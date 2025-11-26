@@ -2,8 +2,6 @@
 
 > Revolutionizing hiring by replacing résumés with real-world challenges and AI-powered evaluation
 
-![SkillMatch AI Banner](./docs/images/banner.png)
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14+-black)](https://nextjs.org/)
