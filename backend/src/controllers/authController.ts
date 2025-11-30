@@ -8,9 +8,9 @@ import jwt from "jsonwebtoken";
  * @param id - The User ID
  */
 const generateToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: "1d",
-  });
+   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
+      expiresIn: "1d",
+   });
 };
 
 /**
@@ -19,42 +19,43 @@ const generateToken = (id: string) => {
  * @access  Public
  */
 export const register = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password, name, type } = req.body;
+   try {
+      const { email, password, name, type } = req.body;
 
-    // Check if user already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      res.status(400).json({ message: "User already exists" });
-      return;
-    }
+      // Check if user already exists
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+         res.status(400).json({ message: "User already exists" });
+         return;
+      }
 
-    // Create new user (password hashing is handled in the Model)
-    const user = await User.create({
-      email,
-      password,
-      name,
-      type,
-    });
-
-    if (user) {
-      res.status(201).json({
-        success: true,
-        token: generateToken(user._id.toString()),
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          type: user.type,
-        },
+      // Create new user (password hashing is handled in the Model)
+      const user = await User.create({
+         email,
+         password,
+         name,
+         type,
       });
-    } else {
-      res.status(400).json({ message: "Invalid user data" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
+
+      if (user) {
+         res.status(201).json({
+            success: true,
+            token: generateToken(user._id.toString()),
+            user: {
+               id: user._id,
+               name: user.name,
+               email: user.email,
+               role: "user",
+               type: user.type,
+            },
+         });
+      } else {
+         res.status(400).json({ message: "Invalid user data" });
+      }
+   } catch (error) {
+      console.error("REGISTER ERROR:", error);
+      res.status(500).json({ message: "Server Error", error });
+   }
 };
 
 /**
@@ -63,29 +64,29 @@ export const register = async (req: Request, res: Response): Promise<void> => {
  * @access  Public
  */
 export const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
+   try {
+      const { email, password } = req.body;
 
-    // Check for user email
-    const user = await User.findOne({ email });
+      // Check for user email
+      const user = await User.findOne({ email });
 
-    // Validate password
-    if (user && (await bcrypt.compare(password, user.password))) {
-      res.json({
-        success: true,
-        token: generateToken(user._id.toString()),
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          type: user.type,
-        },
-      });
-    } else {
-      res.status(401).json({ message: "Invalid email or password" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
+      // Validate password
+      if (user && (await bcrypt.compare(password, user.password))) {
+         res.json({
+            success: true,
+            token: generateToken(user._id.toString()),
+            user: {
+               id: user._id,
+               name: user.name,
+               email: user.email,
+               role: user.role,
+               type: user.type,
+            },
+         });
+      } else {
+         res.status(401).json({ message: "Invalid email or password" });
+      }
+   } catch (error) {
+      res.status(500).json({ message: "Server Error", error });
+   }
 };
