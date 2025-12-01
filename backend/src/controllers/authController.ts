@@ -90,3 +90,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(500).json({ message: "Server Error", error });
    }
 };
+
+// In authController.ts, add a getMe method.
+// Logic: Simply return req.user (response should be { success: true, data: user }).
+// This is used by the frontend on page load to confirm who is logged in without re-entering credentials.
+
+export const getMe = async (req: Request, res: Response): Promise<void> => {
+   try {
+      res.status(200).json({ success: true, data: req.user });
+   } catch (error) {
+      res.status(500).json({ message: "Server Error", error });
+   }
+};
