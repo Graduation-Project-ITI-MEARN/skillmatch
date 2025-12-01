@@ -1,42 +1,25 @@
+"use client";
+
 import { Eye, EyeOff } from "lucide-react";
 import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
+// ======== BASE STYLES ========
 const baseInputClass: string = `
-    disabled:text-gray-700 
-    [-moz-appearance:_textfield] 
-    [&::-webkit-inner-spin-button]:m-0 
-    [&::-webkit-inner-spin-button]:appearance-none 
-    [&::-webkit-outer-spin-button]:m-0 
-    [&::-webkit-outer-spin-button]:appearance-none 
-
-    bg-gray-2
-    w-full 
-    px-3 
-    focus:outline-none 
-    text-base font-sans 
-    pt-7 pb-2.5 
-    transition-all duration-200
-    placeholder:text-gray-400
-
-    hover:bg-white
-    hover:outline-2 
+  disabled:text-gray-700
+  [-moz-appearance:_textfield]
+  [&::-webkit-inner-spin-button]:m-0
+  [&::-webkit-inner-spin-button]:appearance-none
+  [&::-webkit-outer-spin-button]:m-0
+  [&::-webkit-outer-spin-button]:appearance-none
+  bg-gray-2
+  w-full
+  px-3
+  pt-7 pb-2.5
+  text-base font-sans
+  placeholder:text-gray-400
+  transition-all duration-200
 `;
 
-// ========== FOCUS OUTLINE FUNCTION ==========
-const focusOutlineClass = (borderRadius: string): string => `
-    focus-within:before:rounded-${borderRadius} 
-    focus-within:before:pointer-events-none 
-    focus-within:before:absolute 
-    focus-within:before:left-0 
-    focus-within:before:top-0 
-    focus-within:before:z-10 
-    focus-within:before:h-full 
-    focus-within:before:w-full 
-    focus-within:before:outline-offset-2 
-    focus-within:before:opacity-30 
-`;
-
-// ========== TYPE SCRIPT INTERFACE ==========
 interface InputFieldProps<TFieldValues extends FieldValues> {
   id: keyof TFieldValues;
   type: "text" | "email" | "password";
@@ -50,7 +33,6 @@ interface InputFieldProps<TFieldValues extends FieldValues> {
   onTogglePassword?: () => void;
 }
 
-// ========== COMPONENT ==========
 const InputField = <TFieldValues extends FieldValues>({
   id,
   type,
@@ -67,20 +49,11 @@ const InputField = <TFieldValues extends FieldValues>({
     ? "rounded-t-lg border-x border-t"
     : "rounded-b-lg border";
 
-  const focusClasses: string = isTop
-    ? focusOutlineClass("t-lg")
-    : focusOutlineClass("b-lg");
-
   const containerClasses: string = `
-        relative w-full 
-        ${!isTop ? "mt-[-1px]" : ""} 
-        ${
-          error
-            ? "border-red-500 ring-red-500"
-            : "border-gray-300 ring-gray-900"
-        }
-        ${focusClasses}
-    `;
+    relative w-full
+    ${!isTop ? "mt-[-1px]" : ""}
+    ${error ? "border-red-500" : "border-gray-300"}
+  `;
 
   return (
     <div className="relative w-full">
@@ -97,8 +70,9 @@ const InputField = <TFieldValues extends FieldValues>({
             className={`
               ${baseInputClass} 
               ${borderClasses} 
-              ${error ? "border-red-500!" : "border-gray-300"} 
-              focus:ring-0 
+              border-gray-300
+              focus:outline-none
+              focus:ring-1              focus:ring-black
               ${showPasswordToggle && type === "password" ? "pr-10" : ""}
             `}
           />

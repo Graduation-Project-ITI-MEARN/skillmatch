@@ -33,3 +33,37 @@ button:focus {
   @apply bg-gray-400;
 }
 
+.custom-tab {
+  background: white;
+  border: none;
+  position: relative;
+  z-index: 1;
+  padding: 10px 20px;
+  clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 0% 100%);
+}
+
+/* البوردر اللي ماشي على الخط المائل */
+.custom-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+  border: 2px solid #d1d5db; /* default */
+  border-radius: 6px;
+  z-index: -1;
+}
+
+/* Active */
+.active-tab {
+  color: #39594d;
+  font-weight: bold;
+}
+
+.active-tab::before {
+  border-color: #39594d;
+}
+
+/* Inactive */
+.inactive-tab {
+  color: #a0a0a0;
+}
