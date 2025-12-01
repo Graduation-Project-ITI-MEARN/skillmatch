@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [RouterOutlet],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
