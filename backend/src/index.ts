@@ -7,6 +7,7 @@ import authRouter from "./routes/authRoutes";
 import APIError from "./utils/APIError";
 import errorHandler from "./middlewares/errorHandler";
 import challengeRouter from "./routes/challengeRoutes";
+import submissionRoutes from './routes/submissionRoutes';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ const apiPrefix = "/api";
 
 app.use(`${apiPrefix}/auth`, authRouter);
 app.use(`${apiPrefix}/challenges`, challengeRouter);
+app.use('/api/submissions', submissionRoutes);
 
 app.get("/", (req, res) => {
   res.json({
