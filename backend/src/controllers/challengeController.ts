@@ -17,7 +17,7 @@ export const createChallenge = async (req: Request, res: Response) => {
   }
 };
 
-export const getChallenges = async (req: Request, res: Response) => {
+export const getPublishedChallenges = async (req: Request, res: Response) => {
   try {
     const filter: any = { status: "published" }; // Only show published items
 
@@ -27,6 +27,35 @@ export const getChallenges = async (req: Request, res: Response) => {
     const challenges = await Challenge.find(filter).populate(
       "creatorId",
       "name type"
+    );
+
+    res
+      .status(200)
+      .json({ success: true, count: challenges.length, data: challenges });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+export const getMyChallenges = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+
+    const challenges = await Challenge.find({ creatorId: user._id });
+
+    res
+      .status(200)
+      .json({ success: true, count: challenges.length, data: challenges });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+export const getAllChallenges = async (req: Request, res: Response) => {
+  try {
+    const challenges = await Challenge.find().populate(
+      "creatorId",
+      "name email type"
     );
 
     res
