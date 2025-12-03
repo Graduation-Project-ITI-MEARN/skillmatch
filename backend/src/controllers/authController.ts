@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 /**
  * Generate JWT Token
  * @param id - The User ID
  */
+
 const generateToken = (id: string) => {
    return jwt.sign({ id }, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
+      expiresIn: process.env.JWT_EXPIRES_IN ?? "3d",
    });
 };
 

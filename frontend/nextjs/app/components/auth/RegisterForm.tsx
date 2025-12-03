@@ -6,137 +6,137 @@ import UserTypeTabs, { UserType } from "./UserTypeTabs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
+import Link from "next/link";
 
-interface RegisterFormProps {
-    onSwitchToLogin: () => void;
-}
+const RegisterForm = () => {
+   const [userType, setUserType] = useState<UserType>("candidate");
+   const [errorMessage, setErrorMessage] = useState<string>("");
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
-    const [userType, setUserType] = useState<UserType>('candidate');
-    
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm<RegisterFormData>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: { email: "", password: "", confirmPassword: "" }
-    });
+   const {
+      register,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+   } = useForm<RegisterFormData>({
+      resolver: zodResolver(registerSchema),
+      defaultValues: { email: "", password: "", confirmPassword: "" },
+   });
 
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    
-    const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
-        console.log("Register Submission Data:", data);
-        console.log("User Type:", userType);
-        
-        try {
-            // API Call
-            const response = await fetch('YOUR_API_ENDPOINT/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: data.email,
-                    password: data.password,
-                    type: userType  
-                }),
-            });
+   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-            // Check if response is JSON
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                throw new Error("Server returned non-JSON response. Check API endpoint.");
-            }
+   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+      console.log("onSubmit called with data:", data);
+      console.log("userType:", userType);
 
-            const result = await response.json();
+      setErrorMessage(""); // Clear previous errors
 
-            if (response.ok) {
-                // Set cookies using js-cookie with path: '/'
-                Cookies.set('auth_token', result.token, { path: '/' });
-                Cookies.set('user_role', result.user.role, { path: '/' });
-                Cookies.set('user_type', result.user.type, { path: '/' });
+      try {
+         // Call Next.js API route (not backend directly)
+         const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               email: data.email,
+               password: data.password,
+               name: data.email.split("@")[0], // Extract name from email or add name field
+               type: userType,
+            }),
+         });
 
-                // Redirect Logic (Priority Order)
-                let redirectUrl = 'http://localhost:4200/dashboard/';
-                
-                // Check Admin Role first
-                if (result.user.role === 'admin') {
-                    redirectUrl += 'admin';
-                } 
-                // Check User Type
-                else if (result.user.type === 'company') {
-                    redirectUrl += 'company';
-                } else if (result.user.type === 'candidate') {
-                    redirectUrl += 'candidate';
-                } else if (result.user.type === 'challenger') {
-                    redirectUrl += 'challenger';
-                }
+         const result = await response.json();
+         console.log("API response:", result);
 
-                window.location.replace(redirectUrl);
-            } else {
-                console.error('Registration failed:', result.message);
-                alert(result.message || 'Registration failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Registration error:', error);
-            alert(error instanceof Error ? error.message : 'An error occurred. Please check your API endpoint.');
-        }
-    };
-    
-    const togglePasswordVisibility = () => setShowPassword(prev => !prev);
+         if (response.ok && result.success) {
+            // Small delay to ensure cookies are set
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
-    return (
-        <div className="flex w-full flex-col">
-            {/* User Type Tabs */}
-            <UserTypeTabs selected={userType} onChange={setUserType} />
-            
-            <form onSubmit={handleSubmit(onSubmit)}>
-                
-                <InputField<RegisterFormData>
-                    id="email"
-                    type="email"
-                    placeholder="yourname@email.com"
-                    label="EMAIL"
-                    register={register}
-                    isTop={true}
-                    error={errors.email?.message}
-                />
-                
-                <InputField<RegisterFormData>
-                    id="password"
-                    type="password"
-                    placeholder="••••••••••••"
-                    label="PASSWORD"
-                    register={register}
-                    isTop={false}
-                    error={errors.password?.message}
-                    showPasswordToggle={true}
-                    showPassword={showPassword}
-                    onTogglePassword={togglePasswordVisibility}
-                />
+            // Redirect to Angular dashboard
+            const redirectUrl = `http://localhost:4200${result.redirectUrl}`;
+            console.log("Redirecting to:", redirectUrl);
 
-    
-                <SplitButton
-                    buttonText="Sign up"
-                    isSubmitting={isSubmitting}
-                    onClick={handleSubmit(onSubmit)}
-                />
-            </form>
+            // Use window.location.replace to avoid ESLint warning
+            window.location.replace(redirectUrl);
+         } else {
+            setErrorMessage(
+               result.message || "Registration failed. Please try again."
+            );
+         }
+      } catch (error) {
+         console.error("Registration error:", error);
+         setErrorMessage(
+            error instanceof Error
+               ? error.message
+               : "An error occurred. Please try again."
+         );
+      }
+   };
 
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Already have an account?{" "}
-                <button
-                    type="button"
-                    onClick={onSwitchToLogin}
-                    className="text-gray-900 hover:underline underline-offset-2 font-bold"
-                >
-                    Log in
-                </button>
-            </p>
-        </div>
-    );
+   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
+   return (
+      <div className="flex w-full flex-col">
+         {/* User Type Tabs */}
+         <UserTypeTabs selected={userType} onChange={setUserType} />
+
+         <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Error Message */}
+            {errorMessage && (
+               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{errorMessage}</p>
+               </div>
+            )}
+
+            <InputField<RegisterFormData>
+               id="email"
+               type="email"
+               placeholder="yourname@email.com"
+               label="EMAIL"
+               register={register}
+               isTop={true}
+               error={errors.email?.message}
+            />
+
+            <InputField<RegisterFormData>
+               id="password"
+               type="password"
+               placeholder="••••••••••••"
+               label="PASSWORD"
+               register={register}
+               isTop={false}
+               error={errors.password?.message}
+               showPasswordToggle={true}
+               showPassword={showPassword}
+               onTogglePassword={togglePasswordVisibility}
+            />
+
+            <InputField<RegisterFormData>
+               id="confirmPassword"
+               type="password"
+               placeholder="••••••••••••"
+               label="CONFIRM PASSWORD"
+               register={register}
+               isTop={false}
+               error={errors.confirmPassword?.message}
+               showPasswordToggle={true}
+               showPassword={showPassword}
+               onTogglePassword={togglePasswordVisibility}
+            />
+
+            <SplitButton buttonText="Sign up" isSubmitting={isSubmitting} />
+         </form>
+
+         <p className="mt-6 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link
+               href={"/login"}
+               type="button"
+               className="text-gray-900 hover:underline underline-offset-2 font-bold">
+               Log in
+            </Link>
+         </p>
+      </div>
+   );
 };
 
 export default RegisterForm;

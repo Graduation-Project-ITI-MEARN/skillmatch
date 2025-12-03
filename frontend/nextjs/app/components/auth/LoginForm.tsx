@@ -1,86 +1,124 @@
 "use client";
 import { TEXT_COLOR } from "@/app/lib/constants";
-import SplitButton from "./Button";
-
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/app/lib/validation";
 import InputField from "./InputField";
+import Link from "next/link";
+import { useState } from "react";
+import SplitButton from "./Button";
 
-interface LoginFormProps {
-  onSwitchToRegister: () => void;
-}
+const LoginForm = () => {
+   const [errorMessage, setErrorMessage] = useState<string>("");
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
-  });
+   const {
+      register,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+   } = useForm<LoginFormData>({
+      resolver: zodResolver(loginSchema),
+      defaultValues: { email: "", password: "" },
+   });
 
-  
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    console.log("Login Submission Data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Login Successful!");
-  };
+   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+      console.log("onSubmit called with data:", data);
 
-  return (
-    <div className="flex w-full flex-col">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <InputField<LoginFormData>
-          id="email"
-          type="email"
-          placeholder="yourname@email.com"
-          label="EMAIL"
-          register={register}
-          isTop={true}
-          error={errors.email?.message}
-        />
+      setErrorMessage(""); // Clear previous errors
 
-        <InputField<LoginFormData>
-          id="password"
-          type="password"
-          placeholder="••••••••••••"
-          label="PASSWORD"
-          register={register}
-          isTop={false}
-          error={errors.password?.message}
-        />
+      try {
+         // Call Next.js API route (not backend directly)
+         const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               email: data.email,
+               password: data.password,
+            }),
+         });
 
-        <div className="mt-4 text-right">
-          <a
-            href="#"
-            className="text-sm font-semibold transition duration-150 hover:underline"
-            style={{ color: TEXT_COLOR }}
-          >
-            Forgot Password?
-          </a>
-        </div>
+         const result = await response.json();
+         console.log("API response:", result);
 
-        <SplitButton
-          buttonText="Log in"
-          isSubmitting={isSubmitting}
-          onClick={handleSubmit(onSubmit)}
-        />
-      </form>
+         if (response.ok && result.success) {
+            // Small delay to ensure cookies are set
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
-      <p className="mt-6 text-center text-sm text-gray-600">
-        New user?{" "}
-        <button
-          type="button"
-          onClick={onSwitchToRegister}
-          className="text-gray-900 hover:underline underline-offset-2 font-bold"
-        >
-          Sign up
-        </button>
-      </p>
-    </div>
-  );
+            // Redirect to Angular dashboard
+            const redirectUrl = `http://localhost:4200${result.redirectUrl}`;
+            console.log("Redirecting to:", redirectUrl);
+
+            // Use window.location.replace to avoid ESLint warning
+            window.location.replace(redirectUrl);
+         } else {
+            setErrorMessage(
+               result.message || "Login failed. Please try again."
+            );
+         }
+      } catch (error) {
+         console.error("Login error:", error);
+         setErrorMessage(
+            error instanceof Error
+               ? error.message
+               : "An error occurred. Please try again."
+         );
+      }
+   };
+
+   return (
+      <div className="flex w-full flex-col">
+         <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Error Message */}
+            {errorMessage && (
+               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{errorMessage}</p>
+               </div>
+            )}
+
+            <InputField<LoginFormData>
+               id="email"
+               type="email"
+               placeholder="yourname@email.com"
+               label="EMAIL"
+               register={register}
+               isTop={true}
+               error={errors.email?.message}
+            />
+
+            <InputField<LoginFormData>
+               id="password"
+               type="password"
+               placeholder="••••••••••••"
+               label="PASSWORD"
+               register={register}
+               isTop={false}
+               error={errors.password?.message}
+            />
+
+            <div className="mt-4 text-right">
+               <a
+                  href="#"
+                  className="text-sm font-semibold transition duration-150 hover:underline"
+                  style={{ color: TEXT_COLOR }}>
+                  Forgot Password?
+               </a>
+            </div>
+
+            <SplitButton buttonText="Log in" isSubmitting={isSubmitting} />
+         </form>
+
+         <p className="mt-6 text-center text-sm text-gray-600">
+            New user?{" "}
+            <Link
+               href="/register"
+               type="button"
+               className="text-gray-900 hover:underline underline-offset-2 font-bold">
+               Sign up
+            </Link>
+         </p>
+      </div>
+   );
 };
 
 export default LoginForm;

@@ -1,9 +1,10 @@
 import express from "express";
 import {
-  createChallenge,
-  getChallenges,
+   createChallenge,
+   getChallenges,
 } from "../controllers/challengeController";
-import auth, { restrictTo } from "../middlewares/authMiddleware";
+import auth from "../middlewares/authMiddleware";
+import { restrictTo } from "../middlewares/restrictTo";
 
 const router = express.Router();
 
@@ -11,6 +12,6 @@ const router = express.Router();
 router.get("/", getChallenges);
 
 // Protected Route: Only 'company' and 'challenger' can create.
-router.post("/", auth, restrictTo("company", "challenger"), createChallenge);
+router.post("/", auth, restrictTo(["company", "challenger"]), createChallenge);
 
 export default router;
