@@ -7,7 +7,7 @@ import authRouter from "./routes/authRoutes";
 import APIError from "./utils/APIError";
 import errorHandler from "./middlewares/errorHandler";
 import challengeRouter from "./routes/challengeRoutes";
-import submissionRoutes from './routes/submissionRoutes';
+import submissionRouter from "./routes/submissionRoutes";
 import userRouter from "./routes/userRoutes";
 import cookieParser from "cookie-parser";
 
@@ -37,9 +37,8 @@ const apiPrefix = "/api";
 
 app.use(`${apiPrefix}/auth`, authRouter);
 app.use(`${apiPrefix}/challenges`, challengeRouter);
-app.use('/api/submissions', submissionRoutes);
+app.use(`${apiPrefix}/submissions`, submissionRouter);
 app.use(`${apiPrefix}/users`, userRouter);
-
 
 app.get("/", (req, res) => {
    res.json({
