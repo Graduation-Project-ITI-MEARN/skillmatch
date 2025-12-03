@@ -6,41 +6,45 @@ const jwt = require("jsonwebtoken");
 const jwtVerify = promisify(jwt.verify);
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "No token provided" });
-    }
+   try {
+      let token;
 
-    const decoded: any = await jwtVerify(token, process.env.JWT_SECRET);
+      // 1. Check Authorization Header (Bearer token)
+      if (
+         req.headers.authorization &&
+         req.headers.authorization.startsWith("Bearer")
+      ) {
+         token = req.headers.authorization.split(" ")[1];
+      }
+      // 2. Check Cookies (Next.js sets 'auth_token')
+      else if (req.cookies && req.cookies.auth_token) {
+         token = req.cookies.auth_token;
+      }
 
-    // FIX: decoded.id, not decoded.userId
-    const user = await User.findById(decoded.id).select("name email role type");
+      // 3. If no token found in either place
+      if (!token) {
+         return res.status(401).json({ message: "No token provided" });
+      }
 
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
+      // 4. Verify Token
+      const decoded: any = await jwtVerify(token, process.env.JWT_SECRET);
 
-    req.user = user;
-    next();
-  } catch (error) {
-    console.error("AUTH ERROR:", error);
-    res.status(401).json({ message: "Invalid token", error });
-  }
-};
+      // 5. Check if user exists
+      const user = await User.findById(decoded.id).select(
+         "name email role type"
+      );
 
-export const restrictTo = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    // We cast req to 'any' here because TypeScript complains that 'user' doesn't exist on Request
-    const user = (req as any).user;
+      if (!user) {
+         return res.status(401).json({ message: "User not found" });
+      }
 
-    if (!roles.includes(user.role)) {
-      return res
-        .status(403)
-        .json({ message: "You do not have permission to perform this action" });
-    }
-    next();
-  };
+      // 6. Attach user to request
+      req.user = user;
+      next();
+   } catch (error) {
+      console.error("AUTH ERROR:", error);
+      res.status(401).json({ message: "Invalid token", error });
+   }
 };
 
 export default auth;

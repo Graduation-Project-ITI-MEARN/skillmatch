@@ -8,14 +8,13 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard implements OnInit  {
-
+export class Dashboard implements OnInit {
   userName: string = 'User';
 
   private readonly authService = inject(AuthService);
 
-  ngOnInit(): void {
-   const token = this.authService.getToken();
+  ngOnInit() {
+    // instead, just rely on the service state if needed
+    console.log('Dashboard loaded. User role:', this.authService.role);
   }
-
 }
