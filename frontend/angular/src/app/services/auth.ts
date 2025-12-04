@@ -47,7 +47,7 @@ export class AuthService {
     this.cookiesService.delete('user_role');
     this.cookiesService.delete('user_type');
     this.currentUser.set(null);
-    // window.location.href = 'http://localhost:3000/login';
+    window.location.href = 'http://localhost:3000/login';
   }
 
   // Helper to safely get properties from Signal OR Cookie

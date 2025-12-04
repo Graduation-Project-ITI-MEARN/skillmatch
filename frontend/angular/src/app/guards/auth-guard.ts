@@ -15,7 +15,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         return true;
       } else {
         // Redirect to login if auth fails
-        // window.location.href = 'http://localhost:3000/login';
+        window.location.href = 'http://localhost:3000/login';
         return false;
       }
     })

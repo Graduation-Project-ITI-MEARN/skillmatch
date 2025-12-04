@@ -13,7 +13,7 @@ export const companyGuard: CanActivateFn = (route, state) => {
     map((isAuthenticated) => {
       // 2. Check Authentication
       if (!isAuthenticated) {
-        // window.location.href = 'http://localhost:3000/login';
+        window.location.href = 'http://localhost:3000/login';
         return false;
       }
 
