@@ -1,10 +1,11 @@
 import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary";
 
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary as any, // <-- Add "as any" here to fix the error
-  params: async (req, file) => {
+  cloudinary: cloudinary,
+  params: async (req: any, file: any) => {
     return {
       folder: "skillmatch/submissions",
       resource_type: "auto",
