@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
    try {
       const body = await request.json();
-      const { email, password, name, type } = body;
+      const { email, password, name, type, lang } = body;
+
+      // Set default if undefined
+      const currentLang = lang || "en";
 
       // Call your backend API
       const backendResponse = await fetch(
@@ -61,6 +64,10 @@ export async function POST(request: NextRequest) {
          redirectUrl += "challenger";
       }
 
+      // 3. APPEND THE LANG QUERY PARAM
+      // This results in: /dashboard/company?lang=ar
+      redirectUrl += `?lang=${currentLang}`;
+
       // Create response with cookies
       const res = NextResponse.json({
          success: true,
@@ -76,6 +83,13 @@ export async function POST(request: NextRequest) {
          sameSite: "lax",
          maxAge: 60 * 60 * 24 * 7, // 7 days
          path: "/",
+      });
+
+      // Optional: Set a cookie for the language too as a backup
+      res.cookies.set("app_lang", currentLang, {
+         httpOnly: false,
+         path: "/",
+         maxAge: 60 * 60 * 24 * 30,
       });
 
       // Set readable cookies for routing hints

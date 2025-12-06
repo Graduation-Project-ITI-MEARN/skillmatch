@@ -7,9 +7,11 @@ import InputField from "./InputField";
 import Link from "next/link";
 import { useState } from "react";
 import SplitButton from "./Button";
+import { useLocale } from "next-intl";
 
 const LoginForm = () => {
    const [errorMessage, setErrorMessage] = useState<string>("");
+   const locale = useLocale(); // Gets 'en' or 'ar'
 
    const {
       register,
@@ -35,6 +37,7 @@ const LoginForm = () => {
             body: JSON.stringify({
                email: data.email,
                password: data.password,
+               lang: locale,
             }),
          });
 

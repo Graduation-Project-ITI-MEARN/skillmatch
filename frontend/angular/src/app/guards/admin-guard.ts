@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { map, take } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export const adminGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -13,7 +14,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
     map((isAuthenticated) => {
       // 2. Check Authentication
       if (!isAuthenticated) {
-        // window.location.href = 'http://localhost:3000/login';
+        window.location.href = `${environment.nextJsUrl}/login`;
         return false;
       }
 

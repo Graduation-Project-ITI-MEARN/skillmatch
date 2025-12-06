@@ -7,10 +7,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const RegisterForm = () => {
    const [userType, setUserType] = useState<UserType>("candidate");
    const [errorMessage, setErrorMessage] = useState<string>("");
+
+   const t = useTranslations("Common");
 
    const {
       register,
@@ -132,7 +135,7 @@ const RegisterForm = () => {
                href={"/login"}
                type="button"
                className="text-gray-900 hover:underline underline-offset-2 font-bold">
-               Log in
+               {t("login")}
             </Link>
          </p>
       </div>

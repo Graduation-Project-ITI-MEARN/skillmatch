@@ -1,7 +1,9 @@
 import express from "express";
 import {
    createChallenge,
-   getChallenges,
+   getAllChallenges,
+   getMyChallenges,
+   getPublishedChallenges,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
@@ -16,6 +18,6 @@ router.post("/", auth, restrictTo(["company", "challenger"]), createChallenge);
 
 router.get("/mine", auth, getMyChallenges);
 
-router.get("/all", auth, restrictTo("admin"), getAllChallenges);
+router.get("/all", auth, restrictTo(["admin"]), getAllChallenges);
 
 export default router;
