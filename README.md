@@ -125,7 +125,7 @@
 
 **Team 3 - ITI Graduation Project**
 
-- **Team Leader / Backend Lead:** [Aya Zayed]
+- **Team Leader** [Aya Zayed]
 - **Backend Lead:** [Menna Seif]
 - **Next.js Lead:** [Esraa Fayek]
 - **Angular Lead:** [Ahmed Mohamed Hassan]
