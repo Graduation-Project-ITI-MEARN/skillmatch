@@ -1,47 +1,45 @@
 import express from "express";
-import {
-   createSubmission,
-   getSubmissionsByChallenge,
-   getSubmissionById,
-   getAllSubmissions,
-} from "../controllers/submissionController";
-import { restrictTo } from "../middlewares/restrictTo";
 import auth from "../middlewares/authMiddleware";
+import { restrictTo } from "../middlewares/restrictTo";
+import { advancedResults } from "../middlewares/advancedResults";
+import Submission from "../models/Submission";
+
+import {
+  createSubmission,
+  getSubmissionsByChallenge,
+  getSubmissionById,
+  getAllSubmissions,
+} from "../controllers/submissionController";
 
 const router = express.Router();
 
-/**
- * @route   GET /api/submissions
- * @desc    Get all submissions
- * @access  Protected - Admin only
- */
-
-router.get("/", auth, restrictTo(["admin"]), getAllSubmissions);
-
-/**
- * @route   POST /api/submissions
- * @desc    Create a new submission
- * @access  Protected - Candidate only
- */
-router.post("/", auth, restrictTo(["candidate"]), createSubmission);
-
-/**
- * @route   GET /api/submissions/challenge/:id
- * @desc    Get all submissions for a specific challenge
- * @access  Protected - Company/Challenger/Admin
- */
+// --- ADMIN ALL submissions ---
 router.get(
-   "/challenge/:id",
-   auth,
-   restrictTo(["company", "challenger", "admin"]),
-   getSubmissionsByChallenge
+  "/",
+  auth,
+  restrictTo(["admin"]),
+  advancedResults(Submission),
+  getAllSubmissions
 );
 
-/**
- * @route   GET /api/submissions/:id
- * @desc    Get a single submission by ID
- * @access  Protected
- */
+// --- USER create submission ---
+router.post("/", auth, restrictTo(["candidate"]), createSubmission);
+
+// --- COMPANY/CHALLENGER submissions for a specific challenge ---
+router.get(
+  "/challenge/:id",
+  auth,
+  restrictTo(["company", "challenger", "admin"]),
+  (req, res, next) =>
+    advancedResults(
+      Submission,
+      null,
+      { challengeId: req.params.id } // fixed filter
+    )(req, res, next),
+  getSubmissionsByChallenge
+);
+
+// --- Get single submission ---
 router.get("/:id", auth, getSubmissionById);
 
 export default router;
