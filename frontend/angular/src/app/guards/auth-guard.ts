@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { map, take } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -15,7 +16,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         return true;
       } else {
         // Redirect to login if auth fails
-        window.location.href = 'http://localhost:3000/login';
+        window.location.href = `${environment.nextJsUrl}/login`;
         return false;
       }
     })
