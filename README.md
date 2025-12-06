@@ -9,17 +9,17 @@
 
 ## 📋 Table of Contents
 
--  [Overview](#overview)
--  [Key Features](#key-features)
--  [Tech Stack](#tech-stack)
--  [Architecture](#architecture)
--  [Getting Started](#getting-started)
--  [Project Structure](#project-structure)
--  [Development](#development)
--  [API Documentation](#api-documentation)
--  [Deployment](#deployment)
--  [Team](#team)
--  [License](#license)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [API Documentation](#api-documentation)
+- [Deployment](#deployment)
+- [Team](#team)
+- [License](#license)
 
 ---
 
@@ -29,8 +29,8 @@
 
 ### The Problem We Solve
 
--  **For Companies:** Wasting time on unqualified applicants and making hiring decisions based on credentials rather than capability
--  **For Candidates:** Struggling to prove skills without experience, and facing bias in traditional hiring processes
+- **For Companies:** Wasting time on unqualified applicants and making hiring decisions based on credentials rather than capability
+- **For Candidates:** Struggling to prove skills without experience, and facing bias in traditional hiring processes
 
 ### Our Solution
 
@@ -45,44 +45,44 @@
 
 ### 🤖 AI-Powered Dual Evaluation
 
--  **Solution Analysis:** Evaluates technical accuracy, efficiency, creativity, and code quality
--  **Video Analysis:** Assesses candidate's comprehension, problem-solving methodology, and communication skills
--  **Authenticity Verification:** Detects copied solutions by analyzing explanation depth
+- **Solution Analysis:** Evaluates technical accuracy, efficiency, creativity, and code quality
+- **Video Analysis:** Assesses candidate's comprehension, problem-solving methodology, and communication skills
+- **Authenticity Verification:** Detects copied solutions by analyzing explanation depth
 
 ### 🎯 Smart Quests System
 
--  Companies post challenges across all digital domains
--  Real-world tasks instead of generic coding tests
--  Customizable difficulty levels and evaluation criteria
--  Automatic leaderboard generation
+- Companies post challenges across all digital domains
+- Real-world tasks instead of generic coding tests
+- Customizable difficulty levels and evaluation criteria
+- Automatic leaderboard generation
 
 ### 💼 Smart Portfolio
 
--  Auto-generates after each challenge completion
--  Showcases verified skills with AI assessments
--  Shareable as interactive CV or PDF
--  Serves as talent discovery tool for employers
+- Auto-generates after each challenge completion
+- Showcases verified skills with AI assessments
+- Shareable as interactive CV or PDF
+- Serves as talent discovery tool for employers
 
 ### 🎓 AI Career Coach
 
--  Identifies skill gaps from performance
--  Recommends personalized learning paths
--  Tracks progress over time
--  Provides actionable improvement suggestions
+- Identifies skill gaps from performance
+- Recommends personalized learning paths
+- Tracks progress over time
+- Provides actionable improvement suggestions
 
 ### 📊 Company Dashboard
 
--  Post and manage challenges
--  Review submissions with AI insights
--  Compare candidates side-by-side
--  Track hiring pipeline from challenge to offer
+- Post and manage challenges
+- Review submissions with AI insights
+- Compare candidates side-by-side
+- Track hiring pipeline from challenge to offer
 
 ### 👤 Candidate Dashboard
 
--  Browse and attempt challenges
--  Submit solutions with video explanations
--  View AI feedback and recommendations
--  Build and manage portfolio
+- Browse and attempt challenges
+- Submit solutions with video explanations
+- View AI feedback and recommendations
+- Build and manage portfolio
 
 ---
 
@@ -92,52 +92,53 @@
 
 **Public Site (Next.js)**
 
--  **Framework:** Next.js 14+ (App Router)
--  **Language:** TypeScript
--  **Styling:** Tailwind CSS
--  **Validation:** Zod
+- **Framework:** Next.js 14+ (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Validation:** Zod
 
 **Dashboards (Angular)**
 
--  **Framework:** Angular 20
--  **Language:** TypeScript
--  **Styling:** Tailwind CSS
+- **Framework:** Angular 20
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
 
 ### Backend
 
--  **Runtime:** Node.js (v18+)
--  **Framework:** Express.js
--  **Language:** TypeScript
--  **Database:** MongoDB
--  **ODM:** Mongoose
--  **Authentication:** JWT (JSON Web Tokens)
--  **File Upload:** Multer
--  **Validation:** Zod
+- **Runtime:** Node.js (v18+)
+- **Framework:** Express.js
+- **Language:** TypeScript
+- **Database:** MongoDB
+- **ODM:** Mongoose
+- **Authentication:** JWT (JSON Web Tokens)
+- **File Upload:** Multer
+- **Validation:** Zod
 
 ### AI & Processing
 
--  **AI Models:** OpenAI GPT-4 / Anthropic Claude
--  **Video Processing:** FFmpeg
--  **Video Transcription:** OpenAI Whisper API
--  **File Storage:** Cloudinary
+- **AI Models:** OpenAI GPT-4 / Anthropic Claude
+- **Video Processing:** FFmpeg
+- **Video Transcription:** OpenAI Whisper API
+- **File Storage:** Cloudinary
 
 ## 👥 Team
 
 **Team 3 - ITI Graduation Project**
 
--  **Team Leader:** [Aya Zayed]
--  **Next.js Lead:** [Esraa Fayek]
--  **Angular Lead:** [Ahmed Mohamed Hassan]
--  **Full Stack / QA:** [Ahmed Abdulrahman Mancy]
+- **Team Leader** [Aya Zayed]
+- **Backend Lead:** [Menna Seif]
+- **Next.js Lead:** [Esraa Fayek]
+- **Angular Lead:** [Ahmed Mohamed Hassan]
+- **Full Stack / QA:** [Ahmed Abdulrahman Mancy]
 
 ---
 
 ## 🙏 Acknowledgments
 
--  **Inspiration:** CodeQuests.com for challenge-based hiring model
--  **Design:** Cohere.com for visual aesthetic
--  **AI Technology:** OpenAI and Anthropic for AI capabilities
--  **ITI:** Information Technology Institute for education and support
--  **Open Source Community:** All the amazing libraries and tools we use
+- **Inspiration:** CodeQuests.com for challenge-based hiring model
+- **Design:** Cohere.com for visual aesthetic
+- **AI Technology:** OpenAI and Anthropic for AI capabilities
+- **ITI:** Information Technology Institute for education and support
+- **Open Source Community:** All the amazing libraries and tools we use
 
 Made with ❤️ by Team 3 | ITI Graduation Project 2025
