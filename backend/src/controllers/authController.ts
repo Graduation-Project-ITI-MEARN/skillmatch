@@ -8,8 +8,8 @@ const jwt = require("jsonwebtoken");
  * @param id - The User ID
  */
 
-const generateToken = (id: string) => {
-   return jwt.sign({ id }, process.env.JWT_SECRET as string, {
+const generateToken = (id: string , role: string) => {
+   return jwt.sign({ id , role}, process.env.JWT_SECRET as string, {
       expiresIn: process.env.JWT_EXPIRES_IN ?? "3d",
    });
 };
@@ -41,7 +41,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       if (user) {
          res.status(201).json({
             success: true,
-            token: generateToken(user._id.toString()),
+            token: generateToken(user._id.toString() , user.role),
             user: {
                id: user._id,
                name: user.name,
@@ -75,7 +75,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       if (user && (await bcrypt.compare(password, user.password))) {
          res.json({
             success: true,
-            token: generateToken(user._id.toString()),
+            token: generateToken(user._id.toString() , user.role),
             user: {
                id: user._id,
                name: user.name,

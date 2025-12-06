@@ -9,25 +9,11 @@ import {
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
+import { advancedResults } from "../middlewares/advancedResults";
+import Challenge from "../models/Challenge";
 
 const router = express.Router();
 
-// ==============================================================================
-// PUBLIC ROUTES
-// ==============================================================================
-
-// Get all published challenges (Feed)
-router.get("/", getPublishedChallenges);
-
-// ==============================================================================
-// PROTECTED ROUTES (Authenticated Users)
-// ==============================================================================
-
-// Get challenges created by the current user
-router.get("/mine", auth, getMyChallenges);
-
-// Create a new challenge (Company & Challenger only)
-router.post("/", auth, restrictTo(["company", "challenger"]), createChallenge);
 
 // Update an existing challenge (Safe Update)
 router.put(
@@ -51,5 +37,43 @@ router.delete(
 
 // Get all challenges including drafts and archived (Admin only)
 router.get("/all", auth, restrictTo(["admin"]), getAllChallenges);
+// --- ADMIN: all challenges ---
+router.get(
+  "/all",
+  auth,
+  restrictTo(["admin"]),
+  advancedResults(Challenge, {
+    path: "creatorId",
+    select: "name email type",
+  }),
+  getAllChallenges
+);
+
+// --- USER: my challenges ---
+router.get(
+  "/mine",
+  auth,
+  (req: any, res, next) =>
+    advancedResults(
+      Challenge,
+      { path: "creatorId", select: "name type" },
+      { creatorId: req.user._id }
+    )(req, res, next),
+  getMyChallenges
+);
+
+// --- PUBLIC: published challenges ---
+router.get(
+  "/",
+  advancedResults(
+    Challenge,
+    { path: "creatorId", select: "name type" },
+    { status: "published" }
+  ),
+  getPublishedChallenges
+);
+
+// --- CREATE challenge ---
+router.post("/", auth, restrictTo(["company", "challenger"]), createChallenge);
 
 export default router;
