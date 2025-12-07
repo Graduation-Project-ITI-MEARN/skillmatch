@@ -51,7 +51,6 @@ const SubmissionSchema: Schema = new Schema(
       trim: true,
       validate: {
         validator: function (this: ISubmission, value: string) {
-          // If type is 'link', linkUrl must be provided
           if (this.submissionType === SubmissionType.LINK) {
             return !!value && value.length > 0;
           }
@@ -65,7 +64,6 @@ const SubmissionSchema: Schema = new Schema(
       default: [],
       validate: {
         validator: function (this: ISubmission, value: string[]) {
-          // If type is 'file', at least one file must be provided
           if (this.submissionType === SubmissionType.FILE) {
             return value && value.length > 0;
           }
@@ -79,7 +77,6 @@ const SubmissionSchema: Schema = new Schema(
       trim: true,
       validate: {
         validator: function (this: ISubmission, value: string) {
-          // If type is 'text', textContent must be provided
           if (this.submissionType === SubmissionType.TEXT) {
             return !!value && value.length > 0;
           }
@@ -100,8 +97,6 @@ const SubmissionSchema: Schema = new Schema(
   }
 );
 
-// Compound index to prevent duplicate submissions
 SubmissionSchema.index({ challengeId: 1, candidateId: 1 }, { unique: true });
 
-// Export the model
 export default mongoose.model<ISubmission>("Submission", SubmissionSchema);
