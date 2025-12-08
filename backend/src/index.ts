@@ -8,6 +8,7 @@ import APIError from "./utils/APIError";
 import errorHandler from "./middlewares/errorHandler";
 import challengeRouter from "./routes/challengeRoutes";
 import submissionRouter from "./routes/submissionRoutes";
+import metadataRoutes from './routes/metadataRoutes';
 import userRouter from "./routes/userRoutes";
 import cookieParser from "cookie-parser";
 
@@ -38,6 +39,7 @@ const apiPrefix = "/api";
 app.use(`${apiPrefix}/auth`, authRouter);
 app.use(`${apiPrefix}/challenges`, challengeRouter);
 app.use(`${apiPrefix}/submissions`, submissionRouter);
+app.use('/api/metadata', metadataRoutes);
 app.use(`${apiPrefix}/users`, userRouter);
 
 app.get("/", (req, res) => {
