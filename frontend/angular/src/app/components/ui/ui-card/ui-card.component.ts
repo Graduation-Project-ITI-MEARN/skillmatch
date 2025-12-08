@@ -1,4 +1,3 @@
-// src/app/components/ui/ui-card/ui-card.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -11,22 +10,24 @@ import { CommonModule } from '@angular/common';
       <ng-content></ng-content>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .ui-card {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(57, 89, 77, 0.08);
-      box-shadow: var(--shadow-soft);
-      transition: box-shadow var(--transition-medium);
-    }
+      .ui-card {
+        background: var(--color-bg);
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(57, 89, 77, 0.08);
+        box-shadow: var(--shadow-soft);
+        transition: box-shadow var(--transition-medium);
+      }
 
-    .ui-card:hover {
-      box-shadow: var(--shadow-medium);
-    }
-  `]
+      .ui-card:hover {
+        box-shadow: var(--shadow-medium);
+      }
+    `,
+  ],
 })
 export class UiCard {}

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { getCategories, getSkills } from "../controllers/metadataController";
 
-const router = Router();
+const metadataRouter = Router();
 
-router.get("/categories", getCategories);
+metadataRouter.get("/categories", getCategories);
 
-router.get("/skills", getSkills);
+metadataRouter.get("/skills", getSkills);
 
-export default router;
+export default metadataRouter;

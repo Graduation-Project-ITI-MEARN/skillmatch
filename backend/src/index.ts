@@ -1,4 +1,5 @@
 import "./config/db";
+import "./config/cloudinary";
 
 import APIError from "./utils/APIError";
 import { bootstrap } from "./routes/bootstrap";
@@ -8,8 +9,6 @@ import dotenv from "dotenv";
 import errorHandler from "./middlewares/errorHandler";
 import express from "express";
 import helmet from "helmet";
-import paymentRouter from "./routes/paymentRoutes";
-import statsRoutes from "./routes/statsRoutes";
 
 dotenv.config();
 
