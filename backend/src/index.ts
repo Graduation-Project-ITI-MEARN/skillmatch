@@ -12,6 +12,8 @@ import userRouter from "./routes/userRoutes";
 import uploadRouter from "./routes/uploadRoutes"; // <-- NEW IMPORT
 import cookieParser from "cookie-parser";
 import paymentRouter from "./routes/paymentRoutes";
+import statsRoutes from "./routes/statsRoutes";
+
 
 dotenv.config();
 
@@ -43,6 +45,7 @@ app.use(`${apiPrefix}/submissions`, submissionRouter);
 app.use(`${apiPrefix}/users`, userRouter);
 app.use(`${apiPrefix}/upload`, uploadRouter);
 app.use(`${apiPrefix}/payments`, paymentRouter);
+app.use(`${apiPrefix}/stats`, statsRoutes);
 
 app.get("/", (req, res) => {
    res.json({
