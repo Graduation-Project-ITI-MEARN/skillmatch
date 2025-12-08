@@ -1,20 +1,15 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
-import helmet from "helmet";
-import authRouter from "./routes/authRoutes";
+import "./config/db";
+
 import APIError from "./utils/APIError";
-import errorHandler from "./middlewares/errorHandler";
-import challengeRouter from "./routes/challengeRoutes";
-import submissionRouter from "./routes/submissionRoutes";
-import metadataRoutes from './routes/metadataRoutes';
-import userRouter from "./routes/userRoutes";
-import uploadRouter from "./routes/uploadRoutes"; // <-- NEW IMPORT
+import { bootstrap } from "./routes/bootstrap";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import errorHandler from "./middlewares/errorHandler";
+import express from "express";
+import helmet from "helmet";
 import paymentRouter from "./routes/paymentRoutes";
 import statsRoutes from "./routes/statsRoutes";
-
 
 dotenv.config();
 
@@ -38,16 +33,7 @@ app.use(
 app.use(cookieParser());
 
 // Routes
-const apiPrefix = "/api";
-
-app.use(`${apiPrefix}/auth`, authRouter);
-app.use(`${apiPrefix}/challenges`, challengeRouter);
-app.use(`${apiPrefix}/submissions`, submissionRouter);
-app.use('/api/metadata', metadataRoutes);
-app.use(`${apiPrefix}/users`, userRouter);
-app.use(`${apiPrefix}/upload`, uploadRouter);
-app.use(`${apiPrefix}/payments`, paymentRouter);
-app.use(`${apiPrefix}/stats`, statsRoutes);
+bootstrap(app);
 
 app.get("/", (req, res) => {
    res.json({
@@ -62,22 +48,6 @@ app.use((req, res, next) => {
 
 // GLOBAL ERROR HANDLER
 app.use(errorHandler);
-
-// Database Connection
-const mongoURI = process.env.MONGODB_URI as string;
-
-if (!mongoURI) {
-   console.error("Error: MONGODB_URI is missing in .env file");
-   process.exit(1);
-}
-
-mongoose
-   .connect(mongoURI)
-   .then(() => console.log("MongoDB Connected Successfully"))
-   .catch((err) => {
-      console.error("MongoDB Connection Error:", err);
-      process.exit(1);
-   });
 
 const PORT = process.env.PORT || 5000;
 

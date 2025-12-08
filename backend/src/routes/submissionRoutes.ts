@@ -1,15 +1,17 @@
-import express from "express";
-import auth from "../middlewares/authMiddleware";
-import { restrictTo } from "../middlewares/restrictTo";
-import { advancedResults } from "../middlewares/advancedResults";
-import Submission from "../models/Submission";
-
 import {
   createSubmission,
-  getSubmissionsByChallenge,
-  getSubmissionById,
   getAllSubmissions,
+  getSubmissionById,
+  getSubmissionsByChallenge,
 } from "../controllers/submissionController";
+
+import Submission from "../models/Submission";
+import { advancedResults } from "../middlewares/advancedResults";
+import auth from "../middlewares/authMiddleware";
+import { createSubmissionDTO } from "../DTO/submission";
+import express from "express";
+import { restrictTo } from "../middlewares/restrictTo";
+import validate from "../middlewares/validate";
 
 const router = express.Router();
 
@@ -23,12 +25,19 @@ router.get(
 );
 
 // --- USER create submission ---
-router.post("/", auth, restrictTo(["candidate"]), createSubmission);
+router.post(
+  "/",
+  auth,
+  validate(createSubmissionDTO),
+  restrictTo(["candidate"]),
+  createSubmission
+);
 
 // --- COMPANY/CHALLENGER submissions for a specific challenge ---
 router.get(
   "/challenge/:id",
   auth,
+  validate(createSubmissionDTO),
   restrictTo(["company", "challenger", "admin"]),
   (req, res, next) =>
     advancedResults(

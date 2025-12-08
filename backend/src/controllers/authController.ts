@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
+
 import User from "../models/User";
 import bcrypt from "bcryptjs";
+import { catchError } from "../utils/catchAsync";
+
 const jwt = require("jsonwebtoken");
 
 /**
@@ -8,10 +11,10 @@ const jwt = require("jsonwebtoken");
  * @param id - The User ID
  */
 
-const generateToken = (id: string , role: string) => {
-   return jwt.sign({ id , role}, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRES_IN ?? "3d",
-   });
+const generateToken = (id: string, role: string) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET as string, {
+    expiresIn: process.env.JWT_EXPIRES_IN ?? "3d",
+  });
 };
 
 /**
@@ -19,87 +22,82 @@ const generateToken = (id: string , role: string) => {
  * @route   POST /api/auth/register
  * @access  Public
  */
-export const register = async (req: Request, res: Response): Promise<void> => {
-   try {
-      const { email, password, name, type } = req.body;
 
-      // Check if user already exists
-      const userExists = await User.findOne({ email });
-      if (userExists) {
-         res.status(400).json({ message: "User already exists" });
-         return;
-      }
+const register = catchError(async (req: Request, res: Response) => {
+  const { email, password, name, type } = req.body;
 
-      // Create new user (password hashing is handled in the Model)
-      const user = await User.create({
-         email,
-         password,
-         name,
-         type,
-      });
+  // Check if user already exists
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    throw new Error("User already exists");
+  }
 
-      if (user) {
-         res.status(201).json({
-            success: true,
-            token: generateToken(user._id.toString() , user.role),
-            user: {
-               id: user._id,
-               name: user.name,
-               email: user.email,
-               role: "user",
-               type: user.type,
-            },
-         });
-      } else {
-         res.status(400).json({ message: "Invalid user data" });
-      }
-   } catch (error) {
-      console.error("REGISTER ERROR:", error);
-      res.status(500).json({ message: "Server Error", error });
-   }
-};
+  // Create new user (password hashing is handled in the model)
+  const user = await User.create({
+    email,
+    password,
+    name,
+    type,
+  });
 
+  if (!user) {
+    throw new Error("Invalid user data");
+  }
+
+  res.status(201).json({
+    success: true,
+    token: generateToken(user._id.toString(), user.role),
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: "user",
+      type: user.type,
+    },
+  });
+});
 /**
  * @desc    Authenticate user & get token
  * @route   POST /api/auth/login
  * @access  Public
  */
-export const login = async (req: Request, res: Response): Promise<void> => {
-   try {
-      const { email, password } = req.body;
+const login = catchError(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
-      // Check for user email
-      const user = await User.findOne({ email });
+  // Check if user exists
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("Invalid email or password");
+  }
 
-      // Validate password
-      if (user && (await bcrypt.compare(password, user.password))) {
-         res.json({
-            success: true,
-            token: generateToken(user._id.toString() , user.role),
-            user: {
-               id: user._id,
-               name: user.name,
-               email: user.email,
-               role: user.role,
-               type: user.type,
-            },
-         });
-      } else {
-         res.status(401).json({ message: "Invalid email or password" });
-      }
-   } catch (error) {
-      res.status(500).json({ message: "Server Error", error });
-   }
-};
+  // Validate password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new Error("Invalid email or password");
+  }
 
+  // Generate token & send response
+  res.json({
+    success: true,
+    token: generateToken(user._id.toString(), user.role),
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      type: user.type,
+    },
+  });
+});
 // In authController.ts, add a getMe method.
 // Logic: Simply return req.user (response should be { success: true, data: user }).
 // This is used by the frontend on page load to confirm who is logged in without re-entering credentials.
 
-export const getMe = async (req: Request, res: Response): Promise<void> => {
-   try {
-      res.status(200).json({ success: true, data: req.user });
-   } catch (error) {
-      res.status(500).json({ message: "Server Error", error });
-   }
-};
+const getMe = catchError(async (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    data: req.user,
+  });
+});
+
+export { register, login, getMe };
