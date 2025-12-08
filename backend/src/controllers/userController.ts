@@ -1,50 +1,59 @@
 import { Request, Response } from "express";
+
 import User from "../models/User";
+import { catchError } from "../utils/catchAsync";
 
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    res.status(200).json({ success: true, data: res.advancedResults });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
+const getAllUsers = catchError(async (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    data: res.advancedResults,
+  });
+});
+
+const getAllCandidates = catchError(async (req: Request, res: Response) => {
+  const users = await User.find({ role: "candidate" });
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+});
+
+const getAllCompanies = catchError(async (req: Request, res: Response) => {
+  const users = await User.find({ role: "company" });
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+});
+
+const getAllChallengers = catchError(async (req: Request, res: Response) => {
+  const users = await User.find({ role: "challenger" });
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+});
+
+const getUserById = catchError(async (req: Request, res: Response) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
   }
-};
 
-export const getAllCandidates = async (req: Request, res: Response) => {
-  try {
-    const users = await User.find({ role: "candidate" });
-    res.status(200).json({ success: true, data: users });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
-};
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
 
-export const getAllCompanies = async (req: Request, res: Response) => {
-  try {
-    const users = await User.find({ role: "company" });
-    res.status(200).json({ success: true, data: users });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
-};
-
-export const getAllChallengers = async (req: Request, res: Response) => {
-  try {
-    const users = await User.find({ role: "challenger" });
-    res.status(200).json({ success: true, data: users });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
-};
-
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user)
-      return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json({ success: true, data: user });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
+export {
+  getAllUsers,
+  getAllCandidates,
+  getAllCompanies,
+  getAllChallengers,
+  getUserById,
 };
