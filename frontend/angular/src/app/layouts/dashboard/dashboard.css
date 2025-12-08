@@ -1,0 +1,325 @@
+/* Dashboard Container */
+.dashboard-container {
+  min-height: 100vh;
+  background: var(--color-bg-soft);
+  font-family: var(--font-sans);
+}
+
+/* ========== HEADER ========== */
+.dashboard-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid rgba(57, 89, 77, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: var(--shadow-soft);
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-lighter));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.mobile-menu-btn:hover {
+  background: var(--color-bg-soft);
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.logout-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.logout-btn-mobile {
+  display: none;
+}
+
+/* ========== MAIN CONTAINER ========== */
+.main-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+/* ========== TABS NAVIGATION ========== */
+.tabs-nav {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: var(--space-xl);
+  border: 1px solid rgba(57, 89, 77, 0.08);
+}
+
+.tabs-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.tab-link:hover {
+  background: var(--color-bg-soft);
+  color: var(--color-text);
+}
+
+.tab-link.tab-active {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ========== CONTENT AREA ========== */
+.content-area {
+  animation: fade-in 0.35s ease both;
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+}
+
+/* ========== RESPONSIVE - TABLET ========== */
+@media (max-width: 1024px) {
+  .header-content {
+    padding: var(--space-lg) var(--space-lg);
+  }
+
+  .main-container {
+    padding: var(--space-lg);
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ========== RESPONSIVE - MOBILE ========== */
+@media (max-width: 768px) {
+  .header-content {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .main-container {
+    padding: var(--space-md);
+  }
+
+  .page-title {
+    font-size: 1.125rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.75rem;
+  }
+
+  /* Show mobile menu button */
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  /* Hide desktop logout */
+  .logout-btn {
+    display: none;
+  }
+
+  /* Tabs become mobile menu */
+  .tabs-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform var(--transition-medium);
+    border-radius: 0;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tabs-nav.mobile-open {
+    transform: translateX(0);
+  }
+
+  .tabs-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-lg);
+    gap: var(--space-sm);
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .tab-link {
+    justify-content: flex-start;
+    padding: var(--space-md);
+    font-size: 1rem;
+  }
+
+  .tab-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Show mobile logout */
+  .logout-btn-mobile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(57, 89, 77, 0.1);
+    color: var(--color-primary);
+    padding: var(--space-lg);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+
+  .logout-btn-mobile:hover {
+    background: var(--color-bg-soft);
+  }
+
+  /* Show overlay */
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 45;
+    animation: fade-in 0.2s ease;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
