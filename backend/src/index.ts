@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import errorHandler from "./middlewares/errorHandler";
+import metadataRoutes from "./routes/metadataRoutes";
+import moderationRouter from "./routes/moderationRoutes"; 
 import express from "express";
 import helmet from "helmet";
 
@@ -17,6 +19,8 @@ const app = express();
 // Middleware
 app.use(express.json()); // Parse JSON bodies
 app.use(helmet());
+app.use('/api/metadata', metadataRoutes);
+app.use("/api/moderation", moderationRouter);
 
 const FRONTEND_URL = process.env.FRONTEND_URL || [
    "http://localhost:4200",
