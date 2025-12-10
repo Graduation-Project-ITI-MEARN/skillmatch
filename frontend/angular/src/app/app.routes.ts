@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth-guard';
-import { adminGuard } from './guards/admin-guard';
-import { companyGuard } from './guards/company-guard';
-import { candidateGuard } from './guards/candidate-guard';
-import { challengerGuard } from './guards/challenger-guard';
+import { authGuard } from './core/guards/auth-guard';
+import { adminGuard } from './core/guards/admin-guard';
+import { companyGuard } from './core/guards/company-guard';
+import { candidateGuard } from './core/guards/candidate-guard';
+import { challengerGuard } from './core/guards/challenger-guard';
 
 export const routes: Routes = [
   {
     path: 'dashboard',
-    loadComponent: () => import('./layouts/dashboard/dashboard').then((m) => m.Dashboard),
+    loadComponent: () => import('./shared/layouts/dashboard/dashboard').then((m) => m.Dashboard),
     canActivate: [authGuard],
     children: [
       // ========== ADMIN ==========

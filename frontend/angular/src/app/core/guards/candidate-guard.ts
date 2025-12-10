@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
-import { map, take } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { map, switchMap, take } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-export const challengerGuard: CanActivateFn = (route, state) => {
+export const candidateGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -19,12 +19,12 @@ export const challengerGuard: CanActivateFn = (route, state) => {
       }
 
       // 3. Check Role (using the safe getter we made in Step 2)
-      if (authService.type === 'challenger') {
+      if (authService.type === 'candidate') {
         return true;
       }
 
       // 4. Unauthorized Role
-      console.warn('Unauthorized access attempt');
+      console.warn('Unauthorized access attempt: Not a candidate');
       return router.createUrlTree(['/unauthorized']); // Or wherever you want
     })
   );
