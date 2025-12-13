@@ -11,6 +11,10 @@ import submissionRouter from "./submissionRoutes";
 import uploadRouter from "./uploadRoutes";
 import userRouter from "./userRoutes";
 import walletRouter from "./walletRoutes";
+import leaderboardRouter from "./leaderboard";
+import talentRouter from "./talentRoutes";
+
+
 
 const apiPrefix = "/api";
 
@@ -28,4 +32,6 @@ export const bootstrap = (app: Application): void => {
   app.use(`${apiPrefix}/moderation`, moderationRouter);
   app.use(`${apiPrefix}/ai`, aiRouter);
   app.use(`${apiPrefix}/wallet`, walletRouter);
+  app.use(`${apiPrefix}` , leaderboardRouter);
+  app.use(`${apiPrefix}`, talentRouter);
 };
