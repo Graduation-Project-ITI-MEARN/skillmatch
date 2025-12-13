@@ -1,67 +1,164 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
-import { adminGuard } from './core/guards/admin-guard';
-import { companyGuard } from './core/guards/company-guard';
 import { candidateGuard } from './core/guards/candidate-guard';
-import { challengerGuard } from './core/guards/challenger-guard';
+import { companyGuard } from './core/guards/company-guard'; // Ensure you import this!
+// import { adminGuard } from './core/guards/admin-guard'; // You need to create/import this
+// import { challengerGuard } from './core/guards/challenger-guard'; // You need to create/import this
 
 export const routes: Routes = [
   {
+    // Fix: Add the missing route so the app doesn't crash on redirect
+    path: 'unauthorized',
+    loadComponent: () =>
+      import('./shared/components/unauthorized/unauthorized.component').then(
+        (m) => m.UnauthorizedComponent
+      ),
+  },
+  {
     path: 'dashboard',
-    loadComponent: () => import('./shared/layouts/dashboard/dashboard').then((m) => m.Dashboard),
+    loadComponent: () =>
+      import('./shared/layouts/dashboard/dashboard-root').then((m) => m.DashboardRootComponent),
     canActivate: [authGuard],
     children: [
-      // ========== ADMIN ==========
-      {
-        path: 'admin',
-        loadComponent: () => import('./pages/admin/overview/overview').then((m) => m.Overview),
-        canActivate: [adminGuard],
-      },
-      {
-        path: 'admin/candidates',
-        loadComponent: () =>
-          import('./pages/admin/candidates/candidates').then((m) => m.Candidates),
-        canActivate: [adminGuard],
-      },
-
-      // ========== COMPANY ==========
-      {
-        path: 'company',
-        loadComponent: () => import('./pages/company/overview/overview').then((m) => m.Overview),
-        canActivate: [companyGuard],
-      },
-      {
-        path: 'company/create-challenge',
-        loadComponent: () =>
-          import('./pages/company/create-challenge/create-challenge').then(
-            (m) => m.CreateChallenge
-          ),
-        canActivate: [companyGuard],
-      },
-
-      // ========== CANDIDATE ==========
       {
         path: 'candidate',
-        loadComponent: () => import('./pages/candidate/overview/overview').then((m) => m.Overview),
+        loadComponent: () =>
+          import('./pages/candidate/layout/candidate-layout').then(
+            (m) => m.CandidateShellComponent
+          ),
         canActivate: [candidateGuard],
-      },
-      {
-        path: 'candidate/browse',
-        loadComponent: () => import('./pages/candidate/browse/browse').then((m) => m.Browse),
-        canActivate: [candidateGuard],
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+          {
+            path: 'overview',
+            loadComponent: () =>
+              import('./pages/candidate/overview/overview').then((m) => m.Overview),
+          },
+          {
+            path: 'portfolio',
+            loadComponent: () =>
+              import('./pages/candidate/portfolio/portfolio').then((m) => m.Portfolio),
+          },
+          {
+            path: 'coach',
+            loadComponent: () => import('./pages/candidate/coach/coach').then((m) => m.Coach),
+          },
+          {
+            path: 'leaderboard',
+            loadComponent: () =>
+              import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
+          },
+        ],
       },
 
-      // ========== CHALLENGER ==========
+      {
+        path: 'company',
+        loadComponent: () =>
+          import('./pages/company/layout/company-layout').then((m) => m.CompanyShellComponent),
+        canActivate: [companyGuard],
+
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+          {
+            path: 'overview',
+            loadComponent: () =>
+              import('./pages/company/overview/overview').then((m) => m.Overview),
+          },
+          {
+            path: 'submissions',
+            loadComponent: () =>
+              import('./pages/company/submissions/submissions').then((m) => m.Submissions),
+          },
+          {
+            path: 'talent',
+            loadComponent: () => import('./pages/company/talent/talent').then((m) => m.Talent),
+          },
+          {
+            path: 'analytics',
+            loadComponent: () =>
+              import('./pages/company/analytics/analytics').then((m) => m.Analytics),
+          },
+          {
+            path: 'new',
+            loadComponent: () => import('./pages/company/new/new').then((m) => m.New),
+          },
+        ],
+      },
+
+      {
+        path: 'admin',
+        loadComponent: () =>
+          import('./pages/admin/layout/admin-layout').then((m) => m.AdminShellComponent),
+        canActivate: [authGuard],
+
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+
+          {
+            path: 'overview',
+            loadComponent: () => import('./pages/admin/overview/overview').then((m) => m.Overview),
+          },
+          {
+            path: 'users',
+            loadComponent: () => import('./pages/admin/users/users').then((m) => m.Users),
+          },
+          {
+            path: 'moderation',
+            loadComponent: () =>
+              import('./pages/admin/moderation/moderation').then((m) => m.Moderation),
+          },
+          {
+            path: 'challenges',
+            loadComponent: () =>
+              import('./pages/admin/challenges/challenges').then((m) => m.Challenges),
+          },
+          {
+            path: 'analytics',
+            loadComponent: () =>
+              import('./pages/admin/analytics/analytics').then((m) => m.Analytics),
+          },
+          {
+            path: 'settings',
+            loadComponent: () => import('./pages/admin/settings/settings').then((m) => m.Settings),
+          },
+        ],
+      },
+
       {
         path: 'challenger',
-        loadComponent: () => import('./pages/challenger/overview/overview').then((m) => m.Overview),
-        canActivate: [challengerGuard],
-      },
-      {
-        path: 'challenger/create-bounty',
         loadComponent: () =>
-          import('./pages/challenger/create-bounty/create-bounty').then((m) => m.CreateBounty),
-        canActivate: [challengerGuard],
+          import('./pages/challenger/layout/challenger-layout').then(
+            (m) => m.ChallengerShellComponent
+          ),
+        canActivate: [authGuard],
+
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+          {
+            path: 'overview',
+            loadComponent: () =>
+              import('./pages/challenger/overview/overview').then((m) => m.Overview),
+          },
+          {
+            path: 'new',
+            loadComponent: () => import('./pages/challenger/new/new').then((m) => m.New),
+          },
+          {
+            path: 'completed',
+            loadComponent: () =>
+              import('./pages/challenger/completed/completed').then((m) => m.Completed),
+          },
+          {
+            path: 'submissions',
+            loadComponent: () =>
+              import('./pages/challenger/submissions/submissions').then((m) => m.Submissions),
+          },
+          {
+            path: 'analytics',
+            loadComponent: () =>
+              import('./pages/challenger/analytics/analytics').then((m) => m.Analytics),
+          },
+        ],
       },
     ],
   },

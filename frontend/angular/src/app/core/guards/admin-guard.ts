@@ -19,7 +19,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
       }
 
       // 3. Check Role (using the safe getter we made in Step 2)
-      if (authService.role === 'candidate') {
+      if (authService.role === 'admin') {
         return true;
       }
 

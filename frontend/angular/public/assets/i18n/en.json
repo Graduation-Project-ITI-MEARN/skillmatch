@@ -1,4 +1,59 @@
 {
-  "user": "User",
-  "Welcome back": "Welcome back"
+  "AUTH": {
+    "LOGOUT": "Logout"
+  },
+  "DASHBOARD": {
+    "WELCOME": "Welcome, {{name}}",
+    "SUBTITLE": "Let's prove your skills today",
+    "TITLES": {
+      "COMPANY": "Company Dashboard",
+      "ADMIN": "Admin Control Center",
+      "CHALLENGER": "Challenge Creator Hub"
+    },
+    "SUBTITLES": {
+      "CANDIDATE": "Let's prove your skills today",
+      "COMPANY": "Manage your hiring pipeline and challenges",
+      "ADMIN": "Platform oversight and moderation",
+      "CHALLENGER": "Create competitions and build community"
+    },
+    "ACTIONS": {
+      "COACH": "AI Career Coach",
+      "CREATE_CHALLENGE": "Create Challenge",
+      "CREATE_BOUNTY": "New Bounty",
+      "SYSTEM_REPORT": "System Report"
+    },
+    "TABS": {
+      "OVERVIEW": "Overview",
+      "PORTFOLIO": "My Portfolio",
+      "COACH": "AI Coach",
+      "LEADERBOARD": "Leaderboard",
+      "MY_CHALLENGES": "My Challenges",
+      "SUBMISSIONS": "Submissions",
+      "TALENT": "Talent Pool",
+      "ANALYTICS": "Analytics",
+      "USERS": "User Management",
+      "MODERATION": "Moderation",
+      "SETTINGS": "Settings",
+      "NEW_BOUNTY": "Create Bounty",
+      "COMPLETED": "Completed"
+    },
+    "STATS": {
+      "COMPLETED": "Challenges Completed",
+      "SCORE": "Skill Score",
+      "RANK": "Global Rank",
+      "EARNINGS": "Prize Earnings",
+      "ACTIVE_JOBS": "Active Challenges",
+      "APPLICANTS": "Total Submissions",
+      "INTERVIEWS": "Interviews",
+      "HIRED": "Candidates Hired",
+      "TOTAL_USERS": "Total Users",
+      "REVENUE": "Total Revenue",
+      "FLAGS": "Flagged Content",
+      "HEALTH": "System Health",
+      "BOUNTIES": "Active Bounties",
+      "PARTICIPANTS": "Total Participants",
+      "PAID_OUT": "Total Paid Out",
+      "REPUTATION": "Reputation Score"
+    }
+  }
 }

@@ -1,8 +1,8 @@
 import rateLimit from "express-rate-limit";
 
 const createRateLimiter = function (
-   limit = 15,
-   windowMinutes = 30,
+   limit = 200,
+   windowMinutes = 120,
    message = "Too many requests. Please try again after 30 minutes."
 ) {
    return rateLimit({

@@ -1,0 +1,25 @@
+<app-dashboard-layout
+  titleKey="DASHBOARD.TITLES.CHALLENGER"
+  subtitleKey="DASHBOARD.SUBTITLES.CHALLENGER"
+  [tabs]="tabs"
+>
+  <span avatar>{{ initials }}</span>
+
+  <div actions class="flex items-center gap-3">
+    <button
+      class="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all font-medium shadow-xl shadow-gray-900/10"
+    >
+      {{ 'DASHBOARD.ACTIONS.CREATE_BOUNTY' | translate }}
+    </button>
+  </div>
+
+  <ng-container stats>
+    @for(stat of stats; track stat.labelKey){
+    <z-stat labelKey="{{ stat.labelKey }}" value="{{ stat.value }}" trend="{{ stat.trend }}">
+      <lucide-icon icon [img]="stat.icon" class="w-5 h-5"></lucide-icon>
+    </z-stat>
+    }
+  </ng-container>
+
+  <router-outlet></router-outlet>
+</app-dashboard-layout>
