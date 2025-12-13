@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LanguageService } from './services/language';
+import { LanguageService } from './core/services/language';
 
 @Component({
   selector: 'app-root',

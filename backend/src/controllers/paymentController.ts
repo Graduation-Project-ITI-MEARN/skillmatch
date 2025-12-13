@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+
 import axios from "axios";
 import crypto from "crypto";
 import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
@@ -14,7 +15,6 @@ export const createPaymentIntent = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
     const { amount, currency, billing_data } = req.body;
     const user = (req as any).user; // Get authenticated user
 
@@ -92,9 +92,6 @@ export const createPaymentIntent = async (
         iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_FRAME_ID}?payment_token=${paymentKey}`,
       },
     });
-  } catch (error) {
-    next(error); // Pass to global error handler
-  }
 };
 
 /**
@@ -172,6 +169,8 @@ export const handleWebhook = async (
   // 4. VERIFY SIGNATURE
   if (calculatedHmac !== hmac) {
     // Security failure
+    // This is a security failure, not a generic error, so we return 403 explicitly
+    // throwing an error here might be confusing for the global handler
     res.status(403).json({ message: "HMAC Signature Mismatch" });
     return;
   }
@@ -182,6 +181,7 @@ export const handleWebhook = async (
     // NOTE: We cannot use logActivity here easily because the webhook comes from Paymob,
     // so we don't have the req.user context.
     // Ideally, you would look up the user via a stored Transaction model using order.id
+    // TODO: Call your service to update user wallet/subscription
   } else {
     console.log(`❌ [Paymob] Payment Failed/Pending. Order: ${order.id}`);
   }

@@ -8,6 +8,7 @@ export interface IChallenge extends Document {
    creatorId: mongoose.Types.ObjectId;
    status: "draft" | "published" | "closed";
    type: "job" | "prize";
+   tags?: string[];
 }
 
 const ChallengeSchema: Schema = new Schema(
@@ -35,6 +36,7 @@ const ChallengeSchema: Schema = new Schema(
          enum: ["job", "prize"],
          required: true,
       },
+      tags: [{ type: String }],
    },
    {
       timestamps: true,
