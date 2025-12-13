@@ -5,11 +5,12 @@ export const advancedResults =
   (model: Model<any>, populate?: any, fixedFilter: any = {}) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // --- 1) Filtering ---
+      // --- 1A) Filtering ---
       const reqQuery = { ...req.query };
       const removeFields = ["sort", "page", "limit"];
       removeFields.forEach((param) => delete reqQuery[param]);
 
+      // --- 1B) advance Filtering ---
       let queryStr = JSON.stringify(reqQuery);
       queryStr = queryStr.replace(
         /\b(gte|gt|lte|lt|in)\b/g,
