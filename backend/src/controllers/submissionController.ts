@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import Submission, { ISubmission, SubmissionType } from "../models/Submission";
-
 import APIError from "../utils/APIError";
 import { catchError } from "../utils/catchAsync";
 import mongoose from "mongoose";
+import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
 
-// Get all submissions
+/**
+ * @desc    Get all submissions (Admin/General use)
+ * @route   GET /api/submissions
+ * @access  Private
+ */
 const getAllSubmissions = catchError(async (req: Request, res: Response) => {
   const submissions = await Submission.find();
 
@@ -15,7 +19,11 @@ const getAllSubmissions = catchError(async (req: Request, res: Response) => {
   });
 });
 
-// Create new submission
+/**
+ * @desc    Create a new submission for a challenge
+ * @route   POST /api/submissions
+ * @access  Private (Candidate)
+ */
 const createSubmission = catchError(async (req: Request, res: Response) => {
   const {
     challengeId,
@@ -87,11 +95,23 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
     aiScore: 0,
   });
 
-  // Populate relationships
+  // Populate relationships to get Challenge Title and Candidate Name
   await submission.populate([
     { path: "challengeId", select: "title category difficulty" },
     { path: "candidateId", select: "name email" },
   ]);
+
+  // Log Activity
+  // We access the populated challenge title safely
+  const challengeTitle =
+    (submission.challengeId as any)?.title || "Unknown Challenge";
+
+  await logActivity(
+    candidateId,
+    "submission_created",
+    `User submitted to challenge: ${challengeTitle}`,
+    submission._id
+  );
 
   res.status(201).json({
     success: true,
@@ -99,7 +119,11 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
   });
 });
 
-// Submissions by challenge
+/**
+ * @desc    Get submissions for a specific challenge
+ * @route   GET /api/challenges/:id/submissions
+ * @access  Private
+ */
 const getSubmissionsByChallenge = catchError(
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -121,7 +145,11 @@ const getSubmissionsByChallenge = catchError(
   }
 );
 
-// Single submission
+/**
+ * @desc    Get a single submission by ID
+ * @route   GET /api/submissions/:id
+ * @access  Private
+ */
 const getSubmissionById = catchError(async (req: Request, res: Response) => {
   const { id } = req.params;
 

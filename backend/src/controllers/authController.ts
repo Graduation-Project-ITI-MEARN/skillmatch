@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
-
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { catchError } from "../utils/catchAsync";
+import { logActivity } from "../utils/activityLogger";
 
 const jwt = require("jsonwebtoken");
 
 /**
- * Generate JWT Token
+ * Generates a JWT Token for authenticated sessions
  * @param id - The User ID
+ * @param role - The User Role
  */
-
 const generateToken = (id: string, role: string) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRES_IN ?? "3d",
@@ -22,7 +22,6 @@ const generateToken = (id: string, role: string) => {
  * @route   POST /api/auth/register
  * @access  Public
  */
-
 const register = catchError(async (req: Request, res: Response) => {
   const { email, password, name, type } = req.body;
 
@@ -44,6 +43,13 @@ const register = catchError(async (req: Request, res: Response) => {
     throw new Error("Invalid user data");
   }
 
+  // Log Activity
+  await logActivity(
+    user._id,
+    "user_registered",
+    `User ${user.name} joined the platform.`
+  );
+
   res.status(201).json({
     success: true,
     token: generateToken(user._id.toString(), user.role),
@@ -56,6 +62,7 @@ const register = catchError(async (req: Request, res: Response) => {
     },
   });
 });
+
 /**
  * @desc    Authenticate user & get token
  * @route   POST /api/auth/login
@@ -76,6 +83,9 @@ const login = catchError(async (req: Request, res: Response) => {
     throw new Error("Invalid email or password");
   }
 
+  // Log Activity
+  await logActivity(user._id, "user_login", "User logged in.");
+
   // Generate token & send response
   res.json({
     success: true,
@@ -89,10 +99,12 @@ const login = catchError(async (req: Request, res: Response) => {
     },
   });
 });
-// In authController.ts, add a getMe method.
-// Logic: Simply return req.user (response should be { success: true, data: user }).
-// This is used by the frontend on page load to confirm who is logged in without re-entering credentials.
 
+/**
+ * @desc    Get current logged in user
+ * @route   GET /api/auth/me
+ * @access  Private
+ */
 const getMe = catchError(async (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
