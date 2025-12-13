@@ -10,6 +10,8 @@ export interface IUser extends Document {
    role: "user" | "admin";
    type?: "candidate" | "company" | "challenger";
    skills?: string[];
+   totalScore?: number;
+   badges?: string[];
 }
 
 // Mongoose Schema
@@ -21,10 +23,13 @@ const UserSchema: Schema = new Schema(
       role: { type: String, default: "user" },
       type: { type: String, enum: ["candidate", "company", "challenger"] },
       skills: [{ type: String }],
+      totalScore: { type: Number, default: 0 },
+      badges: [{ type: String }],
    },
    {
       timestamps: true, // Adds createdAt and updatedAt fields automatically
-   }
+   },
+   
 );
 
 /**
