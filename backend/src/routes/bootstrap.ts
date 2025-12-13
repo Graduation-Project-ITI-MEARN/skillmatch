@@ -8,6 +8,7 @@ import metadataRouter from "./metadataRoutes";
 import paymentRouter from "./paymentRoutes";
 import statsRouter from "./statsRoutes";
 import notificationRouter from "./notificationRoutes";
+import activityRouter from "./activityRoutes";
 
 const apiPrefix = "/api";
 
@@ -21,4 +22,6 @@ export const bootstrap = (app: Application): void => {
   app.use(`${apiPrefix}/payment`, paymentRouter);
   app.use(`${apiPrefix}/stats`, statsRouter);
   app.use(`${apiPrefix}/notifications`, notificationRouter);
+
+  app.use(`${apiPrefix}/activity`, activityRouter);
 };
