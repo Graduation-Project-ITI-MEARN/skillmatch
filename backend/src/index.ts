@@ -17,6 +17,7 @@ const app = express();
 // Middleware
 app.use(express.json()); // Parse JSON bodies
 app.use(helmet());
+app.use(cookieParser());
 
 const FRONTEND_URL = process.env.FRONTEND_URL || [
    "http://localhost:4200",
@@ -28,8 +29,6 @@ app.use(
       credentials: true,
    })
 ); // Enable CORS for frontend origin
-
-app.use(cookieParser());
 
 // Routes
 bootstrap(app);

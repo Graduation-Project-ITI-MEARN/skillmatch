@@ -35,7 +35,8 @@
       "MODERATION": "المراقبة",
       "SETTINGS": "الإعدادات",
       "NEW_BOUNTY": "إنشاء مسابقة جديدة",
-      "COMPLETED": "المكتملة"
+      "COMPLETED": "المكتملة",
+      "CHALLENGES": "المسابقات"
     },
     "STATS": {
       "COMPLETED": "المسابقات المكتملة",
@@ -46,14 +47,24 @@
       "APPLICANTS": "عدد التقديمات",
       "INTERVIEWS": "المقابلات",
       "HIRED": "الموظفين المتميزون",
-      "TOTAL_USERS": "المستخدمين الكلي",
+      "TOTAL_USERS": "المستخدمين الكليين",
       "REVENUE": "الإيرادات الكلية",
       "FLAGS": "المحتوى المعلق",
       "HEALTH": "صحة النظام",
       "BOUNTIES": "المسابقات المفعلة",
       "PARTICIPANTS": "عدد المشاركين",
       "PAID_OUT": "المدفوعات الكلية",
-      "REPUTATION": "درجة الإعتقاد"
+      "REPUTATION": "درجة الإعتقاد",
+      "ACTIVE_CHALLENGES": "المسابقات المفعلة",
+      "REVIEWS": "المراجعات",
+      "THIS_WEEK": "هذا الأسبوع",
+      "GROWTH": "نمو",
+      "REQUIRES_ATTENTION": "تحت النظر"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "الإشعارات",
+      "EMPTY": "لا يوجد إشعارات",
+      "MARK_ALL_AS_READ": "تعليم كل الإشعارات كمقروءة"
     }
   }
 }

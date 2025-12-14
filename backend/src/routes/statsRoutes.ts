@@ -7,26 +7,29 @@ import {
    getChallengerStats,
 } from "../controllers/statsController";
 import { restrictTo } from "../middlewares/restrictTo";
+import auth from "../middlewares/authMiddleware";
 
 const statsRouter = express.Router();
 
 // GET /api/stats/admin - Admin only
-statsRouter.get("/admin", restrictTo(["admin"]), getAdminStats);
+statsRouter.get("/admin", auth, restrictTo(["admin"]), getAdminStats);
 
 // GET /api/stats/company - Company / Challenger only
-statsRouter.get(
-   "/company",
-   restrictTo(["company", "challenger"]),
-   getCompanyStats
-);
+statsRouter.get("/company", auth, restrictTo(["company"]), getCompanyStats);
 
 // GET /api/stats/candidate - Candidate only
-statsRouter.get("/candidate", restrictTo(["candidate"]), getCandidateStats);
+statsRouter.get(
+   "/candidate",
+   auth,
+   restrictTo(["candidate"]),
+   getCandidateStats
+);
 
 // GET /api/stats/challenger - Company / Challenger only
 statsRouter.get(
    "/challenger",
-   restrictTo(["company", "challenger"]),
+   auth,
+   restrictTo(["company"]),
    getChallengerStats
 );
 

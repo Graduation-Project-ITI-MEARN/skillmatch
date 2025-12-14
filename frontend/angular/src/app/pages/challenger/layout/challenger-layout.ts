@@ -15,6 +15,7 @@ import {
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
 import { ThemeService } from 'src/app/core/services/theme';
+import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
 
 @Component({
   selector: 'app-challenger-shell',
@@ -26,6 +27,7 @@ import { ThemeService } from 'src/app/core/services/theme';
     LucideAngularModule,
     TranslateModule,
     RouterModule,
+    NotificationsDropdownComponent,
   ],
   templateUrl: './challenger-layout.html',
 })
