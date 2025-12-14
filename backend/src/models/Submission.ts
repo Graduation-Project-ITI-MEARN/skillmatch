@@ -17,6 +17,7 @@ export interface ISubmission extends Document {
    fileUrls?: string[];
    textContent?: string;
    aiScore: number;
+   isWinner: boolean;
    status: "pending" | "accepted" | "rejected";
    createdAt: Date;
    updatedAt: Date;
@@ -64,6 +65,10 @@ const SubmissionSchema: Schema = new Schema(
          default: 0,
          min: 0,
          max: 100,
+      },
+      isWinner: {
+         type: Boolean,
+         default: false,
       },
       status: {
          type: String,

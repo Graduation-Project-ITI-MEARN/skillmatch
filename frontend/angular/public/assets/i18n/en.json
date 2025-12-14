@@ -35,7 +35,8 @@
       "MODERATION": "Moderation",
       "SETTINGS": "Settings",
       "NEW_BOUNTY": "Create Bounty",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "CHALLENGES": "Challenges"
     },
     "STATS": {
       "COMPLETED": "Challenges Completed",
@@ -53,7 +54,17 @@
       "BOUNTIES": "Active Bounties",
       "PARTICIPANTS": "Total Participants",
       "PAID_OUT": "Total Paid Out",
-      "REPUTATION": "Reputation Score"
+      "REPUTATION": "Reputation Score",
+      "ACTIVE_CHALLENGES": "Active Challenges",
+      "REVIEWS": "Reviews",
+      "THIS_WEEK": "This Week",
+      "GROWTH": "Growth",
+      "REQUIRES_ATTENTION": "Requires Attention"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "EMPTY": "No notifications",
+      "MARK_ALL_AS_READ": "Mark all as read"
     }
   }
 }

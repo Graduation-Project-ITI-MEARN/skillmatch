@@ -15,6 +15,7 @@ import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboar
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
 import { ThemeService } from 'src/app/core/services/theme';
 import { RouterModule } from '@angular/router';
+import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
 
 @Component({
   selector: 'app-candidate-shell',
@@ -26,6 +27,7 @@ import { RouterModule } from '@angular/router';
     LucideAngularModule,
     TranslateModule,
     RouterModule,
+    NotificationsDropdownComponent,
   ],
   templateUrl: './candidate-layout.html',
 })

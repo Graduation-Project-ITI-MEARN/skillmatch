@@ -22,8 +22,16 @@ import { TranslateModule } from '@ngx-translate/core';
           <ng-content select="[icon]"></ng-content>
         </div>
         <!-- Trend -->
-        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-          {{ trend }}
+        <span
+          class="text-xs font-semibold px-2 py-1 rounded-full"
+          [ngClass]="{
+            'bg-green-50 text-green-600': trendColor === 'success',
+            'bg-red-50 text-red-600': trendColor === 'danger',
+            'bg-yellow-50 text-yellow-600': trendColor === 'warning',
+            'bg-blue-50 text-blue-600': trendColor === 'info'
+          }"
+        >
+          {{ trend | translate }}
         </span>
       </div>
 
@@ -38,4 +46,9 @@ export class ZardStatComponent {
   @Input() labelKey: string = '';
   @Input() value: string = '';
   @Input() trend: string = '';
+  @Input() trendColor: string = '';
+
+  constructor() {
+    console.log(this.trend);
+  }
 }

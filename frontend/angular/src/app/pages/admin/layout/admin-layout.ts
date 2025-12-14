@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,32 +11,47 @@ import {
   Activity,
   Settings,
   LayoutGrid,
+  Bell,
+  Trophy,
+  AlertCircle,
 } from 'lucide-angular';
 
+// Layout & UI Components
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
+import { ZardDropdownModule } from '@shared/components/zard-ui/dropdown/dropdown.module'; // Import Zard Dropdown
+
+// Services
 import { ThemeService } from 'src/app/core/services/theme';
+import { AdminService } from '../services/admin.service';
+import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
 
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
+    TranslateModule,
+    LucideAngularModule,
     DashboardLayoutComponent,
     ZardStatComponent,
-    LucideAngularModule,
-    TranslateModule,
-    RouterModule,
+    ZardDropdownModule,
+    NotificationsDropdownComponent,
   ],
   templateUrl: './admin-layout.html',
 })
 export class AdminShellComponent implements OnInit {
   private theme = inject(ThemeService);
+  private adminService = inject(AdminService);
 
-  name = 'System Admin';
-  initials = 'AD';
+  avatarIcon = Shield;
+  stats = signal<any[]>([]);
+  notifications = signal<any[]>([]);
+  unreadCount = signal(0);
 
-  icons = { Users, DollarSign, Flag, Activity };
+  // Data Signals
+  icons = { Users, DollarSign, Flag, Activity, Bell };
 
   tabs: DashboardTab[] = [
     { labelKey: 'DASHBOARD.TABS.OVERVIEW', route: '/dashboard/admin/overview', icon: LayoutGrid },
@@ -45,24 +60,86 @@ export class AdminShellComponent implements OnInit {
     { labelKey: 'DASHBOARD.TABS.SETTINGS', route: '/dashboard/admin/settings', icon: Settings },
   ];
 
-  stats = [
-    {
-      labelKey: 'DASHBOARD.STATS.TOTAL_USERS',
-      value: '12,847',
-      trend: '+124 this week',
-      icon: Users,
-    },
-    {
-      labelKey: 'DASHBOARD.STATS.REVENUE',
-      value: '$47.2K',
-      trend: '+18% growth',
-      icon: DollarSign,
-    },
-    { labelKey: 'DASHBOARD.STATS.FLAGS', value: '23', trend: 'Requires attention', icon: Flag },
-    { labelKey: 'DASHBOARD.STATS.HEALTH', value: '99.9%', trend: 'Operational', icon: Activity },
-  ];
-
   ngOnInit() {
     this.theme.setTheme('admin');
+    this.loadData();
+  }
+
+  loadData() {
+    // 2. Fetch Stats
+    this.adminService.getStats().subscribe({
+      next: (data) => {
+        // Safe check: Ensure data exists before mapping
+        if (!data) return;
+
+        this.stats.set([
+          {
+            labelKey: 'DASHBOARD.STATS.TOTAL_USERS',
+            value: data.totalUsers?.toLocaleString() || '0',
+            trend: 'Total Registered',
+            icon: Users,
+            trendColor: 'info',
+          },
+          {
+            labelKey: 'DASHBOARD.STATS.ACTIVE_CHALLENGES',
+            value: data.activeChallenges?.toString() || '0',
+            trend: 'Active Challenges',
+            icon: Trophy,
+            trendColor: 'success',
+          },
+          {
+            labelKey: 'DASHBOARD.STATS.REVENUE',
+            value: `$${data.revenue?.toLocaleString() || '0'}`,
+            trend: 'Total Revenue',
+            icon: DollarSign,
+            trendColor: 'success',
+          },
+          {
+            labelKey: 'DASHBOARD.STATS.REVIEWS',
+            value: data.pendingReviews?.toString() || '0',
+            trend: 'Requires Attention',
+            icon: AlertCircle,
+            trendColor: 'danger',
+          },
+        ]);
+      },
+      error: (err) => console.error('Failed to load stats', err),
+    });
+
+    // 3. Fetch Notifications (The cause of the 'filter' error)
+    this.adminService.getNotifications().subscribe({
+      next: (data) => {
+        // CRITICAL FIX: Check if data is actually an array
+        if (Array.isArray(data)) {
+          this.notifications.set(data);
+          this.unreadCount.set(data.filter((n: any) => !n.read).length);
+        } else {
+          console.warn('Notifications API returned non-array:', data);
+          this.notifications.set([]);
+          this.unreadCount.set(0);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load notifications', err);
+        this.notifications.set([]); // Fallback to empty
+      },
+    });
+  }
+
+  // Notification Actions
+  onMarkAllRead() {
+    this.adminService.markAllRead().subscribe(() => {
+      this.notifications.update((list) => list.map((n) => ({ ...n, read: true })));
+      this.unreadCount.set(0);
+    });
+  }
+
+  onReadOne(id: string) {
+    this.adminService.markRead(id).subscribe(() => {
+      this.notifications.update((list) =>
+        list.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+      this.unreadCount.update((c) => Math.max(0, c - 1));
+    });
   }
 }
