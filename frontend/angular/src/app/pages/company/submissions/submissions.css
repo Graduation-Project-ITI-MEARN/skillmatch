@@ -1,0 +1,26 @@
+.rotate-180 {
+  transform: rotate(180deg);
+}
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.select-wrapper .trigger {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select-wrapper .placeholder {
+  color: #999;
+}
+
+button:hover {
+  cursor: pointer;
+}

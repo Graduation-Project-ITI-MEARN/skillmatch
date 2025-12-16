@@ -55,7 +55,7 @@ export const routes: Routes = [
         path: 'company',
         loadComponent: () =>
           import('./pages/company/layout/company-layout').then((m) => m.CompanyShellComponent),
-        // canActivate: [companyGuard],
+        canActivate: [companyGuard],
 
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
