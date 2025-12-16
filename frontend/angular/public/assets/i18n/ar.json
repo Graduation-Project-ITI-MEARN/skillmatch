@@ -65,6 +65,53 @@
       "TITLE": "الإشعارات",
       "EMPTY": "لا يوجد إشعارات",
       "MARK_ALL_AS_READ": "تعليم كل الإشعارات كمقروءة"
+    },
+    "OVERVIEW": {
+      "MY_JOB_POSTINGS": "الوظائف النشطة",
+      "HIRING_INSIGHTS": "رؤى التوظيف",
+      "HIGH_QUALITY_CANDIDATES": "{{count}} مرشح/مرشحين عالي الجودة جاهزين للمقابلات بناءً على الوظائف المنشورة مؤخراً",
+      "AVG_EVALUATION_TIME": "متوسط وقت التقييم:  24 ساعة",
+      "AI_POWERED": "(مدعوم بالذكاء الاصطناعي)",
+      "RECENT_ACTIVITY": "النشاط الأخير",
+      "FILTER": "تصفية",
+      "OFFER": "المكافأة",
+      "APPLICATIONS": "الطلبات",
+      "TOP_SCORE": "أعلى نقاط",
+      "QUALIFIED": "المؤهلين",
+      "VIEW_APPLICATIONS": "عرض الطلبات",
+      "EDIT_JOB": "تعديل الوظيفة",
+      "CREATE_NEW_POSTING": "إنشاء وظيفة جديدة",
+      "VIEW_RECOMMENDATIONS": "عرض التوصيات",
+      "NEW_APPLICATION": "طلب جديد",
+      "CANDIDATE_SHORTLISTED": "تم اختصار المرشح",
+      "CHALLENGE_COMPLETED": "اكتمل التحدي",
+      "JOB_CLOSED": "إغلاق الوظيفة",
+      "NO_CHALLENGES": "لا توجد وظائف نشطة بعد",
+      "NO_ACTIVITY": "لا يوجد نشاط حديث"
+    },
+
+    "COMMON": {
+      "FILTER": "تصفية",
+      "FILTERS": "الفلاتر",
+      "SEARCH": "البحث عن وظائف...",
+      "CLEAR_ALL": "مسح الكل",
+      "CANCEL": "إلغاء",
+      "APPLY_FILTERS": "تطبيق الفلاتر",
+      "LOADING": "جاري التحميل..."
+    },
+    "FILTERS": {
+      "JOB_TYPE": "نوع الوظيفة",
+      "STATUS": "الحالة",
+      "BUDGET_RANGE": "نطاق الميزانية",
+      "CODING": "برمجة",
+      "DESIGN": "تصميم",
+      "MARKETING": "تسويق",
+      "ACTIVE": "نشط",
+      "EVALUATING": "قيد التقييم",
+      "CLOSED": "مغلق",
+      "BUDGET_0_500": "من 0 إلى 500 دولار",
+      "BUDGET_500_1000": "من 500 إلى 1000 دولار",
+      "BUDGET_1000_PLUS": "أكثر من 1000 دولار"
     }
   }
 }
