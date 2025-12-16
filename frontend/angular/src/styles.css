@@ -91,11 +91,3 @@ body {
   -webkit-animation: fade-in 0.35s ease both;
   animation: fade-in 0.35s ease both;
 }
-/* في src/styles.css */
-.bg-primary-gradient {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-}
-
-.bg-primary-gradient:hover {
-  background: linear-gradient(135deg, var(--color-hover), var(--color-primary));
-}

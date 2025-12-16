@@ -75,7 +75,12 @@
       "CHALLENGERS": "Challenge Creators",
       "PARTICIPANTS": "Participants",
       "SUBMISSIONS": "Submissions",
-      "REVENUE": "Revenue"
+      "REVENUE": "Revenue",
+      "LOADING": "Loading...",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous",
+      "SHOWING": "Showing",
+      "OF": "of"
     },
     "ADMIN": {
       "USER_DISTRIBUTION": "User Distribution",
@@ -84,6 +89,27 @@
       "TOP_CHALLENGES": "Top Challenges",
       "TOP_CHALLENGES_SUBTITLE": "Based on participation & AI scores",
       "NEW_SIGNUPS": "New Signups",
+      "CHALLENGES_POSTED": "Challenges Posted",
+      "USERS": {
+        "TITLE": "User Management",
+        "SUBTITLE": "Manage users, roles, and permissions",
+        "ALL_USERS": "All Users",
+        "VIEW_ID": "View ID",
+        "VIEW_TAX": "View Tax Card",
+        "VERIFY": "Verify",
+        "REJECT": "Reject"
+      },
+      "CHALLENGES": {
+        "TITLE": "Challenge Management",
+        "SUBTITLE": "Monitor and manage challenges",
+        "VIEW": "View Details",
+        "ALL": "All Challenges",
+        "NO_CHALLENGES": "No challenges found for this status.",
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "COMPLETED": "Completed",
+        "AVG_SCORE": "Avg. Score"
+      }
       "CHALLENGES_POSTED": "Challenges Posted"
     },
     "OVERVIEW": {

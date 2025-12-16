@@ -124,20 +124,81 @@ const getMyChallenges = catchError(async (req: Request, res: Response) => {
 });
 
 /**
- * @desc    Get all challenges (Admin only)
+ * @desc    Get all challenges (Admin only) - AGGREGATION VERSION
  * @route   GET /api/challenges/all
  * @access  Private (Admin)
  */
 const getAllChallenges = catchError(async (req: Request, res: Response) => {
-   const challenges = await Challenge.find().populate(
-      "creatorId",
-      "name email type"
-   );
+   console.log("⚡ EXECUTING NEW AGGREGATION PIPELINE ⚡"); // <--- Watch for this in your terminal
+
+   const challenges = await Challenge.aggregate([
+      // 1. Join with Submissions
+      {
+         $lookup: {
+            from: "submissions", // Must match MongoDB collection name (lowercase plural)
+            localField: "_id",
+            foreignField: "challengeId",
+            as: "submissionsData",
+         },
+      },
+      // 2. Join with Users
+      {
+         $lookup: {
+            from: "users",
+            localField: "creatorId",
+            foreignField: "_id",
+            as: "creatorData",
+         },
+      },
+      // 3. Unwind Creator (Flatten array to object)
+      {
+         $unwind: {
+            path: "$creatorData",
+            preserveNullAndEmptyArrays: true,
+         },
+      },
+      // 4. Project (Select & Calculate Fields)
+      {
+         $project: {
+            _id: 1,
+            title: 1,
+            description: 1,
+            difficulty: 1,
+            category: 1,
+            status: 1,
+            type: 1,
+            prizeAmount: 1,
+            tags: 1,
+            createdAt: 1,
+            updatedAt: 1,
+
+            // Reconstruct the creator object
+            creatorId: {
+               _id: "$creatorData._id",
+               name: "$creatorData.name",
+               email: "$creatorData.email",
+               type: "$creatorData.type",
+            },
+
+            // --- CALCULATED METRICS ---
+            participantsCount: { $size: "$submissionsData" },
+            averageAiScore: {
+               $cond: {
+                  if: { $eq: [{ $size: "$submissionsData" }, 0] },
+                  then: 0,
+                  else: { $round: [{ $avg: "$submissionsData.aiScore" }, 0] },
+               },
+            },
+         },
+      },
+      // 5. Sort by newest
+      { $sort: { createdAt: -1 } },
+   ]);
 
    res.status(200).json({
       success: true,
       count: challenges.length,
-      data: challenges,
+      data: challenges, // Directly return the array
    });
 });
 

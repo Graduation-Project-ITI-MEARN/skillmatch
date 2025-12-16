@@ -75,6 +75,12 @@
       "CHALLENGERS": "صانعي المسابقات",
       "PARTICIPANTS": "المشاركين",
       "SUBMISSIONS": "التقديمات",
+      "REVENUE": "الإيرادات",
+      "LOADING": "جار التحميل",
+      "NEXT": "التالي",
+      "PREVIOUS": "السابق",
+      "SHOWING": "عرض",
+      "OF": "من"
       "REVENUE": "الإيرادات"
     },
     "ADMIN": {
@@ -84,6 +90,27 @@
       "TOP_CHALLENGES": "أفضل المسابقات",
       "TOP_CHALLENGES_SUBTITLE": "من حسب المشاركات ودرجات الذكاء",
       "NEW_SIGNUPS": "التسجيلات الجديدة",
+      "CHALLENGES_POSTED": "المسابقات المنشورة",
+      "USERS": {
+        "TITLE": "إدارة المستخدمين",
+        "SUBTITLE": "إدارة المستخدمين والصلاحيات",
+        "ALL_USERS": "جميع المستخدمين",
+        "VIEW_ID": "عرض الهوية",
+        "VIEW_TAX": "عرض بطاقة الضريبة",
+        "VERIFY": "تحقق",
+        "REJECT": "رفض"
+      },
+      "CHALLENGES": {
+        "TITLE": "إدارة المسابقات",
+        "SUBTITLE": "متابعة وإدارة المسابقات",
+        "VIEW": "عرض التفاصيل",
+        "ALL": "جميع المسابقات",
+        "NO_CHALLENGES": "لا يوجد مسابقات لهذه الحالة.",
+        "ACTIVE": "نشطة",
+        "PENDING": "قيد الانتظار",
+        "COMPLETED": "منتهية",
+        "AVG_SCORE": "متوسط النقاط"
+      }
       "CHALLENGES_POSTED": "المسابقات المنشورة"
     },
     "OVERVIEW": {
