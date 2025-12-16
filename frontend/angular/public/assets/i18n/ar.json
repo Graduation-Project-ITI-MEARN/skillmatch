@@ -109,11 +109,6 @@
       "NO_CHALLENGES": "لا توجد وظائف نشطة بعد",
       "NO_ACTIVITY": "لا يوجد نشاط حديث"
     },
-    "SECTION": {
-      "ACTIVE_APPLICATIONS": "المسابقات النشطة",
-      "AI_RECOMMENDATIONS": "توصيات الذكاء الاصطناعي",
-      "RECENT_ACTIVITY": "النشاط الأخير"
-    },
     "COMMON": {
       "FILTER": "تصفية",
       "FILTERS": "الفلاتر",
@@ -136,6 +131,57 @@
       "BUDGET_0_500": "من 0 إلى 500 دولار",
       "BUDGET_500_1000": "من 500 إلى 1000 دولار",
       "BUDGET_1000_PLUS": "أكثر من 1000 دولار"
+    },
+    "SUBMISSIONS": {
+      "TITLE": "جميع الطلبات",
+      "SUBTITLE": "الطلبات المقيمة بالذكاء الاصطناعي عبر جميع إعلانات الوظائف",
+      "ACTIVE_CHALLENGES": "اختر تحديًا",
+      "NO_SUBMISSIONS": "لا توجد طلبات",
+      "OVERALL": "الإجمالي",
+      "TECHNICAL_QUALITY": "الجودة التقنية",
+      "COMMUNICATION": "التواصل",
+      "FILTERS": {
+        "ALL": "الكل",
+        "NEW": "جديد",
+        "SHORTLISTED": "القائمة المختصرة",
+        "REVIEWED": "تمت المراجعة"
+      },
+      "STATUS": {
+        "NEW": "جديد",
+        "REVIEWED": "تمت المراجعة",
+        "SHORTLISTED": "القائمة المختصرة"
+      },
+      "ACTIONS": {
+        "WATCH_VIDEO": "مشاهدة الفيديو",
+        "VIEW_APPLICATION": "عرض الطلب",
+        "CONTACT": "اتصل",
+        "SHORTLIST": "القائمة المختصرة"
+      }
+    },
+
+    "TALENT": {
+  "TITLE": "مجمع المواهب المعتمد",
+  "SUBTITLE": "تصفح المرشحين المعتمدين بالذكاء الاصطناعي",
+  "SEARCH_PLACEHOLDER": "البحث حسب المهارات، الدور...",
+  "FILTERS": "الفلاتر",
+  "NO_RESULTS": "لا توجد نتائج مطابقة للبحث",
+  "CHALLENGES_COMPLETED": "تحدي مكتمل",
+  "ACTIONS": {
+    "VIEW_PROFILE": "عرض الملف الشخصي",
+    "CONTACT": "اتصل"
+  },
+  "CATEGORIES": {
+    "ALL": "جميع الفئات",
+    "CODING": "البرمجة",
+    "DESIGN": "التصميم",
+    "MARKETING": "التسويق"
+  },
+  "STATUS": {
+    "CURRENTLY_ENGAGED": "مشغول حاليًا"
+  }
+}
+
+  }
     }
   },
   "SORT": {
