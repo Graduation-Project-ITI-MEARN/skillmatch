@@ -43,6 +43,8 @@
       "SCORE": "Skill Score",
       "RANK": "Global Rank",
       "EARNINGS": "Prize Earnings",
+      "PRIZE": "Prize Pool",
+      "COMPETING": "Competing",
       "ACTIVE_JOBS": "Active Challenges",
       "APPLICANTS": "Total Submissions",
       "INTERVIEWS": "Interviews",
@@ -83,6 +85,7 @@
       "TOP_CHALLENGES_SUBTITLE": "Based on participation & AI scores",
       "NEW_SIGNUPS": "New Signups",
       "CHALLENGES_POSTED": "Challenges Posted"
+    },
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "Active Job Postings",
       "HIRING_INSIGHTS": "Hiring Insights",
@@ -106,6 +109,11 @@
       "NO_CHALLENGES": "No active job postings yet",
       "NO_ACTIVITY": "No recent activity"
     },
+    "SECTION": {
+      "ACTIVE_APPLICATIONS": "Active Applications",
+      "AI_RECOMMENDATIONS": "AI Recommendations",
+      "RECENT_ACTIVITY": "Recent Activity"
+    },
     "COMMON": {
       "FILTER": "Filter",
       "FILTERS": "Filters",
@@ -122,7 +130,6 @@
       "CODING": "Coding",
       "DESIGN": "Design",
       "MARKETING": "Marketing",
-
       "ACTIVE": "Active",
       "EVALUATING": "Evaluating",
       "CLOSED": "Closed",
@@ -130,5 +137,20 @@
       "BUDGET_500_1000": "$500 – $1,000",
       "BUDGET_1000_PLUS": "$1,000+"
     }
-  }
+  },
+  "SORT": {
+    "NEWEST": "Newest First",
+    "OLDEST": "Oldest First"
+  },
+  "TIME": {
+    "DAYS_LEFT": "days left"
+  },
+  "BTN": {
+    "CONTINUE": "Continue",
+    "VIEW_MATCH": "View Match"
+  },
+  "AI": {
+    "ANALYZING": "Analyzing your profile..."
+  },
+  "NO_DATA": "No data available currently."
 }
