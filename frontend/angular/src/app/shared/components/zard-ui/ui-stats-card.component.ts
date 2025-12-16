@@ -47,8 +47,4 @@ export class ZardStatComponent {
   @Input() value: string = '';
   @Input() trend: string = '';
   @Input() trendColor: string = '';
-
-  constructor() {
-    console.log(this.trend);
-  }
 }

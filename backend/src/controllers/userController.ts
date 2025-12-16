@@ -9,10 +9,10 @@ import { logActivity } from "../utils/activityLogger";
  * @access  Private (Admin)
  */
 const getAllUsers = catchError(async (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    data: (res as any).advancedResults,
-  });
+   res.status(200).json({
+      success: true,
+      data: (res as any).advancedResults,
+   });
 });
 
 /**
@@ -21,12 +21,12 @@ const getAllUsers = catchError(async (req: Request, res: Response) => {
  * @access  Private (Admin/Company)
  */
 const getAllCandidates = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "candidate" });
+   const users = await User.find({ type: "candidate" });
 
-  res.status(200).json({
-    success: true,
-    data: users,
-  });
+   res.status(200).json({
+      success: true,
+      data: users,
+   });
 });
 
 /**
@@ -35,12 +35,12 @@ const getAllCandidates = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getAllCompanies = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "company" });
+   const users = await User.find({ type: "company" });
 
-  res.status(200).json({
-    success: true,
-    data: users,
-  });
+   res.status(200).json({
+      success: true,
+      data: users,
+   });
 });
 
 /**
@@ -49,12 +49,12 @@ const getAllCompanies = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getAllChallengers = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "challenger" });
+   const users = await User.find({ type: "challenger" });
 
-  res.status(200).json({
-    success: true,
-    data: users,
-  });
+   res.status(200).json({
+      success: true,
+      data: users,
+   });
 });
 
 /**
@@ -63,16 +63,16 @@ const getAllChallengers = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getUserById = catchError(async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.id);
+   const user = await User.findById(req.params.id);
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
+   if (!user) {
+      return res.status(404).json({ message: "User not found" });
+   }
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+   res.status(200).json({
+      success: true,
+      data: user,
+   });
 });
 
 /**
@@ -81,44 +81,44 @@ const getUserById = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const updateUser = catchError(async (req: Request, res: Response) => {
-  const userToUpdate = await User.findById(req.params.id);
+   const userToUpdate = await User.findById(req.params.id);
 
-  if (!userToUpdate) {
-    return res.status(404).json({ message: "User not found" });
-  }
+   if (!userToUpdate) {
+      return res.status(404).json({ message: "User not found" });
+   }
 
-  // Prevent changing role via this endpoint for security
-  if (req.body.role) {
-    delete req.body.role;
-  }
+   // Prevent changing role via this endpoint for security
+   if (req.body.role) {
+      delete req.body.role;
+   }
 
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+   });
 
-  // ✅ Log Activity: User updated profile
-  // FIX: Added check to ensure req.user exists before logging
-  if (req.user) {
-    await logActivity(
-      req.user._id,
-      "user_update",
-      `Updated profile details for user: ${updatedUser?.name}`,
-      updatedUser?._id
-    );
-  }
+   // ✅ Log Activity: User updated profile
+   // FIX: Added check to ensure req.user exists before logging
+   if (req.user) {
+      await logActivity(
+         req.user._id,
+         "user_update",
+         `Updated profile details for user: ${updatedUser?.name}`,
+         updatedUser?._id
+      );
+   }
 
-  res.status(200).json({
-    success: true,
-    data: updatedUser,
-  });
+   res.status(200).json({
+      success: true,
+      data: updatedUser,
+   });
 });
 
 export {
-  getAllUsers,
-  getAllCandidates,
-  getAllCompanies,
-  getAllChallengers,
-  getUserById,
-  updateUser,
+   getAllUsers,
+   getAllCandidates,
+   getAllCompanies,
+   getAllChallengers,
+   getUserById,
+   updateUser,
 };
