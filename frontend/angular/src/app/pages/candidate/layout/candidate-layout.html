@@ -1,16 +1,15 @@
 <app-dashboard-layout
   titleKey="DASHBOARD.WELCOME"
-  [titleParams]="{ name }"
+  [titleParams]="{ name: user.name || 'Candidate' }"
   subtitleKey="DASHBOARD.SUBTITLE"
   [tabs]="tabs"
+  headerClass="bg-primary-gradient"
 >
-  <!-- Avatar -->
+  <!-- User Initials Avatar -->
   <span avatar>{{ initials }}</span>
 
-  <!-- Actions -->
+  <!-- Header Actions -->
   <div actions class="flex items-center gap-3">
-    <app-notifications-dropdown />
-
     <button
       class="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all font-medium shadow-xl shadow-gray-900/10"
     >
@@ -18,13 +17,15 @@
     </button>
   </div>
 
+  <!-- Stats Grid -->
   <ng-container stats>
-    @for(stat of stats; track stat.labelKey){
-    <z-stat labelKey="{{ stat.labelKey }}" value="{{ stat.value }}" trend="{{ stat.trend }}">
+    @for(stat of stats; track stat.id) {
+    <z-stat [labelKey]="stat.labelKey" [value]="stat.value" [trend]="stat.trend">
       <lucide-icon icon [img]="stat.icon" class="w-5 h-5"></lucide-icon>
     </z-stat>
     }
   </ng-container>
 
+  <!-- Content Area (Overview, Portfolio, etc.) -->
   <router-outlet></router-outlet>
 </app-dashboard-layout>
