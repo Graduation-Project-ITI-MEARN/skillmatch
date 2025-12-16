@@ -76,7 +76,8 @@ export class CandidateShellComponent implements OnInit, OnDestroy {
   }
 
   loadDashboardData() {
-    // Using forkJoin to call both endpoints in parallel
+
+    // Using forkJoin to call both endpoints in parallelءء
     forkJoin({
       user: this.http.get<any>(`${this.API_URL}/auth/me`),
       stats: this.http.get<any>(`${this.API_URL}/stats/candidate`)

@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms'; // هام للـ Dropdown
+import { FormsModule } from '@angular/forms';
 import {
   LucideAngularModule,
   Clock,
@@ -14,6 +14,7 @@ import {
   Calendar
 } from 'lucide-angular';
 import { forkJoin } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-candidate-overview',
@@ -28,7 +29,7 @@ import { forkJoin } from 'rxjs';
 })
 export class Overview implements OnInit {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000'; // تأكد من الرابط
+  private readonly API_URL = environment.apiUrl;
 
   // Icons
   icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar };
@@ -39,7 +40,7 @@ export class Overview implements OnInit {
   recentActivities: any[] = [];
 
   // Sorting State
-  sortOption: string = 'date_desc'; // القيمة الافتراضية
+  sortOption: string = 'date_desc';
   isLoading = true;
 
   ngOnInit() {
@@ -59,14 +60,14 @@ export class Overview implements OnInit {
         // 1. Active Applications
         this.activeChallenges = res.challenges.map(c => ({
           ...c,
-          // إضافة بيانات للعرض إذا كانت ناقصة من الـ API
+
           daysLeft: this.calculateDaysLeft(c.deadline || new Date(Date.now() + 86400000 * 3)),
           category: c.category || 'Development',
           levelColor: this.getLevelColor(c.level),
           competitors: c.competitorsCount || Math.floor(Math.random() * 100)
         }));
 
-        // تطبيق الترتيب الأولي
+
         this.sortChallenges();
 
         // 2. AI Recommendations
@@ -84,7 +85,7 @@ export class Overview implements OnInit {
     });
   }
 
-  // منطق الترتيب (Sorting Logic)
+  // (Sorting Logic)
   sortChallenges() {
     if (this.sortOption === 'date_desc') {
       // الأحدث أولاً
