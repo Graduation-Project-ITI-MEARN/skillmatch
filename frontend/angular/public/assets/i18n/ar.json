@@ -4,21 +4,21 @@
   },
   "DASHBOARD": {
     "WELCOME": "مرحباً، {{name}}",
-    "SUBTITLE": "لتوفير مهاراتك اليوم",
+    "SUBTITLE": "لنثبت مهاراتك اليوم",
     "TITLES": {
       "COMPANY": "لوحة التحكم للشركة",
-      "ADMIN": "مركز التحكم الإداري",
+      "ADMIN": "مركز التحكم الإداري",
       "CHALLENGER": "مركز التحكم للمسابقة"
     },
     "SUBTITLES": {
-      "CANDIDATE": "لتوفير مهاراتك اليوم",
-      "COMPANY": "إدارة قائمة التوظيف والمسابقات",
+      "CANDIDATE": "لنثبت مهاراتك اليوم",
+      "COMPANY": "إدارة قائمة التوظيف والمسابقات",
       "ADMIN": "نظام التحقق والمراقبة",
-      "CHALLENGER": "إنشاء مسابقات وإنشاء مجتمع"
+      "CHALLENGER": "إنشاء مسابقات وإنشاء مجتمع"
     },
     "ACTIONS": {
       "COACH": "مدربك الذكي",
-      "CREATE_CHALLENGE": "إنشاء مسابقة",
+      "CREATE_CHALLENGE": "إنشاء مسابقة",
       "CREATE_BOUNTY": "مسابقة جديدة",
       "SYSTEM_REPORT": "تقرير النظام"
     },
@@ -31,10 +31,10 @@
       "SUBMISSIONS": "تقديمات",
       "TALENT": "بوابة الموهوبين",
       "ANALYTICS": "تحليلات",
-      "USERS": "إدارة المستخدمين",
+      "USERS": "إدارة المستخدمين",
       "MODERATION": "المراقبة",
-      "SETTINGS": "الإعدادات",
-      "NEW_BOUNTY": "إنشاء مسابقة جديدة",
+      "SETTINGS": "الإعدادات",
+      "NEW_BOUNTY": "إنشاء مسابقة جديدة",
       "COMPLETED": "المكتملة",
       "CHALLENGES": "المسابقات"
     },
@@ -42,29 +42,31 @@
       "COMPLETED": "المسابقات المكتملة",
       "SCORE": "درجة المهارات",
       "RANK": "الترتيب العالمي",
-      "EARNINGS": "المكافآت",
+      "EARNINGS": "المكافآت",
+      "PRIZE": "الجائزة",
+      "COMPETING": "منافس",
       "ACTIVE_JOBS": "المسابقات المفعلة",
       "APPLICANTS": "عدد التقديمات",
       "INTERVIEWS": "المقابلات",
       "HIRED": "الموظفين المتميزون",
       "TOTAL_USERS": "المستخدمين الكليين",
-      "REVENUE": "الإيرادات الكلية",
+      "REVENUE": "الإيرادات الكلية",
       "FLAGS": "المحتوى المعلق",
       "HEALTH": "صحة النظام",
       "BOUNTIES": "المسابقات المفعلة",
       "PARTICIPANTS": "عدد المشاركين",
       "PAID_OUT": "المدفوعات الكلية",
-      "REPUTATION": "درجة الإعتقاد",
+      "REPUTATION": "درجة الاعتقاد",
       "ACTIVE_CHALLENGES": "المسابقات المفعلة",
       "REVIEWS": "المراجعات",
-      "THIS_WEEK": "هذا الأسبوع",
+      "THIS_WEEK": "هذا الأسبوع",
       "GROWTH": "نمو",
       "REQUIRES_ATTENTION": "تحت النظر"
     },
     "NOTIFICATIONS": {
-      "TITLE": "الإشعارات",
-      "EMPTY": "لا يوجد إشعارات",
-      "MARK_ALL_AS_READ": "تعليم كل الإشعارات كمقروءة"
+      "TITLE": "الإشعارات",
+      "EMPTY": "لا يوجد إشعارات",
+      "MARK_ALL_AS_READ": "تعليم كل الإشعارات كمقروءة"
     },
     "GENERAL": {
       "CANDIDATES": "الموظفين",
@@ -73,21 +75,22 @@
       "CHALLENGERS": "صانعي المسابقات",
       "PARTICIPANTS": "المشاركين",
       "SUBMISSIONS": "التقديمات",
-      "REVENUE": "الإيرادات"
+      "REVENUE": "الإيرادات"
     },
     "ADMIN": {
       "USER_DISTRIBUTION": "توزيع المستخدمين",
       "RECENT_ACTIVITY": "نشاطات حديثة",
-      "TODAY_STATS": "إحصائات اليوم",
-      "TOP_CHALLENGES": "أفضل المسابقات",
+      "TODAY_STATS": "إحصائيات اليوم",
+      "TOP_CHALLENGES": "أفضل المسابقات",
       "TOP_CHALLENGES_SUBTITLE": "من حسب المشاركات ودرجات الذكاء",
       "NEW_SIGNUPS": "التسجيلات الجديدة",
       "CHALLENGES_POSTED": "المسابقات المنشورة"
+    },
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "الوظائف النشطة",
       "HIRING_INSIGHTS": "رؤى التوظيف",
       "HIGH_QUALITY_CANDIDATES": "{{count}} مرشح/مرشحين عالي الجودة جاهزين للمقابلات بناءً على الوظائف المنشورة مؤخراً",
-      "AVG_EVALUATION_TIME": "متوسط وقت التقييم:  24 ساعة",
+      "AVG_EVALUATION_TIME": "متوسط وقت التقييم: 24 ساعة",
       "AI_POWERED": "(مدعوم بالذكاء الاصطناعي)",
       "RECENT_ACTIVITY": "النشاط الأخير",
       "FILTER": "تصفية",
@@ -106,7 +109,11 @@
       "NO_CHALLENGES": "لا توجد وظائف نشطة بعد",
       "NO_ACTIVITY": "لا يوجد نشاط حديث"
     },
-
+    "SECTION": {
+      "ACTIVE_APPLICATIONS": "المسابقات النشطة",
+      "AI_RECOMMENDATIONS": "توصيات الذكاء الاصطناعي",
+      "RECENT_ACTIVITY": "النشاط الأخير"
+    },
     "COMMON": {
       "FILTER": "تصفية",
       "FILTERS": "الفلاتر",
@@ -130,5 +137,20 @@
       "BUDGET_500_1000": "من 500 إلى 1000 دولار",
       "BUDGET_1000_PLUS": "أكثر من 1000 دولار"
     }
-  }
+  },
+  "SORT": {
+    "NEWEST": "الأحدث أولاً",
+    "OLDEST": "الأقدم أولاً"
+  },
+  "TIME": {
+    "DAYS_LEFT": "أيام متبقية"
+  },
+  "BTN": {
+    "CONTINUE": "متابعة",
+    "VIEW_MATCH": "عرض الفرصة"
+  },
+  "AI": {
+    "ANALYZING": "جاري تحليل ملفك..."
+  },
+  "NO_DATA": "لا توجد بيانات متاحة حالياً."
 }
