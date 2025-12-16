@@ -12,6 +12,7 @@ export interface IUser extends Document {
    skills?: string[];
    totalScore?: number;
    badges?: string[];
+   isVerified?: boolean;
 }
 
 // Mongoose Schema
@@ -25,11 +26,11 @@ const UserSchema: Schema = new Schema(
       skills: [{ type: String }],
       totalScore: { type: Number, default: 0 },
       badges: [{ type: String }],
+      isVerified: { type: Boolean, default: false },
    },
    {
       timestamps: true, // Adds createdAt and updatedAt fields automatically
-   },
-   
+   }
 );
 
 /**
