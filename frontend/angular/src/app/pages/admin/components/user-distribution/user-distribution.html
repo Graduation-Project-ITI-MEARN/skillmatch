@@ -1,12 +1,14 @@
 <ui-card title="User Distribution" class="pb-10">
-  <h2 class="text-lg font-bold text-gray-900 mb-6">User Distribution</h2>
+  <h2 class="text-lg font-bold text-gray-900 mb-6">
+    {{ 'DASHBOARD.ADMIN.USER_DISTRIBUTION' | translate }}
+  </h2>
 
   <div class="space-y-5">
     @for(item of data(); track item.label) {
     <div>
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-3">
-          <span class="text-sm font-semibold">{{ item.label }}</span>
+          <span class="text-sm font-semibold">{{ item.label | translate }}</span>
         </div>
         <span class="text-lg font-semibold">{{ item.value | number }}</span>
       </div>

@@ -170,12 +170,6 @@ export const getTopChallenges = catchError(
                      0,
                   ],
                },
-
-               // Revenue Calculation Logic:
-               // Since IChallenge doesn't have 'entryFee', we calculate hypothetical revenue.
-               // Logic: 10% of prizeAmount OR $10 per participant (Platform Fee)
-               // Here I'm using: Participants * $50 (Average platform fee assumption)
-               revenue: { $multiply: [{ $size: "$submissionData" }, 50] },
             },
          },
          // Sort by highest participation

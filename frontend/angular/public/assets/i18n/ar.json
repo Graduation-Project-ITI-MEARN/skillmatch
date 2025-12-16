@@ -66,6 +66,23 @@
       "EMPTY": "لا يوجد إشعارات",
       "MARK_ALL_AS_READ": "تعليم كل الإشعارات كمقروءة"
     },
+    "GENERAL": {
+      "CANDIDATES": "الموظفين",
+      "CHALLENGES": "المسابقات",
+      "COMPANIES": "الشركات",
+      "CHALLENGERS": "صانعي المسابقات",
+      "PARTICIPANTS": "المشاركين",
+      "SUBMISSIONS": "التقديمات",
+      "REVENUE": "الإيرادات"
+    },
+    "ADMIN": {
+      "USER_DISTRIBUTION": "توزيع المستخدمين",
+      "RECENT_ACTIVITY": "نشاطات حديثة",
+      "TODAY_STATS": "إحصائات اليوم",
+      "TOP_CHALLENGES": "أفضل المسابقات",
+      "TOP_CHALLENGES_SUBTITLE": "من حسب المشاركات ودرجات الذكاء",
+      "NEW_SIGNUPS": "التسجيلات الجديدة",
+      "CHALLENGES_POSTED": "المسابقات المنشورة"
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "الوظائف النشطة",
       "HIRING_INSIGHTS": "رؤى التوظيف",
