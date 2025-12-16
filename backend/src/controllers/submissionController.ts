@@ -121,6 +121,7 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
       candidateId,
       "submission_created",
       `User submitted to challenge: ${challengeTitle}`,
+      "success",
       submission._id
    );
 

@@ -10,11 +10,12 @@ import {
   Activity,
 } from 'lucide-angular';
 import { ChallengesService, TopChallenge } from '../../services/challenges.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-top-challenges',
   standalone: true,
-  imports: [CommonModule, UiCard, LucideAngularModule],
+  imports: [CommonModule, UiCard, LucideAngularModule, TranslateModule],
   templateUrl: './top-challenges.html',
 })
 export class TopChallengesComponent implements OnInit {

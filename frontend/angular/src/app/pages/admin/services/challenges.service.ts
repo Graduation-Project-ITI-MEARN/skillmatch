@@ -7,7 +7,6 @@ export interface TopChallenge {
   _id: string;
   title: string;
   participants: number;
-  revenue: number;
   quality: number; // This maps to 'aiScore' from the backend
 }
 

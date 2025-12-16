@@ -65,6 +65,24 @@
       "TITLE": "Notifications",
       "EMPTY": "No notifications",
       "MARK_ALL_AS_READ": "Mark all as read"
+    },
+    "GENERAL": {
+      "CANDIDATES": "Candidates",
+      "CHALLENGES": "Challenges",
+      "COMPANIES": "Companies",
+      "CHALLENGERS": "Challenge Creators",
+      "PARTICIPANTS": "Participants",
+      "SUBMISSIONS": "Submissions",
+      "REVENUE": "Revenue"
+    },
+    "ADMIN": {
+      "USER_DISTRIBUTION": "User Distribution",
+      "RECENT_ACTIVITY": "Recent Activity",
+      "TODAY_STATS": "Today's Stats",
+      "TOP_CHALLENGES": "Top Challenges",
+      "TOP_CHALLENGES_SUBTITLE": "Based on participation & AI scores",
+      "NEW_SIGNUPS": "New Signups",
+      "CHALLENGES_POSTED": "Challenges Posted"
     }
   }
 }

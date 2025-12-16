@@ -1,5 +1,5 @@
 <ui-card class="bg-linear-to-br from-grad-start/20 to-grad-end/20 border-orange-200/50">
-  <h3 class="text-lg font-semibold mb-4">Today's Stats</h3>
+  <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.ADMIN.TODAY_STATS' | translate }}</h3>
 
   @if (loading()) {
   <div class="animate-pulse space-y-4">
@@ -10,25 +10,33 @@
   } @else {
   <div class="space-y-2">
     <div class="flex items-center justify-between p-2 rounded-lg">
-      <span class="text-sm text-gray-700 font-medium">New Signups</span>
+      <span class="text-sm text-gray-700 font-medium">{{
+        'DASHBOARD.ADMIN.NEW_SIGNUPS' | translate
+      }}</span>
       <span class="text-xl font-semibold text-gray-900">{{ stats().newUsers }}</span>
     </div>
     <div class="h-px bg-grad-end/15"></div>
 
     <div class="flex items-center justify-between p-2 rounded-lg">
-      <span class="text-sm text-gray-700 font-medium">Challenges Posted</span>
+      <span class="text-sm text-gray-700 font-medium">{{
+        'DASHBOARD.ADMIN.CHALLENGES_POSTED' | translate
+      }}</span>
       <span class="text-xl font-semibold text-gray-900">{{ stats().newChallenges }}</span>
     </div>
     <div class="h-px bg-grad-end/15"></div>
 
     <div class="flex items-center justify-between p-2 rounded-lg">
-      <span class="text-sm text-gray-700 font-medium">Submissions</span>
+      <span class="text-sm text-gray-700 font-medium">{{
+        'DASHBOARD.GENERAL.SUBMISSIONS' | translate
+      }}</span>
       <span class="text-xl font-semibold text-gray-900">{{ stats().submissions }}</span>
     </div>
     <div class="h-px bg-grad-end/15"></div>
 
     <div class="flex items-center justify-between p-2 rounded-lg">
-      <span class="text-sm text-gray-700 font-medium">Revenue</span>
+      <span class="text-sm text-gray-700 font-medium">{{
+        'DASHBOARD.GENERAL.REVENUE' | translate
+      }}</span>
       <span class="text-xl font-semibold text-gray-900">{{ stats().revenue | currency }}</span>
     </div>
   </div>

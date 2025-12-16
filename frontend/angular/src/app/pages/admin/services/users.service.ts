@@ -30,10 +30,10 @@ export class UsersService {
         return rawData.map((item: any) => ({
           label:
             item.type === 'challenger'
-              ? 'Challengers'
+              ? 'DASHBOARD.GENERAL.CHALLENGERS'
               : item.type === 'company'
-              ? 'Companies'
-              : 'Candidates',
+              ? 'DASHBOARD.GENERAL.COMPANIES'
+              : 'DASHBOARD.GENERAL.CANDIDATES',
           value: item.count,
           percentage: total > 0 ? Math.round((item.count / total) * 100) : 0,
         }));

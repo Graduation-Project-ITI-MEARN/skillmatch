@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UiCard } from '@shared/components/ui/ui-card/ui-card.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-todays-stats',
   standalone: true,
-  imports: [CommonModule, UiCard],
+  imports: [CommonModule, UiCard, TranslateModule],
   templateUrl: './today-stats.html',
 })
 export class TodaysStatsComponent implements OnInit {
