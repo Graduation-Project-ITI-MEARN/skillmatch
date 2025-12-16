@@ -65,6 +65,53 @@
       "TITLE": "Notifications",
       "EMPTY": "No notifications",
       "MARK_ALL_AS_READ": "Mark all as read"
+    },
+    "OVERVIEW": {
+      "MY_JOB_POSTINGS": "Active Job Postings",
+      "HIRING_INSIGHTS": "Hiring Insights",
+      "HIGH_QUALITY_CANDIDATES": "{{count}} high-quality candidates are ready for interviews based on your recent job postings.",
+      "AVG_EVALUATION_TIME": "Avg. evaluation time: 24 hours",
+      "AI_POWERED": "(AI-powered)",
+      "RECENT_ACTIVITY": "Recent Activity",
+      "FILTER": "Filter",
+      "OFFER": "Offer",
+      "APPLICATIONS": "Applications",
+      "TOP_SCORE": "Top Score",
+      "QUALIFIED": "Qualified",
+      "VIEW_APPLICATIONS": "View Applications",
+      "EDIT_JOB": "Edit Job",
+      "CREATE_NEW_POSTING": "Create New Job Posting",
+      "VIEW_RECOMMENDATIONS": "View Recommendations",
+      "NEW_APPLICATION": "New application",
+      "CANDIDATE_SHORTLISTED": "Candidate shortlisted",
+      "CHALLENGE_COMPLETED": "Challenge completed",
+      "JOB_CLOSED": "Job posting closed",
+      "NO_CHALLENGES": "No active job postings yet",
+      "NO_ACTIVITY": "No recent activity"
+    },
+    "COMMON": {
+      "FILTER": "Filter",
+      "FILTERS": "Filters",
+      "SEARCH": "Search jobs...",
+      "CLEAR_ALL": "Clear all",
+      "CANCEL": "Cancel",
+      "APPLY_FILTERS": "Apply Filters",
+      "LOADING": "Loading..."
+    },
+    "FILTERS": {
+      "JOB_TYPE": "Job Type",
+      "STATUS": "Status",
+      "BUDGET_RANGE": "Budget Range",
+      "CODING": "Coding",
+      "DESIGN": "Design",
+      "MARKETING": "Marketing",
+
+      "ACTIVE": "Active",
+      "EVALUATING": "Evaluating",
+      "CLOSED": "Closed",
+      "BUDGET_0_500": "$0 – $500",
+      "BUDGET_500_1000": "$500 – $1,000",
+      "BUDGET_1000_PLUS": "$1,000+"
     }
   }
 }
