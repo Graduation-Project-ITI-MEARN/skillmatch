@@ -110,7 +110,6 @@
         "COMPLETED": "Completed",
         "AVG_SCORE": "Avg. Score"
       }
-      "CHALLENGES_POSTED": "Challenges Posted"
     },
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "Active Job Postings",
@@ -190,7 +189,7 @@
         "SHORTLIST": "Shortlist"
       }
     },
-   "TALENT": {
+    "TALENT": {
       "TITLE": "Verified Talent Pool",
       "SUBTITLE": "Browse AI-verified candidates across all skills",
       "SEARCH_PLACEHOLDER": "Search by skills, role, or name...",
@@ -210,18 +209,17 @@
         "VIEW_PROFILE": "View Profile",
         "CONTACT": "Contact",
         "CATEGORIES": {
-        "ALL": "All Categories",
-        "CODING": "Coding",
-        "DESIGN": "Design",
-        "MARKETING": "Marketing"
-      },
+          "ALL": "All Categories",
+          "CODING": "Coding",
+          "DESIGN": "Design",
+          "MARKETING": "Marketing"
+        },
 
-      "STATUS": {
-        "CURRENTLY_ENGAGED": "Currently engaged"
+        "STATUS": {
+          "CURRENTLY_ENGAGED": "Currently engaged"
+        }
       }
     }
-  }
-  }
   },
   "SORT": {
     "NEWEST": "Newest First",
@@ -239,4 +237,3 @@
   },
   "NO_DATA": "No data available currently."
 }
-

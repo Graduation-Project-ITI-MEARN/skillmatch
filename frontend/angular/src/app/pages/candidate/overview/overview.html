@@ -140,7 +140,9 @@
 
       <div class="flex items-center gap-2 mb-4 text-blue-900 relative z-10">
         <lucide-icon [img]="icons.Brain" class="w-5 h-5"></lucide-icon>
-        <h3 class="text-base font-bold">{{ 'SECTION.AI_RECOMMENDATIONS' | translate }}</h3>
+        <h3 class="text-base font-bold">
+          {{ 'DASHBOARD.SECTION.AI_RECOMMENDATIONS' | translate }}
+        </h3>
       </div>
 
       @if (aiRecommendations.length > 0) { @for (rec of aiRecommendations.slice(0, 1); track rec) {
@@ -167,7 +169,7 @@
       <div class="flex items-center gap-2 mb-5">
         <lucide-icon [img]="icons.Activity" class="w-5 h-5 text-gray-400"></lucide-icon>
         <h3 class="text-base font-bold text-gray-900">
-          {{ 'SECTION.RECENT_ACTIVITY' | translate }}
+          {{ 'DASHBOARD.SECTION.RECENT_ACTIVITY' | translate }}
         </h3>
       </div>
 
