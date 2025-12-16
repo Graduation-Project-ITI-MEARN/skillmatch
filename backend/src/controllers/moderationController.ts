@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import Report from "../models/Report";
+import { NextFunction, Request, Response } from "express";
+
 import Challenge from "../models/Challenge";
+import Report from "../models/Report";
 import Submission from "../models/Submission";
 import User from "../models/User";
 import { catchError } from "../utils/catchAsync";
+import { logActivity } from "../utils/activityLogger";
 
 /**
  * @desc    Create a new report (Flag content)
@@ -11,7 +13,7 @@ import { catchError } from "../utils/catchAsync";
  * @access  Private (Any authenticated user)
  */
 
-export const createReport = catchError(
+const createReport = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user;
       const { targetType, targetId, reason } = req.body;
@@ -87,6 +89,14 @@ export const createReport = catchError(
       // Populate reporter info
       await report.populate("reporterId", "name email");
 
+      await logActivity(
+         user._id,
+         "report_created",
+         `User ${user.name} reported ${targetType} ${targetId}`,
+         "warning",
+         user._id
+      );
+
       res.status(201).json({
          success: true,
          message: "Report submitted successfully",
@@ -100,7 +110,7 @@ export const createReport = catchError(
  * @route   GET /api/moderation
  * @access  Private (Admin only)
  */
-export const getReports = catchError(
+const getReports = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       // advancedResults middleware will handle the query
       // This is just for reference
@@ -113,7 +123,7 @@ export const getReports = catchError(
  * @route   PUT /api/moderation/:id/resolve
  * @access  Private (Admin only)
  */
-export const resolveReport = catchError(
+const resolveReport = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const { id } = req.params;
       const { status, adminNotes, action } = req.body;
@@ -175,7 +185,7 @@ export const resolveReport = catchError(
  * @route   GET /api/moderation/stats
  * @access  Private (Admin only)
  */
-export const getModerationStats = catchError(
+const getModerationStats = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const stats = await Report.aggregate([
          {
@@ -259,3 +269,5 @@ async function performModerationAction(
          break;
    }
 }
+
+export { createReport, getReports, resolveReport, getModerationStats };

@@ -1,0 +1,56 @@
+<ui-card>
+  <h3 class="text-lg font-bold text-gray-900 mb-4 px-1">Recent Activity</h3>
+
+  @if (loading()) {
+  <div class="space-y-4 animate-pulse px-1">
+    @for(i of [1,2,3,4,5]; track i) {
+    <div class="flex gap-3">
+      <div class="w-2 h-2 rounded-full bg-gray-200 mt-2"></div>
+      <div class="flex-1 space-y-2">
+        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        <div class="h-3 bg-gray-100 rounded w-1/4"></div>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="space-y-1 overflow-y-auto max-h-100 pr-2 custom-scrollbar">
+    @for(log of activities(); track log._id) {
+    <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+      <!-- Colored Dot -->
+      <div
+        class="mt-2 w-2.5 h-2.5 rounded-full shrink-0 ring-4 ring-opacity-20"
+        [ngClass]="{
+          'bg-green-500 ring-green-100': log.type === 'success',
+          'bg-yellow-500 ring-yellow-100': log.type === 'warning',
+          'bg-blue-500 ring-blue-100': log.type === 'info',
+          'bg-red-500 ring-red-100': log.type === 'error'
+        }"
+      ></div>
+
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-gray-900 font-medium leading-snug">
+          {{ log.action }}
+        </p>
+
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-xs text-gray-500">
+            {{ log.createdAt | date : 'MMM d, h:mm a' }}
+          </span>
+
+          <!-- Show user name if populated (Admin view) -->
+          @if (log.userId?.name) {
+          <span class="text-xs text-gray-400">•</span>
+          <span class="text-xs text-gray-500 font-medium bg-gray-100 px-1.5 py-0.5 rounded">
+            {{ log.userId?.name }}
+          </span>
+          }
+        </div>
+      </div>
+    </div>
+    } @if (activities().length === 0) {
+    <div class="text-center py-10 text-gray-500 text-sm">No recent activity recorded.</div>
+    }
+  </div>
+  }
+</ui-card>

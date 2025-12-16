@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import Notification from "../models/Notification";
 
 /**
@@ -6,7 +7,7 @@ import Notification from "../models/Notification";
  * @route   GET /api/notifications
  * @access  Private
  */
-export const getMyNotifications = async (req: Request, res: Response) => {
+const getMyNotifications = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
   if ((res as any).advancedResults) {
@@ -30,7 +31,7 @@ export const getMyNotifications = async (req: Request, res: Response) => {
  * @route   PUT /api/notifications/:id/read
  * @access  Private
  */
-export const markAsRead = async (req: Request, res: Response) => {
+const markAsRead = async (req: Request, res: Response) => {
   const user = (req as any).user;
   const { id } = req.params;
 
@@ -60,7 +61,7 @@ export const markAsRead = async (req: Request, res: Response) => {
  * @route   PUT /api/notifications/read-all
  * @access  Private
  */
-export const markAllAsRead = async (req: Request, res: Response) => {
+const markAllAsRead = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
   await Notification.updateMany(
@@ -72,3 +73,5 @@ export const markAllAsRead = async (req: Request, res: Response) => {
     .status(200)
     .json({ success: true, message: "All notifications marked as read" });
 };
+
+export { getMyNotifications, markAsRead, markAllAsRead };

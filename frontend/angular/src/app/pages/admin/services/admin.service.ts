@@ -18,16 +18,17 @@ export interface AdminUser {
   createdAt: string;
 }
 
+export interface APIResponse {
+  success: boolean;
+  message: string;
+  data: any;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private http = inject(HttpClient);
   // Using localhost based on task description, replace with environment.apiUrl if available
   private apiUrl = `${environment.apiUrl}`;
-
-  // --- Header & Stats ---
-  getMe(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/auth/me`);
-  }
 
   getStats(): Observable<AdminStats> {
     return this.http.get<AdminStats>(`${this.apiUrl}/stats/admin`);
@@ -44,14 +45,5 @@ export class AdminService {
 
   markAllRead(): Observable<any> {
     return this.http.post(`${this.apiUrl}/mark-all`, {});
-  }
-
-  // --- Tab 1: Overview Data ---
-  getUsers(): Observable<AdminUser[]> {
-    return this.http.get<AdminUser[]>(`${this.apiUrl}/users`);
-  }
-
-  getLeaderboard(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/leaderboard`);
   }
 }

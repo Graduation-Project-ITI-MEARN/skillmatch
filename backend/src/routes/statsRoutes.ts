@@ -5,6 +5,9 @@ import {
    getCompanyStats,
    getCandidateStats,
    getChallengerStats,
+   getUserDistribution,
+   getDailyStats,
+   getTopChallenges,
 } from "../controllers/statsController";
 import { restrictTo } from "../middlewares/restrictTo";
 import auth from "../middlewares/authMiddleware";
@@ -31,6 +34,21 @@ statsRouter.get(
    auth,
    restrictTo(["company"]),
    getChallengerStats
+);
+
+statsRouter.get(
+   "/distribution",
+   auth,
+   restrictTo(["admin"]),
+   getUserDistribution
+);
+statsRouter.get("/daily", auth, restrictTo(["admin"]), getDailyStats);
+
+statsRouter.get(
+   "/top-challenges",
+   auth,
+   restrictTo(["admin"]),
+   getTopChallenges
 );
 
 export default statsRouter;

@@ -43,6 +43,8 @@
       "SCORE": "Skill Score",
       "RANK": "Global Rank",
       "EARNINGS": "Prize Earnings",
+      "PRIZE": "Prize Pool",
+      "COMPETING": "Competing",
       "ACTIVE_JOBS": "Active Challenges",
       "APPLICANTS": "Total Submissions",
       "INTERVIEWS": "Interviews",
@@ -66,6 +68,24 @@
       "EMPTY": "No notifications",
       "MARK_ALL_AS_READ": "Mark all as read"
     },
+    "GENERAL": {
+      "CANDIDATES": "Candidates",
+      "CHALLENGES": "Challenges",
+      "COMPANIES": "Companies",
+      "CHALLENGERS": "Challenge Creators",
+      "PARTICIPANTS": "Participants",
+      "SUBMISSIONS": "Submissions",
+      "REVENUE": "Revenue"
+    },
+    "ADMIN": {
+      "USER_DISTRIBUTION": "User Distribution",
+      "RECENT_ACTIVITY": "Recent Activity",
+      "TODAY_STATS": "Today's Stats",
+      "TOP_CHALLENGES": "Top Challenges",
+      "TOP_CHALLENGES_SUBTITLE": "Based on participation & AI scores",
+      "NEW_SIGNUPS": "New Signups",
+      "CHALLENGES_POSTED": "Challenges Posted"
+    },
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "Active Job Postings",
       "HIRING_INSIGHTS": "Hiring Insights",
@@ -88,6 +108,11 @@
       "JOB_CLOSED": "Job posting closed",
       "NO_CHALLENGES": "No active job postings yet",
       "NO_ACTIVITY": "No recent activity"
+    },
+    "SECTION": {
+      "ACTIVE_APPLICATIONS": "Active Applications",
+      "AI_RECOMMENDATIONS": "AI Recommendations",
+      "RECENT_ACTIVITY": "Recent Activity"
     },
     "COMMON": {
       "FILTER": "Filter",
@@ -171,5 +196,21 @@
     }
   }
   }
+  },
+  "SORT": {
+    "NEWEST": "Newest First",
+    "OLDEST": "Oldest First"
+  },
+  "TIME": {
+    "DAYS_LEFT": "days left"
+  },
+  "BTN": {
+    "CONTINUE": "Continue",
+    "VIEW_MATCH": "View Match"
+  },
+  "AI": {
+    "ANALYZING": "Analyzing your profile..."
+  },
+  "NO_DATA": "No data available currently."
 }
 

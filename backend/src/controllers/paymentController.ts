@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
 import axios from "axios";
+import { catchError } from "../utils/catchAsync";
 import crypto from "crypto";
 import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
-import { catchError } from "../utils/catchAsync";
 
 /**
  * INITIATE PAYMENT (Paymob 3-Step Flow)
@@ -11,7 +11,7 @@ import { catchError } from "../utils/catchAsync";
  * 2. Order Registration API -> Get Order ID
  * 3. Payment Key Request -> Get Payment Key for Iframe
  */
-export const createPaymentIntent = catchError(
+const createPaymentIntent = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const { amount, currency, billing_data } = req.body;
       const user = (req as any).user; // Get authenticated user
@@ -78,7 +78,7 @@ export const createPaymentIntent = catchError(
          user._id,
          "payment_initiated",
          `User initiated payment of ${amount} ${currency || "EGP"}`,
-         undefined // No specific target ID for now, or use orderId cast to ObjectId if you store it locally
+         "success" // No specific target ID for now, or use orderId cast to ObjectId if you store it locally
       );
 
       // Send Key and Order ID to Frontend
@@ -97,8 +97,7 @@ export const createPaymentIntent = catchError(
  * WEBHOOK HANDLER
  * Verifies HMAC signature and logs transaction status
  */
-
-export const handleWebhook = catchError(
+const handleWebhook = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const { obj, type, hmac } = req.body;
 
@@ -189,3 +188,5 @@ export const handleWebhook = catchError(
       res.status(200).send();
    }
 );
+
+export { createPaymentIntent, handleWebhook };

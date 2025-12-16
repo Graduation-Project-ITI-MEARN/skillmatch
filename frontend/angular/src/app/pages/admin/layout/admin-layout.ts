@@ -56,6 +56,7 @@ export class AdminShellComponent implements OnInit {
   tabs: DashboardTab[] = [
     { labelKey: 'DASHBOARD.TABS.OVERVIEW', route: '/dashboard/admin/overview', icon: LayoutGrid },
     { labelKey: 'DASHBOARD.TABS.USERS', route: '/dashboard/admin/users', icon: Users },
+    { labelKey: 'DASHBOARD.TABS.CHALLENGES', route: '/dashboard/admin/challenges', icon: Trophy },
     { labelKey: 'DASHBOARD.TABS.MODERATION', route: '/dashboard/admin/moderation', icon: Flag },
     { labelKey: 'DASHBOARD.TABS.SETTINGS', route: '/dashboard/admin/settings', icon: Settings },
   ];

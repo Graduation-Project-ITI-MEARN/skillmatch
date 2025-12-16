@@ -1,5 +1,5 @@
 // src/app/components/ui/ui-card/ui-card.component.ts
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,26 +7,11 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="ui-card">
+    <div [ngClass]="class" class="ui-card p-6 px-8 rounded-lg bg-white border border-gray-200">
       <ng-content></ng-content>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-
-    .ui-card {
-      background: var(--color-bg);
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(57, 89, 77, 0.08);
-      box-shadow: var(--shadow-soft);
-      transition: box-shadow var(--transition-medium);
-    }
-
-    .ui-card:hover {
-      box-shadow: var(--shadow-medium);
-    }
-  `]
 })
-export class UiCard {}
+export class UiCard {
+  @Input() class: string = '';
+}

@@ -5,16 +5,22 @@ import { advancedResults } from "../middlewares/advancedResults";
 import User from "../models/User";
 
 import {
-  getAllUsers,
-  getAllCandidates,
-  getAllCompanies,
-  getAllChallengers,
-  getUserById,
+   getAllUsers,
+   getAllCandidates,
+   getAllCompanies,
+   getAllChallengers,
+   getUserById,
 } from "../controllers/userController";
 
 const router = express.Router();
 
-router.get("/", auth, restrictTo(["admin"]), advancedResults(User), getAllUsers);
+router.get(
+   "/",
+   auth,
+   restrictTo(["admin"]),
+   advancedResults(User),
+   getAllUsers
+);
 
 router.get("/candidates", auth, restrictTo(["admin"]), getAllCandidates);
 router.get("/companies", auth, restrictTo(["admin"]), getAllCompanies);
