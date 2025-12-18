@@ -105,15 +105,16 @@ const getPublishedChallenges = catchError(
  */
 const getMyChallenges = catchError(async (req: Request, res: Response) => {
   const user = req.user;
+  if (!user) return res.status(401).json({ message: "Not authorized" });
 
-  if (!user) {
-    return res.status(401).json({ message: "Not authorized" });
+  const filter: any = { creatorId: user._id };
+  if (req.query.status) {
+    filter.status = req.query.status;
   }
 
-  const challenges = await Challenge.find({ creatorId: user._id }).populate(
-    "creatorId",
-    "name type"
-  );
+  const challenges = await Challenge.find(filter)
+    .populate("creatorId", "name type")
+    .sort({ createdAt: -1 }); // Newest first
 
   res.status(200).json({
     success: true,

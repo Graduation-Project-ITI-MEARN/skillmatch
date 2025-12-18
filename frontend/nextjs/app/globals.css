@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
 
 @import "tailwindcss";
 /* Base Styles */
 * {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
 }
 
 body {
@@ -66,4 +67,8 @@ button:focus {
 /* Inactive */
 .inactive-tab {
   color: #a0a0a0;
+}
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #39594d 0%, #5c8d7b 100%);
+  color: white;
 }

@@ -7,6 +7,11 @@ const CATEGORIES = [
   "Writing",
   "Translation",
   "Data Entry",
+  "Coding",
+  "Video",
+  "Business",
+  "Content",
+  "Data",
 ];
 
 const SKILLS = [
@@ -83,11 +88,14 @@ const getSkills = (req: Request, res: Response, next: NextFunction): void => {
 };
 
 const isValidCategory = (category: string): boolean => {
-  return CATEGORIES.includes(category);
+  return CATEGORIES.some((c) => c.toLowerCase() === category.toLowerCase());
 };
 
 const areValidSkills = (skills: string[]): boolean => {
-  return skills.every((skill) => SKILLS.includes(skill));
+  return (
+    Array.isArray(skills) &&
+    skills.every((s) => typeof s === "string" && s.length > 0)
+  );
 };
 
 export { getCategories, getSkills, isValidCategory, areValidSkills };

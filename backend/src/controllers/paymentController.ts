@@ -188,5 +188,15 @@ const handleWebhook = catchError(
     res.status(200).send();
   }
 );
-
-export { createPaymentIntent, handleWebhook };
+const getWalletDetails = async (req: Request, res: Response) => {
+  // Mock data for the dashboard sidebar
+  res.status(200).json({
+    success: true,
+    data: {
+      balance: 50000,
+      escrow: 12000,
+      currency: "EGP",
+    },
+  });
+};
+export { createPaymentIntent, handleWebhook, getWalletDetails };
