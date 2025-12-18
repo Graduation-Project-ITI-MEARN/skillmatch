@@ -15,6 +15,7 @@ import {
   Activity,
   Calendar,
 } from 'lucide-angular';
+import { CandidateService } from 'src/app/core/services/candidateService';
 
 @Component({
   selector: 'app-overview',
@@ -36,7 +37,8 @@ export class Overview implements OnInit {
   // Data
   activeChallenges: any[] = [];
   aiRecommendations: any[] = [];
-  recentActivities: any[] = [];
+  recentSubmissions: any[] = [];
+
 
   // UI
   sortOption = 'date_desc';

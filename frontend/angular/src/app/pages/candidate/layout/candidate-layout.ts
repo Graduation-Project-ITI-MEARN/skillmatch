@@ -18,6 +18,7 @@ import { RouterModule } from '@angular/router';
 import { Subscription, forkJoin } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CandidateService } from 'src/app/core/services/candidateService';
+import { NotificationsDropdownComponent } from "@shared/components/notifications-dropdown/notifications-dropdown.component";
 
 @Component({
   selector: 'app-candidate-shell',
@@ -29,7 +30,8 @@ import { CandidateService } from 'src/app/core/services/candidateService';
     LucideAngularModule,
     TranslateModule,
     RouterModule,
-  ],
+    NotificationsDropdownComponent
+],
   templateUrl: './candidate-layout.html',
 })
 export class CandidateShellComponent implements OnInit, OnDestroy {
