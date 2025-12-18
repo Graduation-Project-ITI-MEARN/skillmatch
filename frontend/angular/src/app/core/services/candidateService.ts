@@ -25,7 +25,7 @@ export class CandidateService {
     });
   }
 
-  // ================== Active Challenges ==================
+  // ================== Active Applications ==================
   getMyChallenges(): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges/mine`, {
       withCredentials: true,
@@ -33,29 +33,15 @@ export class CandidateService {
   }
 
   // ================== AI Recommendations ==================
-  getAiRecommendations(): Observable<any> {
+  getRecommendations(): Observable<any> {
     return this.http.get(`${this.apiUrl}/ai/recommendations`, {
       withCredentials: true,
     });
   }
 
   // ================== Recent Activity ==================
-  getActivity(): Observable<any> {
+  getRecentActivity(): Observable<any> {
     return this.http.get(`${this.apiUrl}/activity`, {
-      withCredentials: true,
-    });
-  }
-
-  // ================== Portfolio =========================
-  getMySubmissions(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/submissions/mine`, {
-      withCredentials: true,
-    });
-  }
-
-  // ================== Leaderboard ==========================
-  getLeaderboard(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/leaderboard`, {
       withCredentials: true,
     });
   }

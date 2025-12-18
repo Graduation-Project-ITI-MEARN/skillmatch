@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
-
+import { CandidateService } from 'src/app/core/services/candidateService';
 
 import {
   LucideAngularModule,
@@ -14,7 +14,6 @@ import {
   Filter,
   Activity,
   Calendar,
-  Play
 } from 'lucide-angular';
 import { CandidateService } from 'src/app/core/services/candidateService';
 
@@ -33,19 +32,13 @@ export class Overview implements OnInit {
   private candidateService = inject(CandidateService);
 
   // Icons
-  icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar, Play };
+  icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar };
 
   // Data
   activeChallenges: any[] = [];
   aiRecommendations: any[] = [];
   recentSubmissions: any[] = [];
 
-
-  weeklyStats = {
-    started: 0,
-    videos: 0,
-    avgScore: 0
-  };
 
   // UI
   sortOption = 'date_desc';
@@ -60,52 +53,29 @@ export class Overview implements OnInit {
 
     forkJoin({
       challenges: this.candidateService.getMyChallenges(),
-      ai: this.candidateService.getAiRecommendations(),
-      // جلبنا الـ Submissions هنا عشان نعرضها في الـ Overview
-      submissions: this.candidateService.getMySubmissions()
+      ai: this.candidateService.getRecommendations(),
+      activity: this.candidateService.getRecentActivity(),
     }).subscribe({
       next: (res: any) => {
-        /* -------- 1. Active Challenges -------- */
-        const challengesData = Array.isArray(res.challenges)
-          ? res.challenges
-          : res.challenges?.data || [];
-
-        this.activeChallenges = challengesData.map((c: any) => ({
+        // Active Applications
+        this.activeChallenges = (res.challenges?.data || []).map((c: any) => ({
           ...c,
           daysLeft: this.calculateDaysLeft(
-            c.deadline || new Date(Date.now() + 86400000 * (Math.floor(Math.random() * 10) + 1))
+            c.deadline || new Date(Date.now() + 86400000 * 3)
           ),
-          // Fallbacks for UI
           category: c.category || 'Development',
-          levelColor: this.getLevelColor(c.difficulty || c.level),
-          competitors: c.competitorsCount || Math.floor(Math.random() * 100) + 20,
-          prize: c.prize || (Math.floor(Math.random() * 5) + 1) * 100, // Mock prize if missing
-          techStack: ['React', 'Node.js', 'Figma'].slice(0, 3) // Mock tech stack
+          levelColor: this.getLevelColor(c.level),
+          competitors:
+            c.competitorsCount || Math.floor(Math.random() * 50) + 10,
         }));
 
         this.sortChallenges();
 
-        /* -------- 2. AI Recommendations -------- */
-        this.aiRecommendations = Array.isArray(res.ai)
-          ? res.ai
-          : res.ai?.data || [];
+        // AI Recommendations
+        this.aiRecommendations = res.ai?.data || [];
 
-        /* -------- 3. Recent Submissions (Moved from Portfolio) -------- */
-        const subsData = Array.isArray(res.submissions)
-          ? res.submissions
-          : res.submissions?.data || [];
-
-        // نأخذ آخر 3 تسليمات فقط للعرض
-        this.recentSubmissions = subsData.slice(0, 3);
-
-        /* -------- 4. Calculate Stats (Mock Calculation) -------- */
-        this.weeklyStats = {
-            started: this.activeChallenges.length,
-            videos: this.recentSubmissions.filter(s => s.videoExplanationUrl).length,
-            avgScore: Math.round(
-                this.recentSubmissions.reduce((acc, curr) => acc + (curr.aiScore || 0), 0) / (this.recentSubmissions.length || 1)
-            )
-        };
+        // Recent Activity
+        this.recentActivities = res.activity?.data || [];
 
         this.isLoading = false;
       },
@@ -122,23 +92,29 @@ export class Overview implements OnInit {
     if (this.sortOption === 'date_desc') {
       this.activeChallenges.sort(
         (a, b) =>
-          new Date(b.createdAt || Date.now()).getTime() -
-          new Date(a.createdAt || Date.now()).getTime()
+          new Date(b.createdAt || b.startDate).getTime() -
+          new Date(a.createdAt || a.startDate).getTime()
       );
     } else {
       this.activeChallenges.sort(
         (a, b) =>
-          new Date(a.createdAt || Date.now()).getTime() -
-          new Date(b.createdAt || Date.now()).getTime()
+          new Date(a.createdAt || a.startDate).getTime() -
+          new Date(b.createdAt || b.startDate).getTime()
       );
     }
   }
 
   getLevelColor(level: string): string {
-    const l = (level || '').toLowerCase();
-    if (l === 'advanced' || l === 'hard') return 'bg-red-100 text-red-700';
-    if (l === 'intermediate' || l === 'medium') return 'bg-blue-100 text-blue-700';
-    return 'bg-gray-100 text-gray-700'; // Beginner
+    switch ((level || '').toLowerCase()) {
+      case 'advanced':
+        return 'bg-red-100 text-red-700';
+      case 'intermediate':
+        return 'bg-blue-100 text-blue-700';
+      case 'beginner':
+        return 'bg-green-100 text-green-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
   }
 
   calculateDaysLeft(date: string | Date): number {
