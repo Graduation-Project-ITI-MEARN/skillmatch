@@ -19,16 +19,18 @@ const getAllSubmissions = catchError(async (req: Request, res: Response) => {
    });
 });
 
-export const getMySubmissions = (req: Request, res: Response) => {
-   const user = req.user;
-   if (!user) throw new APIError(401, "User not authenticated");
+export const getMySubmissions = catchError(
+   async (req: Request, res: Response) => {
+      const user = req.user;
+      if (!user) throw new APIError(401, "User not authenticated");
 
-   const submissions = Submission.find({ candidateId: user._id });
-   res.status(200).json({
-      success: true,
-      data: submissions,
-   });
-};
+      const submissions = await Submission.find({ candidateId: user._id });
+      res.status(200).json({
+         success: true,
+         data: submissions,
+      });
+   }
+);
 
 /**
  * @desc    Create a new submission for a challenge
