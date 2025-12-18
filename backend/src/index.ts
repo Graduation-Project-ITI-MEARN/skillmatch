@@ -1,7 +1,9 @@
 import "./config/db";
 import "./config/cloudinary";
+import "./socket";
 
 import APIError from "./utils/APIError";
+import { Server } from "socket.io";
 import { bootstrap } from "./routes/bootstrap";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -9,6 +11,8 @@ import dotenv from "dotenv";
 import errorHandler from "./middlewares/errorHandler";
 import express from "express";
 import helmet from "helmet";
+import http from "http";
+import { initSocket } from "../src/socket";
 
 dotenv.config();
 
@@ -20,28 +24,29 @@ app.use(helmet());
 app.use(cookieParser());
 
 const FRONTEND_URL = process.env.FRONTEND_URL || [
-   "http://localhost:4200",
-   "http://localhost:3000",
+  "http://localhost:4200",
+  "http://localhost:3000",
 ];
+
 app.use(
-   cors({
-      origin: FRONTEND_URL,
-      credentials: true,
-   })
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
 ); // Enable CORS for frontend origin
 
 // Routes
 bootstrap(app);
 
 app.get("/", (req, res) => {
-   res.json({
-      message: "Welcome to SkillMatch API",
-   });
+  res.json({
+    message: "Welcome to SkillMatch API",
+  });
 });
 
 // NOT FOUND ROUTES
 app.use((req, res, next) => {
-   next(new APIError(404, `${req.method} ${req.path} is not found`));
+  next(new APIError(404, `${req.method} ${req.path} is not found`));
 });
 
 // GLOBAL ERROR HANDLER
@@ -49,6 +54,16 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
+const server = http.createServer(app);
+initSocket(server);
+
+export const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    credentials: true,
+  },
+});
+
 app.listen(PORT, () => {
-   console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

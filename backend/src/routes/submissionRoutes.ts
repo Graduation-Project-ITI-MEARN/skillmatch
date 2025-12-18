@@ -1,9 +1,10 @@
 import {
-   createSubmission,
-   getAllSubmissions,
-   getMySubmissions,
-   getSubmissionById,
-   getSubmissionsByChallenge,
+  createSubmission,
+  getAllSubmissions,
+  getMySubmissions,
+  getSubmissionById,
+  getSubmissionsByChallenge,
+  updateSubmissionStatus,
 } from "../controllers/submissionController";
 
 import Submission from "../models/Submission";
@@ -18,47 +19,49 @@ const router = express.Router();
 
 // --- ADMIN ALL submissions ---
 router.get(
-   "/",
-   auth,
-   restrictTo(["admin"]),
-   advancedResults(Submission),
-   getAllSubmissions
+  "/",
+  auth,
+  restrictTo(["admin"]),
+  advancedResults(Submission),
+  getAllSubmissions
 );
 
 // --- CANDIDATE submissions ---
 router.get(
-   "/mine",
-   auth,
-   restrictTo(["candidate"]),
-   advancedResults(Submission),
-   getMySubmissions
+  "/mine",
+  auth,
+  restrictTo(["candidate"]),
+  advancedResults(Submission),
+  getMySubmissions
 );
 
 // --- USER create submission ---
 router.post(
-   "/",
-   auth,
-   validate(createSubmissionDTO),
-   restrictTo(["candidate"]),
-   createSubmission
+  "/",
+  auth,
+  validate(createSubmissionDTO),
+  restrictTo(["candidate"]),
+  createSubmission
 );
 
 // --- COMPANY/CHALLENGER submissions for a specific challenge ---
 router.get(
-   "/challenge/:id",
-   auth,
-   validate(createSubmissionDTO),
-   restrictTo(["company", "challenger", "admin"]),
-   (req, res, next) =>
-      advancedResults(
-         Submission,
-         null,
-         { challengeId: req.params.id } // fixed filter
-      )(req, res, next),
-   getSubmissionsByChallenge
+  "/challenge/:id",
+  auth,
+  validate(createSubmissionDTO),
+  restrictTo(["company", "challenger", "admin"]),
+  (req, res, next) =>
+    advancedResults(
+      Submission,
+      null,
+      { challengeId: req.params.id } // fixed filter
+    )(req, res, next),
+  getSubmissionsByChallenge
 );
 
 // --- Get single submission ---
 router.get("/:id", auth, getSubmissionById);
+
+router.put("/:id/status", auth, restrictTo(["admin"]), updateSubmissionStatus);
 
 export default router;
