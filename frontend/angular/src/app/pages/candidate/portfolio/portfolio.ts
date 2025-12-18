@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CandidateService } from 'src/app/core/services/candidateService';
 
-
 @Component({
   selector: 'app-portfolio',
   standalone: true,
@@ -25,7 +24,7 @@ export class Portfolio implements OnInit {
       next: (res) => {
         this.submissions = res.data;
       },
-      error: (err) => console.error('Error fetching submissions', err)
+      error: (err) => console.error('Error fetching submissions', err),
     });
   }
 }

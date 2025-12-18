@@ -115,15 +115,12 @@
     <div class="space-y-6 col-span-1">
       <!-- 1. AI Recommendations -->
       <div
-        class="absolute top-0 right-0 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"
-      ></div>
-
-      <div class="flex items-center gap-2 mb-4 text-blue-900 relative z-10">
-        <lucide-icon [img]="icons.Brain" class="w-5 h-5"></lucide-icon>
-        <h3 class="text-base font-bold">
-          {{ 'DASHBOARD.SECTION.AI_RECOMMENDATIONS' | translate }}
-        </h3>
-      </div>
+        class="bg-gradient-to-bottom from-blue-400/10 to-purple-400/10 rounded-2xl p-6 border border-blue-200"
+      >
+        <div class="flex items-center gap-2 mb-4 text-blue-900">
+          <lucide-icon [img]="icons.Brain" class="w-5 h-5"></lucide-icon>
+          <h3 class="text-lg font-bold">AI Recommendations</h3>
+        </div>
 
         @if (aiRecommendations.length > 0) {
         <p class="text-sm text-gray-700 mb-4 leading-relaxed">
@@ -141,14 +138,9 @@
         }
       </div>
 
-    <!-- 2. Recent Activity -->
-    <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-      <div class="flex items-center gap-2 mb-5">
-        <lucide-icon [img]="icons.Activity" class="w-5 h-5 text-gray-400"></lucide-icon>
-        <h3 class="text-base font-bold text-gray-900">
-          {{ 'DASHBOARD.SECTION.RECENT_ACTIVITY' | translate }}
-        </h3>
-      </div>
+      <!-- 2. Recent Submissions (Moved from Portfolio) -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+        <h3 class="text-lg font-bold mb-4 text-gray-800">Recent Submissions</h3>
 
         <div class="space-y-3">
           @if (recentSubmissions.length === 0) {

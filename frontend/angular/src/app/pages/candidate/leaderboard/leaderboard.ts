@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CandidateService } from 'src/app/core/services/candidateService';
 
-
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
@@ -15,7 +14,6 @@ export class Leaderboard implements OnInit {
   leaderboard: any[] = [];
   currentUserId: string | null = null;
 
-
   activeFilter: 'all' | 'month' | 'week' = 'all';
 
   ngOnInit(): void {
@@ -27,7 +25,7 @@ export class Leaderboard implements OnInit {
     this.candidateService.getMe().subscribe({
       next: (res) => {
         this.currentUserId = res.data._id;
-      }
+      },
     });
   }
 
@@ -36,21 +34,19 @@ export class Leaderboard implements OnInit {
       next: (res) => {
         this.leaderboard = res.data || res;
       },
-      error: (err) => console.error('Error fetching leaderboard', err)
+      error: (err) => console.error('Error fetching leaderboard', err),
     });
   }
-
 
   isCurrentUser(userId: string): boolean {
     return this.currentUserId === userId;
   }
 
-
   getInitials(name: string): string {
     if (!name) return 'U';
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .slice(0, 2)
       .join('')
       .toUpperCase();

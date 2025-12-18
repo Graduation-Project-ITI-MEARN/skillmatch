@@ -4,10 +4,9 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CandidateService {
-
   private apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
@@ -25,7 +24,7 @@ export class CandidateService {
     });
   }
 
-  // ================== Active Applications ==================
+  // ================== Active Challenges ==================
   getMyChallenges(): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges/mine`, {
       withCredentials: true,
@@ -33,15 +32,29 @@ export class CandidateService {
   }
 
   // ================== AI Recommendations ==================
-  getRecommendations(): Observable<any> {
+  getAiRecommendations(): Observable<any> {
     return this.http.get(`${this.apiUrl}/ai/recommendations`, {
       withCredentials: true,
     });
   }
 
   // ================== Recent Activity ==================
-  getRecentActivity(): Observable<any> {
+  getActivity(): Observable<any> {
     return this.http.get(`${this.apiUrl}/activity`, {
+      withCredentials: true,
+    });
+  }
+
+  // ================== Portfolio =========================
+  getMySubmissions(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/submissions/mine`, {
+      withCredentials: true,
+    });
+  }
+
+  // ================== Leaderboard ==========================
+  getLeaderboard(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/leaderboard`, {
       withCredentials: true,
     });
   }
