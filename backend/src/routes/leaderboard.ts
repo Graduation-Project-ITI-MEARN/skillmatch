@@ -6,7 +6,7 @@ import User from "../models/User";
 const leaderboardRouter = express.Router();
 
 leaderboardRouter.get(
-  "/leaderboard",
+  "/",
   (req, _res, next) => {
     req.query.sort = "-totalScore";
     req.query.limit = "10";

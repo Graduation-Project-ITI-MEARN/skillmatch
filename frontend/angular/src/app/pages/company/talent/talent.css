@@ -1,0 +1,7 @@
+.filter-dropdown {
+  direction: ltr; /* أو rtl حسب التصميم */
+  max-height: 15rem; /* نفس mt-1 + w-48 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 50; /* أعلى من أي عنصر آخر */
+}

@@ -75,7 +75,12 @@
       "CHALLENGERS": "Challenge Creators",
       "PARTICIPANTS": "Participants",
       "SUBMISSIONS": "Submissions",
-      "REVENUE": "Revenue"
+      "REVENUE": "Revenue",
+      "LOADING": "Loading...",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous",
+      "SHOWING": "Showing",
+      "OF": "of"
     },
     "ADMIN": {
       "USER_DISTRIBUTION": "User Distribution",
@@ -84,7 +89,27 @@
       "TOP_CHALLENGES": "Top Challenges",
       "TOP_CHALLENGES_SUBTITLE": "Based on participation & AI scores",
       "NEW_SIGNUPS": "New Signups",
-      "CHALLENGES_POSTED": "Challenges Posted"
+      "CHALLENGES_POSTED": "Challenges Posted",
+      "USERS": {
+        "TITLE": "User Management",
+        "SUBTITLE": "Manage users, roles, and permissions",
+        "ALL_USERS": "All Users",
+        "VIEW_ID": "View ID",
+        "VIEW_TAX": "View Tax Card",
+        "VERIFY": "Verify",
+        "REJECT": "Reject"
+      },
+      "CHALLENGES": {
+        "TITLE": "Challenge Management",
+        "SUBTITLE": "Monitor and manage challenges",
+        "VIEW": "View Details",
+        "ALL": "All Challenges",
+        "NO_CHALLENGES": "No challenges found for this status.",
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "COMPLETED": "Completed",
+        "AVG_SCORE": "Avg. Score"
+      }
     },
     "OVERVIEW": {
       "MY_JOB_POSTINGS": "Active Job Postings",
@@ -136,6 +161,64 @@
       "BUDGET_0_500": "$0 – $500",
       "BUDGET_500_1000": "$500 – $1,000",
       "BUDGET_1000_PLUS": "$1,000+"
+    },
+    "SUBMISSIONS": {
+      "TITLE": "All Applications",
+      "SUBTITLE": "AI-evaluated applications across all job postings",
+      "ACTIVE_CHALLENGES": "Active Challenges",
+      "NO_CHALLENGES": "No active challenges available",
+      "NO_SUBMISSIONS": "No submissions found for this challenge",
+      "OVERALL": "Overall",
+      "TECHNICAL_QUALITY": "Technical Quality",
+      "COMMUNICATION": "Communication",
+      "FILTERS": {
+        "ALL": "All",
+        "NEW": "New",
+        "SHORTLISTED": "Shortlisted",
+        "REVIEWED": "Reviewed"
+      },
+      "STATUS": {
+        "NEW": "New",
+        "REVIEWED": "Reviewed",
+        "SHORTLISTED": "Shortlisted"
+      },
+      "ACTIONS": {
+        "WATCH_VIDEO": "Watch Video",
+        "VIEW_APPLICATION": "View Application",
+        "CONTACT": "Contact",
+        "SHORTLIST": "Shortlist"
+      }
+    },
+    "TALENT": {
+      "TITLE": "Verified Talent Pool",
+      "SUBTITLE": "Browse AI-verified candidates across all skills",
+      "SEARCH_PLACEHOLDER": "Search by skills, role, or name...",
+      "FILTERS": "Filters",
+      "ACTIVE_FILTERS": "Active filters",
+      "CLEAR_ALL": "Clear all",
+      "CLEAR_FILTERS": "Clear filters",
+      "NO_RESULTS": "No talent found matching your criteria",
+      "CHALLENGES_COMPLETED": "challenges completed",
+      "CATEGORIES": {
+        "ALL": "All Categories",
+        "CODING": "Coding",
+        "DESIGN": "Design",
+        "MARKETING": "Marketing"
+      },
+      "ACTIONS": {
+        "VIEW_PROFILE": "View Profile",
+        "CONTACT": "Contact",
+        "CATEGORIES": {
+          "ALL": "All Categories",
+          "CODING": "Coding",
+          "DESIGN": "Design",
+          "MARKETING": "Marketing"
+        },
+
+        "STATUS": {
+          "CURRENTLY_ENGAGED": "Currently engaged"
+        }
+      }
     }
   },
   "SORT": {

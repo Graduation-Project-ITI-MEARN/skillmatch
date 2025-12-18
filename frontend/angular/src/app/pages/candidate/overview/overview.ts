@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
-import { CandidateService } from 'src/app/core/services/candidateService';
+
+
 import {
   LucideAngularModule,
   Clock,
@@ -13,7 +14,9 @@ import {
   Filter,
   Activity,
   Calendar,
+  Play
 } from 'lucide-angular';
+import { CandidateService } from 'src/app/core/services/candidateService';
 
 @Component({
   selector: 'app-overview',
@@ -30,12 +33,19 @@ export class Overview implements OnInit {
   private candidateService = inject(CandidateService);
 
   // Icons
-  icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar };
+  icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar, Play };
 
   // Data
   activeChallenges: any[] = [];
   aiRecommendations: any[] = [];
-  recentActivities: any[] = [];
+  recentSubmissions: any[] = [];
+
+
+  weeklyStats = {
+    started: 0,
+    videos: 0,
+    avgScore: 0
+  };
 
   // UI
   sortOption = 'date_desc';
@@ -51,29 +61,51 @@ export class Overview implements OnInit {
     forkJoin({
       challenges: this.candidateService.getMyChallenges(),
       ai: this.candidateService.getAiRecommendations(),
-      activity: this.candidateService.getActivity(),
+      // جلبنا الـ Submissions هنا عشان نعرضها في الـ Overview
+      submissions: this.candidateService.getMySubmissions()
     }).subscribe({
       next: (res: any) => {
-        // --- 1. Active Applications ---
-        // التعامل مع البيانات سواء كانت array مباشرة أو داخل object
-        const challengesData = Array.isArray(res.challenges) ? res.challenges : (res.challenges?.data || []);
+        /* -------- 1. Active Challenges -------- */
+        const challengesData = Array.isArray(res.challenges)
+          ? res.challenges
+          : res.challenges?.data || [];
 
         this.activeChallenges = challengesData.map((c: any) => ({
           ...c,
-          // حساب الأيام المتبقية أو وضع قيمة افتراضية
-          daysLeft: this.calculateDaysLeft(c.deadline || new Date(Date.now() + 86400000 * 3)),
+          daysLeft: this.calculateDaysLeft(
+            c.deadline || new Date(Date.now() + 86400000 * (Math.floor(Math.random() * 10) + 1))
+          ),
+          // Fallbacks for UI
           category: c.category || 'Development',
-          levelColor: this.getLevelColor(c.level),
-          competitors: c.competitorsCount || Math.floor(Math.random() * 50) + 10,
+          levelColor: this.getLevelColor(c.difficulty || c.level),
+          competitors: c.competitorsCount || Math.floor(Math.random() * 100) + 20,
+          prize: c.prize || (Math.floor(Math.random() * 5) + 1) * 100, // Mock prize if missing
+          techStack: ['React', 'Node.js', 'Figma'].slice(0, 3) // Mock tech stack
         }));
 
         this.sortChallenges();
 
-        // --- 2. AI Recommendations ---
-        this.aiRecommendations = Array.isArray(res.ai) ? res.ai : (res.ai?.data || []);
+        /* -------- 2. AI Recommendations -------- */
+        this.aiRecommendations = Array.isArray(res.ai)
+          ? res.ai
+          : res.ai?.data || [];
 
-        // --- 3. Recent Activity ---
-        this.recentActivities = Array.isArray(res.activity) ? res.activity : (res.activity?.data || []);
+        /* -------- 3. Recent Submissions (Moved from Portfolio) -------- */
+        const subsData = Array.isArray(res.submissions)
+          ? res.submissions
+          : res.submissions?.data || [];
+
+        // نأخذ آخر 3 تسليمات فقط للعرض
+        this.recentSubmissions = subsData.slice(0, 3);
+
+        /* -------- 4. Calculate Stats (Mock Calculation) -------- */
+        this.weeklyStats = {
+            started: this.activeChallenges.length,
+            videos: this.recentSubmissions.filter(s => s.videoExplanationUrl).length,
+            avgScore: Math.round(
+                this.recentSubmissions.reduce((acc, curr) => acc + (curr.aiScore || 0), 0) / (this.recentSubmissions.length || 1)
+            )
+        };
 
         this.isLoading = false;
       },
@@ -90,29 +122,23 @@ export class Overview implements OnInit {
     if (this.sortOption === 'date_desc') {
       this.activeChallenges.sort(
         (a, b) =>
-          new Date(b.createdAt || b.startDate || Date.now()).getTime() -
-          new Date(a.createdAt || a.startDate || Date.now()).getTime()
+          new Date(b.createdAt || Date.now()).getTime() -
+          new Date(a.createdAt || Date.now()).getTime()
       );
     } else {
       this.activeChallenges.sort(
         (a, b) =>
-          new Date(a.createdAt || a.startDate || Date.now()).getTime() -
-          new Date(b.createdAt || b.startDate || Date.now()).getTime()
+          new Date(a.createdAt || Date.now()).getTime() -
+          new Date(b.createdAt || Date.now()).getTime()
       );
     }
   }
 
   getLevelColor(level: string): string {
-    switch ((level || '').toLowerCase()) {
-      case 'advanced':
-        return 'bg-red-100 text-red-700';
-      case 'intermediate':
-        return 'bg-blue-100 text-blue-700';
-      case 'beginner':
-        return 'bg-green-100 text-green-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
+    const l = (level || '').toLowerCase();
+    if (l === 'advanced' || l === 'hard') return 'bg-red-100 text-red-700';
+    if (l === 'intermediate' || l === 'medium') return 'bg-blue-100 text-blue-700';
+    return 'bg-gray-100 text-gray-700'; // Beginner
   }
 
   calculateDaysLeft(date: string | Date): number {
