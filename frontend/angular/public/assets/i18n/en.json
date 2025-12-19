@@ -80,7 +80,8 @@
       "NEXT": "Next",
       "PREVIOUS": "Previous",
       "SHOWING": "Showing",
-      "OF": "of"
+      "OF": "of",
+      "PAGE": "Page"
     },
     "ADMIN": {
       "USER_DISTRIBUTION": "User Distribution",
@@ -109,6 +110,24 @@
         "PENDING": "Pending",
         "COMPLETED": "Completed",
         "AVG_SCORE": "Avg. Score"
+      },
+      "MODERATION": {
+        "TITLE": "Moderation",
+        "SUBTITLE": "Review flagged content ({{ count }} items)",
+        "NO_REPORTS": "No reports found",
+        "NO_REPORTS_SUBTITLE": "There are no {{ status }} reports.",
+        "PENDING": "Pending",
+        "RESOLVED": "Resolved",
+        "DISMISSED": "Dismissed",
+        "REVIEW": "Review",
+        "DISMISS": "Dismiss",
+        "RESOLVE": "Resolve & Remove",
+        "CHALLENGE": "Challenge",
+        "USER": "User",
+        "SUBMISSION": "Submission",
+        "REASON": "Reason",
+        "REPORTED_BY": "Reported By",
+        "ON": "on"
       }
     },
     "OVERVIEW": {

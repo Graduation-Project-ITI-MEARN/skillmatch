@@ -78,10 +78,12 @@ const createReport = catchError(
          });
       }
 
-      // Create report
+      const formattedTargetType =
+         targetType.charAt(0).toUpperCase() + targetType.slice(1);
+
       const report = await Report.create({
          reporterId: user._id,
-         targetType,
+         targetType: formattedTargetType, // Save as "Submission", "User", "Challenge"
          targetId,
          reason,
       });
