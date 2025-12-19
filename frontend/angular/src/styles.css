@@ -3,11 +3,10 @@
 
 @theme {
   /* ---------- COLORS ---------- */
-  --color-primary: #39594d;
+  --color-primary: #a6c0fe;
   --color-primary-light: #4f6e60;
   --color-primary-lighter: #6b8c78;
-  --color-hover: #191f1de8;
-  --color-text: rgb(41, 60, 54);
+  --color-text: var(--color-gray-900);
   --color-muted: #6c7a75;
   --color-bg: #ffffff;
   --color-bg-soft: #f8faf9;
@@ -44,11 +43,9 @@
   font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-bg-soft);
-  --color-primary: #39594d;
+  --color-primary: #f68084d6;
   --color-primary-light: #4f6e60;
   --color-primary-lighter: #6b8c78;
-  --color-hover: #191f1de8;
-  --color-text: rgb(41, 60, 54);
   --color-muted: #6c7a75;
   --color-bg: #ffffff;
   --color-bg-soft: #f8faf9;
