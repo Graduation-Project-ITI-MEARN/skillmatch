@@ -58,7 +58,7 @@ isRtl: any;
     try {
       this.isLoading = true;
       const response = await firstValueFrom(
-        this.http.get<TalentProfile[]>(`${environment.apiUrl}/talent`)
+        this.http.get<TalentProfile[]>(`${environment.apiUrl}/talents`)
       );
       this.talentList = response ?? [];
       this.applyFilters();

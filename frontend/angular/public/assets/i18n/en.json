@@ -221,6 +221,85 @@
       }
     }
   },
+  "CHALLENGE": {
+    "BACK": "Back to Dashboard",
+    "CREATE": {
+      "TITLE": "Create New Challenge",
+      "DESCRIPTION": "Post real-world tasks and let AI evaluate candidates through their solutions and video explanations.",
+      "BENEFIT_1_TITLE": "AI-Powered Evaluation",
+      "BENEFIT_1_DESC": "Automated assessment of both technical quality and communication skills",
+      "BENEFIT_2_TITLE": "Real-World Tasks",
+      "BENEFIT_2_DESC": "Test candidates with actual work scenarios, not theoretical questions",
+      "BENEFIT_3_TITLE": "Video Explanations",
+      "BENEFIT_3_DESC": "Understand candidate thought process through their video walkthroughs"
+    },
+    "EDIT": {
+      "TITLE": "Edit Challenge",
+      "DESCRIPTION": "Update your challenge details. Some fields may be locked if candidates have already applied."
+    },
+    "FORM": {
+      "TITLE": "Challenge Title",
+      "TITLE_PLACEHOLDER": "Enter challenge title",
+      "TITLE_ERROR": "Title is required and must be at least 5 characters",
+      "CATEGORY": "Category",
+      "DIFFICULTY": "Difficulty Level",
+      "TYPE": "Challenge Type",
+      "DEADLINE": "Deadline",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Describe the challenge requirements",
+      "SKILLS": "Required Skills",
+      "SKILLS_SELECTED": "skills selected",
+      "SELECT_CATEGORY": "Select category",
+      "SELECT_DIFFICULTY": "Select difficulty",
+      "SELECT_TYPE": "Select type",
+      "SELECT_SKILLS": "Select required skills",
+      "SEARCH_SKILLS": "Search skills",
+      "NO_SKILLS_FOUND": "No skills found",
+      "SELECT_CATEGORY_FIRST": "Please select a category first",
+      "SKILLS_AVAILABLE": "skills available",
+      "SALARY": "Salary",
+      "SALARY_PLACEHOLDER": "Enter salary amount",
+      "PRIZE": "Prize Amount",
+      "PRIZE_PLACEHOLDER": "Enter prize amount",
+      "ADDITIONAL_INFO": "Additional Information",
+      "ADDITIONAL_INFO_PLACEHOLDER": "Any additional details",
+      "OPTIONAL": "Optional",
+      "SUBMIT": "Create Challenge",
+      "SUBMITTING": "Submitting..."
+    },
+   "CATEGORIES": {
+      "CODING": "Coding & Development",
+      "DESIGN": "Design & Creative",
+      "MARKETING": "Marketing & Growth",
+      "DATA_SCIENCE": "Data Science & Analytics",
+      "PRODUCT_MANAGEMENT": "Product Management"
+    },
+    "DIFFICULTY": {
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard"
+    },
+    "TYPES": {
+      "JOB": "Job Opportunity",
+      "PRIZE": "Prize Competition"
+    },
+    "SUCCESS": {
+      "TITLE": "Challenge Created Successfully!",
+      "MESSAGE": "Redirecting to dashboard...",
+      "EDIT_TITLE": "Challenge Updated Successfully!",
+      "EDIT_MESSAGE": "Your changes have been saved. Redirecting..."
+    },
+    "ERROR": {
+      "TITLE": "Error",
+      "MESSAGE": "Something went wrong. Please try again."
+    },
+    "RESTRICTED": {
+      "TITLE": "Restricted Editing Mode",
+      "MESSAGE": "active submissions detected. Core fields are locked to protect candidate experience.",
+      "ALLOWED": "You can only edit: Description and Additional Information."
+    }
+  },
+
   "SORT": {
     "NEWEST": "Newest First",
     "OLDEST": "Oldest First"

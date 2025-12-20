@@ -1,0 +1,414 @@
+<div class="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 py-12 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <button
+      (click)="goBack()"
+      class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+    >
+      <lucide-icon [img]="icons.ArrowLeft" class="w-5 h-5"></lucide-icon>
+      <span class="font-medium">{{ 'CHALLENGE.BACK' | translate }}</span>
+    </button>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <!-- Left Side - Info -->
+      <div class="lg:col-span-2">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          {{ 'CHALLENGE.CREATE.TITLE' | translate }}
+        </h1>
+        <p class="text-gray-600 text-lg mb-8">
+          {{ 'CHALLENGE.CREATE.DESCRIPTION' | translate }}
+        </p>
+
+        <div class="space-y-4">
+          <div class="flex items-start gap-3" *ngFor="let benefit of benefits">
+            <div
+              class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-1"
+            >
+              <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-900">{{ benefit.title | translate }}</h3>
+              <p class="text-gray-600 text-sm">{{ benefit.desc | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Form -->
+      <div class="lg:col-span-3">
+        <!-- Success Message -->
+        <div
+          *ngIf="submitSuccess"
+          class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3"
+        >
+          <lucide-icon
+            [img]="icons.CheckCircle"
+            class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+          ></lucide-icon>
+          <div>
+            <h3 class="font-semibold text-green-900">
+              {{ 'CHALLENGE.SUCCESS.TITLE' | translate }}
+            </h3>
+            <p class="text-sm text-green-700">{{ 'CHALLENGE.SUCCESS.MESSAGE' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="submitError"
+          class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+        >
+          <lucide-icon
+            [img]="icons.AlertCircle"
+            class="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+          ></lucide-icon>
+          <div>
+            <h3 class="font-semibold text-red-900">{{ 'CHALLENGE.ERROR.TITLE' | translate }}</h3>
+            <p class="text-sm text-red-700">{{ submitError }}</p>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <form
+          [formGroup]="challengeForm"
+          (ngSubmit)="onSubmit()"
+          class="bg-white rounded-2xl shadow-xl p-8 space-y-6"
+        >
+          <!-- Title -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.TITLE' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="{{ 'CHALLENGE.FORM.TITLE_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+            />
+            <p
+              *ngIf="challengeForm.get('title')?.invalid && challengeForm.get('title')?.touched"
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.TITLE_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Category, Difficulty, Type -->
+          <div class="grid grid-cols-1 gap-4">
+            <!-- Changed to grid-cols-1 for separate rows -->
+
+            <!-- Category Dropdown -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.CATEGORY' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="custom-dropdown"
+                  (click)="openCategory = !openCategory"
+                >
+                  <span [class.text-gray-400]="!selectedCategory">
+                    {{
+                      selectedCategory
+                        ? ('CHALLENGE.CATEGORIES.' + selectedCategory | translate)
+                        : ('CHALLENGE.FORM.SELECT_CATEGORY' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openCategory"
+                  ></lucide-icon>
+                </button>
+                <ul *ngIf="openCategory" class="dropdown-menu">
+                  <li
+                    *ngFor="let cat of categories"
+                    (click)="selectCategory(cat)"
+                    class="dropdown-item"
+                  >
+                    {{ 'CHALLENGE.CATEGORIES.' + cat | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Difficulty Dropdown -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.DIFFICULTY' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="custom-dropdown"
+                  (click)="openDifficulty = !openDifficulty"
+                >
+                  <span [class.text-gray-400]="!selectedDifficulty">
+                    {{
+                      selectedDifficulty
+                        ? ('CHALLENGE.DIFFICULTY.' + selectedDifficulty.toUpperCase() | translate)
+                        : ('CHALLENGE.FORM.SELECT_DIFFICULTY' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openDifficulty"
+                  ></lucide-icon>
+                </button>
+                <ul *ngIf="openDifficulty" class="dropdown-menu">
+                  <li
+                    *ngFor="let level of difficultyLevels"
+                    (click)="selectDifficulty(level)"
+                    class="dropdown-item"
+                  >
+                    {{ 'CHALLENGE.DIFFICULTY.' + level.toUpperCase() | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Type Dropdown -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.TYPE' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <button type="button" class="custom-dropdown" (click)="openType = !openType">
+                  <span [class.text-gray-400]="!selectedType">
+                    {{
+                      selectedType
+                        ? ('CHALLENGE.TYPES.' + selectedType.toUpperCase() | translate)
+                        : ('CHALLENGE.FORM.SELECT_TYPE' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openType"
+                  ></lucide-icon>
+                </button>
+                <ul *ngIf="openType" class="dropdown-menu">
+                  <li
+                    *ngFor="let type of challengeTypes"
+                    (click)="selectType(type)"
+                    class="dropdown-item"
+                  >
+                    {{ 'CHALLENGE.TYPES.' + type.toUpperCase() | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deadline -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.DEADLINE' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              formControlName="deadline"
+              [min]="minDate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+            />
+            <p
+              *ngIf="
+                challengeForm.get('deadline')?.hasError('pastDate') &&
+                challengeForm.get('deadline')?.touched
+              "
+              class="text-red-600 text-sm mt-1"
+            >
+              {{ 'CHALLENGE.FORM.DEADLINE_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.DESCRIPTION' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              formControlName="description"
+              rows="5"
+              placeholder="{{ 'CHALLENGE.FORM.DESCRIPTION_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Skills Dropdown with Search -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.SKILLS' | translate }} <span class="text-red-500">*</span>
+            </label>
+
+            <!-- Selected Skills Pills -->
+            <div
+              *ngIf="selectedTags.length > 0"
+              class="flex flex-wrap gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+            >
+              <span
+                *ngFor="let skill of selectedTags"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-sm font-medium"
+              >
+                {{ skill }}
+                <button
+                  type="button"
+                  (click)="removeSkill(skill)"
+                  class="hover:bg-gray-700 rounded-full p-0.5 transition-colors"
+                >
+                  <lucide-icon [img]="icons.X" class="w-3.5 h-3.5"></lucide-icon>
+                </button>
+              </span>
+            </div>
+
+            <!-- Skills Dropdown -->
+            <div class="relative">
+              <button
+                type="button"
+                class="custom-dropdown"
+                (click)="openSkillsDropdown = !openSkillsDropdown"
+              >
+                <span class="text-gray-400">
+                  {{
+                    selectedTags.length > 0
+                      ? selectedTags.length + ' ' + ('CHALLENGE.FORM.SKILLS_SELECTED' | translate)
+                      : ('CHALLENGE.FORM.SELECT_SKILLS' | translate)
+                  }}
+                </span>
+                <lucide-icon
+                  [img]="icons.ChevronDown"
+                  class="w-5 h-5 text-gray-500 transition-transform"
+                  [class.rotate-180]="openSkillsDropdown"
+                ></lucide-icon>
+              </button>
+
+              <!-- Dropdown Menu with Search -->
+              <div
+                *ngIf="openSkillsDropdown"
+                class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl"
+              >
+                <!-- Search Input -->
+                <div class="p-3 border-b border-gray-200">
+                  <div class="relative">
+                    <lucide-icon
+                      [img]="icons.Search"
+                      class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                    ></lucide-icon>
+                    <input
+                      type="text"
+                      [(ngModel)]="skillSearchQuery"
+                      [ngModelOptions]="{ standalone: true }"
+                      placeholder="{{ 'CHALLENGE.FORM.SEARCH_SKILLS' | translate }}"
+                      class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg outline-none focus:border-black text-sm"
+                    />
+                    <button
+                      *ngIf="skillSearchQuery"
+                      type="button"
+                      (click)="clearSkillSearch()"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <lucide-icon [img]="icons.X" class="w-4 h-4"></lucide-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Skills List -->
+                <div class="max-h-64 overflow-y-auto">
+                  <div
+                    *ngIf="filteredSkills.length === 0"
+                    class="px-4 py-8 text-center text-gray-500 text-sm"
+                  >
+                    {{ 'CHALLENGE.FORM.NO_SKILLS_FOUND' | translate }}
+                  </div>
+                  <label
+                    *ngFor="let skill of filteredSkills"
+                    class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isSkillSelected(skill)"
+                      (change)="toggleSkill(skill)"
+                      class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-black focus:ring-offset-0"
+                    />
+                    <span class="text-sm text-gray-900">{{ skill }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <p class="mt-2 text-sm text-gray-500">
+              <span *ngIf="!selectedCategory" class="text-yellow-600"
+                >💡 {{ 'CHALLENGE.FORM.SELECT_CATEGORY_FIRST' | translate }}</span
+              >
+              <span *ngIf="selectedCategory"
+                >{{ selectedTags.length }} / {{ availableSkills.length }}
+                {{ 'CHALLENGE.FORM.SKILLS_AVAILABLE' | translate }}</span
+              >
+            </p>
+          </div>
+
+          <!-- Salary (if type = job) -->
+          <div *ngIf="selectedType === 'job'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.SALARY' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="salary"
+              min="1000"
+              placeholder="{{ 'CHALLENGE.FORM.SALARY_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+            />
+          </div>
+
+          <!-- Prize Amount (if type = prize) -->
+          <div *ngIf="selectedType === 'prize'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.PRIZE' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="prizeAmount"
+              min="100"
+              placeholder="{{ 'CHALLENGE.FORM.PRIZE_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+            />
+          </div>
+
+          <!-- Additional Info (Optional) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.ADDITIONAL_INFO' | translate }}
+              <span class="text-xs text-gray-500 ml-1"
+                >({{ 'CHALLENGE.FORM.OPTIONAL' | translate }})</span
+              >
+            </label>
+            <textarea
+              formControlName="additionalInfo"
+              rows="4"
+              placeholder="{{ 'CHALLENGE.FORM.ADDITIONAL_INFO_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all resize-none"
+            ></textarea>
+          </div>
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="isSubmitting || submitSuccess"
+            class="w-full px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-lg"
+          >
+            <span *ngIf="!isSubmitting">{{ 'CHALLENGE.FORM.SUBMIT' | translate }}</span>
+            <span *ngIf="isSubmitting">{{ 'CHALLENGE.FORM.SUBMITTING' | translate }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
