@@ -1,12 +1,12 @@
 import {
-  createReport,
-  getModerationStats,
-  getReports,
-  resolveReport,
+   createReport,
+   getModerationStats,
+   getReports,
+   resolveReport,
 } from "../controllers/moderationController";
 import {
-  createReportSchema,
-  resolveReportSchema,
+   createReportSchema,
+   resolveReportSchema,
 } from "./../DTO/CreateReportDTO";
 
 import Report from "../models/Report";
@@ -15,6 +15,9 @@ import auth from "../middlewares/authMiddleware";
 import express from "express";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
+import "../models/User";
+import "../models/Challenge";
+import "../models/Submission";
 
 const moderationRouter = express.Router();
 
@@ -26,10 +29,10 @@ const moderationRouter = express.Router();
  * POST /api/moderation/report
  */
 moderationRouter.post(
-  "/report",
-  validate(createReportSchema),
-  auth,
-  createReport
+   "/report",
+   validate(createReportSchema),
+   auth,
+   createReport
 );
 
 // ==============================================================================
@@ -40,14 +43,14 @@ moderationRouter.post(
  * GET /api/moderation
  */
 moderationRouter.get(
-  "/",
-  auth,
-  restrictTo(["admin"]),
-  advancedResults(Report, [
-    { path: "reporterId", select: "name email type" },
-    { path: "targetId" },
-  ]),
-  getReports
+   "/",
+   auth,
+   restrictTo(["admin"]),
+   advancedResults(Report, [
+      { path: "reporterId", select: "name email type" },
+      { path: "targetId" },
+   ]),
+   getReports
 );
 
 /**
@@ -59,11 +62,11 @@ moderationRouter.get("/stats", auth, restrictTo(["admin"]), getModerationStats);
  * PUT /api/moderation/:id/resolve
  */
 moderationRouter.put(
-  "/:id/resolve",
-  validate(resolveReportSchema),
-  auth,
-  restrictTo(["admin"]),
-  resolveReport
+   "/:id/resolve",
+   validate(resolveReportSchema),
+   auth,
+   restrictTo(["admin"]),
+   resolveReport
 );
 
 export default moderationRouter;

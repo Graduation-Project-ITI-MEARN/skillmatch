@@ -109,6 +109,24 @@
         "PENDING": "قيد الانتظار",
         "COMPLETED": "مكتملة",
         "AVG_SCORE": "متوسط التقييم"
+      },
+      "MODERATION": {
+        "TITLE": "المراقبة",
+        "SUBTITLE": "مراجعة المحتوى المبلغ عنه ({{ count }} عنصر)",
+        "NO_REPORTS": "No reports found",
+        "NO_REPORTS_SUBTITLE": "لا توجد تقارير {{ status }}.",
+        "PENDING": "قيد الانتظار",
+        "RESOLVED": "محلول",
+        "DISMISSED": "متجاهل",
+        "REVIEW": "مراجعة",
+        "DISMISS": "تجاهل",
+        "RESOLVE": "حل & حذف",
+        "CHALLENGE": "تحدي",
+        "USER": "مستخدم",
+        "SUBMISSION": "مشاركة",
+        "REASON": "السبب",
+        "REPORTED_BY": "تم التبليغ بواسطة",
+        "ON": "في"
       }
     },
     "OVERVIEW": {
