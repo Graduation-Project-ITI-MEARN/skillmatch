@@ -16,20 +16,50 @@ export const routes: Routes = [
       ),
   },
 
-  // 3. ⭐ CHALLENGER ROUTE (Moved OUTSIDE the main Dashboard Shell)
-  // This must come BEFORE the generic 'dashboard' path so it matches first.
-  // It loads the component directly, so NO ugly header, NO sidebar from the parent.
+  // =========================
+  // ⭐ CHALLENGER ROUTES
+  // =========================
   {
     path: 'dashboard/challenger',
-    loadComponent: () =>
-      import('./(dashboard)/challenger/challenger-dashboard.component').then(
-        (m) => m.ChallengerDashboardComponent
-      ),
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./(dashboard)/challenger/challenger-dashboard.component').then(
+            (m) => m.ChallengerDashboardComponent
+          ),
+      },
+      // Detail Page: View Submissions (Active)
+      {
+        path: 'challenge/:id/submissions',
+        loadComponent: () =>
+          import('./(dashboard)/challenger/submissions/challenge-submissions.component').then(
+            (m) => m.ChallengeSubmissionsComponent
+          ),
+      },
+      // Detail Page: Edit Challenge
+      {
+        path: 'challenge/:id/edit',
+        loadComponent: () =>
+          import('./(dashboard)/challenger/edit/edit-challenge.component').then(
+            (m) => m.EditChallengeComponent
+          ),
+      },
+      // 👇 UPDATED: Points to the new Winner Page
+      {
+        path: 'challenge/:id/solution',
+        loadComponent: () =>
+          import('./(dashboard)/challenger/solution/winner-solution.component').then(
+            (m) => m.WinnerSolutionComponent
+          ),
+      },
+    ],
   },
 
-  // 4. STANDARD DASHBOARD SHELL (For Admin, Company, Candidate)
-  // This loads the Layout (Header + Sidebar) that you didn't want for Challenger.
+  // =========================
+  // STANDARD DASHBOARD SHELL
+  // =========================
   {
     path: 'dashboard',
     loadComponent: () =>
@@ -65,13 +95,6 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
           },
-          {
-           path: 'challenge/:id',
-          loadComponent: () =>
-         import('./pages/candidate/challenge-details/challenge-details').then(
-          (m) => m.ChallengeDetails
-      ),
-      },
         ],
       },
 
