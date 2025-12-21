@@ -1,1 +1,98 @@
-<p>leaderboard works!</p>
+<div class="space-y-8 animate-fade-in">
+  <!-- Header & Filters -->
+  <div class="flex items-center justify-between flex-wrap gap-4">
+    <div>
+      <h2 class="text-2xl font-bold mb-2 text-gray-800">Global Leaderboard</h2>
+      <p class="text-gray-600">Top performers across all challenges</p>
+    </div>
+
+    <div class="flex gap-2">
+      <button
+        (click)="activeFilter = 'all'"
+        [class]="
+          activeFilter === 'all'
+            ? 'bg-gray-900 text-white'
+            : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+        "
+        class="px-4 py-2 rounded-lg transition-all text-sm font-medium"
+      >
+        All Time
+      </button>
+      <button
+        (click)="activeFilter = 'month'"
+        [class]="
+          activeFilter === 'month'
+            ? 'bg-gray-900 text-white'
+            : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+        "
+        class="px-4 py-2 rounded-lg transition-all text-sm font-medium"
+      >
+        This Month
+      </button>
+      <button
+        (click)="activeFilter = 'week'"
+        [class]="
+          activeFilter === 'week'
+            ? 'bg-gray-900 text-white'
+            : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+        "
+        class="px-4 py-2 rounded-lg transition-all text-sm font-medium"
+      >
+        This Week
+      </button>
+    </div>
+  </div>
+
+  <!-- Leaderboard List -->
+  <div class="space-y-3">
+    @if (leaderboard.length === 0) {
+    <div class="text-center py-10 text-gray-500">Loading leaderboard...</div>
+    } @for (entry of leaderboard; track entry._id; let i = $index) {
+    <!-- تم إضافة [id] هنا ليكون بمثابة الـ key على مستوى الـ DOM -->
+    <div
+      [id]="entry._id"
+      class="flex items-center gap-6 p-6 rounded-2xl transition-all border"
+      [ngClass]="{
+        'bg-gradient-to-right from-blue-400/20 to-purple-400/20 border-blue-300': isCurrentUser(
+          entry._id
+        ),
+        'bg-white hover:bg-gray-50 border-gray-200': !isCurrentUser(entry._id)
+      }"
+    >
+      <!-- Rank Icon/Number -->
+      <div class="w-12 text-center text-2xl text-gray-500 font-bold">
+        @switch (i) { @case (0) { <span>🥇</span> } @case (1) { <span>🥈</span> } @case (2) {
+        <span>🥉</span> } @default { <span>#{{ i + 1 }}</span> } }
+      </div>
+
+      <!-- Avatar -->
+      <div
+        class="w-10 h-10 rounded-full bg-primary-gradient flex items-center justify-center text-white font-bold text-sm shadow-sm"
+      >
+        {{ getInitials(entry.name) }}
+      </div>
+
+      <!-- Name & Stats -->
+      <div class="flex-1">
+        <h3 class="mb-1 font-semibold text-gray-900">
+          {{ entry.name }}
+          @if (isCurrentUser(entry._id)) {
+          <span class="text-blue-600 ml-1">(You)</span>
+          }
+        </h3>
+        <p class="text-sm text-gray-600">
+          {{ entry.completedChallenges || 0 }} challenges completed
+        </p>
+      </div>
+
+      <!-- Score -->
+      <div class="text-right">
+        <div class="text-2xl mb-1 font-bold text-gray-800">
+          {{ entry.totalScore | number }}
+        </div>
+        <div class="text-xs text-gray-500 uppercase tracking-wide">Total Score</div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

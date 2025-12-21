@@ -1,10 +1,9 @@
 <app-dashboard-layout
   titleKey="DASHBOARD.WELCOME"
-  [titleParams]="{ name }"
+  [titleParams]="{ name: user.name || 'Candidate' }"
   subtitleKey="DASHBOARD.SUBTITLE"
   [tabs]="tabs"
 >
-  <!-- Avatar -->
   <span avatar>{{ initials }}</span>
 
   <!-- Actions -->
@@ -18,9 +17,11 @@
     </button>
   </div>
 
+  <!-- Stats Grid -->
   <ng-container stats>
-    @for(stat of stats; track stat.labelKey){
-    <z-stat labelKey="{{ stat.labelKey }}" value="{{ stat.value }}" trend="{{ stat.trend }}">
+    @for(stat of stats; track stat.labelKey) {
+    <z-stat [labelKey]="stat.labelKey" [value]="stat.value" [trend]="stat.trend">
+      <!-- Icon Binding -->
       <lucide-icon icon [img]="stat.icon" class="w-5 h-5"></lucide-icon>
     </z-stat>
     }

@@ -1,1 +1,181 @@
-<p>submissions works!</p>
+<div class="space-y-6">
+  <!-- Header + Filters -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold">{{ 'DASHBOARD.SUBMISSIONS.TITLE' | translate }}</h2>
+      <p class="text-gray-600 text-sm mt-1">{{ 'DASHBOARD.SUBMISSIONS.SUBTITLE' | translate }}</p>
+    </div>
+
+    <!-- Challenge Dropdown + Filters -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <!-- Custom Challenge Dropdown -->
+      <div class="relative w-64">
+        <div
+          class="border rounded-md px-4 py-2 cursor-pointer flex justify-between items-center"
+          (click)="toggleDropdown()"
+        >
+          <span class="text-gray-900">
+            {{
+              selectedChallenge?.title || ('DASHBOARD.SUBMISSIONS.ACTIVE_CHALLENGES' | translate)
+            }}
+          </span>
+
+          <lucide-icon
+            [img]="icons.ChevronDown"
+            class="w-5 h-5"
+            [class.rotate-180]="showDropdown"
+          ></lucide-icon>
+        </div>
+
+        <div
+          *ngIf="showDropdown"
+          class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+        >
+          <div *ngIf="challenges.length === 0" class="px-4 py-3 text-gray-500 text-sm text-center">
+            No Active Challenge
+          </div>
+          <button
+            *ngFor="let challenge of challenges"
+            type="button"
+            (click)="selectChallenge(challenge)"
+            class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm"
+            [class.bg-gray-100]="selectedChallengeId === challenge.id"
+          >
+            {{ challenge.title }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Filters -->
+      <div class="flex gap-2 bg-white border border-gray-200 rounded-lg p-1">
+        <button
+          *ngFor="let filter of filters"
+          (click)="setFilter(filter)"
+          class="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          [class.bg-gray-900]="activeFilter === filter"
+          [class.text-white]="activeFilter === filter"
+          [class.text-gray-600]="activeFilter !== filter"
+          [class.hover:text-gray-900]="activeFilter !== filter"
+        >
+          {{ 'DASHBOARD.SUBMISSIONS.FILTERS.' + filter | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-12 text-gray-500">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    <p class="mt-2">{{ 'DASHBOARD.COMMON.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && filteredSubmissions.length === 0"
+    class="text-center py-12 text-gray-500"
+  >
+    <p class="text-lg">{{ 'DASHBOARD.SUBMISSIONS.NO_SUBMISSIONS' | translate }}</p>
+  </div>
+
+  <!-- Submissions List -->
+  <div *ngIf="!isLoading && filteredSubmissions.length > 0" class="space-y-4">
+    <div
+      *ngFor="let submission of filteredSubmissions"
+      class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+    >
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+        <div class="flex gap-4 items-center">
+          <div
+            class="w-14 h-14 rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-semibold text-lg shrink-0"
+          >
+            {{ submission.candidateInitials }}
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg">{{ submission.candidateName }}</h3>
+            <p class="text-gray-600 text-sm">{{ submission.role }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span
+            class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
+            [ngClass]="getStatusClass(submission.status)"
+          >
+            {{ 'DASHBOARD.SUBMISSIONS.STATUS.' + submission.status | translate }}
+          </span>
+          <div class="text-right">
+            <div class="text-2xl font-bold">{{ submission.overallScore }}</div>
+            <div class="text-sm text-gray-500">
+              {{ 'DASHBOARD.SUBMISSIONS.OVERALL' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Score Bars -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600">{{
+              'DASHBOARD.SUBMISSIONS.TECHNICAL_QUALITY' | translate
+            }}</span>
+            <span class="text-sm font-semibold">{{ submission.technicalQuality }}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-linear-to-r from-blue-500 to-purple-500 transition-all duration-500"
+              [style.width.%]="submission.technicalQuality"
+            ></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600">{{
+              'DASHBOARD.SUBMISSIONS.COMMUNICATION' | translate
+            }}</span>
+            <span class="text-sm font-semibold">{{ submission.communication }}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-linear-to-r from-blue-500 to-purple-500 transition-all duration-500"
+              [style.width.%]="submission.communication"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap gap-3">
+        <button
+          (click)="watchVideo(submission.videoUrl)"
+          class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.Play" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.WATCH_VIDEO' | translate }}
+        </button>
+        <button
+          (click)="viewApplication(submission.id)"
+          class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.Eye" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.VIEW_APPLICATION' | translate }}
+        </button>
+        <button
+          (click)="contactCandidate(submission.id)"
+          class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.MessageSquare" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.CONTACT' | translate }}
+        </button>
+        <button
+          (click)="shortlistCandidate(submission.id)"
+          class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.Star" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.SHORTLIST' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

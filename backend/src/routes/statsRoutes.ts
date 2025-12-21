@@ -79,4 +79,40 @@ statsRouter.get(
   getJobPerformance
 );
 
+statsRouter.get(
+   "/distribution",
+   auth,
+   restrictTo(["admin"]),
+   getUserDistribution
+);
+statsRouter.get("/daily", auth, restrictTo(["admin"]), getDailyStats);
+
+statsRouter.get(
+   "/top-challenges",
+   auth,
+   restrictTo(["admin"]),
+   getTopChallenges
+);
+
+statsRouter.get(
+   "/hiring-analytics",
+   auth,
+   restrictTo(["company", "challenger"]),
+   getHiringAnalytics
+);
+
+statsRouter.get(
+   "/platform-analytics",
+   auth,
+   restrictTo(["admin"]),
+   getPlatformAnalytics
+);
+
+statsRouter.get(
+   "/job-performance",
+   auth,
+   restrictTo(["company", "challenger"]),
+   getJobPerformance
+);
+
 export default statsRouter;

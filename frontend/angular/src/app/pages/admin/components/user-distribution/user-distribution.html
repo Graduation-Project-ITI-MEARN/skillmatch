@@ -1,0 +1,26 @@
+<ui-card title="User Distribution" class="pb-10">
+  <h2 class="text-lg font-bold text-gray-900 mb-6">
+    {{ 'DASHBOARD.ADMIN.USER_DISTRIBUTION' | translate }}
+  </h2>
+
+  <div class="space-y-5">
+    @for(item of data(); track item.label) {
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold">{{ item.label | translate }}</span>
+        </div>
+        <span class="text-lg font-semibold">{{ item.value | number }}</span>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-1000 ease-out bg-primary-gradient"
+          [style.width.%]="item.percentage"
+        ></div>
+      </div>
+    </div>
+    }
+  </div>
+</ui-card>
