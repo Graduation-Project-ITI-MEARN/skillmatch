@@ -49,10 +49,10 @@ export const routes: Routes = [
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
           },
           {
-    path: 'challenge/:id',
-    loadComponent: () =>
-      import('./pages/candidate/challenge-details/challenge-details').then(
-        (m) => m.ChallengeDetailsComponent
+           path: 'challenge/:id',
+          loadComponent: () =>
+         import('./pages/candidate/challenge-details/challenge-details').then(
+          (m) => m.ChallengeDetails
       ),
       },
         ],

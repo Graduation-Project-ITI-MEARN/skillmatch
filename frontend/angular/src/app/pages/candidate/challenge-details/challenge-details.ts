@@ -1,16 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import {
-  FileDown,
-  Link,
-  Layout,
-  Award,
-  BarChart,
-  Code,
-  Clock,
-  LucideAngularModule
-} from 'lucide-angular';
+import { LucideAngularModule, FileDown, Link, Layout, Award, BarChart, Code, Clock } from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CandidateService } from 'src/app/core/services/candidateService';
 import { forkJoin } from 'rxjs';
@@ -21,13 +12,13 @@ import { forkJoin } from 'rxjs';
   imports: [CommonModule, LucideAngularModule, TranslateModule, RouterModule],
   templateUrl: './challenge-details.html',
 })
-export class ChallengeDetailsComponent implements OnInit {
+export class ChallengeDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private candidateService = inject(CandidateService);
 
   challenge: any = null;
   loading = true;
-  isSubmitted = false;
+  isSubmitted = false; // دي اللي هتحدد شكل الزرار
 
   readonly icons = { FileDown, Link, Layout, Award, BarChart, Code, Clock };
 
@@ -39,7 +30,7 @@ export class ChallengeDetailsComponent implements OnInit {
   }
 
   loadData(id: string) {
-
+    // بنطلب بيانات التحدي وقائمة التسليمات الخاصة باليوزر في نفس الوقت
     forkJoin({
       challengeDetail: this.candidateService.getChallengeById(id),
       mySubmissions: this.candidateService.getMySubmissions()
@@ -47,6 +38,7 @@ export class ChallengeDetailsComponent implements OnInit {
       next: (res) => {
         this.challenge = res.challengeDetail.data;
 
+        // التأكد لو الـ ID بتاع التحدي ده موجود في أي Submission قديم لليوزر
         const submissions = res.mySubmissions?.data || [];
         this.isSubmitted = submissions.some((s: any) =>
             (s.challengeId === id) || (s.challenge?._id === id)
@@ -63,10 +55,10 @@ export class ChallengeDetailsComponent implements OnInit {
 
   handleAction() {
     if (this.isSubmitted) {
-
+      // توجيه لصفحة الحل (Portfolio) أو عرض رسالة
       console.log('User already submitted. Redirecting to portfolio...');
     } else {
-
+      // منطق بدء التحدي (Start Challenge)
       console.log('Starting challenge interaction...');
     }
   }
