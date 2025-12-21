@@ -58,4 +58,11 @@ export class CandidateService {
       withCredentials: true,
     });
   }
+
+    // ================== Challenge Details ==================
+  getChallengeById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/challenges/${id}`, {
+      withCredentials: true,
+    });
+  }
 }

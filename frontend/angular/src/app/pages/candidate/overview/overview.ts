@@ -54,15 +54,17 @@ export class Overview implements OnInit {
     forkJoin({
       challenges: this.candidateService.getMyChallenges(),
       ai: this.candidateService.getAiRecommendations(),
-      // جلبنا الـ Submissions هنا عشان نعرضها في الـ Overview
       submissions: this.candidateService.getMySubmissions(),
     }).subscribe({
       next: (res: any) => {
         /* -------- 1. Active Challenges -------- */
         const challengesData = Array.isArray(res.challenges)
-          ? res.challenges
-          : res.challenges?.data || [];
+        ? res.challenges
+        : res.challenges?.data;
 
+
+
+        console.log("dataaa" ,challengesData)
         this.activeChallenges = challengesData.map((c: any) => ({
           ...c,
           daysLeft: this.calculateDaysLeft(
