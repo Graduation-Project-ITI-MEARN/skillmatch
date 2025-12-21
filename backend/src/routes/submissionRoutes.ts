@@ -1,8 +1,10 @@
 import {
   createSubmission,
   getAllSubmissions,
+  getMySubmissions,
   getSubmissionById,
   getSubmissionsByChallenge,
+  updateSubmissionStatus,
 } from "../controllers/submissionController";
 
 import Submission from "../models/Submission";
@@ -22,6 +24,15 @@ router.get(
   restrictTo(["admin"]),
   advancedResults(Submission),
   getAllSubmissions
+);
+
+// --- CANDIDATE submissions ---
+router.get(
+  "/mine",
+  auth,
+  restrictTo(["candidate"]),
+  advancedResults(Submission),
+  getMySubmissions
 );
 
 // --- USER create submission ---
@@ -50,5 +61,7 @@ router.get(
 
 // --- Get single submission ---
 router.get("/:id", auth, getSubmissionById);
+
+router.put("/:id/status", auth, restrictTo(["admin"]), updateSubmissionStatus);
 
 export default router;

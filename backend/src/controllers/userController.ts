@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
+
+import Submission from "../models/Submission";
 import User from "../models/User";
+import { calculateSkillLevel } from "../utils/skillLevel";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
+import mongoose from "mongoose";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -21,7 +25,7 @@ const getAllUsers = catchError(async (req: Request, res: Response) => {
  * @access  Private (Admin/Company)
  */
 const getAllCandidates = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "candidate" });
+  const users = await User.find({ type: "candidate" });
 
   res.status(200).json({
     success: true,
@@ -35,7 +39,7 @@ const getAllCandidates = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getAllCompanies = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "company" });
+  const users = await User.find({ type: "company" });
 
   res.status(200).json({
     success: true,
@@ -49,7 +53,7 @@ const getAllCompanies = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getAllChallengers = catchError(async (req: Request, res: Response) => {
-  const users = await User.find({ role: "challenger" });
+  const users = await User.find({ type: "challenger" });
 
   res.status(200).json({
     success: true,
@@ -114,6 +118,68 @@ const updateUser = catchError(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @desc    Get AI-calculated skills for the current user
+ * @route   GET /api/users/profile/ai-skills
+ * @access  Private
+ */
+const getAISkills = catchError(async (req: Request, res: Response) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const results = await Submission.aggregate([
+    {
+      $match: {
+        candidateId: new mongoose.Types.ObjectId(user._id),
+        status: "accepted",
+      },
+    },
+    {
+      $lookup: {
+        from: "challenges", // Match the collection name exactly as in MongoDB
+        localField: "challengeId",
+        foreignField: "_id",
+        as: "challenge",
+      },
+    },
+    { $unwind: "$challenge" },
+    {
+      $group: {
+        _id: "$challenge.category",
+        challengeCount: { $sum: 1 },
+        avgScore: { $avg: "$aiScore" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        skill: "$_id",
+        challengeCount: 1,
+        score: { $round: ["$avgScore", 0] },
+      },
+    },
+  ]);
+
+  const skills = results.map((skill) => ({
+    ...skill,
+    level: calculateSkillLevel(skill.score, skill.challengeCount),
+  }));
+
+  res.status(200).json({
+    success: true,
+    data: skills,
+  });
+
+  // Debug: log submissions to verify
+  const testResults = await Submission.find({
+    candidateId: user._id,
+    status: "accepted",
+  });
+  console.log("Found submissions:", testResults);
+});
+
 export {
   getAllUsers,
   getAllCandidates,
@@ -121,4 +187,5 @@ export {
   getAllChallengers,
   getUserById,
   updateUser,
+  getAISkills,
 };

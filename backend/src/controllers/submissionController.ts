@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import Submission, { ISubmission, SubmissionType } from "../models/Submission";
+
 import APIError from "../utils/APIError";
 import { catchError } from "../utils/catchAsync";
-import mongoose from "mongoose";
+import { emitToUser } from "../socket/socketService";
 import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
+import mongoose from "mongoose";
 
 /**
  * @desc    Get all submissions (Admin/General use)
@@ -12,6 +14,20 @@ import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
  */
 const getAllSubmissions = catchError(async (req: Request, res: Response) => {
   const submissions = await Submission.find();
+
+  res.status(200).json({
+    success: true,
+    data: submissions,
+  });
+});
+
+const getMySubmissions = catchError(async (req: Request, res: Response) => {
+  const user = req.user;
+  if (!user) throw new APIError(401, "User not authenticated");
+
+  const submissions = await Submission.find({
+    candidateId: new mongoose.Types.ObjectId(user._id),
+  });
 
   res.status(200).json({
     success: true,
@@ -110,6 +126,7 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
     candidateId,
     "submission_created",
     `User submitted to challenge: ${challengeTitle}`,
+    "success",
     submission._id
   );
 
@@ -171,9 +188,49 @@ const getSubmissionById = catchError(async (req: Request, res: Response) => {
   });
 });
 
+const updateSubmissionStatus = catchError(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { status, score } = req.body;
+
+    if (!["accepted", "rejected"].includes(status)) {
+      throw new APIError(400, "Invalid status");
+    }
+
+    const submission = await Submission.findById(id).populate(
+      "challengeId",
+      "title"
+    );
+
+    if (!submission) {
+      throw new APIError(404, "Submission not found");
+    }
+
+    submission.status = status;
+    if (score !== undefined) submission.aiScore = score;
+
+    await submission.save();
+
+    // REAL-TIME NOTIFICATION
+    emitToUser(submission.candidateId.toString(), {
+      title: "Submission Update",
+      message: `Your submission for "${
+        (submission.challengeId as any).title
+      }" was ${status}.`,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: submission,
+    });
+  }
+);
+
 export {
   getAllSubmissions,
+  getMySubmissions,
   createSubmission,
   getSubmissionsByChallenge,
   getSubmissionById,
+  updateSubmissionStatus,
 };

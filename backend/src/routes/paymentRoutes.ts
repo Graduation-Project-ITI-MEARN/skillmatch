@@ -1,8 +1,6 @@
-import express from "express";
 import {
   createPaymentIntent,
   handleWebhook,
-  getWalletDetails,
 } from "../controllers/paymentController";
 import {
   createPaymentIntentSchema,
@@ -10,6 +8,7 @@ import {
 } from "../DTO/CreatePaymentIntentDTO";
 
 import auth from "../middlewares/authMiddleware";
+import express from "express";
 import validate from "../middlewares/validate";
 
 const paymentRouter = express.Router();
@@ -21,9 +20,6 @@ paymentRouter.post(
   auth,
   createPaymentIntent
 );
-
-// Route to get Wallet Balance for Dashboard Sidebar
-paymentRouter.get("/details", auth, getWalletDetails);
 
 // Webhook for Paymob to notify us (Must be public internet accessible)
 paymentRouter.post("/webhook", validate(paymobWebhookSchema), handleWebhook);
