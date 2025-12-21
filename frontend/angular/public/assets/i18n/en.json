@@ -80,7 +80,8 @@
       "NEXT": "Next",
       "PREVIOUS": "Previous",
       "SHOWING": "Showing",
-      "OF": "of"
+      "OF": "of",
+      "PAGE": "Page"
     },
     "ADMIN": {
       "USER_DISTRIBUTION": "User Distribution",
@@ -109,6 +110,44 @@
         "PENDING": "Pending",
         "COMPLETED": "Completed",
         "AVG_SCORE": "Avg. Score"
+      },
+      "MODERATION": {
+        "TITLE": "Moderation",
+        "SUBTITLE": "Review flagged content ({{ count }} items)",
+        "NO_REPORTS": "No reports found",
+        "NO_REPORTS_SUBTITLE": "There are no {{ status }} reports.",
+        "PENDING": "Pending",
+        "RESOLVED": "Resolved",
+        "DISMISSED": "Dismissed",
+        "REVIEW": "Review",
+        "DISMISS": "Dismiss",
+        "RESOLVE": "Resolve & Remove",
+        "CHALLENGE": "Challenge",
+        "USER": "User",
+        "SUBMISSION": "Submission",
+        "REASON": "Reason",
+        "REPORTED_BY": "Reported By",
+        "ON": "on"
+      },
+      "ANALYTICS": {
+        "TITLE": "Platform Analytics",
+        "SUBTITLE": "Comprehensive metrics and insights (Last 30 Days)",
+        "USER_GROWTH": "User Growth",
+        "VS_LAST_MONTH": "vs last month",
+        "ACTIVE_USERS": "Active Users (7d)",
+        "ACTIVE_SUBTITLE": "Users active this week",
+        "REVENUE": "Total Revenue",
+        "REVENUE_SUBTITLE": "Accumulated platform fees",
+        "CONVERSION": "Conversion Rate",
+        "NO_DATA": "Data not available",
+        "REVENUE_DISTRIBUTION": "Revenue Source Distribution",
+        "COMPANY_CHALLENGES": "Company Challenges",
+        "PREMIUM_FEATURES": "Premium Features",
+        "COMMISSIONS": "Commissions",
+        "PLATFORM_HEALTH": "Platform Health",
+        "AVG_SESSION": "Avg. Session Length",
+        "CHALLENGES_PER_USER": "Challenges per User",
+        "RETENTION": "Retention Rate"
       }
     },
     "OVERVIEW": {

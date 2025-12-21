@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IChallenge extends Document {
    title: string;
@@ -10,7 +10,11 @@ export interface IChallenge extends Document {
    status: "draft" | "published" | "closed";
    type: "job" | "prize";
    prizeAmount?: number;
+   salary?: number;
+   additionalInfo?: string;
    tags?: string[];
+   createdAt: Date;
+   updatedAt: Date;
 }
 
 const ChallengeSchema: Schema = new Schema(
@@ -39,6 +43,8 @@ const ChallengeSchema: Schema = new Schema(
          required: true,
       },
       prizeAmount: { type: Number },
+      salary: { type: Number },
+      additionalInfo: { type: String },
       tags: [{ type: String }],
       deadline: { type: Date, required: true },
    },

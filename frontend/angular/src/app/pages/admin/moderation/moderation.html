@@ -1,1 +1,164 @@
-<p>moderation works!</p>
+<div class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+  <!-- Header & Filters -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold mb-2 text-gray-900">
+        {{ 'DASHBOARD.ADMIN.MODERATION.TITLE' | translate }}
+      </h2>
+      <p class="text-gray-600">
+        {{ 'DASHBOARD.ADMIN.MODERATION.SUBTITLE' | translate : { count: totalCount() } }}
+      </p>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="flex p-1 bg-gray-100/50 rounded-lg">
+      @for(tab of tabs; track tab.value) {
+      <button
+        (click)="setTab(tab.value)"
+        class="px-4 py-2 rounded-md transition-all font-medium text-sm"
+        [ngClass]="{
+          'bg-white text-gray-900 shadow-sm': currentTab() === tab.value,
+          'text-gray-500 hover:text-gray-700': currentTab() !== tab.value
+        }"
+      >
+        {{ tab.label | translate }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Reports List -->
+  <div class="space-y-4 min-h-100">
+    @if (loading()) {
+    <div class="p-12 text-center">
+      <div class="animate-pulse space-y-4">
+        <div class="h-32 bg-gray-100 rounded-2xl w-full"></div>
+        <div class="h-32 bg-gray-100 rounded-2xl w-full"></div>
+      </div>
+    </div>
+    } @else { @if (reports().length === 0) {
+    <div class="p-16 text-center border border-dashed border-gray-200 rounded-2xl bg-white">
+      <lucide-icon
+        [img]="icons.CheckCircle"
+        class="w-12 h-12 text-green-500 mx-auto mb-3"
+      ></lucide-icon>
+      <p class="text-gray-900 font-medium">
+        {{ 'DASHBOARD.ADMIN.MODERATION.NO_REPORTS' | translate }}
+      </p>
+      <p class="text-gray-500 text-sm">
+        {{ 'DASHBOARD.ADMIN.MODERATION.NO_REPORTS_SUBTITLE' | translate }}
+      </p>
+    </div>
+    } @else { @for (item of reports(); track item._id) {
+    <ui-card class="mb-6">
+      <div class="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
+        <div class="flex-1">
+          <!-- Header: Title & Type -->
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <h3 class="text-lg font-bold text-gray-900">
+              {{ getItemName(item) }}
+            </h3>
+
+            <span
+              class="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 capitalize flex items-center gap-1"
+            >
+              <lucide-icon [img]="icons.Flag" class="w-3 h-3"></lucide-icon>
+              {{ item.targetType | translate }}
+            </span>
+
+            <span
+              class="px-3 py-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-full text-xs font-medium"
+            >
+              {{ item.status | translate }}
+            </span>
+          </div>
+
+          <!-- Details -->
+          <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 mt-6">
+            <p class="text-sm text-gray-800">
+              <span class="font-medium text-gray-500"
+                >{{ 'DASHBOARD.ADMIN.MODERATION.REASON' | translate }}:</span
+              >
+              {{ item.reason }}
+            </p>
+            <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+              {{ 'DASHBOARD.ADMIN.MODERATION.REPORTED_BY' | translate }}
+
+              <span class="font-medium text-gray-700">
+                {{ item.reporterId.name || 'Anonymous' }}
+              </span>
+
+              {{ 'DASHBOARD.ADMIN.MODERATION.ON' | translate }}
+
+              <span class="font-medium text-gray-700">
+                {{ item.createdAt | date : 'medium' }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Only for Pending) -->
+      @if (currentTab() === 'pending') {
+      <div class="flex flex-wrap gap-3 border-t border-gray-100 pt-4">
+        <button
+          (click)="onReview(item)"
+          class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.Eye" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.ADMIN.MODERATION.REVIEW' | translate }}
+        </button>
+
+        <div class="flex-1"></div>
+        <!-- Spacer -->
+
+        <button
+          (click)="onDismiss(item._id)"
+          class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.XCircle" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.ADMIN.MODERATION.DISMISS' | translate }}
+        </button>
+
+        <button
+          (click)="onResolve(item)"
+          class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 border border-red-100 rounded-lg hover:bg-red-100 transition-all text-sm font-medium"
+        >
+          <lucide-icon [img]="icons.CheckCircle" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.ADMIN.MODERATION.RESOLVE' | translate }}
+        </button>
+      </div>
+      }
+    </ui-card>
+    } } }
+  </div>
+
+  <!-- Pagination Footer -->
+  @if (!loading() && reports().length > 0) {
+  <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+    <span class="text-sm text-gray-500">
+      {{ 'DASHBOARD.GENERAL.PAGE' | translate }} {{ currentPage() }}
+    </span>
+
+    <div class="flex gap-2">
+      <button
+        (click)="prevPage()"
+        [disabled]="currentPage() === 1"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm text-gray-600"
+      >
+        <lucide-icon [img]="icons.ChevronLeft" class="w-4 h-4"></lucide-icon>
+        {{ 'DASHBOARD.GENERAL.PREVIOUS' | translate }}
+      </button>
+
+      <button
+        (click)="nextPage()"
+        [disabled]="reports().length < limit"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm text-gray-600"
+      >
+        {{ 'DASHBOARD.GENERAL.NEXT' | translate }}
+        <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4"></lucide-icon>
+      </button>
+    </div>
+  </div>
+  }
+</div>
