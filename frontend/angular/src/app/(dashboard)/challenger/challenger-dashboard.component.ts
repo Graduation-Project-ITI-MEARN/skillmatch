@@ -13,43 +13,39 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./challenger-dashboard.component.scss'],
 })
 export class ChallengerDashboardComponent implements OnInit {
-  // Dependency Injection using inject()
   private challengerService = inject(ChallengerService);
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
 
-  // State Variables
   activeTab: 'active' | 'completed' | 'create' = 'active';
   isLoading = false;
 
-  // Data Containers
   stats: any = {};
   wallet: any = {};
   challenges: any[] = [];
   topCandidates: any[] = [];
 
-  // Form Group
   createForm: FormGroup;
 
-  // Categories Data with Icons
+  // Updated categories to match your Backend's allowed list
   categories = [
-    { name: 'Coding', icon: 'code' },
+    { name: 'Development', icon: 'code' },
     { name: 'Design', icon: 'pen-tool' },
     { name: 'Marketing', icon: 'trending-up' },
-    { name: 'Video', icon: 'video' },
     { name: 'Writing', icon: 'file-text' },
+    { name: 'Translation', icon: 'file-text' },
+    { name: 'Data Entry', icon: 'file-text' },
   ];
 
   constructor() {
-    // Initialize Form with Validators
     this.createForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(20)]],
-      category: ['Coding', Validators.required],
+      category: ['Development', Validators.required],
       difficulty: ['medium', Validators.required],
-      duration: [7, [Validators.required, Validators.min(1), Validators.max(60)]], // Default 7 days
+      duration: [7, [Validators.required, Validators.min(1), Validators.max(60)]],
       type: ['prize', Validators.required],
-      prizeAmount: [null, [Validators.required, Validators.min(100)]], // Minimum 100 EGP
+      prizeAmount: [null, [Validators.required, Validators.min(100)]],
       skills: ['', Validators.required],
     });
   }
@@ -61,12 +57,9 @@ export class ChallengerDashboardComponent implements OnInit {
     this.loadActiveChallenges();
   }
 
-  // --- Performance Helper ---
   trackByName(index: number, item: any): string {
     return item.name;
   }
-
-  // --- UI Helper Methods ---
 
   isFieldInvalid(field: string): boolean {
     const control = this.createForm.get(field);
@@ -74,21 +67,16 @@ export class ChallengerDashboardComponent implements OnInit {
   }
 
   getDaysLeft(deadlineInput: string | Date | undefined): string {
-    // 1. Handle missing date
     if (!deadlineInput) return 'No Deadline';
 
-    // 2. Parse Date safely
     const deadline = new Date(deadlineInput);
     if (isNaN(deadline.getTime())) return 'Invalid Date';
 
-    // 3. Calculate Difference
     const now = new Date();
     const diffTime = deadline.getTime() - now.getTime();
 
-    // 4. Handle "Ended" case immediately
     if (diffTime < 0) return 'Ended';
 
-    // 5. Convert to days
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return 'Ends Today';
@@ -102,8 +90,6 @@ export class ChallengerDashboardComponent implements OnInit {
     if (tab === 'active') this.loadActiveChallenges();
     if (tab === 'completed') this.loadCompletedChallenges();
   }
-
-  // --- Data Loading Methods ---
 
   loadStats() {
     this.challengerService.getStats().subscribe({
@@ -160,10 +146,7 @@ export class ChallengerDashboardComponent implements OnInit {
     });
   }
 
-  // --- Form Submission ---
-
   onSubmitChallenge() {
-    // 1. Validation Check
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
       this.toastr.warning('Please fix the errors in the form.');
@@ -172,43 +155,55 @@ export class ChallengerDashboardComponent implements OnInit {
 
     this.isLoading = true;
     const formData = this.createForm.value;
+    const skillsArray = formData.skills
+      ? formData.skills.split(',').map((s: string) => s.trim())
+      : [];
 
-    // 2. Prepare Payload
-    // Convert comma-separated string to array
-    const skillsArray = formData.skills.split(',').map((s: string) => s.trim());
+    // --- FIX: ROBUST DEADLINE CALCULATION ---
+    const daysToAdd = Number(formData.duration); // Ensure it's a number
+    const safeDays = !isNaN(daysToAdd) && daysToAdd > 0 ? daysToAdd : 7; // Fallback to 7 if invalid
 
-    // Calculate Deadline Date based on Duration (Days)
     const deadlineDate = new Date();
-    deadlineDate.setDate(deadlineDate.getDate() + formData.duration);
+    deadlineDate.setDate(deadlineDate.getDate() + safeDays);
+    // ----------------------------------------
 
     const payload = {
-      ...formData,
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      difficulty: formData.difficulty,
+      type: formData.type,
+      prizeAmount: Number(formData.prizeAmount),
       skills: skillsArray,
-      deadline: deadlineDate, // Send calculated Date object
+
+      // Both keys to ensure backend catches one of them
+      deadline: deadlineDate.toISOString(),
+
       currency: 'EGP',
       status: 'published',
+      tags: skillsArray, // Sending as tags too, just in case backend expects that
     };
 
-    // 3. API Call
+    console.log('🚀 Final Payload:', payload);
+
     this.challengerService.createChallenge(payload).subscribe({
       next: () => {
         this.toastr.success('Challenge Published Successfully!');
-
-        // Reset form to default state
         this.createForm.reset({
-          category: 'Coding',
+          category: 'Development',
           difficulty: 'medium',
           type: 'prize',
           duration: 7,
         });
-
-        // Refresh data and switch view
         this.switchTab('active');
         this.loadStats();
         this.isLoading = false;
       },
       error: (err) => {
-        this.toastr.error(err.error?.message || 'Failed to create challenge');
+        console.error('❌ Backend Error:', err);
+        this.toastr.error(
+          err.error?.message || 'Failed to create challenge. Backend rejected data.'
+        );
         this.isLoading = false;
       },
     });
