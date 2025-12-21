@@ -128,6 +128,26 @@
         "REASON": "Reason",
         "REPORTED_BY": "Reported By",
         "ON": "on"
+      },
+      "ANALYTICS": {
+        "TITLE": "Platform Analytics",
+        "SUBTITLE": "Comprehensive metrics and insights (Last 30 Days)",
+        "USER_GROWTH": "User Growth",
+        "VS_LAST_MONTH": "vs last month",
+        "ACTIVE_USERS": "Active Users (7d)",
+        "ACTIVE_SUBTITLE": "Users active this week",
+        "REVENUE": "Total Revenue",
+        "REVENUE_SUBTITLE": "Accumulated platform fees",
+        "CONVERSION": "Conversion Rate",
+        "NO_DATA": "Data not available",
+        "REVENUE_DISTRIBUTION": "Revenue Source Distribution",
+        "COMPANY_CHALLENGES": "Company Challenges",
+        "PREMIUM_FEATURES": "Premium Features",
+        "COMMISSIONS": "Commissions",
+        "PLATFORM_HEALTH": "Platform Health",
+        "AVG_SESSION": "Avg. Session Length",
+        "CHALLENGES_PER_USER": "Challenges per User",
+        "RETENTION": "Retention Rate"
       }
     },
     "OVERVIEW": {

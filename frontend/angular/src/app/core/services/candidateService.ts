@@ -26,7 +26,7 @@ export class CandidateService {
 
   // ================== Active Challenges ==================
   getMyChallenges(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges/mine`, {
+    return this.http.get(`${this.apiUrl}/challenges`, {
       withCredentials: true,
     });
   }
@@ -59,7 +59,7 @@ export class CandidateService {
     });
   }
 
-    // ================== Challenge Details ==================
+  // ================== Challenge Details ==================
   getChallengeById(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges/${id}`, {
       withCredentials: true,
