@@ -447,10 +447,16 @@
         </div>
 
         <!-- Action Buttons -->
+        <!-- Action Buttons -->
         <div class="flex gap-3">
+          <!-- VIEW BUTTON: Dynamically routes to 'solution' (if closed) or 'submissions' (if active) -->
           <a
-            [routerLink]="['/dashboard/challenger/challenge', challenge._id]"
-            class="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium text-sm shadow-sm hover:shadow"
+            [routerLink]="[
+              '/dashboard/challenger/challenge',
+              challenge._id,
+              challenge.status === 'closed' ? 'solution' : 'submissions'
+            ]"
+            class="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium text-sm shadow-sm hover:shadow cursor-pointer no-underline"
           >
             <svg
               class="w-4 h-4"
@@ -468,13 +474,13 @@
             {{ challenge.status === 'closed' ? 'View Results' : 'View Submissions' }}
           </a>
 
-          <button
-            class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all font-medium text-sm border border-gray-200"
-            disabled
-            title="Edit disabled for active challenges"
+          <!-- EDIT BUTTON: Removed 'disabled', changed to <a> tag for routing -->
+          <a
+            [routerLink]="['/dashboard/challenger/challenge', challenge._id, 'edit']"
+            class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all font-medium text-sm border border-gray-200 cursor-pointer no-underline flex items-center"
           >
             Edit
-          </button>
+          </a>
         </div>
       </div>
 

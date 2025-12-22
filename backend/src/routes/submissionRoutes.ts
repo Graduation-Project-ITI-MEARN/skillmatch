@@ -48,7 +48,6 @@ router.post(
 router.get(
   "/challenge/:id",
   auth,
-  validate(createSubmissionDTO),
   restrictTo(["company", "challenger", "admin"]),
   (req, res, next) =>
     advancedResults(

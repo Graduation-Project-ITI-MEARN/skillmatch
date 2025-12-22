@@ -12,6 +12,8 @@ export class ChallengerService {
 
   constructor(private http: HttpClient) {}
 
+  // --- DASHBOARD DATA ---
+
   getMyChallenges(status: 'published' | 'closed' | 'draft'): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges/mine`).pipe(
       map((res: any) => {
@@ -24,21 +26,15 @@ export class ChallengerService {
   }
 
   getStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges/mine`).pipe(
+    return this.http.get(`${this.apiUrl}/stats/company`).pipe(
       map((res: any) => {
-        const challenges = res.data || [];
-        const activeCount = challenges.filter((c: any) => c.status === 'published').length;
-        const totalSubmissions = challenges.reduce(
-          (acc: number, c: any) => acc + (c.submissionCount || 0),
-          0
-        );
-
+        const data = res.data || res;
         return {
           stats: {
-            activeCount: activeCount,
-            totalSubmissions: totalSubmissions,
-            totalPrizes: 0,
-            averageScore: 0,
+            activeCount: data.totalChallenges || data.activeCount || 0,
+            totalSubmissions: data.totalSubmissions || 0,
+            totalPrizes: data.totalRevenue || data.totalPrizes || 0,
+            averageScore: data.avgScore || 0,
           },
         };
       }),
@@ -64,5 +60,31 @@ export class ChallengerService {
     return this.http
       .get(`${this.apiUrl}/stats/leaderboard`)
       .pipe(catchError(() => of({ data: [] })));
+  }
+
+  // --- TASK 39: NEW METHODS ---
+
+  getChallengeById(id: string): Observable<any> {
+    // Fetches all 'mine' and filters, ensuring we get the object even if GET /:id doesn't exist on backend
+    return this.http.get(`${this.apiUrl}/challenges/mine`).pipe(
+      map((res: any) => {
+        const found = (res.data || []).find((c: any) => c._id === id);
+        return { success: !!found, data: found };
+      }),
+      catchError(() => of({ success: false, data: null }))
+    );
+  }
+
+  updateChallenge(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/challenges/${id}`, data);
+  }
+
+  getSubmissionsByChallenge(challengeId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/submissions/challenge/${challengeId}`);
+  }
+
+  // Used for the Winner Solution page to fetch specific video details
+  getSubmission(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/submissions/${id}`);
   }
 }
