@@ -32,7 +32,7 @@ const getCompanyStats = async (req: any, res: Response) => {
     Submission.countDocuments({ challengeCreator: companyId }) || 0,
     Submission.aggregate([
       { $match: { challengeCreator: companyId } },
-      { $group: { _id: null, avgScore: { $avg: "$score" } } },
+      { $group: { _id: null, avgScore: { $avg: "$aiScore" } } },
     ]).then((r) => r[0]?.avgScore || 0),
   ]);
 
@@ -41,7 +41,7 @@ const getCompanyStats = async (req: any, res: Response) => {
   res.status(200).json({
     totalChallenges,
     totalSubmissions,
-    avgScore,
+    avgScore: Math.round(avgScore),
     totalHires,
   });
 };
@@ -70,31 +70,63 @@ const getCandidateStats = async (req: any, res: Response) => {
 const getChallengerStats = async (req: any, res: Response) => {
   const challengerId = req.user._id;
 
-  const [totalChallenges, totalSubmissions, avgScore, totalPrizes] =
-    await Promise.all([
-      Challenge.countDocuments({ creatorId: challengerId }) || 0,
-      Submission.countDocuments({ challengeCreator: challengerId }) || 0,
-      Submission.aggregate([
-        { $match: { challengeCreator: challengerId } },
-        { $group: { _id: null, avgScore: { $avg: "$score" } } },
-      ]).then((r) => r[0]?.avgScore || 0),
-      0,
-    ]);
+  const myChallenges = await Challenge.find({ creatorId: challengerId }).select(
+    "_id prizeAmount"
+  );
+  const myChallengeIds = myChallenges.map((c) => c._id);
+
+  // Calculate real total prizes allocated
+  const totalPrizes = myChallenges.reduce(
+    (acc, curr) => acc + (curr.prizeAmount || 0),
+    0
+  );
+
+  const [totalSubmissions, avgScore] = await Promise.all([
+    Submission.countDocuments({ challengeId: { $in: myChallengeIds } }) || 0,
+    Submission.aggregate([
+      { $match: { challengeId: { $in: myChallengeIds } } },
+      { $group: { _id: null, avgScore: { $avg: "$aiScore" } } },
+    ]).then((r) => r[0]?.avgScore || 0),
+  ]);
+
+  const activeCount = await Challenge.countDocuments({
+    creatorId: challengerId,
+    status: "published",
+  });
 
   res.status(200).json({
-    totalChallenges,
+    totalChallenges: myChallenges.length,
+    activeCount,
     totalSubmissions,
-    avgScore,
+    avgScore: Math.round(avgScore),
     totalPrizes,
   });
 };
 
+// ==================== Leaderboard (Sidebar) ====================
+const getLeaderboard = catchError(async (req: Request, res: Response) => {
+  // 👇 FIX: Query by 'type' OR 'role' to find candidates properly
+  const topCandidates = await User.find({
+    $or: [{ type: "candidate" }, { role: "candidate" }],
+  })
+    .select("name email")
+    .limit(3)
+    .lean();
+
+  const leaderboard = topCandidates.map((user) => ({
+    name: user.name,
+    score: Math.floor(Math.random() * 500) + 500, // Placeholder score until submissions are graded
+    avatar: `https://ui-avatars.com/api/?name=${user.name}&background=random`,
+  }));
+
+  res.status(200).json({
+    success: true,
+    data: leaderboard,
+  });
+});
+
 // ==================== Dashboard Widgets (Admin) ====================
 
-/**
- * @desc    Get user distribution by role (Candidate vs Company vs Challenger)
- * @route   GET /api/stats/distribution
- */
 const getUserDistribution = catchError(async (req: Request, res: Response) => {
   const stats = await User.aggregate([
     {
@@ -115,10 +147,6 @@ const getUserDistribution = catchError(async (req: Request, res: Response) => {
   });
 });
 
-/**
- * @desc    Get counts for today only (New Signups, etc.)
- * @route   GET /api/stats/daily
- */
 const getDailyStats = catchError(async (req: Request, res: Response) => {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
@@ -135,15 +163,11 @@ const getDailyStats = catchError(async (req: Request, res: Response) => {
       newUsers,
       newChallenges,
       submissions,
-      revenue: 0, // Add revenue logic here later
+      revenue: 0,
     },
   });
 });
 
-/**
- * @desc    Get top 3 challenges by participant count, avg AI score, and revenue
- * @route   GET /api/stats/top-challenges
- */
 const getTopChallenges = catchError(async (req: Request, res: Response) => {
   const topChallenges = await Challenge.aggregate([
     {
@@ -157,19 +181,13 @@ const getTopChallenges = catchError(async (req: Request, res: Response) => {
     {
       $project: {
         title: 1,
-        // Count how many items in the submissionData array
         participants: { $size: "$submissionData" },
-
-        // Calculate Average of 'aiScore' from ISubmission
-        // If no submissions, default to 0 to avoid null
         quality: {
           $ifNull: [{ $round: [{ $avg: "$submissionData.aiScore" }, 0] }, 0],
         },
       },
     },
-    // Sort by highest participation
     { $sort: { participants: -1 } },
-    // Get top 3
     { $limit: 3 },
   ]);
 
@@ -178,51 +196,36 @@ const getTopChallenges = catchError(async (req: Request, res: Response) => {
 
 const getHiringAnalytics = catchError(async (req: any, res: Response) => {
   const ownerId = req.user._id;
-
-  // Get challenges owned by company/challenger
   const challenges = await Challenge.find({
     creatorId: ownerId,
     status: "published",
   }).select("_id createdAt");
 
   const challengeIds = challenges.map((c) => c._id);
-
-  // Get submissions for these challenges
   const submissions = await Submission.find({
     challengeId: { $in: challengeIds },
   });
 
   const totalChallenges = challenges.length;
   const totalSubmissions = submissions.length;
-
-  //Accepted submissions
   const accepted = submissions.filter((s) => s.status === "accepted");
-
-  // Conversion
   const conversion =
     totalSubmissions === 0 ? 0 : accepted.length / totalSubmissions;
-
-  //Application Rate
   const applicationRate =
     totalChallenges === 0 ? 0 : totalSubmissions / totalChallenges;
-
-  //Avg AI Score
   const avgScore =
     totalSubmissions === 0
       ? 0
       : submissions.reduce((sum, s) => sum + (s.aiScore || 0), 0) /
         totalSubmissions;
 
-  //Time to Hire
   const hireTimes: number[] = [];
-
   accepted.forEach((sub) => {
     const challenge = challenges.find(
       (c) => c._id.toString() === sub.challengeId.toString()
     );
     if (challenge) {
       const createdAt = challenge.createdAt as unknown as Date;
-
       hireTimes.push(
         new Date(sub.updatedAt).getTime() - new Date(createdAt).getTime()
       );
@@ -249,29 +252,20 @@ const getHiringAnalytics = catchError(async (req: any, res: Response) => {
 
 const getPlatformAnalytics = catchError(async (req: Request, res: Response) => {
   const now = new Date();
-
   const last30 = new Date();
   last30.setDate(now.getDate() - 30);
-
   const prev30 = new Date();
   prev30.setDate(now.getDate() - 60);
 
-  // 1️⃣ User Growth
   const usersLast30 = await User.countDocuments({
     createdAt: { $gte: last30 },
   });
-
   const usersPrev30 = await User.countDocuments({
     createdAt: { $gte: prev30, $lt: last30 },
   });
-
-  // 2️⃣ Revenue (if you don’t have transactions yet)
   const revenue = 0;
-
-  // 3️⃣ Engagement (last 7 days)
   const last7 = new Date();
   last7.setDate(now.getDate() - 7);
-
   const engagedUsers = await User.countDocuments({
     lastLogin: { $gte: last7 },
   });
@@ -291,16 +285,11 @@ const getPlatformAnalytics = catchError(async (req: Request, res: Response) => {
 
 const getJobPerformance = catchError(async (req: any, res: Response) => {
   const ownerId = req.user._id;
-
   const challenges = await Challenge.find({ creatorId: ownerId });
-
   const result = [];
 
   for (const challenge of challenges) {
-    const submissions = await Submission.find({
-      challengeId: challenge._id,
-    });
-
+    const submissions = await Submission.find({ challengeId: challenge._id });
     const scores = submissions.map((s) => s.aiScore || 0);
 
     result.push({
@@ -314,10 +303,7 @@ const getJobPerformance = catchError(async (req: any, res: Response) => {
     });
   }
 
-  res.status(200).json({
-    success: true,
-    data: result,
-  });
+  res.status(200).json({ success: true, data: result });
 });
 
 export {
@@ -325,6 +311,7 @@ export {
   getCompanyStats,
   getCandidateStats,
   getChallengerStats,
+  getLeaderboard,
   getUserDistribution,
   getDailyStats,
   getTopChallenges,

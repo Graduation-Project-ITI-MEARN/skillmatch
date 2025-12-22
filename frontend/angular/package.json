@@ -22,6 +22,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^21.0.3",
     "@angular/cdk": "^21.0.3",
     "@angular/common": "^21.0.3",
     "@angular/compiler": "^21.0.3",
@@ -35,6 +36,7 @@
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
     "lucide-angular": "^0.559.0",
+    "ngx-toastr": "^19.1.0",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.4.0",
     "tslib": "^2.3.0",

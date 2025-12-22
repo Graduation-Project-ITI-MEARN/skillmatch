@@ -45,15 +45,12 @@
 
   <!-- Leaderboard List -->
   <div class="space-y-3">
-    <!-- Loading State (@if) -->
     @if (leaderboard.length === 0) {
     <div class="text-center py-10 text-gray-500">Loading leaderboard...</div>
-    }
-
-    <!-- Rows Loop (@for) -->
-    <!-- ملاحظة: track ضروري جداً في الـ syntax الجديد، بيفضل استخدام الـ id -->
-    @for (entry of leaderboard; track entry._id; let i = $index) {
+    } @for (entry of leaderboard; track entry._id; let i = $index) {
+    <!-- تم إضافة [id] هنا ليكون بمثابة الـ key على مستوى الـ DOM -->
     <div
+      [id]="entry._id"
       class="flex items-center gap-6 p-6 rounded-2xl transition-all border"
       [ngClass]="{
         'bg-gradient-to-right from-blue-400/20 to-purple-400/20 border-blue-300': isCurrentUser(
@@ -62,15 +59,15 @@
         'bg-white hover:bg-gray-50 border-gray-200': !isCurrentUser(entry._id)
       }"
     >
-      <!-- Rank Icon/Number (@switch) -->
+      <!-- Rank Icon/Number -->
       <div class="w-12 text-center text-2xl text-gray-500 font-bold">
         @switch (i) { @case (0) { <span>🥇</span> } @case (1) { <span>🥈</span> } @case (2) {
         <span>🥉</span> } @default { <span>#{{ i + 1 }}</span> } }
       </div>
 
-      <!-- Avatar (Initials) -->
+      <!-- Avatar -->
       <div
-        class="w-10 h-10 rounded-full bg-gradient-to-bottom from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold text-sm shadow-sm"
+        class="w-10 h-10 rounded-full bg-primary-gradient flex items-center justify-center text-white font-bold text-sm shadow-sm"
       >
         {{ getInitials(entry.name) }}
       </div>
@@ -79,8 +76,6 @@
       <div class="flex-1">
         <h3 class="mb-1 font-semibold text-gray-900">
           {{ entry.name }}
-
-          <!-- Current User Label (@if) -->
           @if (isCurrentUser(entry._id)) {
           <span class="text-blue-600 ml-1">(You)</span>
           }

@@ -26,7 +26,7 @@ export class CandidateService {
 
   // ================== Active Challenges ==================
   getMyChallenges(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges/mine`, {
+    return this.http.get(`${this.apiUrl}/challenges`, {
       withCredentials: true,
     });
   }

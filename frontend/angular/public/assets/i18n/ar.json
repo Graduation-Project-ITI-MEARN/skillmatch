@@ -143,6 +143,72 @@
       "SUBMITTING": "جاري الإنشاء...",
       "UPDATE": "تحديث التحدي",
       "UPDATING": "جاري التحديث..."
+    "ADMIN": {
+      "USER_DISTRIBUTION": "توزيع المستخدمين",
+      "RECENT_ACTIVITY": "النشاط الأخير",
+      "TODAY_STATS": "إحصائيات اليوم",
+      "TOP_CHALLENGES": "أفضل التحديات",
+      "TOP_CHALLENGES_SUBTITLE": "بناءً على المشاركة وتقييم الذكاء الاصطناعي",
+      "NEW_SIGNUPS": "تسجيلات جديدة",
+      "CHALLENGES_POSTED": "تحديات منشورة",
+      "USERS": {
+        "TITLE": "إدارة المستخدمين",
+        "SUBTITLE": "إدارة المستخدمين، الأدوار، والصلاحيات",
+        "ALL_USERS": "كل المستخدمين",
+        "VIEW_ID": "عرض الهوية",
+        "VIEW_TAX": "عرض البطاقة الضريبية",
+        "VERIFY": "توثيق",
+        "REJECT": "رفض"
+      },
+      "CHALLENGES": {
+        "TITLE": "إدارة التحديات",
+        "SUBTITLE": "مراقبة وإدارة جميع التحديات",
+        "VIEW": "عرض التفاصيل",
+        "ALL": "كل التحديات",
+        "NO_CHALLENGES": "لا توجد تحديات بهذه الحالة.",
+        "ACTIVE": "نشطة",
+        "PENDING": "قيد الانتظار",
+        "COMPLETED": "مكتملة",
+        "AVG_SCORE": "متوسط التقييم"
+      },
+      "MODERATION": {
+        "TITLE": "المراقبة",
+        "SUBTITLE": "مراجعة المحتوى المبلغ عنه ({{ count }} عنصر)",
+        "NO_REPORTS": "No reports found",
+        "NO_REPORTS_SUBTITLE": "لا توجد تقارير {{ status }}.",
+        "PENDING": "قيد الانتظار",
+        "RESOLVED": "محلول",
+        "DISMISSED": "متجاهل",
+        "REVIEW": "مراجعة",
+        "DISMISS": "تجاهل",
+        "RESOLVE": "حل & حذف",
+        "CHALLENGE": "تحدي",
+        "USER": "مستخدم",
+        "SUBMISSION": "مشاركة",
+        "REASON": "السبب",
+        "REPORTED_BY": "تم التبليغ بواسطة",
+        "ON": "في"
+      },
+      "ANALYTICS": {
+        "TITLE": "التحليلات النظامية",
+        "SUBTITLE": "التحليلات النظامية المتكاملة (الشهر الماضي)",
+        "USER_GROWTH": "نمو المستخدمين",
+        "VS_LAST_MONTH": "مقارنة مع الشهر الماضي",
+        "ACTIVE_USERS": "المستخدمون النشطون",
+        "ACTIVE_SUBTITLE": "المستخدمون النشطون هذا الاسبوع",
+        "REVENUE": "الإيرادات",
+        "REVENUE_SUBTITLE": "المصاريف النظامية المكتسبة",
+        "CONVERSION": "نسبة التحويل",
+        "NO_DATA": "لا توجد بيانات حالياً.",
+        "REVENUE_DISTRIBUTION": "توزيع الإيرادات",
+        "COMPANY_CHALLENGES": "تحديات الشركة",
+        "PREMIUM_FEATURES": "ميزات المميزة",
+        "COMMISSIONS": "العمولات",
+        "PLATFORM_HEALTH": "صحة النظام",
+        "AVG_SESSION": "متوسط طول الجلسة",
+        "CHALLENGES_PER_USER": "تحديات لكل مستخدم",
+        "RETENTION": "نسبة الحفاظة"
+      }
     },
 
     "CATEGORIES": {
