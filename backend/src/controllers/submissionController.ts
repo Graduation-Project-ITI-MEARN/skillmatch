@@ -6,6 +6,7 @@ import { catchError } from "../utils/catchAsync";
 import { emitToUser } from "../socket/socketService";
 import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
 import mongoose from "mongoose";
+import Challenge from "../models/Challenge";
 
 /**
  * @desc    Get all submissions (Admin/General use)
@@ -13,127 +14,169 @@ import mongoose from "mongoose";
  * @access  Private
  */
 const getAllSubmissions = catchError(async (req: Request, res: Response) => {
-  const submissions = await Submission.find();
+   const submissions = await Submission.find();
 
-  res.status(200).json({
-    success: true,
-    data: submissions,
-  });
-});
-
-const getMySubmissions = catchError(async (req: Request, res: Response) => {
-  const user = req.user;
-  if (!user) throw new APIError(401, "User not authenticated");
-
-  const submissions = await Submission.find({
-    candidateId: new mongoose.Types.ObjectId(user._id),
-  });
-
-  res.status(200).json({
-    success: true,
-    data: submissions,
-  });
+   res.status(200).json({
+      success: true,
+      data: submissions,
+   });
 });
 
 /**
- * @desc    Create a new submission for a challenge
- * @route   POST /api/submissions
+ * @desc    Get submissions and started challenges for the logged-in candidate
+ * @route   GET /api/submissions/mine
+ * @access  Private (Candidate)
+ */
+const getMySubmissions = catchError(async (req: Request, res: Response) => {
+   const user = req.user;
+   if (!user) throw new APIError(401, "User not authenticated");
+
+   // Fetch all submissions (including 'started' ones) for the candidate
+   const candidateSubmissions = await Submission.find({
+      candidateId: new mongoose.Types.ObjectId(user._id),
+   }).populate("challengeId", "title category difficulty deadline"); // <-- Populate deadline here
+
+   // Now, structure the data for the dashboard
+   const startedChallenges = candidateSubmissions
+      .filter((sub) => sub.status === "started")
+      .map((sub) => ({
+         _id: sub._id,
+         challengeId: sub.challengeId,
+         status: sub.status,
+         createdAt: sub.createdAt,
+         deadline: (sub.challengeId as any).deadline, // Access populated deadline
+         title: (sub.challengeId as any).title,
+         category: (sub.challengeId as any).category,
+         difficulty: (sub.challengeId as any).difficulty,
+      }));
+
+   const activeSubmissions = candidateSubmissions
+      .filter((sub) => sub.status !== "started")
+      .map((sub) => ({
+         _id: sub._id,
+         challengeId: sub.challengeId,
+         status: sub.status,
+         createdAt: sub.createdAt,
+         deadline: (sub.challengeId as any).deadline, // Access populated deadline
+         title: (sub.challengeId as any).title,
+         category: (sub.challengeId as any).category,
+         difficulty: (sub.challengeId as any).difficulty,
+         aiScore: sub.aiScore,
+         isWinner: sub.isWinner,
+         submissionType: sub.submissionType,
+      }));
+
+   res.status(200).json({
+      success: true,
+      data: {
+         startedChallenges,
+         activeSubmissions,
+      },
+   });
+});
+
+/**
+ * @desc    Candidate submits a solution for a challenge (updates a "started" submission)
+ * @route   POST /api/submissions   (This endpoint now handles final submission)
  * @access  Private (Candidate)
  */
 const createSubmission = catchError(async (req: Request, res: Response) => {
-  const {
-    challengeId,
-    videoExplanationUrl,
-    submissionType,
-    linkUrl,
-    fileUrls,
-    textContent,
-  } = req.body;
+   const {
+      challengeId,
+      videoExplanationUrl,
+      submissionType,
+      linkUrl,
+      fileUrls,
+      textContent,
+   } = req.body;
 
-  const candidateId = req.user?._id;
-  if (!candidateId) throw new APIError(401, "User not authenticated");
+   const candidateId = req.user?._id;
+   if (!candidateId) throw new APIError(401, "User not authenticated");
+   if (!challengeId) throw new APIError(400, "Challenge ID is required");
 
-  if (!challengeId) throw new APIError(400, "Challenge ID is required");
+   // --- VALIDATION FOR ACTUAL SUBMISSION ---
+   if (!videoExplanationUrl?.trim()) {
+      throw new APIError(400, "Video explanation is required");
+   }
+   if (!submissionType) throw new APIError(400, "Submission type is required");
+   if (!Object.values(SubmissionType).includes(submissionType)) {
+      throw new APIError(
+         400,
+         `Invalid submission type: ${Object.values(SubmissionType).join(", ")}`
+      );
+   }
 
-  if (!videoExplanationUrl?.trim()) {
-    throw new APIError(400, "Video explanation is required");
-  }
+   // Type-specific validation
+   switch (submissionType) {
+      case SubmissionType.LINK:
+         if (!linkUrl?.trim()) {
+            throw new APIError(400, "Link URL required");
+         }
+         break;
+      case SubmissionType.FILE:
+         if (!fileUrls?.length) {
+            throw new APIError(400, "File URLs required");
+         }
+         break;
+      case SubmissionType.TEXT:
+         if (!textContent?.trim()) {
+            throw new APIError(400, "Text content is required");
+         }
+         break;
+   }
 
-  if (!submissionType) throw new APIError(400, "Submission type is required");
+   // Find an existing submission (either 'started' or already submitted)
+   let submission: ISubmission | null = await Submission.findOne({
+      challengeId: new mongoose.Types.ObjectId(challengeId),
+      candidateId: new mongoose.Types.ObjectId(candidateId),
+   });
 
-  if (!Object.values(SubmissionType).includes(submissionType)) {
-    throw new APIError(
-      400,
-      `Invalid submission type: ${Object.values(SubmissionType).join(", ")}`
-    );
-  }
+   if (!submission) {
+      throw new APIError(
+         400,
+         "You must start the challenge before submitting a solution."
+      );
+   }
 
-  // Type-specific validation
-  switch (submissionType) {
-    case SubmissionType.LINK:
-      if (!linkUrl?.trim()) {
-        throw new APIError(400, "Link URL required");
-      }
-      break;
+   if (submission.status !== "started") {
+      throw new APIError(409, "You have already submitted for this challenge.");
+   }
 
-    case SubmissionType.FILE:
-      if (!fileUrls?.length) {
-        throw new APIError(400, "File URLs required");
-      }
-      break;
+   // Update the existing 'started' submission with the actual solution details
+   submission.videoExplanationUrl = videoExplanationUrl.trim();
+   submission.submissionType = submissionType;
+   submission.linkUrl = linkUrl?.trim() || undefined; // Use undefined to remove if not provided
+   submission.fileUrls = fileUrls || [];
+   submission.textContent = textContent?.trim() || undefined; // Use undefined to remove if not provided
+   submission.status = "pending"; // Change status to pending
+   submission.aiScore = 0; // Reset score if it was previously set or for initial pending state
 
-    case SubmissionType.TEXT:
-      if (!textContent?.trim()) {
-        throw new APIError(400, "Text content is required");
-      }
-      break;
-  }
+   await submission.save(); // Save the updated submission
 
-  // Prevent duplicate submissions
-  const exists = await Submission.findOne({
-    challengeId: new mongoose.Types.ObjectId(challengeId),
-    candidateId: new mongoose.Types.ObjectId(candidateId),
-  });
+   // Populate relationships to get Challenge Title and Candidate Name
+   await submission.populate([
+      { path: "challengeId", select: "title category difficulty" },
+      { path: "candidateId", select: "name email" },
+   ]);
 
-  if (exists) {
-    throw new APIError(409, "Already submitted for this challenge");
-  }
+   // Log Activity
+   const challengeTitle =
+      (submission.challengeId as any)?.title || "Unknown Challenge";
 
-  // Create submission
-  const submission: ISubmission = await Submission.create({
-    challengeId,
-    candidateId,
-    videoExplanationUrl: videoExplanationUrl.trim(),
-    submissionType,
-    linkUrl: linkUrl?.trim(),
-    fileUrls,
-    textContent: textContent?.trim(),
-    aiScore: 0,
-  });
+   await logActivity(
+      candidateId,
+      "submission_created", // Or "submission_updated" if you want to differentiate
+      `User submitted solution for challenge: ${challengeTitle}`,
+      "success",
+      submission._id
+   );
 
-  // Populate relationships to get Challenge Title and Candidate Name
-  await submission.populate([
-    { path: "challengeId", select: "title category difficulty" },
-    { path: "candidateId", select: "name email" },
-  ]);
-
-  // Log Activity
-  // We access the populated challenge title safely
-  const challengeTitle =
-    (submission.challengeId as any)?.title || "Unknown Challenge";
-
-  await logActivity(
-    candidateId,
-    "submission_created",
-    `User submitted to challenge: ${challengeTitle}`,
-    "success",
-    submission._id
-  );
-
-  res.status(201).json({
-    success: true,
-    data: submission,
-  });
+   res.status(200).json({
+      // Changed to 200 OK as it's an update
+      success: true,
+      data: submission,
+      message: "Solution submitted successfully!",
+   });
 });
 
 /**
@@ -142,24 +185,24 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getSubmissionsByChallenge = catchError(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
+   async (req: Request, res: Response) => {
+      const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new APIError(400, "Invalid challenge ID");
-    }
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         throw new APIError(400, "Invalid challenge ID");
+      }
 
-    const submissions = await Submission.find({ challengeId: id })
-      .populate("candidateId", "name email profilePicture")
-      .populate("challengeId", "title category difficulty")
-      .sort({ createdAt: -1 });
+      const submissions = await Submission.find({ challengeId: id })
+         .populate("candidateId", "name email profilePicture")
+         .populate("challengeId", "title category difficulty")
+         .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      count: submissions.length,
-      data: submissions,
-    });
-  }
+      res.status(200).json({
+         success: true,
+         count: submissions.length,
+         data: submissions,
+      });
+   }
 );
 
 /**
@@ -168,69 +211,131 @@ const getSubmissionsByChallenge = catchError(
  * @access  Private
  */
 const getSubmissionById = catchError(async (req: Request, res: Response) => {
-  const { id } = req.params;
+   const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new APIError(400, "Invalid submission ID");
-  }
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new APIError(400, "Invalid submission ID");
+   }
 
-  const submission = await Submission.findById(id)
-    .populate("candidateId", "name email profilePicture")
-    .populate("challengeId", "title category difficulty");
+   const submission = await Submission.findById(id)
+      .populate("candidateId", "name email profilePicture")
+      .populate("challengeId", "title category difficulty");
 
-  if (!submission) {
-    throw new APIError(404, "Submission not found");
-  }
+   if (!submission) {
+      throw new APIError(404, "Submission not found");
+   }
 
-  res.status(200).json({
-    success: true,
-    data: submission,
-  });
+   res.status(200).json({
+      success: true,
+      data: submission,
+   });
 });
 
 const updateSubmissionStatus = catchError(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { status, score } = req.body;
+   async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { status, score } = req.body;
 
-    if (!["accepted", "rejected"].includes(status)) {
-      throw new APIError(400, "Invalid status");
-    }
+      if (!["accepted", "rejected"].includes(status)) {
+         throw new APIError(400, "Invalid status");
+      }
 
-    const submission = await Submission.findById(id).populate(
-      "challengeId",
-      "title"
-    );
+      const submission = await Submission.findById(id).populate(
+         "challengeId",
+         "title"
+      );
 
-    if (!submission) {
-      throw new APIError(404, "Submission not found");
-    }
+      if (!submission) {
+         throw new APIError(404, "Submission not found");
+      }
 
-    submission.status = status;
-    if (score !== undefined) submission.aiScore = score;
+      submission.status = status;
+      if (score !== undefined) submission.aiScore = score;
 
-    await submission.save();
+      await submission.save();
 
-    // REAL-TIME NOTIFICATION
-    emitToUser(submission.candidateId.toString(), {
-      title: "Submission Update",
-      message: `Your submission for "${
-        (submission.challengeId as any).title
-      }" was ${status}.`,
-    });
+      // REAL-TIME NOTIFICATION
+      emitToUser(submission.candidateId.toString(), {
+         title: "Submission Update",
+         message: `Your submission for "${
+            (submission.challengeId as any).title
+         }" was ${status}.`,
+      });
 
-    res.status(200).json({
-      success: true,
-      data: submission,
-    });
-  }
+      res.status(200).json({
+         success: true,
+         data: submission,
+      });
+   }
 );
 
+/**
+ * @desc    Candidate starts a challenge (enrolls)
+ * @route   POST /api/submissions/start
+ * @access  Private (Candidate)
+ */
+const startChallenge = catchError(async (req: Request, res: Response) => {
+   const { challengeId } = req.body;
+   const candidateId = req.user?._id;
+
+   if (!candidateId) throw new APIError(401, "User not authenticated");
+   if (!challengeId) throw new APIError(400, "Challenge ID is required");
+
+   // Check if the challenge exists and is published
+   const challenge = await Challenge.findById(challengeId);
+   if (!challenge) {
+      throw new APIError(404, "Challenge not found");
+   }
+   if (challenge.status !== "published") {
+      throw new APIError(400, "Cannot start a challenge that is not published");
+   }
+
+   // Prevent starting a challenge more than once
+   const existingSubmission = await Submission.findOne({
+      challengeId: new mongoose.Types.ObjectId(challengeId),
+      candidateId: new mongoose.Types.ObjectId(candidateId),
+   });
+
+   if (existingSubmission) {
+      if (existingSubmission.status === "started") {
+         throw new APIError(409, "You have already started this challenge.");
+      } else {
+         throw new APIError(
+            409,
+            "You have already submitted for this challenge."
+         );
+      }
+   }
+
+   const startedSubmission = await Submission.create({
+      challengeId,
+      candidateId,
+      status: "started", // Explicitly set status to 'started'
+      // Other fields like videoExplanationUrl, submissionType, etc. are omitted for 'started' state
+   });
+
+   await logActivity(
+      candidateId,
+      "challenge_started",
+      `User started challenge: ${(challenge as any).title}`,
+      "success",
+      startedSubmission._id
+   );
+
+   res.status(201).json({
+      success: true,
+      data: startedSubmission,
+      message:
+         "Challenge successfully started. You can now submit your solution.",
+   });
+});
+
 export {
-  getAllSubmissions,
-  getMySubmissions,
-  createSubmission,
-  getSubmissionsByChallenge,
-  getSubmissionById,
-  updateSubmissionStatus,
+   getAllSubmissions,
+   getMySubmissions,
+   createSubmission,
+   getSubmissionsByChallenge,
+   getSubmissionById,
+   updateSubmissionStatus,
+   startChallenge,
 };

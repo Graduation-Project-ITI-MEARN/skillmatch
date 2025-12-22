@@ -7,23 +7,21 @@ export enum SubmissionType {
    TEXT = "text",
 }
 
-// Interface for TypeScript
 export interface ISubmission extends Document {
    challengeId: mongoose.Types.ObjectId;
    candidateId: mongoose.Types.ObjectId;
    videoExplanationUrl: string;
-   submissionType: SubmissionType;
+   submissionType?: SubmissionType; // Make optional if 'started' submissions don't have it yet
    linkUrl?: string;
    fileUrls?: string[];
    textContent?: string;
    aiScore: number;
    isWinner: boolean;
-   status: "pending" | "accepted" | "rejected";
+   status: "started" | "pending" | "accepted" | "rejected"; // <-- Add "started"
    createdAt: Date;
    updatedAt: Date;
 }
 
-// Mongoose Schema
 const SubmissionSchema: Schema = new Schema(
    {
       challengeId: {
@@ -40,13 +38,13 @@ const SubmissionSchema: Schema = new Schema(
       },
       videoExplanationUrl: {
          type: String,
-         required: true,
+         // required: true, // <-- Make this not required for 'started' status
          trim: true,
       },
       submissionType: {
          type: String,
          enum: Object.values(SubmissionType),
-         required: true,
+         // required: true, // <-- Make this not required for 'started' status
       },
       linkUrl: {
          type: String,
@@ -72,8 +70,8 @@ const SubmissionSchema: Schema = new Schema(
       },
       status: {
          type: String,
-         enum: ["pending", "accepted", "rejected"],
-         default: "pending",
+         enum: ["started", "pending", "accepted", "rejected"], // <-- Update enum
+         default: "started", // <-- Default to started when created
       },
    },
    {

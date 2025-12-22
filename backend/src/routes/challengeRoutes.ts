@@ -1,10 +1,10 @@
 import {
-  createChallenge,
-  deleteChallenge,
-  getAllChallenges,
-  getMyChallenges,
-  getPublishedChallenges,
-  updateChallenge,
+   createChallenge,
+   deleteChallenge,
+   getAllChallenges,
+   getMyChallenges,
+   getPublishedChallenges,
+   updateChallenge,
 } from "../controllers/challengeController";
 import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
 
@@ -31,28 +31,28 @@ router.get("/mine", auth, getMyChallenges);
 
 // Create a new challenge (Company & Challenger only)
 router.post(
-  "/",
-  auth,
-  validate(createChallengeDTO),
-  restrictTo(["company", "challenger"]),
-  createChallenge
+   "/",
+   auth,
+   validate(createChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   createChallenge
 );
 
 // Update an existing challenge (Safe Update)
 router.put(
-  "/:id",
-  auth,
-  validate(updateChallengeDTO),
-  restrictTo(["company", "challenger"]),
-  updateChallenge
+   "/:id",
+   auth,
+   validate(updateChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   updateChallenge
 );
 
 // Delete a challenge (Safe Delete)
 router.delete(
-  "/:id",
-  auth,
-  restrictTo(["company", "challenger"]),
-  deleteChallenge
+   "/:id",
+   auth,
+   restrictTo(["company", "challenger"]),
+   deleteChallenge
 );
 
 // ==============================================================================
