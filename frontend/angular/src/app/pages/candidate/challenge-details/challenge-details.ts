@@ -68,7 +68,7 @@ export class ChallengeDetails implements OnInit {
   handleAction() {
     if (this.isSubmitted) {
 
-      this.router.navigate(['/dashboard/candidate/portfolio']);
+      this.router.navigate(['/dashboard/candidate/mysubmissions']);
     } else {
       this.onStartChallenge();
     }
@@ -79,7 +79,7 @@ export class ChallengeDetails implements OnInit {
       next: () => {
         this.toast.success('Challenge Started! Good luck.');
 
-        this.router.navigate(['/dashboard/candidate/portfolio']);
+        this.router.navigate(['/dashboard/candidate/mysubmissions']);
       },
       error: (err) => {
         this.toast.error(err.error?.message || 'Failed to start challenge');
