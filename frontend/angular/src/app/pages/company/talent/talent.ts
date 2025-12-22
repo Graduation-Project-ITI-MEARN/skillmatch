@@ -14,19 +14,19 @@ import {
 } from 'lucide-angular';
 import { environment } from 'src/environments/environment';
 
-type CategoryFilter = 'ALL' | 'CODING' | 'DESIGN' | 'MARKETING';
-
 interface TalentProfile {
-  id: number;
+  _id: string;
   name: string;
-  initials: string;
-  role: string;
-  score: number;
+  email: string;
+  profilePicture?: string;
+  totalScore: number;
   challengesCompleted: number;
   skills: string[];
   status: 'available' | 'engaged';
-  category: 'CODING' | 'DESIGN' | 'MARKETING';
+  role?: string;
 }
+
+type CategoryFilter = 'all' | 'coding' | 'design' | 'marketing';
 
 @Component({
   selector: 'app-talent-pool',
@@ -46,37 +46,40 @@ export class Talent implements OnInit {
   isLoading = false;
   showFilterDropdown = false;
 
-  categoryFilter: CategoryFilter = 'ALL';
-  categories: CategoryFilter[] = ['ALL', 'CODING', 'DESIGN', 'MARKETING'];
-isRtl: any;
+  categoryFilter: CategoryFilter = 'all';
+  categories: CategoryFilter[] = ['all', 'coding', 'design', 'marketing' ];
 
   async ngOnInit() {
     await this.loadTalent();
   }
 
   private async loadTalent() {
-    try {
-      this.isLoading = true;
-      const response = await firstValueFrom(
-        this.http.get<TalentProfile[]>(`${environment.apiUrl}/talents`)
-      );
-      this.talentList = response ?? [];
-      this.applyFilters();
-    } catch (error) {
-      console.error('Error loading talent:', error);
-      this.talentList = [];
-      this.filteredTalentList = [];
-    } finally {
-      this.isLoading = false;
-    }
+  try {
+    this.isLoading = true;
+    // جربي إضافة /talent مرة أخرى في نهاية الرابط
+    const response: any = await firstValueFrom(
+      this.http.get(`${environment.apiUrl}/talent/talent`)
+    );
+
+    this.talentList = response.data || [];
+    this.applyFilters();
+  } catch (error) {
+    console.error('Error loading talent:', error);
+  } finally {
+    this.isLoading = false;
   }
+}
 
   applyFilters() {
     let results = [...this.talentList];
 
     // Filter by category
-    if (this.categoryFilter !== 'ALL') {
-      results = results.filter(p => p.category === this.categoryFilter);
+    if (this.categoryFilter !== 'all') {
+      results = results.filter(p =>
+        p.skills?.some(skill =>
+          skill.toLowerCase().includes(this.categoryFilter)
+        )
+      );
     }
 
     // Filter by search query
@@ -85,8 +88,9 @@ isRtl: any;
       results = results.filter(
         (person) =>
           person.name.toLowerCase().includes(query) ||
-          person.role.toLowerCase().includes(query) ||
-          person.skills.some((skill) => skill.toLowerCase().includes(query))
+          person.email.toLowerCase().includes(query) ||
+          person.role?.toLowerCase().includes(query) ||
+          person.skills?.some((skill) => skill.toLowerCase().includes(query))
       );
     }
 
@@ -109,19 +113,29 @@ isRtl: any;
 
   clearFilters() {
     this.searchQuery = '';
-    this.categoryFilter = 'ALL';
+    this.categoryFilter = 'all';
     this.applyFilters();
   }
 
   get hasActiveFilters(): boolean {
-    return this.searchQuery !== '' || this.categoryFilter !== 'ALL';
+    return this.searchQuery !== '' || this.categoryFilter !== 'all';
   }
 
-  viewProfile(id: number) {
+  getCandidateInitials(name: string): string {
+    const words = name.trim().split(' ');
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  viewProfile(id: string) {
     console.log('View profile:', id);
+    // TODO: Navigate to profile page
   }
 
-  contactPerson(id: number) {
+  contactPerson(id: string) {
     console.log('Contact person:', id);
+    // TODO: Open contact modal
   }
 }

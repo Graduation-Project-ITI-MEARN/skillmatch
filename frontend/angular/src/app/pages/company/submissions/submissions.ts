@@ -4,27 +4,45 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
-import { LucideAngularModule, Play, Eye, MessageSquare, Star, ChevronDown } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Play,
+  Eye,
+  MessageSquare,
+  Star,
+  ChevronDown,
+} from 'lucide-angular';
 import { environment } from 'src/environments/environment';
 
-type SubmissionFilter = 'ALL' | 'NEW' | 'REVIEWED' | 'SHORTLISTED';
-
 interface Challenge {
-  id: number;
+  _id: string;
   title: string;
 }
 
 interface Submission {
-  id: number;
-  candidateName: string;
-  candidateInitials: string;
-  role: string;
-  videoUrl: string;
-  overallScore: number;
-  technicalQuality: number;
-  communication: number;
-  status: 'NEW' | 'REVIEWED' | 'SHORTLISTED';
+  _id: string;
+  candidateId: {
+    _id: string;
+    name: string;
+    profilePicture?: string;
+  };
+  challengeId: {
+    _id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+  };
+  videoExplanationUrl: string;
+  aiScore: number;
+  status: 'pending' | 'accepted' | 'rejected';
+  submissionType: 'link' | 'file' | 'text';
+  linkUrl?: string;
+  fileUrls?: string[];
+  textContent?: string;
+  createdAt: string;
 }
+
+type SubmissionFilter = 'all' | 'new' | 'reviewed' | 'shortlisted';
 
 @Component({
   selector: 'app-submissions',
@@ -38,70 +56,106 @@ export class Submissions implements OnInit {
 
   icons = { Play, Eye, MessageSquare, Star, ChevronDown };
 
-  selectedChallengeId: number | null = null;
-  selectedChallenge: Challenge | null = null;
-  showDropdown = false;
-  submissions: Submission[] = [];
-  isLoading = false;
-  isLoadingChallenges = false;
-
-  activeFilter: SubmissionFilter = 'ALL';
-  filters: SubmissionFilter[] = ['ALL', 'NEW', 'SHORTLISTED', 'REVIEWED'];
   challenges: Challenge[] = [];
+  submissions: Submission[] = [];
+  selectedChallengeId: string | null = null;
+
+  isLoadingChallenges = false;
+  isLoadingSubmissions = false;
+  submitError = '';
+
+  activeFilter: SubmissionFilter = 'all';
+  filters: SubmissionFilter[] = ['all', 'new', 'reviewed', 'shortlisted'];
+
+  openChallengeDropdown = false;
 
   async ngOnInit() {
     await this.loadChallenges();
   }
 
-  // Load challenges
   async loadChallenges() {
     try {
       this.isLoadingChallenges = true;
-      const response = await firstValueFrom(
-        this.http.get<Challenge[]>(`${environment.apiUrl}/challenges/mine`)
+      const response: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/challenges/mine`)
       );
 
-      this.challenges = Array.isArray(response) ? response : Object.values(response || {});
-      this.selectedChallengeId = null;
-      this.selectedChallenge = null;
+      const data = response.data || response;
+      this.challenges = Array.isArray(data) ? data : Object.values(data || {});
+
+      if (this.challenges.length > 0) {
+        this.selectedChallengeId = this.challenges[0]._id;
+        await this.loadSubmissions(this.selectedChallengeId);
+      }
     } catch (error) {
-      console.error('Error loading challenges', error);
-      this.challenges = [];
-      this.selectedChallengeId = null;
-      this.selectedChallenge = null;
+      console.error('Error loading challenges:', error);
+      this.submitError = 'Failed to load challenges';
     } finally {
       this.isLoadingChallenges = false;
     }
   }
 
-  async loadSubmissions(challengeId: number) {
-    try {
-      this.isLoading = true;
-      const response = await firstValueFrom(
-        this.http.get<Submission[]>(`${environment.apiUrl}/submissions/challenge/${challengeId}`)
-      );
-      this.submissions = response ?? [];
-    } catch (error) {
-      console.error('Error loading submissions', error);
-      this.submissions = [];
-    } finally {
-      this.isLoading = false;
-    }
-  }
+  async loadSubmissions(challengeId: string) {
+  try {
+    this.isLoadingSubmissions = true;
+    this.submitError = '';
 
-  toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
+    // الرابط المباشر بدون أي params وهمية
+    const response: any = await firstValueFrom(
+      this.http.get(`${environment.apiUrl}/submissions/challenge/${challengeId}`)
+    );
+
+    this.submissions = response.data || [];
+    console.log('تم جلب البيانات بنجاح:', this.submissions);
+  } catch (error: any) {
+    console.error('Error:', error);
+    this.submitError = error?.error?.message || 'فشل في جلب البيانات';
+    this.submissions = [];
+  } finally {
+    this.isLoadingSubmissions = false;
   }
+}
+
+// محاولة أخيرة للمسار البديل بـ Params
+async finalAttempt(challengeId: string) {
+    try {
+        const response: any = await firstValueFrom(
+            this.http.get(`${environment.apiUrl}/submissions/challenge/${challengeId}`, {
+                params: {
+                  challengeId,
+                  candidateId: challengeId,
+                  submissionType: 'text',
+                  videoExplanationUrl: 'https://placeholder.com'
+                }
+            })
+        );
+        this.submissions = response.data || [];
+        this.submitError = '';
+    } catch (e) {
+        this.submitError = 'Backend Error: Please check if the Route is GET /api/challenges/:id/submissions';
+    }
+}
+// دالة احتياطية في حال فشل الـ GET بسبب قيود الـ Validation في الباك إند
+async tryPostBackup(challengeId: string) {
+    try {
+        const response: any = await firstValueFrom(
+            this.http.post(`${environment.apiUrl}/submissions/challenge/${challengeId}`, {})
+        );
+        this.submissions = response.data || [];
+        this.submitError = '';
+    } catch (e) {
+        this.submitError = 'Validation Error: Backend requires a body or specific structure.';
+    }
+}
 
   selectChallenge(challenge: Challenge) {
-    this.selectedChallengeId = challenge.id;
-    this.selectedChallenge = challenge;
-    this.showDropdown = false;
-    this.loadSubmissions(challenge.id);
+    this.selectedChallengeId = challenge._id;
+    this.openChallengeDropdown = false;
+    this.loadSubmissions(challenge._id);
   }
 
   getSelectedChallenge(): Challenge | undefined {
-    return this.challenges.find((c) => c.id === this.selectedChallengeId);
+    return this.challenges.find(c => c._id === this.selectedChallengeId);
   }
 
   setFilter(filter: SubmissionFilter): void {
@@ -109,41 +163,83 @@ export class Submissions implements OnInit {
   }
 
   get filteredSubmissions(): Submission[] {
-    if (this.activeFilter === 'ALL') {
+    if (this.activeFilter === 'all') {
       return this.submissions;
     }
-    return this.submissions.filter((s) => s.status?.toUpperCase() === this.activeFilter);
+
+    const statusMap: Record<string, string> = {
+      new: 'pending',
+      reviewed: 'rejected',
+      shortlisted: 'accepted',
+    };
+
+    const targetStatus = statusMap[this.activeFilter];
+    return this.submissions.filter(s => s.status === targetStatus);
   }
 
-  getStatusClass(status: Submission['status']): string {
-    const map: Record<Submission['status'], string> = {
-      NEW: 'bg-green-100 text-green-700',
-      REVIEWED: 'bg-gray-100 text-gray-700',
-      SHORTLISTED: 'bg-blue-100 text-blue-700',
+  getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      pending: 'bg-green-100 text-green-700 border-green-200',
+      accepted: 'bg-blue-100 text-blue-700 border-blue-200',
+      rejected: 'bg-gray-100 text-gray-700 border-gray-200',
     };
-    return map[status] || 'bg-gray-100 text-gray-700';
+    return map[status] || 'bg-gray-100 text-gray-700 border-gray-200';
+  }
+
+  getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      pending: 'DASHBOARD.SUBMISSIONS.STATUS.NEW',
+      accepted: 'DASHBOARD.SUBMISSIONS.STATUS.SHORTLISTED',
+      rejected: 'DASHBOARD.SUBMISSIONS.STATUS.REVIEWED',
+    };
+    return map[status] || status;
+  }
+
+  getCandidateInitials(name: string): string {
+    const words = name.trim().split(' ');
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  // Calculate scores (mock - in real app this would come from AI)
+  getTechnicalQuality(submission: Submission): number {
+    return Math.min(Math.floor(submission.aiScore * 0.95), 100);
+  }
+
+  getCommunication(submission: Submission): number {
+    return Math.min(Math.floor(submission.aiScore * 1.05), 100);
   }
 
   watchVideo(url: string) {
     window.open(url, '_blank');
   }
 
-  viewApplication(id: number) {
-    console.log('View application', id);
+  viewApplication(id: string) {
+    console.log('View application:', id);
+    // TODO: Navigate to detail page
   }
 
-  contactCandidate(id: number) {
-    console.log('Contact candidate', id);
+  contactCandidate(id: string) {
+    console.log('Contact candidate:', id);
+    // TODO: Open contact modal
   }
 
-  async shortlistCandidate(id: number) {
+  async shortlistCandidate(id: string) {
     try {
-      await firstValueFrom(this.http.post(`${environment.apiUrl}/submissions/${id}/shortlist`, {}));
+      await firstValueFrom(
+        this.http.put(`${environment.apiUrl}/submissions/${id}/status`, {
+          status: 'accepted',
+        })
+      );
+
+      // Reload submissions
       if (this.selectedChallengeId) {
         await this.loadSubmissions(this.selectedChallengeId);
       }
     } catch (error) {
-      console.error('Shortlist error', error);
+      console.error('Error shortlisting candidate:', error);
     }
   }
 }

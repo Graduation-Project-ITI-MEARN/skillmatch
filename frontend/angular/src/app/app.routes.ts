@@ -49,13 +49,19 @@ export const routes: Routes = [
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
           },
           {
-    path: 'challenge/:id',
-    loadComponent: () =>
-      import('./pages/candidate/challenge-details/challenge-details').then(
-        (m) => m.ChallengeDetailsComponent
-      ),
-      },
+            path: 'challenge/:id',
+            loadComponent: () =>
+              import('./pages/candidate/challenge-details/challenge-details').then(
+                (m) => m.ChallengeDetailsComponent
+              ),
+          },
         ],
+      },
+      {
+        path: 'company/challenge/:id/edit',
+        loadComponent: () =>
+          import('./pages/company/edit-challenge/edit-challenge').then((m) => m.EditChallenge),
+        canActivate: [companyGuard],
       },
 
       {
@@ -96,12 +102,6 @@ export const routes: Routes = [
           import('./pages/company/create-challenge/create-challenge').then(
             (m) => m.CreateChallenge
           ),
-        canActivate: [companyGuard],
-      },
-      {
-        path: 'company/challenge/:id/edit',
-        loadComponent: () =>
-          import('./pages/company/edit-challenge/edit-challenge').then((m) => m.EditChallenge),
         canActivate: [companyGuard],
       },
       {
