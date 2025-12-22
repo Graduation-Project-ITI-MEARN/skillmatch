@@ -88,3 +88,6 @@ body {
   -webkit-animation: fade-in 0.35s ease both;
   animation: fade-in 0.35s ease both;
 }
+body {
+  padding-right: var(--scrollbar-gutter, 0px);
+}

@@ -151,60 +151,60 @@
       }
     },
     "OVERVIEW": {
-      "MY_JOB_POSTINGS": "Active Job Postings",
-      "HIRING_INSIGHTS": "Hiring Insights",
-      "HIGH_QUALITY_CANDIDATES": "{{count}} high-quality candidates are ready for interviews based on your recent job postings.",
-      "AVG_EVALUATION_TIME": "Avg. evaluation time: 24 hours",
-      "AI_POWERED": "(AI-powered)",
-      "RECENT_ACTIVITY": "Recent Activity",
+      "TITLE": "Active Job Postings",
+      "SEARCH_PLACEHOLDER": "Search jobs...",
       "FILTER": "Filter",
+      "DAYS_REMAINING": "days remaining",
       "OFFER": "Offer",
       "APPLICATIONS": "Applications",
       "TOP_SCORE": "Top Score",
       "QUALIFIED": "Qualified",
       "VIEW_APPLICATIONS": "View Applications",
       "EDIT_JOB": "Edit Job",
-      "CREATE_NEW_POSTING": "Create New Job Posting",
+      "CREATE_NEW_JOB": "+ Create New Job Posting",
+      "HIRING_INSIGHTS": "Hiring Insights",
+      "HIGH_QUALITY_CANDIDATES": "high-quality candidates",
+      "READY_FOR_INTERVIEWS": "are ready for interviews based on your recent job postings.",
+      "AVG_EVALUATION_TIME": "Avg. evaluation time",
+      "HOURS": "hours",
+      "AI_POWERED": "AI-powered",
       "VIEW_RECOMMENDATIONS": "View Recommendations",
+      "RECENT_ACTIVITY": "Recent Activity",
+      "NO_RECENT_ACTIVITY": "No recent activity",
       "NEW_APPLICATION": "New application",
-      "CANDIDATE_SHORTLISTED": "Candidate shortlisted",
-      "CHALLENGE_COMPLETED": "Challenge completed",
       "JOB_CLOSED": "Job posting closed",
-      "NO_CHALLENGES": "No active job postings yet",
-      "NO_ACTIVITY": "No recent activity"
-    },
-    "SECTION": {
-      "ACTIVE_APPLICATIONS": "Active Applications",
-      "AI_RECOMMENDATIONS": "AI Recommendations",
-      "RECENT_ACTIVITY": "Recent Activity"
-    },
-    "COMMON": {
-      "FILTER": "Filter",
-      "FILTERS": "Filters",
-      "SEARCH": "Search jobs...",
+      "FILTERS_TITLE": "Filters",
+      "STATUS_FILTER": "Status",
+      "BUDGET_FILTER": "Budget Range",
       "CLEAR_ALL": "Clear all",
       "CANCEL": "Cancel",
       "APPLY_FILTERS": "Apply Filters",
-      "LOADING": "Loading..."
-    },
-    "FILTERS": {
-      "JOB_TYPE": "Job Type",
-      "STATUS": "Status",
-      "BUDGET_RANGE": "Budget Range",
-      "CODING": "Coding",
-      "DESIGN": "Design",
-      "MARKETING": "Marketing",
-      "ACTIVE": "Active",
-      "EVALUATING": "Evaluating",
-      "CLOSED": "Closed",
-      "BUDGET_0_500": "$0 – $500",
-      "BUDGET_500_1000": "$500 – $1,000",
-      "BUDGET_1000_PLUS": "$1,000+"
+      "CATEGORIES": {
+        "TITLE": "Job Type",
+        "CODING": "Coding",
+        "DESIGN": "Design",
+        "MARKETING": "Marketing",
+        "DATA_SCIENCE": "Data Science",
+        "PRODUCT_MANAGEMENT": "Product Management"
+      },
+      "STATUS": {
+        "ACTIVE": "Active",
+        "EVALUATING": "Evaluating",
+        "CLOSED": "Closed"
+      },
+      "FILTERS": {
+        "ACTIVE": "Active",
+        "EVALUATING": "Evaluating",
+        "CLOSED": "Closed",
+        "BUDGET_0_500": "$0 - $500",
+        "BUDGET_500_1000": "$500 - $1,000",
+        "BUDGET_1000_PLUS": "$1,000+"
+      }
     },
     "SUBMISSIONS": {
       "TITLE": "All Applications",
       "SUBTITLE": "AI-evaluated applications across all job postings",
-      "ACTIVE_CHALLENGES": "Active Challenges",
+      "SELECT_CHALLENGE": "Active Challenges",
       "NO_CHALLENGES": "No active challenges available",
       "NO_SUBMISSIONS": "No submissions found for this challenge",
       "OVERALL": "Overall",
@@ -221,12 +221,10 @@
         "REVIEWED": "Reviewed",
         "SHORTLISTED": "Shortlisted"
       },
-      "ACTIONS": {
-        "WATCH_VIDEO": "Watch Video",
-        "VIEW_APPLICATION": "View Application",
-        "CONTACT": "Contact",
-        "SHORTLIST": "Shortlist"
-      }
+      "WATCH_VIDEO": "Watch Video",
+      "VIEW_APPLICATION": "View Application",
+      "CONTACT": "Contact",
+      "SHORTLIST": "Shortlist"
     },
     "TALENT": {
       "TITLE": "Verified Talent Pool",
@@ -238,26 +236,109 @@
       "CLEAR_FILTERS": "Clear filters",
       "NO_RESULTS": "No talent found matching your criteria",
       "CHALLENGES_COMPLETED": "challenges completed",
+      "VIEW_PROFILE": "View Profile",
+      "CONTACT": "Contact",
+      "CURRENTLY_ENGAGED": "Currently engaged",
       "CATEGORIES": {
         "ALL": "All Categories",
         "CODING": "Coding",
         "DESIGN": "Design",
         "MARKETING": "Marketing"
-      },
-      "ACTIONS": {
-        "VIEW_PROFILE": "View Profile",
-        "CONTACT": "Contact",
-        "CATEGORIES": {
-          "ALL": "All Categories",
-          "CODING": "Coding",
-          "DESIGN": "Design",
-          "MARKETING": "Marketing"
-        },
-
-        "STATUS": {
-          "CURRENTLY_ENGAGED": "Currently engaged"
-        }
       }
+    },
+    "COMMON": {
+      "LOADING": "Loading..."
+    }
+  },
+  "CHALLENGE": {
+    "BACK": "Back to Dashboard",
+    "CREATE": {
+      "TITLE": "Create New Challenge",
+      "DESCRIPTION": "Post real-world tasks and let AI evaluate candidates through their solutions and video explanations.",
+      "BENEFIT_1_TITLE": "AI-Powered Evaluation",
+      "BENEFIT_1_DESC": "Automated assessment of both technical quality and communication skills",
+      "BENEFIT_2_TITLE": "Real-World Tasks",
+      "BENEFIT_2_DESC": "Test candidates with actual work scenarios, not theoretical questions",
+      "BENEFIT_3_TITLE": "Video Explanations",
+      "BENEFIT_3_DESC": "Understand candidate thought process through their video walkthroughs"
+    },
+    "EDIT": {
+      "TITLE": "Edit Challenge",
+      "DESCRIPTION": "Update your challenge details with care",
+      "RESTRICTED_MODE": "Restricted Mode Active",
+      "LOCKED_FIELDS": "Locked Fields",
+      "EDITABLE_FIELDS": "Still Editable",
+      "EDITABLE": "Editable",
+      "FULL_ACCESS": "Full Edit Access",
+      "FULL_ACCESS_DESC": "No submissions yet. All fields are editable."
+    },
+    "FORM": {
+      "TITLE": "Challenge Title",
+      "TITLE_PLACEHOLDER": "e.g., Build a Real-Time Chat Application",
+      "TITLE_ERROR": "Title is required (minimum 5 characters)",
+      "CATEGORY": "Category",
+      "SELECT_CATEGORY": "Select category",
+      "DIFFICULTY": "Difficulty Level",
+      "SELECT_DIFFICULTY": "Select difficulty",
+      "TYPE": "Challenge Type",
+      "SELECT_TYPE": "Select type",
+      "STATUS": "Status",
+      "DEADLINE": "Deadline",
+      "DESCRIPTION": "Challenge Description",
+      "DESCRIPTION_PLACEHOLDER": "Describe the challenge, what the candidate needs to build, and any specific requirements...",
+      "SKILLS": "Required Skills",
+      "SELECT_SKILLS": "Click to select skills",
+      "SEARCH_SKILLS": "Search skills...",
+      "NO_SKILLS_FOUND": "No skills found matching your search",
+      "SKILLS_SELECTED": "selected",
+      "SKILLS_AVAILABLE": "available",
+      "SELECT_CATEGORY_FIRST": "Select a category first to see relevant skills",
+      "SALARY": "Salary (USD/month)",
+      "SALARY_PLACEHOLDER": "e.g., 5000",
+      "PRIZE": "Prize Amount (USD)",
+      "PRIZE_PLACEHOLDER": "e.g., 1000",
+      "OPTIONAL": "Optional",
+      "SUBMIT": "Create Challenge",
+      "SUBMITTING": "Creating...",
+      "UPDATE": "Update Challenge",
+      "UPDATING": "Updating..."
+    },
+    "CATEGORIES": {
+      "DEVELOPMENT": "Coding & Development",
+      "DESIGN": "Design & Creative",
+      "MARKETING": "Marketing & Growth",
+      "WRITING": "Writing & Content",
+      "TRANSLATION": "Translation & Localization",
+      "DATA ENTRY": "Data Entry & Processing"
+    },
+    "DIFFICULTY": {
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard"
+    },
+    "TYPES": {
+      "JOB": "Job Opportunity",
+      "PRIZE": "Prize Competition"
+    },
+    "STATUS": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "CLOSED": "Closed"
+    },
+    "SUCCESS": {
+      "TITLE": "Challenge Created Successfully!",
+      "MESSAGE": "Redirecting to dashboard...",
+      "UPDATE_TITLE": "Challenge Updated!",
+      "UPDATE_MESSAGE": "Your changes have been saved successfully."
+    },
+    "ERROR": {
+      "TITLE": "Error",
+      "MESSAGE": "Something went wrong. Please try again."
+    },
+    "RESTRICTED": {
+      "TITLE": "Restricted Editing Mode",
+      "MESSAGE": "active submissions detected. Core fields are locked to protect candidate experience.",
+      "ALLOWED": "You can only edit: Description, Deadline, and Status."
     }
   },
   "SORT": {
