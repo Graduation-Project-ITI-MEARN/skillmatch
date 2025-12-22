@@ -46,6 +46,8 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       }
    }
 
+
+
    const challenge = await Challenge.create({
       ...req.body,
       creatorId: user._id,
@@ -313,6 +315,18 @@ const deleteChallenge = catchError(async (req: Request, res: Response) => {
    });
 });
 
+
+   const getChallengeById = catchError(async (req: Request, res: Response) => {
+   const { id } = req.params;
+
+   const challenge = await Challenge.findById(id);
+   if (!challenge) return res.status(404).json({ status: "fail", message: "Challenge not found" });
+
+   res.status(200).json({ status: "success", data: challenge });
+});
+
+
+
 export {
    createChallenge,
    getPublishedChallenges,
@@ -320,4 +334,6 @@ export {
    getAllChallenges,
    updateChallenge,
    deleteChallenge,
+   getChallengeById
+   
 };

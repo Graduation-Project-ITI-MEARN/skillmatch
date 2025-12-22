@@ -1,32 +1,35 @@
+import express from "express";
 import {
   createChallenge,
-  deleteChallenge,
-  getAllChallenges,
-  getMyChallenges,
   getPublishedChallenges,
+  getMyChallenges,
+  getAllChallenges,
   updateChallenge,
+  deleteChallenge,
+  getChallengeById,
 } from "../controllers/challengeController";
-import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
-
 import auth from "../middlewares/authMiddleware";
-import express from "express";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
+import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
 
 const router = express.Router();
 
-// ==============================================================================
+// ==========================
 // PUBLIC ROUTES
-// ==============================================================================
+// ==========================
 
 // Get all published challenges (Feed)
 router.get("/", getPublishedChallenges);
 
-// ==============================================================================
-// PROTECTED ROUTES (Authenticated Users)
-// ==============================================================================
+// Get challenge details by ID
+router.get("/:id", getChallengeById);
 
-// Get challenges created by the current user
+// ==========================
+// PROTECTED ROUTES (Authenticated Users)
+// ==========================
+
+// Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
 
 // Create a new challenge (Company & Challenger only)
@@ -38,7 +41,7 @@ router.post(
   createChallenge
 );
 
-// Update an existing challenge (Safe Update)
+// Update an existing challenge (Creator only)
 router.put(
   "/:id",
   auth,
@@ -47,17 +50,12 @@ router.put(
   updateChallenge
 );
 
-// Delete a challenge (Safe Delete)
-router.delete(
-  "/:id",
-  auth,
-  restrictTo(["company", "challenger"]),
-  deleteChallenge
-);
+// Delete a challenge (Creator only)
+router.delete("/:id", auth, restrictTo(["company", "challenger"]), deleteChallenge);
 
-// ==============================================================================
+// ==========================
 // ADMIN ROUTES
-// ==============================================================================
+// ==========================
 
 // Get all challenges including drafts and archived (Admin only)
 router.get("/all", auth, restrictTo(["admin"]), getAllChallenges);

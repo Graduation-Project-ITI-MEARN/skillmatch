@@ -38,7 +38,7 @@
       <!-- Loop: Challenge Cards -->
       @for (challenge of activeChallenges; track challenge._id) {
       <div
-        class="relative bg-white rounded-2xl p-6 group hover:bg-gray-50 transition-all cursor-pointer border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md"
+        class="relative bg-white rounded-2xl p-6 group hover:bg-gray-50 transition-all border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md"
       >
         <!-- Top Row: Title, Tags, Prize -->
         <div class="flex items-start justify-between mb-4">
@@ -101,9 +101,10 @@
           </div>
 
           <button
-            class="flex items-center gap-2 px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all font-medium text-sm shadow-lg shadow-gray-900/10"
+            [routerLink]="['../challenge', challenge._id]"
+            class="cursor-pointer flex items-center gap-2 px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all font-medium text-sm shadow-lg shadow-gray-900/10"
           >
-            Start Challenge
+            View Details
             <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4"></lucide-icon>
           </button>
         </div>

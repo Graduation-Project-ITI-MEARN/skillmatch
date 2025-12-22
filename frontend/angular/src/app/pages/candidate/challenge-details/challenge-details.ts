@@ -1,10 +1,19 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { LucideAngularModule, FileDown, Link, Layout, Award, BarChart, Code, Clock } from 'lucide-angular';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import {
+  LucideAngularModule,
+  BarChart,
+  Award,
+  Layout,
+  Code,
+  FileDown,
+  Link,
+  ChevronRight
+} from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CandidateService } from 'src/app/core/services/candidateService';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-challenge-details',
@@ -14,56 +23,73 @@ import { forkJoin } from 'rxjs';
 })
 export class ChallengeDetails implements OnInit {
   private route = inject(ActivatedRoute);
-  private candidateService = inject(CandidateService);
+  private router = inject(Router);
+  private candidateservice = inject(CandidateService);
+  private toast = inject(ToastrService);
 
+  challengeId: string = '';
   challenge: any = null;
   loading = true;
-  isSubmitted = false; // دي اللي هتحدد شكل الزرار
+  isSubmitted = false;
 
-  readonly icons = { FileDown, Link, Layout, Award, BarChart, Code, Clock };
+
+  readonly icons = {
+    BarChart,
+    Award,
+    Layout,
+    Code,
+    FileDown,
+    Link,
+    ChevronRight
+  };
 
   ngOnInit() {
-    const challengeId = this.route.snapshot.paramMap.get('id');
-    if (challengeId) {
-      this.loadData(challengeId);
+    this.challengeId = this.route.snapshot.paramMap.get('id') || '';
+    if (this.challengeId) {
+      this.loadChallenge();
     }
   }
 
-  loadData(id: string) {
-    // بنطلب بيانات التحدي وقائمة التسليمات الخاصة باليوزر في نفس الوقت
-    forkJoin({
-      challengeDetail: this.candidateService.getChallengeById(id),
-      mySubmissions: this.candidateService.getMySubmissions()
-    }).subscribe({
+  loadChallenge() {
+    this.loading = true;
+    this.candidateservice.getChallengeById(this.challengeId).subscribe({
       next: (res) => {
-        this.challenge = res.challengeDetail.data;
-
-        // التأكد لو الـ ID بتاع التحدي ده موجود في أي Submission قديم لليوزر
-        const submissions = res.mySubmissions?.data || [];
-        this.isSubmitted = submissions.some((s: any) =>
-            (s.challengeId === id) || (s.challenge?._id === id)
-        );
-
+        this.challenge = res.data;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading challenge details:', err);
+        this.toast.error('Failed to load challenge details');
         this.loading = false;
       }
     });
   }
 
+
   handleAction() {
     if (this.isSubmitted) {
-      // توجيه لصفحة الحل (Portfolio) أو عرض رسالة
-      console.log('User already submitted. Redirecting to portfolio...');
+
+      this.router.navigate(['/dashboard/candidate/portfolio']);
     } else {
-      // منطق بدء التحدي (Start Challenge)
-      console.log('Starting challenge interaction...');
+      this.onStartChallenge();
     }
   }
 
+  private onStartChallenge() {
+    this.candidateservice.getChallengeById(this.challengeId).subscribe({
+      next: () => {
+        this.toast.success('Challenge Started! Good luck.');
+
+        this.router.navigate(['/dashboard/candidate/portfolio']);
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Failed to start challenge');
+      }
+    });
+  }
+
   downloadFile(url: string) {
-    window.open(url, '_blank');
+    if (url) {
+      window.open(url, '_blank');
+    }
   }
 }

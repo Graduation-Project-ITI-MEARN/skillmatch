@@ -1,201 +1,68 @@
-<div class="space-y-8 animate-fade-in">
-  <!-- Header Section -->
-  <div class="flex items-center justify-between flex-wrap gap-4">
-    <div>
-      <h2 class="text-2xl font-bold mb-2 text-gray-800">AI-Verified Portfolio</h2>
-      <p class="text-gray-600">Auto-updating with every challenge completion</p>
-    </div>
-    <button
-      class="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
-    >
-      Share Portfolio
-    </button>
-  </div>
-
-  <!-- Stats Grid (Static Mockup based on design) -->
-  <!-- ملاحظة: البيانات هنا ثابتة للمحاكاة، يمكن ربطها لاحقاً بـ API -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Card 1: Coding -->
-    <div
-      class="bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all cursor-pointer border border-gray-200 shadow-sm hover:shadow-md"
-    >
-      <h3 class="text-xl font-bold mb-4 text-gray-800">Coding</h3>
-      <div class="space-y-3 mb-4">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Completed</span>
-          <span class="font-semibold">12</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Avg Score</span>
-          <span class="font-semibold text-green-600">91</span>
-        </div>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >React</span
-        >
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >Node.js</span
-        >
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >TypeScript</span
-        >
-      </div>
-    </div>
-
-    <!-- Card 2: Design -->
-    <div
-      class="bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all cursor-pointer border border-gray-200 shadow-sm hover:shadow-md"
-    >
-      <h3 class="text-xl font-bold mb-4 text-gray-800">Design</h3>
-      <div class="space-y-3 mb-4">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Completed</span>
-          <span class="font-semibold">6</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Avg Score</span>
-          <span class="font-semibold text-blue-600">87</span>
-        </div>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >Figma</span
-        >
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >UI/UX</span
-        >
-      </div>
-    </div>
-
-    <!-- Card 3: Marketing -->
-    <div
-      class="bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all cursor-pointer border border-gray-200 shadow-sm hover:shadow-md"
-    >
-      <h3 class="text-xl font-bold mb-4 text-gray-800">Marketing</h3>
-      <div class="space-y-3 mb-4">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Completed</span>
-          <span class="font-semibold">6</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-gray-600">Avg Score</span>
-          <span class="font-semibold text-purple-600">85</span>
-        </div>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >Content</span
-        >
-        <span class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-700"
-          >Strategy</span
-        >
-      </div>
-    </div>
-  </div>
-
-  <!-- Verified Achievements Section -->
-  <div>
-    <h3 class="text-xl font-bold mb-4 text-gray-800">Verified Achievements</h3>
-
-    <!-- Loading/Empty State -->
-    @if (submissions.length === 0) {
-    <div
-      class="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-300 text-gray-500"
-    >
-      No achievements yet. Complete challenges to build your portfolio!
-    </div>
-    }
-
-    <!-- Achievements Grid -->
+<div class="space-y-10 p-6">
+  <!-- 1. Started Challenges (In Progress) -->
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">In Progress</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      @for (sub of submissions; track sub._id) {
-      <div
-        class="bg-white rounded-2xl p-6 hover:bg-gray-50 transition-all border border-gray-200 hover:border-blue-200 group shadow-sm"
-      >
-        <!-- Card Header -->
-        <div class="flex items-start justify-between mb-4">
-          <div>
-            <h4
-              class="font-bold text-gray-900 mb-1 text-lg line-clamp-1"
-              [title]="sub.challengeId?.title"
-            >
-              {{ sub.challengeId?.title || 'Unknown Challenge' }}
-            </h4>
-            <p class="text-sm text-gray-500">Completed {{ sub.createdAt | date : 'mediumDate' }}</p>
-          </div>
-
-          <!-- Score Badge -->
-          <div
-            class="px-3 py-1 bg-gradient-to-right from-blue-500 to-purple-500 text-white rounded-lg text-sm font-bold shadow-sm"
-          >
-            Score: {{ sub.aiScore || 'N/A' }}
+      @for (sub of inProgressChallenges; track sub._id) {
+        <div class="bg-white border-2 border-blue-100 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+              <span class="block font-semibold text-red-500">Deadline:</span>
+              {{ sub.createdAt | date }} <!-- أو الحقل القادم من السيرفر -->
+            </div>
+            <button (click)="openSubmitModal(sub)" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700">
+              Submit Solution
+            </button>
           </div>
         </div>
-
-        <!-- Tags -->
-        <div class="flex gap-2 mb-6 flex-wrap">
-          <span
-            class="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium border border-blue-100"
-          >
-            {{ sub.challengeId?.category | uppercase }}
-          </span>
-          <span
-            class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium border border-gray-200"
-          >
-            {{ sub.challengeId?.difficulty }}
-          </span>
-          <span
-            class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium border border-gray-200"
-          >
-            {{ sub.submissionType }}
-          </span>
+      } @empty {
+        <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed text-gray-400">
+          No challenges in progress. Go start one!
         </div>
-
-        <!-- Action Button -->
-        @if (sub.videoExplanationUrl) {
-        <a
-          [href]="sub.videoExplanationUrl"
-          target="_blank"
-          class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors group-hover:translate-x-1 duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="bg-gray-100 rounded-full p-1 w-6 h-6 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"
-          >
-            <path
-              d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"
-            ></path>
-          </svg>
-          Watch Explanation Video
-        </a>
-        } @else {
-        <span class="text-sm text-gray-400 italic flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          No video attached
-        </span>
-        }
-      </div>
       }
+    </div>
+  </section>
+
+  <!-- 2. Completed Challenges -->
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Completed</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (sub of completedChallenges; track sub._id) {
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg font-bold text-gray-700">{{ sub.challengeId?.title }}</h3>
+            <div class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+              Score: {{ sub.aiScore }}
+            </div>
+          </div>
+          <button class="mt-4 text-blue-600 font-bold text-sm hover:underline">View Result & Feedback</button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Submission Modal -->
+  <div *ngIf="showModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-fade-in-up">
+      <h2 class="text-2xl font-bold mb-2">Submit Your Work</h2>
+      <p class="text-gray-500 text-sm mb-6">Provide the links to your solution and demo video.</p>
+      
+      <form [formGroup]="submitForm" (ngSubmit)="onFinalSubmit()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1">GitHub / Design Link</label>
+          <input formControlName="solutionUrl" type="url" placeholder="https://..." class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1">Video Demo Link (Loom/YouTube)</label>
+          <input formControlName="videoUrl" type="url" placeholder="https://..." class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button type="button" (click)="showModal=false" class="flex-1 py-3 font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all">Cancel</button>
+          <button type="submit" [disabled]="submitForm.invalid" class="flex-1 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black disabled:opacity-50 transition-all">Submit Now</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
