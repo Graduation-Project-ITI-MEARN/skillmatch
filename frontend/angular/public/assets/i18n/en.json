@@ -301,7 +301,11 @@
       "SUBMIT": "Create Challenge",
       "SUBMITTING": "Creating...",
       "UPDATE": "Update Challenge",
-      "UPDATING": "Updating..."
+      "UPDATING": "Updating...",
+      "SAVE_DRAFT": "Save as Draft",
+      "PUBLISH": "Publish Challenge",
+      "PUBLISHING": "Publishing...",
+      "SAVING_DRAFT": "Saving..."
     },
     "CATEGORIES": {
       "DEVELOPMENT": "Coding & Development",

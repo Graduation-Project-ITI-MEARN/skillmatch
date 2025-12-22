@@ -41,10 +41,8 @@ export class CreateChallenge implements OnInit {
   submitSuccess = false;
 
   categories = ['Development', 'Design', 'Marketing', 'Writing', 'Translation', 'Data Entry'];
-
   difficultyLevels = ['easy', 'medium', 'hard'];
-  challengeTypes = ['job', 'prize'];
-  statusOptions = ['draft', 'published', 'closed'];
+  // statusOptions = ['draft', 'published', 'closed']; // REMOVED
 
   allSkills: Record<string, string[]> = {
     Development: [
@@ -125,7 +123,7 @@ export class CreateChallenge implements OnInit {
   };
 
   selectedTags: string[] = [];
-  minDate!: string; // <-- هنا عرفنا المتغير
+  minDate!: string;
   skillSearchQuery = '';
   openSkillsDropdown = false;
 
@@ -141,49 +139,24 @@ export class CreateChallenge implements OnInit {
   selectedDifficulty: string | null = null;
   openDifficulty = false;
 
-  selectedType: string | null = null;
-  openType = false;
-
-  selectedStatus: string = 'draft';
-  openStatus = false;
+  // selectedStatus: string = 'draft'; // REMOVED
+  // openStatus = false; // REMOVED
 
   ngOnInit() {
-    // 1. تحديد الحد الأدنى لتاريخ deadline
     const today = new Date();
-    today.setDate(today.getDate() + 1); // الحد الأدنى يبقى الغد
-    this.minDate = today.toISOString().split('T')[0]; // yyyy-mm-dd
+    today.setDate(today.getDate() + 1);
+    this.minDate = today.toISOString().split('T')[0];
 
-    // 2. تعريف الفورم
     this.challengeForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(1)]],
       category: ['', Validators.required],
       difficulty: ['', Validators.required],
-      type: ['', Validators.required],
-      status: ['draft'],
-      deadline: ['', Validators.required], // لازم يكون required
-      salary: [null],
-      prizeAmount: [null],
+      type: ['job'],
+      // status: ['draft'], // REMOVED from form control
+      deadline: ['', Validators.required],
+      salary: [null, [Validators.required, Validators.min(1000)]],
       tags: [[], Validators.required],
-    });
-
-    // 3. تعديل Validators بناءً على نوع التحدي
-    this.challengeForm.get('type')?.valueChanges.subscribe((type) => {
-      if (type === 'job') {
-        this.challengeForm
-          .get('salary')
-          ?.setValidators([Validators.required, Validators.min(1000)]);
-        this.challengeForm.get('prizeAmount')?.clearValidators();
-        this.challengeForm.get('prizeAmount')?.setValue(null);
-      } else if (type === 'prize') {
-        this.challengeForm
-          .get('prizeAmount')
-          ?.setValidators([Validators.required, Validators.min(100)]);
-        this.challengeForm.get('salary')?.clearValidators();
-        this.challengeForm.get('salary')?.setValue(null);
-      }
-      this.challengeForm.get('salary')?.updateValueAndValidity();
-      this.challengeForm.get('prizeAmount')?.updateValueAndValidity();
     });
   }
 
@@ -199,17 +172,11 @@ export class CreateChallenge implements OnInit {
     this.challengeForm.get('difficulty')?.setValue(level);
   }
 
-  selectType(type: string) {
-    this.selectedType = type;
-    this.openType = false;
-    this.challengeForm.get('type')?.setValue(type);
-  }
-
-  selectStatus(status: string) {
-    this.selectedStatus = status;
-    this.openStatus = false;
-    this.challengeForm.get('status')?.setValue(status);
-  }
+  // selectStatus(status: string) { // REMOVED
+  //   this.selectedStatus = status;
+  //   this.openStatus = false;
+  //   this.challengeForm.get('status')?.setValue(status);
+  // }
 
   get availableSkills(): string[] {
     if (!this.selectedCategory) return Object.values(this.allSkills).flat();
@@ -243,42 +210,55 @@ export class CreateChallenge implements OnInit {
     this.skillSearchQuery = '';
   }
 
-  async onSubmit() {
-    if (this.challengeForm.invalid || this.selectedTags.length === 0) {
-      this.challengeForm.markAllAsTouched();
+  async onSubmit(status: 'draft' | 'published') {
+    // This log shows what the form *contains* at this moment
+    console.log('Attempting to submit. Current form value:', this.challengeForm.value);
+    console.log('Selected Tags:', this.selectedTags);
+    console.log('Is form valid BEFORE validation block?', this.challengeForm.valid);
+    console.log('Does selectedTags have length?', this.selectedTags.length > 0);
 
-      if (this.selectedTags.length === 0) this.submitError = 'Please select at least one skill';
-      else if (!this.selectedCategory) this.submitError = 'Please select a category';
-      else if (!this.selectedDifficulty) this.submitError = 'Please select difficulty level';
-      else if (!this.selectedType) this.submitError = 'Please select challenge type';
-      else this.submitError = 'Please fill all required fields';
-      return;
+    // Frontend validation logic
+    if (this.selectedTags.length === 0) {
+      this.submitError = 'Please select at least one skill';
+    } else if (!this.selectedCategory) {
+      this.submitError = 'Please select a category';
+    } else if (!this.selectedDifficulty) {
+      this.submitError = 'Please select difficulty level';
+    } else if (this.challengeForm.get('salary')?.hasError('min')) {
+      this.submitError = 'Salary must be at least 1000';
+    } else {
+      this.submitError = 'Please fill all required fields';
     }
 
     const deadlineValue = this.challengeForm.get('deadline')?.value;
     if (!deadlineValue) {
+      // Should be caught by form.invalid if deadline is required
       this.submitError = 'Please select a deadline date';
+      console.error('Blocking submission due to missing deadline (secondary check).');
       return;
     }
+
+    // If we reach here, frontend validation passed
+    console.log('Frontend validation passed. Constructing payload...');
 
     const payload: any = {
       title: this.challengeForm.value.title,
       description: this.challengeForm.value.description,
       category: this.selectedCategory,
       difficulty: this.selectedDifficulty,
-      type: this.selectedType,
-      status: this.selectedStatus || 'draft',
+      type: 'job',
+      status: status,
       deadline: this.challengeForm.value.deadline,
       tags: this.selectedTags,
-      // هنا التعديل المهم 👇
+      salary: Number(this.challengeForm.value.salary),
     };
 
-    // توحيد الحقلين (salary و prizeAmount) في حقل واحد للباك إند
-    if (this.selectedType === 'job') {
-      payload.prizeAmount = Number(this.challengeForm.value.salary);
-    } else if (this.selectedType === 'prize') {
-      payload.prizeAmount = Number(this.challengeForm.value.prizeAmount);
+    if (payload.prizeAmount !== undefined) {
+      delete payload.prizeAmount;
     }
+
+    console.log('Final payload being sent to backend:', payload);
+
     try {
       this.isSubmitting = true;
       this.submitError = '';
@@ -286,7 +266,7 @@ export class CreateChallenge implements OnInit {
       this.submitSuccess = true;
       setTimeout(() => this.router.navigate(['/dashboard/company/overview']), 4000);
     } catch (error: any) {
-      console.error('Error creating challenge:', error);
+      console.error('Error creating challenge (from backend):', error);
       this.submitError = error?.error?.message || 'Failed to create challenge';
     } finally {
       this.isSubmitting = false;

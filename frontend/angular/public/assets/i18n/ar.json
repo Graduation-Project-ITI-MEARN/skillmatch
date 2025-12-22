@@ -142,7 +142,12 @@
       "SUBMIT": "إنشاء التحدي",
       "SUBMITTING": "جاري الإنشاء...",
       "UPDATE": "تحديث التحدي",
-      "UPDATING": "جاري التحديث..."
+      "UPDATING": "جاري التحديث...",
+      "SAVE_DRAFT": "حفظ كمسودة",
+      "PUBLISH": "نشر التحدي",
+      "PUBLISHING": "جاري النشر...",
+      "SAVING_DRAFT": "جاري الحفظ..."
+    },
     "ADMIN": {
       "USER_DISTRIBUTION": "توزيع المستخدمين",
       "RECENT_ACTIVITY": "النشاط الأخير",

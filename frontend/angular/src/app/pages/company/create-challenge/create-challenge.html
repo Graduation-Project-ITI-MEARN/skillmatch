@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
+<div class="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 py-12 px-4">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <button
@@ -75,11 +75,7 @@
         </div>
 
         <!-- Form Card -->
-        <form
-          [formGroup]="challengeForm"
-          (ngSubmit)="onSubmit()"
-          class="bg-white rounded-2xl shadow-xl p-8 space-y-6"
-        >
+        <form [formGroup]="challengeForm" class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
           <!-- Title -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -99,7 +95,7 @@
             </p>
           </div>
 
-          <!-- Category, Difficulty, Type, Status -->
+          <!-- Category, Difficulty -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Category Dropdown -->
             <div>
@@ -173,40 +169,8 @@
               </div>
             </div>
 
-            <!-- Type Dropdown -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                {{ 'CHALLENGE.FORM.TYPE' | translate }} <span class="text-red-500">*</span>
-              </label>
-              <div class="relative">
-                <button type="button" class="custom-dropdown" (click)="openType = !openType">
-                  <span [class.text-gray-400]="!selectedType">
-                    {{
-                      selectedType
-                        ? ('CHALLENGE.TYPES.' + selectedType.toUpperCase() | translate)
-                        : ('CHALLENGE.FORM.SELECT_TYPE' | translate)
-                    }}
-                  </span>
-                  <lucide-icon
-                    [img]="icons.ChevronDown"
-                    class="w-5 h-5 text-gray-500 transition-transform"
-                    [class.rotate-180]="openType"
-                  ></lucide-icon>
-                </button>
-                <ul *ngIf="openType" class="dropdown-menu">
-                  <li
-                    *ngFor="let type of challengeTypes"
-                    (click)="selectType(type)"
-                    class="dropdown-item"
-                  >
-                    {{ 'CHALLENGE.TYPES.' + type.toUpperCase() | translate }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Status Dropdown -->
-            <div>
+            <!-- Removed Status Dropdown -->
+            <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 {{ 'CHALLENGE.FORM.STATUS' | translate }}
               </label>
@@ -231,7 +195,7 @@
                   </li>
                 </ul>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- Skills Dropdown with Search -->
@@ -372,9 +336,8 @@
             ></textarea>
           </div>
 
-
-          <!-- Salary (if type = job) -->
-          <div *ngIf="selectedType === 'job'">
+          <!-- Salary (Always visible) -->
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ 'CHALLENGE.FORM.SALARY' | translate }} <span class="text-red-500">*</span>
             </label>
@@ -387,29 +350,28 @@
             />
           </div>
 
-           <!-- Prize Amount (if type = prize) -->
-          <div *ngIf="selectedType === 'prize'">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ 'CHALLENGE.FORM.PRIZE' | translate }} <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              formControlName="prizeAmount"
-              min="1"
-              placeholder="{{ 'CHALLENGE.FORM.PRIZE_PLACEHOLDER' | translate }}"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
-            />
-          </div>
+          <!-- Action Buttons (Save as Draft / Publish) -->
+          <div class="flex gap-4 pt-4">
+            <button
+              type="button"
+              (click)="onSubmit('draft')"
+              [disabled]="isSubmitting || submitSuccess"
+              class="flex-1 px-6 py-3 bg-gray-100 text-gray-900 rounded-xl font-semibold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm text-lg"
+            >
+              <span *ngIf="!isSubmitting">{{ 'CHALLENGE.FORM.SAVE_DRAFT' | translate }}</span>
+              <span *ngIf="isSubmitting">{{ 'CHALLENGE.FORM.SAVING_DRAFT' | translate }}</span>
+            </button>
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            [disabled]="isSubmitting || submitSuccess"
-            class="w-full px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-lg"
-          >
-            <span *ngIf="!isSubmitting">{{ 'CHALLENGE.FORM.SUBMIT' | translate }}</span>
-            <span *ngIf="isSubmitting">{{ 'CHALLENGE.FORM.SUBMITTING' | translate }}</span>
-          </button>
+            <button
+              type="button"
+              (click)="onSubmit('published')"
+              [disabled]="isSubmitting || submitSuccess"
+              class="flex-1 px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-lg"
+            >
+              <span *ngIf="!isSubmitting">{{ 'CHALLENGE.FORM.PUBLISH' | translate }}</span>
+              <span *ngIf="isSubmitting">{{ 'CHALLENGE.FORM.PUBLISHING' | translate }}</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>

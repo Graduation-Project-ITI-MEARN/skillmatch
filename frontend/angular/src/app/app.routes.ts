@@ -99,7 +99,7 @@ export const routes: Routes = [
             path: 'challenge/:id',
             loadComponent: () =>
               import('./pages/candidate/challenge-details/challenge-details').then(
-                (m) => m.ChallengeDetailsComponent
+                (m) => m.ChallengeDetails
               ),
           },
         ],
