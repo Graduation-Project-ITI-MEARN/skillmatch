@@ -1,84 +1,76 @@
-<div class="space-y-6">
-  <!-- Header -->
-  <div>
-    <h2 class="text-2xl font-bold">
+<div class="talent-pool-container p-4 md:p-8 bg-[#fcfcfd] min-h-screen">
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-[#101828] mb-2">
       {{ 'DASHBOARD.TALENT.TITLE' | translate }}
     </h2>
-    <p class="text-gray-600 text-sm mt-1">
+    <p class="text-gray-600 text-sm">
       {{ 'DASHBOARD.TALENT.SUBTITLE' | translate }}
     </p>
   </div>
 
-  <!-- Search Bar + Filter -->
-  <div class="flex flex-col sm:flex-row gap-4 items-start">
-    <div class="md:w-1/2 relative w-full">
+  <div class="flex flex-col sm:flex-row gap-4 mb-6">
+    <div class="flex-1 relative">
       <lucide-icon
         [img]="icons.Search"
-        class="absolute left-1 p-1 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none"
+        class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
       ></lucide-icon>
       <input
         type="text"
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange()"
         [placeholder]="'DASHBOARD.TALENT.SEARCH_PLACEHOLDER' | translate"
-        class="w-full px-6 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 text-sm"
+        class="w-full pl-12 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white"
       />
       <button
         *ngIf="searchQuery"
         (click)="searchQuery = ''; onSearchChange()"
-        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
       >
-        <lucide-icon [img]="icons.X" class="w-4 h-4"></lucide-icon>
+        <lucide-icon [img]="icons.X" class="w-5 h-5"></lucide-icon>
       </button>
     </div>
 
-    <!-- Filter Dropdown -->
-    <div class="sm:w-1/4 w-full relative">
+    <div class="relative">
       <button
         (click)="toggleFilterDropdown()"
-        class="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap bg-white w-full text-center"
-        [class.bg-gray-100]="categoryFilter !== 'ALL'"
+        class="flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap bg-white w-full sm:w-auto"
+        [class.bg-gray-100]="categoryFilter !== 'all'"
       >
         <lucide-icon [img]="icons.Filter" class="w-5 h-5"></lucide-icon>
-        <span class="flex-1 text-center">
+        <span>
           {{
-            categoryFilter === 'ALL'
+            categoryFilter === 'all'
               ? ('DASHBOARD.TALENT.FILTERS' | translate)
-              : ('DASHBOARD.TALENT.CATEGORIES.' + categoryFilter | translate)
+              : ('DASHBOARD.TALENT.CATEGORIES.' + categoryFilter.toUpperCase() | translate)
           }}
         </span>
       </button>
 
-      <!-- Filter Dropdown Menu -->
       <div
         *ngIf="showFilterDropdown"
-        class="absolute right-0 z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg"
+        class="absolute right-0 z-10 mt-1 w-full sm:w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
       >
         <button
           *ngFor="let category of categories"
           type="button"
           (click)="selectCategory(category)"
-          class="w-full text-center px-4 py-2 hover:bg-gray-50 transition-colors text-sm"
+          class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium"
           [class.bg-gray-100]="categoryFilter === category"
-          [class.font-medium]="categoryFilter === category"
         >
-          {{ 'DASHBOARD.TALENT.CATEGORIES.' + category | translate }}
+          {{ 'DASHBOARD.TALENT.CATEGORIES.' + category.toUpperCase() | translate }}
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Active Filters Badge -->
-  <div *ngIf="hasActiveFilters" class="flex items-center gap-2">
-    <span class="text-sm text-gray-600">
-      {{ 'DASHBOARD.TALENT.ACTIVE_FILTERS' | translate }}:
-    </span>
+  <div *ngIf="hasActiveFilters" class="flex flex-wrap items-center gap-2 mb-6">
+    <span class="text-sm text-gray-600">{{ 'DASHBOARD.TALENT.ACTIVE_FILTERS' | translate }}:</span>
     <span
-      *ngIf="categoryFilter !== 'ALL'"
-      class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm flex items-center gap-2"
+      *ngIf="categoryFilter !== 'all'"
+      class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm flex items-center gap-2 font-medium"
     >
-      {{ 'DASHBOARD.TALENT.CATEGORIES.' + categoryFilter | translate }}
-      <button (click)="categoryFilter = 'ALL'; applyFilters()" class="hover:text-blue-900">
+      {{ 'DASHBOARD.TALENT.CATEGORIES.' + categoryFilter.toUpperCase() | translate }}
+      <button (click)="categoryFilter = 'all'; applyFilters()" class="hover:text-blue-900">
         <lucide-icon [img]="icons.X" class="w-3 h-3"></lucide-icon>
       </button>
     </span>
@@ -87,13 +79,11 @@
     </button>
   </div>
 
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="text-center py-12 text-gray-500">
+  <div *ngIf="isLoading" class="text-center py-12">
     <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-    <p class="mt-2">{{ 'DASHBOARD.COMMON.LOADING' | translate }}</p>
+    <p class="mt-2 text-gray-600">{{ 'COMMON.LOADING' | translate }}</p>
   </div>
 
-  <!-- Empty State -->
   <div
     *ngIf="!isLoading && filteredTalentList.length === 0"
     class="text-center py-12 text-gray-500"
@@ -108,82 +98,83 @@
     </button>
   </div>
 
-  <!-- Talent Grid -->
   <div
     *ngIf="!isLoading && filteredTalentList.length > 0"
     class="grid grid-cols-1 md:grid-cols-2 gap-6"
   >
     <div
       *ngFor="let person of filteredTalentList"
-      class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
+      class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow flex flex-col h-full"
     >
-      <!-- Header -->
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-4">
           <div
-            class="w-14 h-14 bg-linear-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-lg font-semibold shrink-0"
+            *ngIf="!person.profilePicture"
+            class="w-14 h-14 bg-linear-to-br from-[#a6c0fe] to-[#f68084d6] rounded-full flex items-center justify-center text-white text-lg font-semibold shrink-0"
           >
-            {{ person.initials }}
+            {{ getCandidateInitials(person.name) }}
           </div>
+          <img
+            *ngIf="person.profilePicture"
+            [src]="person.profilePicture"
+            [alt]="person.name"
+            class="w-14 h-14 rounded-full object-cover flex-shrink-0"
+          />
+
           <div>
-            <h3 class="text-lg font-semibold">{{ person.name }}</h3>
-            <p class="text-gray-600 text-sm">{{ person.role }}</p>
+            <h3 class="text-lg font-semibold text-[#101828] break-words">{{ person.name }}</h3>
+            <p class="text-gray-600 text-sm break-all">{{ person.role || person.email }}</p>
             <p class="text-gray-500 text-xs mt-1">
-              {{ person.challengesCompleted }}
+              {{ person.challengesCompleted || 0 }}
               {{ 'DASHBOARD.TALENT.CHALLENGES_COMPLETED' | translate }}
             </p>
           </div>
         </div>
 
-        <!-- Score -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-shrink-0">
           <lucide-icon
             [img]="icons.Star"
             class="w-5 h-5 text-yellow-500 fill-yellow-500"
           ></lucide-icon>
-          <span class="text-xl font-bold">{{ person.score }}</span>
+          <span class="text-xl font-bold text-[#101828]">{{ person.totalScore || 0 }}</span>
         </div>
       </div>
 
-      <!-- Category Badge -->
-      <div class="mb-3">
-        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-          {{ 'DASHBOARD.TALENT.CATEGORIES.' + person.category | translate }}
-        </span>
-      </div>
-
-      <!-- Skills -->
-      <div class="flex flex-wrap gap-2 mb-4">
+      <div class="flex flex-wrap gap-2 mb-6 mt-auto">
         <span
-          *ngFor="let skill of person.skills"
-          class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+          *ngFor="let skill of person.skills.slice(0, 5)"
+          class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs sm:text-sm font-medium"
         >
           {{ skill }}
         </span>
+        <span
+          *ngIf="person.skills.length > 5"
+          class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-xs font-medium"
+        >
+          +{{ person.skills.length - 5 }}
+        </span>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex gap-3">
+      <div class="flex flex-col sm:flex-row gap-3">
         <button
-          (click)="viewProfile(person.id)"
-          class="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+          (click)="viewProfile(person._id)"
+          class="flex-1 px-4 py-2.5 bg-[#101828] text-white rounded-lg hover:bg-black transition-colors text-sm font-medium"
         >
-          {{ 'DASHBOARD.TALENT.ACTIONS.VIEW_PROFILE' | translate }}
+          {{ 'DASHBOARD.TALENT.VIEW_PROFILE' | translate }}
         </button>
         <button
-          (click)="contactPerson(person.id)"
-          class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          (click)="contactPerson(person._id)"
+          class="flex-1 sm:flex-initial px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
-          {{ 'DASHBOARD.TALENT.ACTIONS.CONTACT' | translate }}
+          {{ 'DASHBOARD.TALENT.CONTACT' | translate }}
         </button>
       </div>
 
-      <!-- Engaged Status -->
       <div
         *ngIf="person.status === 'engaged'"
-        class="mt-3 text-center text-sm text-gray-500 bg-gray-50 py-2 rounded"
+        class="mt-3 text-center text-sm text-gray-500 bg-gray-50 py-2 rounded-lg"
       >
-        {{ 'DASHBOARD.TALENT.STATUS.CURRENTLY_ENGAGED' | translate }}
+        {{ 'DASHBOARD.TALENT.CURRENTLY_ENGAGED' | translate }}
       </div>
     </div>
   </div>

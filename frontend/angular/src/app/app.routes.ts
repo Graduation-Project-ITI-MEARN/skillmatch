@@ -95,7 +95,20 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
           },
+          {
+            path: 'challenge/:id',
+            loadComponent: () =>
+              import('./pages/candidate/challenge-details/challenge-details').then(
+                (m) => m.ChallengeDetailsComponent
+              ),
+          },
         ],
+      },
+      {
+        path: 'company/challenge/:id/edit',
+        loadComponent: () =>
+          import('./pages/company/edit-challenge/edit-challenge').then((m) => m.EditChallenge),
+        canActivate: [companyGuard],
       },
 
       // Company
@@ -106,30 +119,38 @@ export const routes: Routes = [
         canActivate: [companyGuard],
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
+
           {
             path: 'overview',
             loadComponent: () =>
               import('./pages/company/overview/overview').then((m) => m.Overview),
           },
+
           {
             path: 'submissions',
             loadComponent: () =>
               import('./pages/company/submissions/submissions').then((m) => m.Submissions),
           },
+
           {
             path: 'talent',
             loadComponent: () => import('./pages/company/talent/talent').then((m) => m.Talent),
           },
+
           {
             path: 'analytics',
             loadComponent: () =>
               import('./pages/company/analytics/analytics').then((m) => m.Analytics),
           },
-          {
-            path: 'new',
-            loadComponent: () => import('./pages/company/new/new').then((m) => m.New),
-          },
         ],
+      },
+      {
+        path: 'company/create',
+        loadComponent: () =>
+          import('./pages/company/create-challenge/create-challenge').then(
+            (m) => m.CreateChallenge
+          ),
+        canActivate: [companyGuard],
       },
 
       // Admin
