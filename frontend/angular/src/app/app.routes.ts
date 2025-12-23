@@ -84,7 +84,12 @@ export const routes: Routes = [
           {
             path: 'portfolio',
             loadComponent: () =>
-              import('./pages/candidate/portfolio/portfolio').then((m) => m.Portfolio),
+              import('./pages/candidate/portfolio/portfolio').then((m) => m.PortfolioComponent),
+          },
+             {
+            path: 'mysubmissions',
+            loadComponent: () =>
+              import('./pages/candidate/my-submissions/my-submissions').then((m) => m.MySubmissions),
           },
           {
             path: 'coach',

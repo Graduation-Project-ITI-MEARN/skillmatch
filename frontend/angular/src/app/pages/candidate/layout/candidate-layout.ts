@@ -52,6 +52,7 @@ export class CandidateShellComponent implements OnInit, OnDestroy {
     { labelKey: 'DASHBOARD.TABS.PORTFOLIO', route: '/dashboard/candidate/portfolio', icon: Star },
     { labelKey: 'DASHBOARD.TABS.COACH', route: '/dashboard/candidate/coach', icon: Brain },
     { labelKey: 'DASHBOARD.TABS.LEADERBOARD', route: '/dashboard/candidate/leaderboard', icon: Trophy },
+      { labelKey: 'DASHBOARD.TABS.SUBMISSIONS', route: '/dashboard/candidate/mysubmissions', icon: Trophy },
   ];
 
   stats = [

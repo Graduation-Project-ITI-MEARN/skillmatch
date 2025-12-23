@@ -25,7 +25,7 @@ export class CandidateService {
   }
 
   // ================== Active Challenges ==================
-  getMyChallenges(): Observable<any> {
+  getAllChallenges(): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges`, {
       withCredentials: true,
     });
@@ -62,6 +62,23 @@ export class CandidateService {
     // ================== Challenge Details ==================
   getChallengeById(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/challenges/${id}`, {
+      withCredentials: true,
+    });
+  }
+
+    // ================== Submissions ==================
+
+
+  startChallenge(challengeId: string, submissionType: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/submissions/start`, {
+    challengeId,
+  }, {
+    withCredentials: true,
+  });
+}
+
+  submitFinalSolution(submissionData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/submissions`, submissionData, {
       withCredentials: true,
     });
   }

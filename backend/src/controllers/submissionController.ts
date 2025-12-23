@@ -14,7 +14,7 @@ import Challenge from "../models/Challenge";
  * @access  Private
  */
 const getAllSubmissions = catchError(async (req: Request, res: Response) => {
-   const submissions = await Submission.find();
+  const submissions = await Submission.find()
 
    res.status(200).json({
       success: true,
