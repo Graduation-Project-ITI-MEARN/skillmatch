@@ -16,11 +16,12 @@ import {
   Play,
 } from 'lucide-angular';
 import { CandidateService } from 'src/app/core/services/candidateService';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule, RouterLink],
   templateUrl: './overview.html',
 })
 export class Overview implements OnInit {
@@ -52,9 +53,9 @@ export class Overview implements OnInit {
     this.isLoading = true;
 
     forkJoin({
-      challenges: this.candidateService.getMyChallenges(),
+      challenges: this.candidateService.getAllChallenges(),
       ai: this.candidateService.getAiRecommendations(),
-      submissions: this.candidateService.getMySubmissions(),
+      submissions: this.candidateService. getMySubmissions(),
     }).subscribe({
       next: (res: any) => {
         /* -------- 1. Active Challenges -------- */
@@ -63,8 +64,6 @@ export class Overview implements OnInit {
         : res.challenges?.data;
 
 
-
-        console.log("dataaa" ,challengesData)
         this.activeChallenges = challengesData.map((c: any) => ({
           ...c,
           daysLeft: this.calculateDaysLeft(
@@ -88,7 +87,7 @@ export class Overview implements OnInit {
           ? res.submissions
           : res.submissions?.data || [];
 
-        // نأخذ آخر 3 تسليمات فقط للعرض
+
         this.recentSubmissions = subsData.slice(0, 3);
 
         /* -------- 4. Calculate Stats (Mock Calculation) -------- */

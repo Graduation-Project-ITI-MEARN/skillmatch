@@ -1,0 +1,139 @@
+<div class="space-y-10 p-6">
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">In Progress</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (sub of inProgressChallenges; track sub._id) {
+      <div class="bg-white border-2 border-blue-100 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-sm text-gray-500">
+            <span class="block font-semibold text-red-500">Deadline:</span>
+            {{ sub.createdAt | date }}
+          </div>
+          <button
+            (click)="openSubmitModal(sub)"
+            class="bg-primary-gradient text-white px-4 py-2 rounded-lg text-sm font-bold cursor-pointer transition-all"
+          >
+            Submit Solution
+          </button>
+        </div>
+      </div>
+      } @empty {
+      <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed text-gray-400">
+        No challenges in progress. Go start one!
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- 2. قسم التحديات المكتملة -->
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Completed</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (sub of completedChallenges; track sub._id) {
+      <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+        <div class="flex justify-between items-start">
+          <h3 class="text-lg font-bold text-gray-700">{{ sub.challengeId?.title }}</h3>
+          <div class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+            Score: {{ sub.aiScore }}
+          </div>
+        </div>
+        <button class="mt-4 text-blue-600 font-bold text-sm hover:underline cursor-pointer">
+          View Result & Feedback
+        </button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+  >
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transition-all">
+      <h2 class="text-2xl font-bold mb-2">Submit Your Work</h2>
+      <p class="text-gray-500 text-sm mb-6">Choose how you want to submit your project.</p>
+
+      <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
+        <button
+          (click)="activeTab = 'file'"
+          [class.bg-white]="activeTab === 'file'"
+          [class.shadow-sm]="activeTab === 'file'"
+          class="flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer"
+        >
+          Upload File
+        </button>
+        <button
+          (click)="activeTab = 'link'"
+          [class.bg-white]="activeTab === 'link'"
+          [class.shadow-sm]="activeTab === 'link'"
+          class="flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer"
+        >
+          Submit Link
+        </button>
+      </div>
+
+      <form [formGroup]="submitForm" (ngSubmit)="onFinalSubmit()" class="space-y-4">
+        <!-- في حالة رفع ملف -->
+        <div *ngIf="activeTab === 'file'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">Project File (ZIP/PDF)</label>
+          <div class="relative group">
+            <input type="file" (change)="onFileSelected($event)" class="hidden" #fileInput />
+            <div
+              (click)="fileInput.click()"
+              class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer"
+            >
+              <lucide-icon [img]="icons.FileUp" class="text-gray-400"></lucide-icon>
+              <span class="text-xs font-bold text-gray-500">
+                {{ selectedFile ? selectedFile.name : 'Click to select file' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="activeTab === 'link'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">GitHub / Design Link</label>
+          <input
+            formControlName="solutionUrl"
+            type="url"
+            placeholder="https://github.com/..."
+            class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1"
+            >Video Demo Link (Loom/YouTube)</label
+          >
+          <input
+            formControlName="videoUrl"
+            type="url"
+            placeholder="https://loom.com/..."
+            class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button
+            type="button"
+            (click)="showModal = false"
+            class="flex-1 py-3 font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="
+              submitForm.get('videoUrl')?.invalid ||
+              (activeTab === 'file' && !selectedFile) ||
+              (activeTab === 'link' && !submitForm.get('solutionUrl')?.value)
+            "
+            class="flex-1 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer"
+          >
+            Submit Now
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
