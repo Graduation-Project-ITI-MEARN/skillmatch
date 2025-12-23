@@ -16,7 +16,7 @@ import {
   Play,
 } from 'lucide-angular';
 import { CandidateService } from 'src/app/core/services/candidateService';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-overview',
@@ -55,14 +55,13 @@ export class Overview implements OnInit {
     forkJoin({
       challenges: this.candidateService.getAllChallenges(),
       ai: this.candidateService.getAiRecommendations(),
-      submissions: this.candidateService. getMySubmissions(),
+      submissions: this.candidateService.getMySubmissions(),
     }).subscribe({
       next: (res: any) => {
         /* -------- 1. Active Challenges -------- */
         const challengesData = Array.isArray(res.challenges)
-        ? res.challenges
-        : res.challenges?.data;
-
+          ? res.challenges
+          : res.challenges?.data;
 
         this.activeChallenges = challengesData.map((c: any) => ({
           ...c,
@@ -85,8 +84,7 @@ export class Overview implements OnInit {
         /* -------- 3. Recent Submissions (Moved from Portfolio) -------- */
         const subsData = Array.isArray(res.submissions)
           ? res.submissions
-          : res.submissions?.data || [];
-
+          : res.submissions?.data.activeSubmissions || [];
 
         this.recentSubmissions = subsData.slice(0, 3);
 

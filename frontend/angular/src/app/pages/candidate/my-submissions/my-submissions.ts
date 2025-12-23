@@ -37,10 +37,11 @@ export class MySubmissions implements OnInit {
     this.candidateService.getMySubmissions().subscribe({
       next: (res) => {
         const data = res.data || [];
-        this.inProgressChallenges = data.filter((s: any) => !s.aiScore);
-        this.completedChallenges = data.filter((s: any) => s.aiScore);
+        this.inProgressChallenges = data.startedChallenges;
+        this.completedChallenges = data.activeSubmissions;
+        console.log(this.completedChallenges);
       },
-      error: () => this.toast.error('Failed to load submissions')
+      error: () => this.toast.error('Failed to load submissions'),
     });
   }
 
@@ -60,7 +61,6 @@ export class MySubmissions implements OnInit {
   }
 
   onFinalSubmit() {
-
     const formData = new FormData();
     formData.append('submissionId', this.selectedSubmissionId);
     formData.append('submissionType', this.activeTab);
@@ -80,7 +80,7 @@ export class MySubmissions implements OnInit {
         this.showModal = false;
         this.loadSubmissions();
       },
-      error: (err) => this.toast.error(err.error?.message || 'Submission failed')
+      error: (err) => this.toast.error(err.error?.message || 'Submission failed'),
     });
   }
 }

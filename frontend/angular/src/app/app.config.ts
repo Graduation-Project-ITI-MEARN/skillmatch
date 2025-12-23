@@ -4,17 +4,11 @@ import { provideHttpClient, withFetch, withInterceptors, HttpClient } from '@ang
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
-
 
 import { routes } from './app.routes';
 import { CredentialsInterceptor } from './core/interceptors/credentials.interceptor';
-
-// 👇 NEW IMPORTS FOR TOASTR
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideToastr } from 'ngx-toastr';
 
 export function httpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -26,20 +20,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
 
     // HttpClient
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([CredentialsInterceptor])
-    ),
+    provideHttpClient(withFetch(), withInterceptors([CredentialsInterceptor])),
 
     // Animations (required for ngx-toastr)
     provideAnimations(),
 
     // ngx-toastr
-   provideToastr({
-  positionClass: 'toast-bottom-right',
-  timeOut: 3000,
-  preventDuplicates: true,
-}),
+    provideToastr({
+      positionClass: 'toast-bottom-right',
+      timeOut: 3000,
+      preventDuplicates: true,
+    }),
 
     // ngx-translate
     provideTranslateService({
