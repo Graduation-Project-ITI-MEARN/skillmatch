@@ -17,13 +17,16 @@ export class ChallengerDashboardComponent implements OnInit {
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
 
-  activeTab: 'active' | 'completed' | 'create' = 'active';
+  activeTab: 'active' | 'completed' | 'create' | 'analytics' = 'active';
   isLoading = false;
 
   stats: any = {};
   wallet: any = {};
   challenges: any[] = [];
   topCandidates: any[] = [];
+
+  hiringStats: any = {};
+  performanceData: any[] = [];
 
   createForm: FormGroup;
 
@@ -85,11 +88,12 @@ export class ChallengerDashboardComponent implements OnInit {
     return `${diffDays} Days Left`;
   }
 
-  switchTab(tab: 'active' | 'completed' | 'create') {
-    this.activeTab = tab;
-    if (tab === 'active') this.loadActiveChallenges();
-    if (tab === 'completed') this.loadCompletedChallenges();
-  }
+  switchTab(tab: 'active' | 'completed' | 'create' | 'analytics') {
+  this.activeTab = tab;
+  if (tab === 'active') this.loadActiveChallenges();
+  if (tab === 'completed') this.loadCompletedChallenges();
+  if (tab === 'analytics') this.loadAnalyticsData(); // استدعاء الدالة الجديدة
+}
 
   loadStats() {
     this.challengerService.getStats().subscribe({
@@ -139,6 +143,7 @@ export class ChallengerDashboardComponent implements OnInit {
         this.challenges = res.data || [];
         this.isLoading = false;
       },
+
       error: () => {
         this.isLoading = false;
         this.challenges = [];
@@ -208,4 +213,15 @@ export class ChallengerDashboardComponent implements OnInit {
       },
     });
   }
+
+
+loadAnalyticsData() {
+  this.challengerService.getHiringAnalytics().subscribe(res => {
+    this.hiringStats = res.data;
+  });
+
+  this.challengerService.getJobPerformance().subscribe(res => {
+    this.performanceData = res.data;
+  });
+}
 }

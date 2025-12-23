@@ -260,7 +260,20 @@
       "ALLOWED": "يمكنك تعديل: الوصف، الموعد النهائي، والحالة فقط."
     }
   },
-
+  "ANALYTICS": {
+    "TITLE": "تحليلات التوظيف",
+    "SUBTITLE": "مؤشرات الأداء والرؤى",
+    "TOTAL_CHALLENGES": "إجمالي التحديات",
+    "TOTAL_SUBMISSIONS": "إجمالي الطلبات",
+    "APP_RATE": "معدل التقديم",
+    "CONVERSION": "معدل التحويل",
+    "AVG_SCORE": "متوسط النقاط",
+    "TIME_TO_HIRE": "مدة التوظيف",
+    "DAYS": "أيام",
+    "PERFORMANCE_LIST": "أداء الوظائف المنشورة",
+    "TOP_SCORE": "أعلى نقطة",
+    "SUBMISSIONS_COUNT": "عدد الطلبات"
+  },
   "SORT": {
     "NEWEST": "الأحدث أولًا",
     "OLDEST": "الأقدم أولًا"

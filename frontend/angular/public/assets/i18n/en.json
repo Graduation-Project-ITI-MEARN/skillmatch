@@ -345,6 +345,21 @@
       "ALLOWED": "You can only edit: Description, Deadline, and Status."
     }
   },
+
+  "ANALYTICS": {
+    "TITLE": "Hiring Analytics",
+    "SUBTITLE": "Performance metrics and insights",
+    "TOTAL_CHALLENGES": "Total Challenges",
+    "TOTAL_SUBMISSIONS": "Total Submissions",
+    "APP_RATE": "Application Rate",
+    "CONVERSION": "Conversion Rate",
+    "AVG_SCORE": "Average Score",
+    "TIME_TO_HIRE": "Time to Hire",
+    "DAYS": "Days",
+    "PERFORMANCE_LIST": "Job Posting Performance",
+    "TOP_SCORE": "Highest Score",
+    "SUBMISSIONS_COUNT": "Submissions"
+  },
   "SORT": {
     "NEWEST": "Newest First",
     "OLDEST": "Oldest First"
