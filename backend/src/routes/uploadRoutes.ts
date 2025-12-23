@@ -10,11 +10,11 @@ const router = express.Router();
 // Route: /api/upload/file
 // 1. Check Auth -> 2. Process File -> 3. Return Response
 router.post(
-  "/file",
-  validate(videoLinkSchema),
-  auth,
-  uploadDocument.single("file"),
-  uploadFile
+   "/file",
+   // validate(videoLinkSchema),
+   auth,
+   uploadDocument.single("file"),
+   uploadFile
 );
 
 export default router;

@@ -9,6 +9,7 @@ export interface IChallenge extends Document {
    creatorId: mongoose.Types.ObjectId;
    status: "draft" | "published" | "closed";
    type: "job" | "prize";
+   submissionType: "link" | "file" | "text";
    prizeAmount?: number;
    salary?: number;
    additionalInfo?: string;
@@ -40,6 +41,12 @@ const ChallengeSchema: Schema = new Schema(
       type: {
          type: String,
          enum: ["job", "prize"],
+         required: true,
+      },
+      submissionType: {
+         type: String,
+         enum: ["link", "file", "text"],
+         default: "link",
          required: true,
       },
       prizeAmount: { type: Number },
