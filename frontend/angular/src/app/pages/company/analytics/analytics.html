@@ -1,1 +1,171 @@
-<p>analytics works!</p>
+<div class="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-10">
+      <h1 class="text-xl md:text-3xl font-bold text-slate-900">
+        {{ 'ANALYTICS.TITLE' | translate }}
+      </h1>
+      <p class="text-slate-500 mt-1 text-sm md:text-base">{{ 'ANALYTICS.SUBTITLE' | translate }}</p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+          <lucide-icon [img]="icons.Layout" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.TOTAL_CHALLENGES' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.totalChallenges || 0 }}
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div
+          class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600"
+        >
+          <lucide-icon [img]="icons.Send" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.TOTAL_SUBMISSIONS' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.totalSubmissions || 0 }}
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div
+          class="w-14 h-14 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"
+        >
+          <lucide-icon [img]="icons.TrendingUp" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.APP_RATE' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.applicationRate * 100 | number : '1.0-1' }}%
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div
+          class="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600"
+        >
+          <lucide-icon [img]="icons.Users" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.CONVERSION' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.conversion || 0 }}%
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div
+          class="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600"
+        >
+          <lucide-icon [img]="icons.Award" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.AVG_SCORE' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.avgScore || 0 }}/100
+          </h3>
+        </div>
+      </div>
+
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-all"
+      >
+        <div class="w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+          <lucide-icon [img]="icons.Clock" class="w-7 h-7"></lucide-icon>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-slate-600 uppercase tracking-wider">
+            {{ 'ANALYTICS.TIME_TO_HIRE' | translate }}
+          </p>
+          <h3 class="text-xl font-bold text-slate-900 mt-2 p-2">
+            {{ hiringAnalytics?.avgTimeToHireDays || 0 }} {{ 'ANALYTICS.DAYS' | translate }}
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <section class="mb-14">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-slate-800">
+          {{ 'ANALYTICS.PERFORMANCE_LIST' | translate }}
+        </h2>
+      </div>
+
+      <div class="grid gap-5">
+        <div
+          *ngFor="let job of jobPerformance"
+          class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex flex-col gap-6">
+            <!-- Job Info -->
+            <div class="flex-1">
+              <h4 class="text-base font-bold text-slate-900 leading-tight">
+                {{ job.title }}
+              </h4>
+              <p class="text-xs text-slate-800 mt-2">
+                {{ job.submissionsCount }}
+                {{ 'ANALYTICS.SUBMISSIONS_COUNT' | translate }}
+              </p>
+            </div>
+
+            <!-- Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center text-center">
+              <!-- Avg Score -->
+              <div
+                class="px-3 py-3 rounded-xl bg-white border border-indigo-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
+              >
+                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">
+                  {{ 'ANALYTICS.AVG_SCORE' | translate }}
+                </p>
+                <p class="text-xl font-bold text-indigo-600 mt-1">
+                  {{ job.avgScore }}
+                </p>
+              </div>
+
+              <!-- Top Score -->
+              <div
+                class="px-3 py-3 rounded-xl bg-white border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
+              >
+                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
+                  {{ 'ANALYTICS.TOP_SCORE' | translate }}
+                </p>
+                <p class="text-xl font-bold text-emerald-600 mt-1">
+                  {{ job.topScore }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

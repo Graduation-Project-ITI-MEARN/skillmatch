@@ -26,7 +26,7 @@ export class ChallengerService {
   }
 
   getStats(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/stats/company`).pipe(
+    return this.http.get(`${this.apiUrl}/stats/challenger`).pipe(
       map((res: any) => {
         const data = res.data || res;
         return {
@@ -87,4 +87,16 @@ export class ChallengerService {
   getSubmission(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/submissions/${id}`);
   }
+
+  // challenger.service.ts
+
+getHiringAnalytics(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/stats/hiring-analytics`);
 }
+
+getJobPerformance(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/stats/job-performance`);
+}
+
+}
+

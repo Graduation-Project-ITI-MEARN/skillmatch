@@ -143,7 +143,7 @@ export class EditChallenge implements OnInit {
     try {
       this.isLoading = true;
       const response: any = await firstValueFrom(
-        this.http.get(`${environment.apiUrl}/challenges/${this.challengeId}`)
+        this.http.get(`${environment.apiUrl}/challenge/${this.challengeId}`)
       );
 
       this.challengeData = response;

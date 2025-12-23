@@ -1,0 +1,15 @@
+/* أضف هذه التنسيقات لضمان مظهر مطابق */
+:host {
+  display: block;
+  font-family: 'Inter', sans-serif; /* الخط المستخدم في الصورة */
+}
+
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+}
+
+.text-xs-bold {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}

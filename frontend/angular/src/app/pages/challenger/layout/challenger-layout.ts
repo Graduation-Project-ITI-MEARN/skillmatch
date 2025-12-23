@@ -2,13 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { LucideAngularModule, Zap, Users, DollarSign, Star } from 'lucide-angular';
+import { LucideAngularModule, Zap, Users, DollarSign, Star,BarChart3 } from 'lucide-angular';
 
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
 import { ThemeService } from 'src/app/core/services/theme';
 import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
 import { AuthService } from 'src/app/core/services/auth';
+
 
 @Component({
   selector: 'app-challenger-shell',
@@ -30,7 +31,7 @@ export class ChallengerShellComponent implements OnInit {
   name = 'Loading...';
   initials = '..';
 
-  icons = { Zap, Users, DollarSign, Star };
+  icons = { Zap, Users, DollarSign, Star, BarChart3 };
 
   // 👇 FIX 1: Clean Tabs.
   // If the Dashboard handles navigation internally, we only need a link to get back to "Overview".
