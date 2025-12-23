@@ -58,7 +58,7 @@ export class AdminShellComponent implements OnInit {
     { labelKey: 'DASHBOARD.TABS.USERS', route: '/dashboard/admin/users', icon: Users },
     { labelKey: 'DASHBOARD.TABS.CHALLENGES', route: '/dashboard/admin/challenges', icon: Trophy },
     { labelKey: 'DASHBOARD.TABS.MODERATION', route: '/dashboard/admin/moderation', icon: Flag },
-    { labelKey: 'DASHBOARD.TABS.SETTINGS', route: '/dashboard/admin/settings', icon: Settings },
+    { labelKey: 'DASHBOARD.TABS.ANALYTICS', route: '/dashboard/admin/analytics', icon: Activity },
   ];
 
   ngOnInit() {

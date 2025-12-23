@@ -1,16 +1,20 @@
-// src/routes/statsRoutes.ts
 import express from "express";
 import {
-   getAdminStats,
-   getCompanyStats,
-   getCandidateStats,
-   getChallengerStats,
-   getUserDistribution,
-   getDailyStats,
-   getTopChallenges,
+  getAdminStats,
+  getCandidateStats,
+  getChallengerStats,
+  getCompanyStats,
+  getDailyStats,
+  getHiringAnalytics,
+  getJobPerformance,
+  getPlatformAnalytics,
+  getTopChallenges,
+  getUserDistribution,
+  getLeaderboard,
 } from "../controllers/statsController";
-import { restrictTo } from "../middlewares/restrictTo";
+
 import auth from "../middlewares/authMiddleware";
+import { restrictTo } from "../middlewares/restrictTo";
 
 const statsRouter = express.Router();
 
@@ -22,18 +26,57 @@ statsRouter.get("/company", auth, restrictTo(["company"]), getCompanyStats);
 
 // GET /api/stats/candidate - Candidate only
 statsRouter.get(
-   "/candidate",
-   auth,
-   restrictTo(["candidate"]),
-   getCandidateStats
+  "/candidate",
+  auth,
+  restrictTo(["candidate"]),
+  getCandidateStats
 );
 
 // GET /api/stats/challenger - Company / Challenger only
 statsRouter.get(
-   "/challenger",
-   auth,
-   restrictTo(["company"]),
-   getChallengerStats
+  "/challenger",
+  auth,
+  restrictTo(["company", "challenger"]),
+  getChallengerStats
+);
+
+// GET /api/stats/leaderboard - Public/Auth
+statsRouter.get("/leaderboard", auth, getLeaderboard);
+
+statsRouter.get(
+  "/distribution",
+  auth,
+  restrictTo(["admin"]),
+  getUserDistribution
+);
+statsRouter.get("/daily", auth, restrictTo(["admin"]), getDailyStats);
+
+statsRouter.get(
+  "/top-challenges",
+  auth,
+  restrictTo(["admin"]),
+  getTopChallenges
+);
+
+statsRouter.get(
+  "/hiring-analytics",
+  auth,
+  restrictTo(["company", "challenger"]),
+  getHiringAnalytics
+);
+
+statsRouter.get(
+  "/platform-analytics",
+  auth,
+  restrictTo(["admin"]),
+  getPlatformAnalytics
+);
+
+statsRouter.get(
+  "/job-performance",
+  auth,
+  restrictTo(["company", "challenger"]),
+  getJobPerformance
 );
 
 statsRouter.get(
@@ -49,6 +92,27 @@ statsRouter.get(
    auth,
    restrictTo(["admin"]),
    getTopChallenges
+);
+
+statsRouter.get(
+   "/hiring-analytics",
+   auth,
+   restrictTo(["company", "challenger"]),
+   getHiringAnalytics
+);
+
+statsRouter.get(
+   "/platform-analytics",
+   auth,
+   restrictTo(["admin"]),
+   getPlatformAnalytics
+);
+
+statsRouter.get(
+   "/job-performance",
+   auth,
+   restrictTo(["company", "challenger"]),
+   getJobPerformance
 );
 
 export default statsRouter;

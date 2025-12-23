@@ -1,10 +1,11 @@
 import {
-  createSubmission,
-  getAllSubmissions,
-  getMySubmissions,
-  getSubmissionById,
-  getSubmissionsByChallenge,
-  updateSubmissionStatus,
+   createSubmission,
+   getAllSubmissions,
+   getMySubmissions,
+   getSubmissionById,
+   getSubmissionsByChallenge,
+   startChallenge,
+   updateSubmissionStatus,
 } from "../controllers/submissionController";
 
 import Submission from "../models/Submission";
@@ -19,44 +20,46 @@ const router = express.Router();
 
 // --- ADMIN ALL submissions ---
 router.get(
-  "/",
-  auth,
-  restrictTo(["admin"]),
-  advancedResults(Submission),
-  getAllSubmissions
+   "/",
+   auth,
+   restrictTo(["admin"]),
+   advancedResults(Submission),
+   getAllSubmissions
 );
 
 // --- CANDIDATE submissions ---
 router.get(
-  "/mine",
-  auth,
-  restrictTo(["candidate"]),
-  advancedResults(Submission),
-  getMySubmissions
+   "/mine",
+   auth,
+   restrictTo(["candidate"]),
+   advancedResults(Submission),
+   getMySubmissions
 );
+
+// --- USER start challenge ---
+router.post("/start", auth, restrictTo(["candidate"]), startChallenge);
 
 // --- USER create submission ---
 router.post(
-  "/",
-  auth,
-  validate(createSubmissionDTO),
-  restrictTo(["candidate"]),
-  createSubmission
+   "/",
+   auth,
+   validate(createSubmissionDTO),
+   restrictTo(["candidate"]),
+   createSubmission
 );
 
 // --- COMPANY/CHALLENGER submissions for a specific challenge ---
 router.get(
-  "/challenge/:id",
-  auth,
-  validate(createSubmissionDTO),
-  restrictTo(["company", "challenger", "admin"]),
-  (req, res, next) =>
-    advancedResults(
-      Submission,
-      null,
-      { challengeId: req.params.id } // fixed filter
-    )(req, res, next),
-  getSubmissionsByChallenge
+   "/challenge/:id",
+   auth,
+   restrictTo(["company", "challenger", "admin"]),
+   (req, res, next) =>
+      advancedResults(
+         Submission,
+         null,
+         { challengeId: req.params.id } // fixed filter
+      )(req, res, next),
+   getSubmissionsByChallenge
 );
 
 // --- Get single submission ---

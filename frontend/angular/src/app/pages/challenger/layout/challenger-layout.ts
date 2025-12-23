@@ -2,20 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  LucideAngularModule,
-  Zap,
-  Users,
-  DollarSign,
-  Star,
-  PlusCircle,
-  CheckCircle,
-} from 'lucide-angular';
+import { LucideAngularModule, Zap, Users, DollarSign, Star } from 'lucide-angular';
 
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
 import { ThemeService } from 'src/app/core/services/theme';
 import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
+import { AuthService } from 'src/app/core/services/auth';
 
 @Component({
   selector: 'app-challenger-shell',
@@ -23,7 +16,6 @@ import { NotificationsDropdownComponent } from '@shared/components/notifications
   imports: [
     CommonModule,
     DashboardLayoutComponent,
-    ZardStatComponent,
     LucideAngularModule,
     TranslateModule,
     RouterModule,
@@ -33,40 +25,50 @@ import { NotificationsDropdownComponent } from '@shared/components/notifications
 })
 export class ChallengerShellComponent implements OnInit {
   private theme = inject(ThemeService);
+  private authService = inject(AuthService);
 
-  name = 'Community Lead';
-  initials = 'CL';
+  name = 'Loading...';
+  initials = '..';
 
   icons = { Zap, Users, DollarSign, Star };
 
+  // 👇 FIX 1: Clean Tabs.
+  // If the Dashboard handles navigation internally, we only need a link to get back to "Overview".
   tabs: DashboardTab[] = [
-    { labelKey: 'DASHBOARD.TABS.OVERVIEW', route: '/dashboard/challenger/overview', icon: Zap },
-    { labelKey: 'DASHBOARD.TABS.NEW_BOUNTY', route: '/dashboard/challenger/new', icon: PlusCircle },
     {
-      labelKey: 'DASHBOARD.TABS.SUBMISSIONS',
-      route: '/dashboard/challenger/submissions',
-      icon: Users,
+      labelKey: 'DASHBOARD.TABS.OVERVIEW',
+      route: '/dashboard/challenger/overview',
+      icon: Zap,
     },
-    {
-      labelKey: 'DASHBOARD.TABS.COMPLETED',
-      route: '/dashboard/challenger/completed',
-      icon: CheckCircle,
-    },
+    // Removed "Submissions", "New Bounty", "Completed" to avoid duplication
   ];
 
-  stats = [
-    { labelKey: 'DASHBOARD.STATS.BOUNTIES', value: '5', trend: 'Active now', icon: Zap },
-    { labelKey: 'DASHBOARD.STATS.PARTICIPANTS', value: '890', trend: '+45 this week', icon: Users },
-    {
-      labelKey: 'DASHBOARD.STATS.PAID_OUT',
-      value: '$12.5K',
-      trend: 'Total Rewards',
-      icon: DollarSign,
-    },
-    { labelKey: 'DASHBOARD.STATS.REPUTATION', value: '4.9', trend: 'Top Creator', icon: Star },
-  ];
+  // 👇 FIX 2: Empty Stats.
+  // We remove the data here so the Parent doesn't render a second grid of cards.
+  stats: any[] = [];
 
   ngOnInit() {
     this.theme.setTheme('challenger');
+
+    this.authService.verifyUser().subscribe({
+      next: (user: any) => {
+        if (user && user.name) {
+          this.name = user.name;
+          this.initials = user.name
+            .split(' ')
+            .map((n: string) => n[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase();
+        } else {
+          this.name = 'Challenger';
+          this.initials = 'CH';
+        }
+      },
+      error: () => {
+        this.name = 'Challenger';
+        this.initials = 'CH';
+      },
+    });
   }
 }

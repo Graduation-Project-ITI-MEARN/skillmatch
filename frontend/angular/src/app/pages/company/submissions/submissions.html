@@ -1,179 +1,198 @@
-<div class="space-y-6">
-  <!-- Header + Filters -->
-  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-    <div>
-      <h2 class="text-2xl font-bold">{{ 'DASHBOARD.SUBMISSIONS.TITLE' | translate }}</h2>
-      <p class="text-gray-600 text-sm mt-1">{{ 'DASHBOARD.SUBMISSIONS.SUBTITLE' | translate }}</p>
-    </div>
+<div class="submissions-container p-4 md:p-8 bg-[#fcfcfd] min-h-screen">
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-[#101828] mb-2">
+      {{ 'DASHBOARD.SUBMISSIONS.TITLE' | translate }}
+    </h2>
+    <p class="text-gray-600 text-sm">
+      {{ 'DASHBOARD.SUBMISSIONS.SUBTITLE' | translate }}
+    </p>
+  </div>
 
-    <!-- Challenge Dropdown + Filters -->
-    <div class="flex flex-col sm:flex-row gap-3">
-      <!-- Custom Challenge Dropdown -->
-      <div class="relative w-64">
-        <div
-          class="border rounded-md px-4 py-2 cursor-pointer flex justify-between items-center"
-          (click)="toggleDropdown()"
-        >
-          <span class="text-gray-900">
-            {{
-              selectedChallenge?.title || ('DASHBOARD.SUBMISSIONS.ACTIVE_CHALLENGES' | translate)
-            }}
-          </span>
+  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+    <div class="relative min-w-62.5">
+      <button
+        type="button"
+        (click)="openChallengeDropdown = !openChallengeDropdown"
+        [disabled]="isLoadingChallenges"
+        class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white text-left focus:outline-none focus:ring-2 focus:ring-gray-900 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        [class.opacity-50]="isLoadingChallenges"
+      >
+        <span *ngIf="getSelectedChallenge()" class="text-gray-900 font-medium">
+          {{ getSelectedChallenge()?.title }}
+        </span>
+        <span *ngIf="!getSelectedChallenge() && !isLoadingChallenges" class="text-gray-400">
+          {{ 'DASHBOARD.SUBMISSIONS.SELECT_CHALLENGE' | translate }}
+        </span>
+        <span *ngIf="isLoadingChallenges" class="text-gray-400">
+          {{ 'COMMON.LOADING' | translate }}
+        </span>
+        <lucide-icon
+          [img]="icons.ChevronDown"
+          class="w-5 h-5 text-gray-600 transition-transform"
+          [class.rotate-180]="openChallengeDropdown"
+        ></lucide-icon>
+      </button>
 
-          <lucide-icon
-            [img]="icons.ChevronDown"
-            class="w-5 h-5"
-            [class.rotate-180]="showDropdown"
-          ></lucide-icon>
+      <div
+        *ngIf="openChallengeDropdown"
+        class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+      >
+        <div *ngIf="challenges.length === 0" class="px-4 py-3 text-gray-500 text-sm text-center">
+          {{ 'DASHBOARD.SUBMISSIONS.NO_CHALLENGES' | translate }}
         </div>
-
-        <div
-          *ngIf="showDropdown"
-          class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-        >
-          <div *ngIf="challenges.length === 0" class="px-4 py-3 text-gray-500 text-sm text-center">
-            No Active Challenge
-          </div>
-          <button
-            *ngFor="let challenge of challenges"
-            type="button"
-            (click)="selectChallenge(challenge)"
-            class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm"
-            [class.bg-gray-100]="selectedChallengeId === challenge.id"
-          >
-            {{ challenge.title }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Status Filters -->
-      <div class="flex gap-2 bg-white border border-gray-200 rounded-lg p-1">
         <button
-          *ngFor="let filter of filters"
-          (click)="setFilter(filter)"
-          class="px-4 py-2 rounded-md text-sm font-medium transition-colors"
-          [class.bg-gray-900]="activeFilter === filter"
-          [class.text-white]="activeFilter === filter"
-          [class.text-gray-600]="activeFilter !== filter"
-          [class.hover:text-gray-900]="activeFilter !== filter"
+          *ngFor="let challenge of challenges"
+          type="button"
+          (click)="selectChallenge(challenge)"
+          class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm font-medium"
+          [class.bg-gray-100]="selectedChallengeId === challenge._id"
         >
-          {{ 'DASHBOARD.SUBMISSIONS.FILTERS.' + filter | translate }}
+          {{ challenge.title }}
         </button>
       </div>
     </div>
+
+    <div class="flex gap-2 bg-white border border-gray-200 rounded-lg p-1">
+      <button
+        *ngFor="let filter of filters"
+        (click)="setFilter(filter)"
+        class="px-8 py-2 rounded-md text-sm font-medium transition-colors"
+        [style.background]="activeFilter === filter ? 'black' : 'transparent'"
+        [class.text-white]="activeFilter === filter"
+        [class.text-gray-600]="activeFilter !== filter"
+        [class.hover:text-gray-900]="activeFilter !== filter"
+      >
+        {{ 'DASHBOARD.SUBMISSIONS.FILTERS.' + filter.toUpperCase() | translate }}
+      </button>
+    </div>
   </div>
 
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="text-center py-12 text-gray-500">
-    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-    <p class="mt-2">{{ 'DASHBOARD.COMMON.LOADING' | translate }}</p>
-  </div>
-
-  <!-- Empty State -->
   <div
-    *ngIf="!isLoading && filteredSubmissions.length === 0"
+    *ngIf="submitError"
+    class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+  >
+    <lucide-icon [img]="icons.MessageSquare" class="w-5 h-5 text-red-600 shrink-0 mt-0.5"></lucide-icon>
+    <p class="text-sm text-red-700">{{ submitError }}</p>
+  </div>
+
+  <div *ngIf="isLoadingSubmissions" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    <p class="mt-2 text-gray-600">{{ 'COMMON.LOADING' | translate }}</p>
+  </div>
+
+  <div
+    *ngIf="!isLoadingSubmissions && filteredSubmissions.length === 0"
     class="text-center py-12 text-gray-500"
   >
     <p class="text-lg">{{ 'DASHBOARD.SUBMISSIONS.NO_SUBMISSIONS' | translate }}</p>
   </div>
 
-  <!-- Submissions List -->
-  <div *ngIf="!isLoading && filteredSubmissions.length > 0" class="space-y-4">
+  <div *ngIf="!isLoadingSubmissions && filteredSubmissions.length > 0" class="space-y-4">
     <div
       *ngFor="let submission of filteredSubmissions"
-      class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+      class="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow"
     >
-      <!-- Header -->
-      <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
         <div class="flex gap-4 items-center">
           <div
-            class="w-14 h-14 rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-semibold text-lg shrink-0"
+            *ngIf="!submission.candidateId.profilePicture"
+            class="w-14 h-14 rounded-full text-white flex items-center justify-center font-semibold text-lg flex-shrink-0"
+            style="background: linear-gradient(120deg, #a6c0fe 0%, #f68084d6 100%)"
           >
-            {{ submission.candidateInitials }}
+            {{ getCandidateInitials(submission.candidateId.name) }}
           </div>
+          <img
+            *ngIf="submission.candidateId.profilePicture"
+            [src]="submission.candidateId.profilePicture"
+            [alt]="submission.candidateId.name"
+            class="w-14 h-14 rounded-full object-cover shrink-0"
+          />
+
           <div>
-            <h3 class="font-semibold text-lg">{{ submission.candidateName }}</h3>
-            <p class="text-gray-600 text-sm">{{ submission.role }}</p>
+            <h3 class="font-semibold text-lg text-[#101828]">{{ submission.candidateId.name }}</h3>
+            <p class="text-gray-600 text-sm">{{ submission.challengeId.title }}</p>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
           <span
-            class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap"
+            class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap"
             [ngClass]="getStatusClass(submission.status)"
           >
-            {{ 'DASHBOARD.SUBMISSIONS.STATUS.' + submission.status | translate }}
+            {{ getStatusLabel(submission.status) | translate }}
           </span>
+
           <div class="text-right">
-            <div class="text-2xl font-bold">{{ submission.overallScore }}</div>
-            <div class="text-sm text-gray-500">
-              {{ 'DASHBOARD.SUBMISSIONS.OVERALL' | translate }}
-            </div>
+            <div class="text-2xl font-bold text-[#101828]">{{ submission.aiScore }}</div>
+            <div class="text-xs text-gray-500">{{ 'DASHBOARD.SUBMISSIONS.OVERALL' | translate }}</div>
           </div>
         </div>
       </div>
 
-      <!-- Score Bars -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
           <div class="flex justify-between items-center mb-2">
-            <span class="text-sm text-gray-600">{{
-              'DASHBOARD.SUBMISSIONS.TECHNICAL_QUALITY' | translate
-            }}</span>
-            <span class="text-sm font-semibold">{{ submission.technicalQuality }}</span>
+            <span class="text-sm text-gray-600">{{ 'DASHBOARD.SUBMISSIONS.TECHNICAL_QUALITY' | translate }}</span>
+            <span class="text-sm font-semibold">{{ getTechnicalQuality(submission) }}</span>
           </div>
           <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              class="h-full bg-linear-to-r from-blue-500 to-purple-500 transition-all duration-500"
-              [style.width.%]="submission.technicalQuality"
+              class="h-full transition-all duration-500"
+              style="background: linear-gradient(90deg, #a6c0fe 0%, #f68084d6 100%)"
+              [style.width.%]="getTechnicalQuality(submission)"
             ></div>
           </div>
         </div>
+
         <div>
           <div class="flex justify-between items-center mb-2">
-            <span class="text-sm text-gray-600">{{
-              'DASHBOARD.SUBMISSIONS.COMMUNICATION' | translate
-            }}</span>
-            <span class="text-sm font-semibold">{{ submission.communication }}</span>
+            <span class="text-sm text-gray-600">{{ 'DASHBOARD.SUBMISSIONS.COMMUNICATION' | translate }}</span>
+            <span class="text-sm font-semibold">{{ getCommunication(submission) }}</span>
           </div>
           <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              class="h-full bg-linear-to-r from-blue-500 to-purple-500 transition-all duration-500"
-              [style.width.%]="submission.communication"
+              class="h-full transition-all duration-500"
+              style="background: linear-gradient(90deg, #a6c0fe 0%, #f68084d6 100%)"
+              [style.width.%]="getCommunication(submission)"
             ></div>
           </div>
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="flex flex-wrap gap-3">
         <button
-          (click)="watchVideo(submission.videoUrl)"
-          class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+          (click)="watchVideo(submission.videoExplanationUrl)"
+          class="flex items-center gap-2 px-4 py-2.5 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
+          style="background: black"
         >
           <lucide-icon [img]="icons.Play" class="w-4 h-4"></lucide-icon>
-          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.WATCH_VIDEO' | translate }}
+          {{ 'DASHBOARD.SUBMISSIONS.WATCH_VIDEO' | translate }}
         </button>
+
         <button
-          (click)="viewApplication(submission.id)"
-          class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          (click)="viewApplication(submission._id)"
+          class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
           <lucide-icon [img]="icons.Eye" class="w-4 h-4"></lucide-icon>
-          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.VIEW_APPLICATION' | translate }}
+          {{ 'DASHBOARD.SUBMISSIONS.VIEW_APPLICATION' | translate }}
         </button>
+
         <button
-          (click)="contactCandidate(submission.id)"
-          class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+          (click)="contactCandidate(submission.candidateId._id)"
+          class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
           <lucide-icon [img]="icons.MessageSquare" class="w-4 h-4"></lucide-icon>
-          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.CONTACT' | translate }}
+          {{ 'DASHBOARD.SUBMISSIONS.CONTACT' | translate }}
         </button>
+
         <button
-          (click)="shortlistCandidate(submission.id)"
-          class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+          (click)="shortlistCandidate(submission._id)"
+          [disabled]="submission.status === 'accepted'"
+          class="flex items-center gap-2 px-4 py-2.5 text-white rounded-lg hover:opacity-90 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          style="background: #a6c0fe"
         >
           <lucide-icon [img]="icons.Star" class="w-4 h-4"></lucide-icon>
-          {{ 'DASHBOARD.SUBMISSIONS.ACTIONS.SHORTLIST' | translate }}
+          {{ 'DASHBOARD.SUBMISSIONS.SHORTLIST' | translate }}
         </button>
       </div>
     </div>

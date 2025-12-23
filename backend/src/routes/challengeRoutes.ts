@@ -34,20 +34,20 @@ router.get("/mine", auth, getMyChallenges);
 
 // Create a new challenge (Company & Challenger only)
 router.post(
-  "/",
-  auth,
-  validate(createChallengeDTO),
-  restrictTo(["company", "challenger"]),
-  createChallenge
+   "/",
+   auth,
+   validate(createChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   createChallenge
 );
 
 // Update an existing challenge (Creator only)
 router.put(
-  "/:id",
-  auth,
-  validate(updateChallengeDTO),
-  restrictTo(["company", "challenger"]),
-  updateChallenge
+   "/:id",
+   auth,
+   validate(updateChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   updateChallenge
 );
 
 // Delete a challenge (Creator only)

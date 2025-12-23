@@ -1,213 +1,218 @@
-<div class="overview-container">
-  <!-- Main Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Left Section -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Active Job Postings Section -->
-      <div class="section-card">
-        <div class="section-header">
-          <h2 class="section-title">{{ 'DASHBOARD.OVERVIEW.MY_JOB_POSTINGS' | translate }}</h2>
+<div class="overview-container p-4 md:p-8 bg-[#fcfcfd] min-h-screen">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <h1 class="text-2xl font-semibold text-[#101828]">
+      {{ 'DASHBOARD.OVERVIEW.TITLE' | translate }}
+    </h1>
 
-          <!-- Search & Filter -->
-          <div class="search-filter-container">
-            <!-- Search Input -->
-            <div class="search-wrapper">
-              <lucide-icon [img]="icons.Search" class="search-icon"></lucide-icon>
-              <input
-                type="text"
-                [(ngModel)]="searchQuery"
-                (keyup.enter)="onSearch()"
-                (blur)="onSearchBlur()"
-                [placeholder]="'DASHBOARD.COMMON.SEARCH' | translate"
-                class="search-input"
-              />
-            </div>
-
-            <!-- Filter Button -->
-            <button class="filter-btn" (click)="toggleFilter()">
-              <lucide-icon [img]="icons.Filter" class="w-4 h-4"></lucide-icon>
-              <span class="hidden md:inline">{{ 'DASHBOARD.COMMON.FILTER' | translate }}</span>
-              @if(activeFiltersCount > 0) {
-              <span class="filter-badge">{{ activeFiltersCount }}</span>
-              }
-            </button>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        @if(isLoadingChallenges) {
-        <div class="space-y-4">
-          @for(i of [1,2,3]; track i) {
-          <div class="challenge-card-skeleton"></div>
-          }
-        </div>
-        }
-
-        <!-- Challenges List -->
-        @else if(challenges.length > 0) {
-        <div class="space-y-4">
-          @for(challenge of challenges; track challenge.id) {
-          <div class="challenge-card">
-            <!-- Header -->
-            <div class="challenge-header">
-              <div class="flex-1">
-                <div class="challenge-badges">
-                  <span class="category-badge">{{ challenge.category }}</span>
-                  <span class="status-badge" [ngClass]="getStatusClass(challenge.status)">
-                    {{ challenge.status }}
-                  </span>
-                </div>
-                <h3 class="challenge-title">{{ challenge.title }}</h3>
-                <p class="challenge-meta">
-                  <lucide-icon [img]="icons.Clock" class="w-4 h-4"></lucide-icon>
-                  {{ challenge.daysRemaining }}
-                  {{ 'DASHBOARD.OVERVIEW.DAYS_REMAINING' | translate }}
-                </p>
-              </div>
-
-              <div class="challenge-budget">
-                <p class="budget-amount">\${{ challenge.budget }}</p>
-                <p class="budget-label">{{ 'DASHBOARD.OVERVIEW.OFFER' | translate }}</p>
-              </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="challenge-stats">
-              <div class="stat-item">
-                <lucide-icon [img]="icons.Users" class="stat-icon"></lucide-icon>
-                <div>
-                  <p class="stat-value">{{ challenge.applications }}</p>
-                  <p class="stat-label">{{ 'DASHBOARD.OVERVIEW.APPLICATIONS' | translate }}</p>
-                </div>
-              </div>
-
-              <div class="stat-item">
-                <lucide-icon [img]="icons.TrendingUp" class="stat-icon"></lucide-icon>
-                <div>
-                  <p class="stat-value">{{ challenge.topScore }}</p>
-                  <p class="stat-label">{{ 'DASHBOARD.OVERVIEW.TOP_SCORE' | translate }}</p>
-                </div>
-              </div>
-
-              <div class="stat-item">
-                <lucide-icon [img]="icons.Target" class="stat-icon"></lucide-icon>
-                <div>
-                  <p class="stat-value">{{ challenge.qualified }}</p>
-                  <p class="stat-label">{{ 'DASHBOARD.OVERVIEW.QUALIFIED' | translate }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="challenge-actions">
-              <button class="action-btn primary">
-                <lucide-icon [img]="icons.Eye" class="w-4 h-4"></lucide-icon>
-                {{ 'DASHBOARD.OVERVIEW.VIEW_APPLICATIONS' | translate }}
-              </button>
-              <button class="action-btn secondary">
-                {{ 'DASHBOARD.OVERVIEW.EDIT_JOB' | translate }}
-              </button>
-            </div>
-          </div>
-          }
-        </div>
-        }
-
-        <!-- Empty State -->
-        @else {
-        <div class="empty-state">
-          <lucide-icon [img]="icons.FileText" class="w-12 h-12 text-gray-300"></lucide-icon>
-          <p class="empty-text">{{ 'DASHBOARD.OVERVIEW.NO_CHALLENGES' | translate }}</p>
-        </div>
-        }
-
-        <!-- Create New Button -->
-        <button class="create-new-btn">
-          <span class="text-2xl">+</span>
-          {{ 'DASHBOARD.OVERVIEW.CREATE_NEW_POSTING' | translate }}
-        </button>
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <!-- Search -->
+      <div class="relative flex-1 md:w-80">
+        <lucide-icon
+          [img]="icons.Search"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+        ></lucide-icon>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+          class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-900"
+          placeholder="{{ 'DASHBOARD.OVERVIEW.SEARCH_PLACEHOLDER' | translate }}"
+        />
       </div>
-    </div>
 
-    <!-- Right Sidebar -->
-    <div class="space-y-6">
-      <!-- Hiring Insights Widget -->
-      <div class="widget-card">
-        <div class="widget-header">
-          <lucide-icon [img]="icons.TrendingUp" class="w-5 h-5 text-primary"></lucide-icon>
-          <h3 class="widget-title">{{ 'DASHBOARD.OVERVIEW.HIRING_INSIGHTS' | translate }}</h3>
+      <!-- Filter Button -->
+      <button
+        (click)="toggleFilter()"
+        class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+      >
+        <lucide-icon [img]="icons.Filter" class="w-4 h-4"></lucide-icon>
+        {{ 'DASHBOARD.OVERVIEW.FILTER' | translate }}
+        <span
+          *ngIf="activeFiltersCount > 0"
+          class="ml-1 px-2 py-0.5 bg-gray-900 text-white text-xs rounded-full"
+        >
+          {{ activeFiltersCount }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Challenges List -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Loading State -->
+      @if(isLoadingChallenges) {
+      <div class="animate-pulse space-y-4">
+        @for(i of [1,2]; track i) {
+        <div class="h-48 bg-gray-100 rounded-2xl"></div>
+        }
+      </div>
+      }
+
+      <!-- Challenges List -->
+      @else { @for(challenge of challenges; track challenge.id) {
+      <div
+        class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2 flex-wrap">
+              <h3 class="text-xl font-medium text-[#101828]">{{ challenge.title }}</h3>
+              <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                {{ challenge.category | translate }}
+              </span>
+              <span
+                class="px-3 py-1 text-xs rounded-full font-medium border"
+                [ngClass]="getStatusClass(challenge.status)"
+              >
+                {{ 'DASHBOARD.OVERVIEW.STATUS.' + challenge.status.toUpperCase() | translate }}
+              </span>
+            </div>
+            <p class="text-sm text-gray-400">
+              {{ challenge.daysRemaining }} {{ 'DASHBOARD.OVERVIEW.DAYS_REMAINING' | translate }}
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-2xl font-semibold text-[#101828]">${{ challenge.budget }}</span>
+            <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">
+              {{ 'DASHBOARD.OVERVIEW.OFFER' | translate }}
+            </p>
+          </div>
         </div>
 
-        <div class="insight-content">
-          <p class="insight-text">
-            {{
-              'DASHBOARD.OVERVIEW.HIGH_QUALITY_CANDIDATES'
-                | translate : { count: hiringInsights.highQualityCandidates }
-            }}
-          </p>
-
-          <div class="insight-meta">
-            <span class="text-sm text-gray-600">
-              {{ 'DASHBOARD.OVERVIEW.AVG_EVALUATION_TIME' | translate }}:
-            </span>
-
-            @if(hiringInsights.isPowered) {
-            <span class="powered-badge">{{ 'DASHBOARD.OVERVIEW.AI_POWERED' | translate }}</span>
-            }
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="bg-[#f9fafb] p-5 rounded-2xl border border-gray-50">
+            <p class="text-2xl font-semibold text-[#101828]">{{ challenge.applications }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ 'DASHBOARD.OVERVIEW.APPLICATIONS' | translate }}
+            </p>
           </div>
+          <div class="bg-[#f9fafb] p-5 rounded-2xl border border-gray-50">
+            <p class="text-2xl font-semibold text-[#101828]">{{ challenge.topScore }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ 'DASHBOARD.OVERVIEW.TOP_SCORE' | translate }}
+            </p>
+          </div>
+          <div class="bg-[#f9fafb] p-5 rounded-2xl border border-gray-50">
+            <p class="text-2xl font-semibold text-[#101828]">{{ challenge.qualified }}</p>
+            <p class="text-xs text-gray-400 mt-1">
+              {{ 'DASHBOARD.OVERVIEW.QUALIFIED' | translate }}
+            </p>
+          </div>
+        </div>
 
-          <button class="insight-btn bg-primary-gradient">
-            {{ 'DASHBOARD.OVERVIEW.VIEW_RECOMMENDATIONS' | translate }}
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+          <button
+            (click)="viewApplications(challenge.id)"
+            class="flex-1 bg-[#101828] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-black transition-all"
+          >
+            <lucide-icon [img]="icons.Eye" class="w-4 h-4"></lucide-icon>
+            {{ 'DASHBOARD.OVERVIEW.VIEW_APPLICATIONS' | translate }}
+          </button>
+          <button
+            [routerLink]="[
+              '/dashboard',
+              'company',
+              'challenge',
+              challenge._id || challenge.id,
+              'edit'
+            ]"
+            class="px-8 py-3.5 bg-[#f9fafb] text-[#101828] rounded-xl font-medium border border-gray-100 hover:bg-gray-100 transition-all"
+          >
+            {{ 'DASHBOARD.OVERVIEW.EDIT_JOB' | translate }}
           </button>
         </div>
       </div>
+      }
 
-      <!-- Recent Activity Widget -->
-      <div class="widget-card">
-        <h3 class="widget-title mb-4">{{ 'DASHBOARD.OVERVIEW.RECENT_ACTIVITY' | translate }}</h3>
+      <!-- Create New Button -->
+      <button
+       routerLink="/dashboard/company/create"
+        class="w-full py-5 border-2 border-dashed border-gray-200 rounded-3xl text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-all font-medium flex items-center justify-center gap-2"
+      >
+        <lucide-icon [img]="icons.Plus" class="w-5 h-5"></lucide-icon>
+        {{ 'DASHBOARD.OVERVIEW.CREATE_NEW_JOB' | translate }}
+      </button>
+      }
+    </div>
 
-        @if(isLoadingActivity) {
-        <div class="space-y-3">
-          @for(i of [1,2,3,4,5]; track i) {
-          <div class="activity-skeleton"></div>
-          }
+    <!-- Right Column: Sidebar -->
+    <div class="space-y-6">
+      <!-- Hiring Insights Card -->
+      <div class="bg-[#f2f4ff] rounded-3xl p-6 border border-[#e0e7ff] shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <lucide-icon [img]="icons.TrendingUp" class="w-5 h-5 text-[#101828]"></lucide-icon>
+          <h3 class="text-xl font-semibold text-[#101828]">
+            {{ 'DASHBOARD.OVERVIEW.HIRING_INSIGHTS' | translate }}
+          </h3>
         </div>
-        } @else if(activities.length > 0) {
-        <div class="activity-list">
-          @for(activity of activities; track activity.id) {
-          <div class="activity-item">
-            <div class="activity-icon" [ngClass]="getActivityColor(activity.type)">
-              <lucide-icon [img]="getActivityIcon(activity.type)" class="w-4 h-4"></lucide-icon>
-            </div>
+        <p class="text-md-end text-[#101828] leading-tight mb-4">
+          <span class="font-bold"
+            >3 {{ 'DASHBOARD.OVERVIEW.HIGH_QUALITY_CANDIDATES' | translate }}</span
+          >
+          {{ 'DASHBOARD.OVERVIEW.READY_FOR_INTERVIEWS' | translate }}
+        </p>
+        <p class="text-base text-[#475467] mb-8">
+          {{ 'DASHBOARD.OVERVIEW.AVG_EVALUATION_TIME' | translate }}:
+          <span class="font-bold text-[#101828]"
+            >24 {{ 'DASHBOARD.OVERVIEW.HOURS' | translate }}</span
+          >
+          <span class="text-sm">({{ 'DASHBOARD.OVERVIEW.AI_POWERED' | translate }})</span>
+        </p>
+        <button
+          class="w-full py-4 bg-[#101828] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
+        >
+          {{ 'DASHBOARD.OVERVIEW.VIEW_RECOMMENDATIONS' | translate }}
+        </button>
+      </div>
 
-            <div class="activity-content">
-              <p class="activity-title">
-                @if(activity.type === 'application') {
-                {{ 'DASHBOARD.OVERVIEW.NEW_APPLICATION' | translate }}
-                } @else if(activity.type === 'shortlist') {
-                {{ 'DASHBOARD.OVERVIEW.CANDIDATE_SHORTLISTED' | translate }}
-                } @else if(activity.type === 'completed') {
-                {{ 'DASHBOARD.OVERVIEW.CHALLENGE_COMPLETED' | translate }}
-                } @else {
-                {{ 'DASHBOARD.OVERVIEW.JOB_CLOSED' | translate }}
-                }
-              </p>
-              <p class="activity-subtitle">{{ activity.challengeTitle }}</p>
-              @if(activity.candidateName) {
-              <p class="activity-candidate">{{ activity.candidateName }}</p>
-              }
+      <!-- Recent Activity Card -->
+      <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+        <h3 class="font-semibold text-[#101828] text-lg mb-6">
+          {{ 'DASHBOARD.OVERVIEW.RECENT_ACTIVITY' | translate }}
+        </h3>
+        <div class="space-y-6">
+          @if(isLoadingActivity) {
+          <div class="animate-pulse space-y-4">
+            @for(i of [1,2,3]; track i) {
+            <div class="flex gap-4">
+              <div class="w-2 h-2 rounded-full bg-gray-200 mt-2"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div class="h-3 bg-gray-100 rounded w-1/2"></div>
+              </div>
             </div>
-
-            <span class="activity-time">{{ activity.timestamp }}</span>
+            }
           </div>
-          }
+          } @else if(activities.length === 0) {
+          <p class="text-sm text-gray-400 text-center py-4">
+            {{ 'DASHBOARD.OVERVIEW.NO_RECENT_ACTIVITY' | translate }}
+          </p>
+          } @else { @for(act of activities; track act.id) {
+          <div class="flex gap-4 items-start">
+            <div
+              class="w-2 h-2 rounded-full mt-2 shrink-0"
+              [ngClass]="act.type === 'application' ? 'bg-indigo-500' : 'bg-gray-400'"
+            ></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-[#101828]">
+                {{
+                  act.type === 'application'
+                    ? ('DASHBOARD.OVERVIEW.NEW_APPLICATION' | translate)
+                    : ('DASHBOARD.OVERVIEW.JOB_CLOSED' | translate)
+                }}
+              </p>
+              <p class="text-xs text-[#667085] truncate">{{ act.challengeTitle }}</p>
+            </div>
+            <span class="text-[11px] text-[#98a2b3] whitespace-nowrap">{{ act.timestamp }}</span>
+          </div>
+          } }
         </div>
-        } @else {
-        <div class="empty-state-small">
-          <lucide-icon [img]="icons.Calendar" class="w-8 h-8 text-gray-300"></lucide-icon>
-          <p class="text-sm text-gray-500">{{ 'DASHBOARD.OVERVIEW.NO_ACTIVITY' | translate }}</p>
-        </div>
-        }
       </div>
     </div>
   </div>
@@ -216,20 +221,17 @@
   @if(isFilterOpen) {
   <div class="filter-overlay" (click)="closeFilter()">
     <div class="filter-modal" (click)="$event.stopPropagation()">
-      <!-- Header -->
       <div class="filter-modal-header">
-        <h3 class="filter-modal-title">{{ 'DASHBOARD.COMMON.FILTERS' | translate }}</h3>
+        <h3 class="filter-modal-title">{{ 'DASHBOARD.OVERVIEW.FILTERS_TITLE' | translate }}</h3>
         <button class="close-btn" (click)="closeFilter()">
           <lucide-icon [img]="icons.X" class="w-5 h-5"></lucide-icon>
         </button>
       </div>
 
-      <!-- Body -->
       <div class="filter-modal-body">
-        <!-- Job Type -->
         <div class="filter-section">
           <h4 class="filter-section-title">
-            {{ 'DASHBOARD.FILTERS.JOB_TYPE' | translate }}
+            {{ 'DASHBOARD.OVERVIEW.CATEGORIES.TITLE' | translate }}
           </h4>
           <div class="filter-options">
             @for (jobType of filterOptions.jobTypes; track jobType.value) {
@@ -240,20 +242,15 @@
                 (change)="toggleJobType(jobType.value)"
                 class="filter-checkbox"
               />
-              <span class="filter-label">
-                {{ jobType.label | translate }}
-              </span>
+              <span class="filter-label">{{ jobType.label | translate }}</span>
               <span class="filter-count">{{ jobType.count }}</span>
             </label>
             }
           </div>
         </div>
 
-        <!-- Status -->
         <div class="filter-section">
-          <h4 class="filter-section-title">
-            {{ 'DASHBOARD.FILTERS.STATUS' | translate }}
-          </h4>
+          <h4 class="filter-section-title">{{ 'DASHBOARD.OVERVIEW.STATUS_FILTER' | translate }}</h4>
           <div class="filter-options">
             @for (status of filterOptions.statuses; track status.value) {
             <label class="filter-option">
@@ -263,20 +260,15 @@
                 (change)="toggleStatus(status.value)"
                 class="filter-checkbox"
               />
-              <span class="filter-label">
-                {{ status.label | translate }}
-              </span>
+              <span class="filter-label">{{ status.label | translate }}</span>
               <span class="filter-count">{{ status.count }}</span>
             </label>
             }
           </div>
         </div>
 
-        <!-- Budget Range -->
         <div class="filter-section">
-          <h4 class="filter-section-title">
-            {{ 'DASHBOARD.FILTERS.BUDGET_RANGE' | translate }}
-          </h4>
+          <h4 class="filter-section-title">{{ 'DASHBOARD.OVERVIEW.BUDGET_FILTER' | translate }}</h4>
           <div class="filter-options">
             @for (budget of filterOptions.budgets; track budget.value) {
             <label class="filter-option">
@@ -286,9 +278,7 @@
                 (change)="toggleBudget(budget.value)"
                 class="filter-checkbox"
               />
-              <span class="filter-label">
-                {{ budget.label | translate }}
-              </span>
+              <span class="filter-label">{{ budget.label | translate }}</span>
               <span class="filter-count">{{ budget.count }}</span>
             </label>
             }
@@ -296,17 +286,16 @@
         </div>
       </div>
 
-      <!-- Footer -->
       <div class="filter-modal-footer">
         <button class="clear-btn" (click)="clearAllFilters()">
-          {{ 'DASHBOARD.COMMON.CLEAR_ALL' | translate }}
+          {{ 'DASHBOARD.OVERVIEW.CLEAR_ALL' | translate }}
         </button>
         <div class="filter-actions">
           <button class="cancel-btn" (click)="closeFilter()">
-            {{ 'DASHBOARD.COMMON.CANCEL' | translate }}
+            {{ 'DASHBOARD.OVERVIEW.CANCEL' | translate }}
           </button>
           <button class="apply-btn bg-primary-gradient" (click)="applyFiltersAndClose()">
-            {{ 'DASHBOARD.COMMON.APPLY_FILTERS' | translate }}
+            {{ 'DASHBOARD.OVERVIEW.APPLY_FILTERS' | translate }}
           </button>
         </div>
       </div>
