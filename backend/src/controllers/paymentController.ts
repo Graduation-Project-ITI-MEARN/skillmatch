@@ -13,21 +13,32 @@ import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
  */
 const createPaymentIntent = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
-      const { amount, currency, billing_data } = req.body;
-      const user = (req as any).user; // Get authenticated user
+      const { amount, currency, billing_data, payment_type } = req.body;
+      const user = (req as any).user;
 
-      // 1. AUTHENTICATION
+      // VALIDATION: Ensure we know what this payment is for
+      if (!payment_type || !["SUBSCRIPTION", "TOPUP"].includes(payment_type)) {
+         return res.status(400).json({
+            status: "fail",
+            message: "payment_type is required (SUBSCRIPTION or TOPUP)",
+         });
+      }
+
+      // 2. AUTHENTICATION
       const authResponse = await axios.post(
          "https://accept.paymob.com/api/auth/tokens",
-         {
-            api_key: process.env.PAYMOB_API_KEY,
-         }
+         { api_key: process.env.PAYMOB_API_KEY }
       );
       const authToken = authResponse.data.token;
 
-      // 2. ORDER REGISTRATION
-      // Paymob expects amount in cents (e.g., 100 EGP = 10000 cents)
+      // 3. ORDER REGISTRATION
       const amountInCents = Math.round(amount * 100);
+
+      // CRITICAL CHANGE:
+      // Format: "USER_ID---PAYMENT_TYPE---TIMESTAMP"
+      // Example: "654321...---SUBSCRIPTION---17000000"
+      // This allows the webhook to split this string and know exactly what to update.
+      const customOrderId = `${user._id}---${payment_type}---${Date.now()}`;
 
       const orderResponse = await axios.post(
          "https://accept.paymob.com/api/ecommerce/orders",
@@ -36,29 +47,27 @@ const createPaymentIntent = catchError(
             delivery_needed: "false",
             amount_cents: amountInCents,
             currency: currency || "EGP",
-            // We can pass the User ID here to track it in the webhook later
-            merchant_order_id: `TX-${Date.now()}-${user._id}`,
+            merchant_order_id: customOrderId, // <--- Sent to Paymob here
          }
       );
       const orderId = orderResponse.data.id;
 
-      // 3. PAYMENT KEY GENERATION
+      // 4. PAYMENT KEY GENERATION
       const keyResponse = await axios.post(
          "https://accept.paymob.com/api/acceptance/payment_keys",
          {
             auth_token: authToken,
             amount_cents: amountInCents,
-            expiration: 3600, // 1 hour
+            expiration: 3600,
             order_id: orderId,
             billing_data: billing_data || {
-               // Use real user data if available, fallback to defaults
                apartment: "NA",
-               email: user.email, // Important for tracking
+               email: user.email,
                floor: "NA",
                first_name: user.name.split(" ")[0] || "User",
                street: "NA",
                building: "NA",
-               phone_number: "+201234567890", // Paymob requires a valid phone format
+               phone_number: "+201234567890",
                shipping_method: "NA",
                postal_code: "NA",
                city: "Cairo",
@@ -73,21 +82,22 @@ const createPaymentIntent = catchError(
 
       const paymentKey = keyResponse.data.token;
 
-      // ✅ Log Activity: User initiated payment
+      // ✅ Log Activity including the type
       await logActivity(
          user._id,
          "payment_initiated",
-         `User initiated payment of ${amount} ${currency || "EGP"}`,
-         "success" // No specific target ID for now, or use orderId cast to ObjectId if you store it locally
+         `User initiated ${payment_type} payment of ${amount} ${
+            currency || "EGP"
+         }`,
+         "success"
       );
 
-      // Send Key and Order ID to Frontend
       res.status(200).json({
          status: "success",
          data: {
             paymentKey,
             orderId,
-            iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_FRAME_ID}?payment_token=${paymentKey}`,
+            iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_IFRAME_ID}?payment_token=${paymentKey}`,
          },
       });
    }
