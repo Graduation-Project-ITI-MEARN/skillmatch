@@ -31,7 +31,8 @@ export default async function RootLayout({
    const direction = locale === "ar" ? "rtl" : "ltr";
    return (
       <html lang={locale} dir={direction}>
-         <body className={direction === "rtl" ? "font-arabic" : "font-english"}>
+         <body
+            className={direction === "rtl" ? "font-arabic-sans" : "font-sans"}>
             <NextIntlClientProvider locale={locale} messages={messages}>
                {children}
             </NextIntlClientProvider>
