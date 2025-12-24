@@ -10,10 +10,13 @@ import {
   Code,
   FileDown,
   Link,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CandidateService } from 'src/app/core/services/candidateService';
+import { AuthService } from 'src/app/core/services/auth';
+import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
+import { checkVerification } from 'src/app/core/guards/verification.guard';
 
 @Component({
   selector: 'app-challenge-details',
@@ -26,12 +29,13 @@ export class ChallengeDetails implements OnInit {
   private router = inject(Router);
   private candidateservice = inject(CandidateService);
   private toast = inject(ToastrService);
+  private authService = inject(AuthService);
+  private dialog = inject(ZardDialogService);
 
   challengeId: string = '';
   challenge: any = null;
   loading = true;
   isSubmitted = false;
-
 
   readonly icons = {
     BarChart,
@@ -40,7 +44,7 @@ export class ChallengeDetails implements OnInit {
     Code,
     FileDown,
     Link,
-    ChevronRight
+    ChevronRight,
   };
 
   ngOnInit() {
@@ -60,14 +64,16 @@ export class ChallengeDetails implements OnInit {
       error: (err) => {
         this.toast.error('Failed to load challenge details');
         this.loading = false;
-      }
+      },
     });
   }
 
-
   handleAction() {
-    if (this.isSubmitted) {
+    if (!checkVerification(this.authService.currentUser(), this.dialog)) {
+      return;
+    }
 
+    if (this.isSubmitted) {
       this.router.navigate(['/dashboard/candidate/mysubmissions']);
     } else {
       this.onStartChallenge();
@@ -78,12 +84,11 @@ export class ChallengeDetails implements OnInit {
     this.candidateservice.getChallengeById(this.challengeId).subscribe({
       next: () => {
         this.toast.success('Challenge Started! Good luck.');
-
         this.router.navigate(['/dashboard/candidate/mysubmissions']);
       },
       error: (err) => {
         this.toast.error(err.error?.message || 'Failed to start challenge');
-      }
+      },
     });
   }
 
