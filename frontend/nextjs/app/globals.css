@@ -37,6 +37,11 @@
   --color-grad-start: #a6c0fe;
   --color-grad-end: #f68084d6;
   --background-image-primary-gradient: linear-gradient(120deg, var(--color-grad-start) 0%, var(--color-grad-end) 100%);
+
+  --shadow-primary-gradient: 0 4px 14px 0 rgba(166, 192, 254, 0.4), 0 4px 14px 0 rgba(246, 128, 132, 0.4);
+
+  /* SVG Clip Path Variables */
+  --clipped-card-svg-path-ltr: "M670 0H0V91C0 102.046 8.9543 111 20 111H518.641C526.216 111 533.14 106.721 536.529 99.9469L570.988 31.0531C574.377 24.2789 581.301 20 588.875 20H650C661.046 20 670 11.0457 670 0Z";
 }
 
 @theme {
@@ -72,6 +77,30 @@
   --color-grad-start: #a6c0fe;
   --color-grad-end: #f68084d6;
   --background-image-primary-gradient: linear-gradient(120deg, var(--color-grad-start) 0%, var(--color-grad-end) 100%);
+  --shadow-primary-gradient: var(--shadow-primary-gradient);
+
+  --color-primary: var(--color-black);
+  --color-primary-foreground: var(--color-white);
+  --color-background: var(--color-white);
+  --color-muted: var(--color-gray);
+  --color-muted-foreground: var(--color-gray);
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-gray);
+  --color-border: var(--color-gray);
+  --color-input: var(--color-gray);
+  --color-input-foreground: var(--color-gray);
+  --color-text: var(--color-gray);
+  --color-text-foreground: var(--color-gray);
+
+
+}
+
+[dir="rtl"] {
+  --clipped-card-svg-path-default: var(--clipped-card-svg-path-rtl);
+}
+
+[dir="ltr"] {
+  --clipped-card-svg-path-default: var(--clipped-card-svg-path-ltr);
 }
 
 @font-face {
