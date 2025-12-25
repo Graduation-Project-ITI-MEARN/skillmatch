@@ -26,7 +26,6 @@
     </div>
   </section>
 
-  <!-- 2. قسم التحديات المكتملة -->
   <section>
     <h2 class="text-2xl font-bold mb-6 text-gray-800">Completed</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,7 +73,6 @@
       </div>
 
       <form [formGroup]="submitForm" (ngSubmit)="onFinalSubmit()" class="space-y-4">
-        <!-- في حالة رفع ملف -->
         <div *ngIf="activeTab === 'file'">
           <label class="block text-sm font-bold text-gray-700 mb-1">Project File (ZIP/PDF)</label>
           <div class="relative group">

@@ -1,31 +1,78 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Brain, BookOpen, ChevronRight } from 'lucide-angular';
 import { PricingModal } from '@shared/components/pricing-modal/pricing-modal';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentIframe } from '@shared/components/payment-iframe/payment-iframe';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '@/core/services/auth';
+import { PaymentService } from '@/core/services/payment';
 
 @Component({
   selector: 'app-coach',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, PricingModal],
+  imports: [CommonModule, LucideAngularModule, PricingModal, MatDialogModule],
   templateUrl: './coach.html'
 })
-export class Coach {
-  isPremium = false;
-  showPricingModal = false;
+export class Coach implements OnInit {
+  private authService = inject(AuthService);
+  private paymentService = inject(PaymentService);
+  private dialog = inject(MatDialog);
+  private toastr = inject(ToastrService);
 
+  // مراقبة الـ Signal تلقائياً
+  isPremium = computed(() => this.authService.currentUser()?.subscriptionStatus === 'active');
+  
+  showPricingModal = false;
+  isLoading = false;
   readonly icons = { Brain, BookOpen, ChevronRight };
 
-  checkAccess() {
-    if (!this.isPremium) {
-      this.showPricingModal = true;
-    }
-  }
+  ngOnInit() {}
 
   handleUpgrade() {
-    // Mocking the upgrade process
-    this.isPremium = true;
     this.showPricingModal = false;
-    // هنا ممكن تظهر Toast success
-    alert('Welcome to Pro! You now have full access.');
+    this.isLoading = true;
+
+    // بنبعت 200 و 'SUBSCRIPTION' كـ parameters
+    this.paymentService.initiatePayment(200, 'SUBSCRIPTION').subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        const dialogRef = this.dialog.open(PaymentIframe, {
+          data: { url: res.data.iframeUrl },
+          width: '550px',
+          maxWidth: '95vw',
+          disableClose: true
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result === 'CHECK_STATUS') {
+            this.verifyStatus();
+          }
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Payment Error:', err); // بص هنا لو الـ payload لسه فيه مشكلة
+        this.toastr.error('تعذر جلب بيانات الدفع');
+      }
+    });
+  }
+
+  verifyStatus() {
+    this.isLoading = true;
+    this.toastr.info('جاري التحقق من عملية الدفع...');
+    
+    setTimeout(() => {
+      this.authService.refreshUserProfile().subscribe({
+        next: (user) => {
+          this.isLoading = false;
+          if (user?.subscriptionStatus === 'active') {
+            this.toastr.success('مبروك! تم تفعيل اشتراك برو بنجاح.');
+          } else {
+            this.toastr.warning('الدفع مازال قيد المعالجة، يرجى المحاولة بعد لحظات.');
+          }
+        }
+      });
+    }, 4000);
   }
 }

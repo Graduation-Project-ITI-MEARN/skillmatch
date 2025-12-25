@@ -16,6 +16,9 @@ const createPaymentIntent = catchError(
       const { amount, currency, billing_data, payment_type } = req.body;
       const user = (req as any).user;
 
+       console.log('Payment payload:', { amount, payment_type, currency: currency || 'EGP' });
+      console.log('User:', user);
+
       // VALIDATION: Ensure we know what this payment is for
       if (!payment_type || !["SUBSCRIPTION", "TOPUP"].includes(payment_type)) {
          return res.status(400).json({
