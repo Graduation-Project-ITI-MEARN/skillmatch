@@ -1,0 +1,159 @@
+/* Add this to your global styles.css or component styles */
+
+/* Custom Select Dropdown Styling */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%2394a3b8' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+}
+
+/* Remove default arrow in IE */
+select::-ms-expand {
+  display: none;
+}
+
+/* Dropdown animation */
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-up {
+  animation: scale-up 0.2s ease-out;
+}
+
+/* Smooth fade in */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Better select hover state */
+select:hover {
+  border-color: #94a3b8;
+}
+
+/* Focus state for accessibility */
+select:focus {
+  outline: none;
+  border-color: #64748b;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+/* Input focus state */
+input[type="text"]:focus,
+input[type="range"]:focus {
+  outline: none;
+}
+
+/* Range slider custom styling */
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #334155;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #1e293b;
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #334155;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #1e293b;
+  transform: scale(1.1);
+}
+
+/* Scrollbar styling for modal */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+/* Base style for all dropdowns */
+.custom-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #1e293b;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s;
+}
+
+/* Hover state */
+.custom-select:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+/* Focus state */
+.custom-select:focus {
+  outline: none;
+  border-color: #94a3b8;
+  box-shadow: 0 0 0 2px #e2e8f0;
+  background-color: #f8fafc;
+}
+
+/* Add custom arrow using Tailwind pseudo-element */
+.custom-select-wrapper {
+  position: relative;
+}
+
+.custom-select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 1rem;
+  height: 1rem;
+  border-top: 2px solid;
+  border-right: 2px solid;
+  border-color: #94a3b8;
+  pointer-events: none;
+}

@@ -48,19 +48,19 @@ export class Overview implements OnInit {
 
   filterOptions = {
     jobTypes: [
-      { label: 'DASHBOARD.OVERVIEW.CATEGORIES.CODING', count: 0, value: 'coding' },
-      { label: 'DASHBOARD.OVERVIEW.CATEGORIES.DESIGN', count: 0, value: 'design' },
-      { label: 'DASHBOARD.OVERVIEW.CATEGORIES.MARKETING', count: 0, value: 'marketing' },
+      { label: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING', count: 0, value: 'coding' },
+      { label: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DESIGN', count: 0, value: 'design' },
+      { label: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.MARKETING', count: 0, value: 'marketing' },
     ],
     statuses: [
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.ACTIVE', count: 0, value: 'active' },
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.EVALUATING', count: 0, value: 'evaluating' },
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.CLOSED', count: 0, value: 'closed' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.ACTIVE', count: 0, value: 'active' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.EVALUATING', count: 0, value: 'evaluating' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.CLOSED', count: 0, value: 'closed' },
     ],
     budgets: [
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.BUDGET_0_500', count: 0, value: '0-500' },
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.BUDGET_500_1000', count: 0, value: '500-1000' },
-      { label: 'DASHBOARD.OVERVIEW.FILTERS.BUDGET_1000_PLUS', count: 0, value: '1000+' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.BUDGET_0_500', count: 0, value: '0-500' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.BUDGET_500_1000', count: 0, value: '500-1000' },
+      { label: 'DASHBOARD.CO-OVERVIEW.FILTERS.BUDGET_1000_PLUS', count: 0, value: '1000+' },
     ],
   };
 
@@ -222,11 +222,11 @@ clearAllFilters() {
   // Helpers
   private translateCategory(cat: string): string {
     const map: any = {
-      coding: 'DASHBOARD.OVERVIEW.CATEGORIES.CODING',
-      design: 'DASHBOARD.OVERVIEW.CATEGORIES.DESIGN',
-      marketing: 'DASHBOARD.OVERVIEW.CATEGORIES.MARKETING',
-      data_science: 'OVERVIEW.CATEGORIES.DATA_SCIENCE',
-      product_management: 'OVERVIEW.CATEGORIES.PRODUCT_MANAGEMENT',
+      coding: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING',
+      design: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DESIGN',
+      marketing: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.MARKETING',
+      data_science: 'CO-OVERVIEW.CATEGORIES.DATA_SCIENCE',
+      product_management: 'CO-OVERVIEW.CATEGORIES.PRODUCT_MANAGEMENT',
     };
     return map[cat?.toLowerCase()] || cat || 'General';
   }

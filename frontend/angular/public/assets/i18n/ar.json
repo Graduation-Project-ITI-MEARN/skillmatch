@@ -2,35 +2,34 @@
   "AUTH": {
     "LOGOUT": "تسجيل الخروج"
   },
-
   "DASHBOARD": {
-    "WELCOME": "مرحبًا، {{name}}",
+    "WELCOME": "مرحباً، {{name}}",
     "SUBTITLE": "لنثبت مهاراتك اليوم",
     "TITLES": {
       "COMPANY": "لوحة تحكم الشركة",
-      "ADMIN": "مركز تحكم الإدارة",
-      "CHALLENGER": "مركز صانعي التحديات"
+      "ADMIN": "مركز التحكم الإداري",
+      "CHALLENGER": "مركز إنشاء التحديات"
     },
     "SUBTITLES": {
       "CANDIDATE": "لنثبت مهاراتك اليوم",
-      "COMPANY": "إدارة عمليات التوظيف والتحديات",
-      "ADMIN": "إشراف وإدارة المنصة",
-      "CHALLENGER": "إنشاء مسابقات وبناء مجتمع"
+      "COMPANY": "إدارة خط التوظيف والتحديات",
+      "ADMIN": "الإشراف والإدارة على المنصة",
+      "CHALLENGER": "إنشاء المسابقات وبناء المجتمع"
     },
     "ACTIONS": {
-      "COACH": "المدرب الوظيفي بالذكاء الاصطناعي",
+      "COACH": "مدرب مهني بالذكاء الاصطناعي",
       "CREATE_CHALLENGE": "إنشاء تحدي",
       "CREATE_BOUNTY": "مكافأة جديدة",
       "SYSTEM_REPORT": "تقرير النظام"
     },
     "TABS": {
       "OVERVIEW": "نظرة عامة",
-      "PORTFOLIO": "ملفي الشخصي",
+      "PORTFOLIO": "معرض أعمالي",
       "COACH": "المدرب الذكي",
       "LEADERBOARD": "لوحة المتصدرين",
       "MY_CHALLENGES": "تحدياتي",
       "SUBMISSIONS": "التقديمات",
-      "TALENT": "قاعدة المواهب",
+      "TALENT": "مجموعة المواهب",
       "ANALYTICS": "التحليلات",
       "USERS": "إدارة المستخدمين",
       "MODERATION": "الإشراف",
@@ -41,41 +40,39 @@
     },
     "STATS": {
       "COMPLETED": "التحديات المكتملة",
-      "SCORE": "تقييم المهارات",
+      "SCORE": "درجة المهارة",
       "RANK": "الترتيب العالمي",
-      "EARNINGS": "الأرباح",
-      "PRIZE": "إجمالي الجوائز",
-      "COMPETING": "قيد المنافسة",
+      "EARNINGS": "أرباح الجوائز",
+      "PRIZE": "مجموع الجوائز",
+      "COMPETING": "يتنافسون",
       "ACTIVE_JOBS": "التحديات النشطة",
       "APPLICANTS": "إجمالي التقديمات",
       "INTERVIEWS": "المقابلات",
-      "HIRED": "تم توظيفهم",
+      "HIRED": "المرشحون المعينون",
       "TOTAL_USERS": "إجمالي المستخدمين",
       "REVENUE": "إجمالي الإيرادات",
       "FLAGS": "المحتوى المبلغ عنه",
-      "HEALTH": "حالة النظام",
+      "HEALTH": "صحة النظام",
       "BOUNTIES": "المكافآت النشطة",
-      "PARTICIPANTS": "عدد المشاركين",
-      "PAID_OUT": "إجمالي المدفوع",
-      "REPUTATION": "تقييم السمعة",
+      "PARTICIPANTS": "إجمالي المشاركين",
+      "PAID_OUT": "إجمالي المدفوعات",
+      "REPUTATION": "نقاط السمعة",
       "ACTIVE_CHALLENGES": "التحديات النشطة",
       "REVIEWS": "المراجعات",
       "THIS_WEEK": "هذا الأسبوع",
       "GROWTH": "النمو",
-      "REQUIRES_ATTENTION": "يتطلب مراجعة"
+      "REQUIRES_ATTENTION": "يتطلب اهتماماً"
     },
-
     "NOTIFICATIONS": {
       "TITLE": "الإشعارات",
       "EMPTY": "لا توجد إشعارات",
-      "MARK_ALL_AS_READ": "تحديد الكل كمقروء"
+      "MARK_ALL_AS_READ": "وضع علامة مقروء للكل"
     },
-
     "GENERAL": {
       "CANDIDATES": "المرشحون",
       "CHALLENGES": "التحديات",
       "COMPANIES": "الشركات",
-      "CHALLENGERS": "صانعو التحديات",
+      "CHALLENGERS": "منشئو التحديات",
       "PARTICIPANTS": "المشاركون",
       "SUBMISSIONS": "التقديمات",
       "REVENUE": "الإيرادات",
@@ -85,56 +82,562 @@
       "SHOWING": "عرض",
       "OF": "من",
       "PAGE": "صفحة"
+    },
+    "ADMIN": {
+      "USER_DISTRIBUTION": "توزيع المستخدمين",
+      "RECENT_ACTIVITY": "النشاط الأخير",
+      "TODAY_STATS": "إحصائيات اليوم",
+      "TOP_CHALLENGES": "أفضل التحديات",
+      "TOP_CHALLENGES_SUBTITLE": "بناءً على المشاركة ودرجات الذكاء الاصطناعي",
+      "NEW_SIGNUPS": "التسجيلات الجديدة",
+      "CHALLENGES_POSTED": "التحديات المنشورة",
+      "USERS": {
+        "TITLE": "إدارة المستخدمين",
+        "SUBTITLE": "إدارة المستخدمين والأدوار والصلاحيات",
+        "ALL_USERS": "جميع المستخدمين",
+        "VIEW_ID": "عرض الهوية",
+        "VIEW_TAX": "عرض البطاقة الضريبية",
+        "VERIFY": "تحقق",
+        "REJECT": "رفض"
+      },
+      "CHALLENGES": {
+        "TITLE": "إدارة التحديات",
+        "SUBTITLE": "مراقبة وإدارة التحديات",
+        "VIEW": "عرض التفاصيل",
+        "ALL": "جميع التحديات",
+        "NO_CHALLENGES": "لم يتم العثور على تحديات لهذه الحالة.",
+        "ACTIVE": "نشط",
+        "PENDING": "قيد الانتظار",
+        "COMPLETED": "مكتمل",
+        "AVG_SCORE": "متوسط الدرجة"
+      },
+      "MODERATION": {
+        "TITLE": "الإشراف",
+        "SUBTITLE": "مراجعة المحتوى المبلغ عنه ({{ count }} عنصر)",
+        "NO_REPORTS": "لا توجد تقارير",
+        "NO_REPORTS_SUBTITLE": "لا توجد تقارير {{ status }}.",
+        "PENDING": "قيد الانتظار",
+        "RESOLVED": "تم الحل",
+        "DISMISSED": "تم الرفض",
+        "REVIEW": "مراجعة",
+        "DISMISS": "رفض",
+        "RESOLVE": "حل وإزالة",
+        "CHALLENGE": "التحدي",
+        "USER": "المستخدم",
+        "SUBMISSION": "التقديم",
+        "REASON": "السبب",
+        "REPORTED_BY": "تم الإبلاغ بواسطة",
+        "ON": "في"
+      },
+      "ANALYTICS": {
+        "TITLE": "تحليلات المنصة",
+        "SUBTITLE": "مقاييس ورؤى شاملة (آخر 30 يوماً)",
+        "USER_GROWTH": "نمو المستخدمين",
+        "VS_LAST_MONTH": "مقارنة بالشهر الماضي",
+        "ACTIVE_USERS": "المستخدمون النشطون (7 أيام)",
+        "ACTIVE_SUBTITLE": "المستخدمون النشطون هذا الأسبوع",
+        "REVENUE": "إجمالي الإيرادات",
+        "REVENUE_SUBTITLE": "رسوم المنصة المتراكمة",
+        "CONVERSION": "معدل التحويل",
+        "NO_DATA": "البيانات غير متوفرة",
+        "REVENUE_DISTRIBUTION": "توزيع مصادر الإيرادات",
+        "COMPANY_CHALLENGES": "تحديات الشركات",
+        "PREMIUM_FEATURES": "الميزات المميزة",
+        "COMMISSIONS": "العمولات",
+        "PLATFORM_HEALTH": "صحة المنصة",
+        "AVG_SESSION": "متوسط مدة الجلسة",
+        "CHALLENGES_PER_USER": "التحديات لكل مستخدم",
+        "RETENTION": "معدل الاحتفاظ"
+      }
+    },
+    "OVERVIEW": {
+      "TITLE": "التحديات المتاحة",
+      "SHOWING": "عرض",
+      "CHALLENGE": "تحدي",
+      "CHALLENGES": "تحديات",
+      "NO_CHALLENGES": "لا توجد تحديات تطابق الفلاتر.",
+      "RESET_FILTERS": "إعادة تعيين الفلاتر",
+      "PRIZE": "الجائزة",
+      "DAYS_LEFT": "يوم متبقي",
+      "COMPETING": "يتنافسون",
+      "VIEW_DETAILS": "عرض التفاصيل",
+      "ALL_FIELDS": "جميع المجالات",
+      "FILTERS": "الفلاتر",
+      "AI_RECOMMENDATIONS": {
+        "TITLE": "توصيات الذكاء الاصطناعي",
+        "BASED_ON": "بناءً على مهاراتك، نوصي بالبدء بتحدي",
+        "CHALLENGE": ". يتطابق",
+        "WITH_EXPERTISE": "مع خبرتك.",
+        "VIEW_MATCH": "عرض تفاصيل التطابق",
+        "ANALYZING": "جاري تحليل ملفك الشخصي للحصول على التوصيات"
+      },
+      "RECENT_SUBMISSIONS": {
+        "TITLE": "التقديمات الأخيرة",
+        "NO_SUBMISSIONS": "لا توجد تقديمات بعد.",
+        "UNKNOWN_CHALLENGE": "تحدي غير معروف",
+        "EVALUATED": "تم التقييم",
+        "UNDER_REVIEW": "قيد المراجعة",
+        "SCORE": "الدرجة"
+      },
+      "WEEKLY_STATS": {
+        "TITLE": "هذا الأسبوع",
+        "CHALLENGES_STARTED": "التحديات المبدوءة",
+        "VIDEOS_RECORDED": "الفيديوهات المسجلة",
+        "AVG_SCORE": "متوسط الدرجة"
+      },
+      "FILTER_MODAL": {
+        "TITLE": "تصفية التحديات",
+        "SEARCH": "بحث",
+        "SEARCH_PLACEHOLDER": "البحث بالعنوان أو الشركة...",
+        "CATEGORY": "الفئة",
+        "ALL_CATEGORIES": "جميع الفئات",
+        "DIFFICULTY": "الصعوبة",
+        "ALL_LEVELS": "جميع المستويات",
+        "DEADLINE": "الموعد النهائي",
+        "ANY_TIME": "أي وقت",
+        "WITHIN_DAYS": "خلال {{days}} أيام",
+        "PRIZE_RANGE": "نطاق الجائزة",
+        "MIN": "الأدنى",
+        "MAX": "الأقصى",
+        "RESET_ALL": "إعادة تعيين الكل",
+        "APPLY_FILTERS": "تطبيق الفلاتر"
+      }
+    },
+    "PORTFOLIO": {
+      "TITLE": "معرض الأعمال المعتمد بالذكاء الاصطناعي",
+      "SUBTITLE": "يتم التحديث تلقائياً مع كل تحدٍ مكتمل",
+      "SHARE_PORTFOLIO": "مشاركة المعرض",
+      "CODING": "البرمجة",
+      "DESIGN": "التصميم",
+      "MARKETING": "التسويق",
+      "COMPLETED": "مكتمل",
+      "AVG_SCORE": "متوسط الدرجة",
+      "VERIFIED_ACHIEVEMENTS": "الإنجازات المعتمدة",
+      "NO_ACHIEVEMENTS": "لا توجد إنجازات بعد. أكمل التحديات لبناء معرض أعمالك!",
+      "COMPLETED_ON": "مكتمل في",
+      "SCORE": "الدرجة",
+      "WATCH_VIDEO": "مشاهدة فيديو الشرح",
+      "NO_VIDEO": "لا يوجد فيديو مرفق"
+    },
+    "COACH": {
+      "TITLE": "مدرب مهني بالذكاء الاصطناعي",
+      "SUBTITLE": "مسار تعليمي مخصص بناءً على أدائك",
+      "CURRENT_PATH": "مسارك التعليمي الحالي",
+      "IN_PROGRESS": "قيد التقدم",
+      "NEXT": "التالي",
+      "RECOMMENDED_CHALLENGES": "التحديات الموصى بها",
+      "PERFECT_FOR": "مثالي لتحسين نقاط الضعف لديك",
+      "START": "ابدأ",
+      "SKILL_GAPS": "الفجوات المهارية المكتشفة",
+      "LEARNING_RESOURCES": "موارد التعلم",
+      "PREMIUM_FEATURE": "ميزة مميزة",
+      "PREMIUM_DESC": "احصل على تدريب مهني مخصص واكتشف مسارك التعليمي.",
+      "UPGRADE_TO_PRO": "الترقية إلى النسخة الاحترافية"
+    },
+
+  "PRICING": {
+    "PLAN_NAME": "الخطة المميزة",
+    "TITLE": "أطلق العنان لكامل إمكانياتك",
+    "PRICE": "$9.99",
+    "PERIOD": "/شهرياً",
+    "UPGRADE_BTN": "اشترك الآن",
+    "FOOTER_NOTE": "إلغاء في أي وقت. لا توجد رسوم خفية.",
+    "FEATURES": {
+      "UNLIMITED_COACHING": "تدريب مهني غير محدود بالذكاء الاصطناعي",
+      "PORTFOLIO_ANALYSIS": "تحليل مفصل للسيرة الذاتية ومعرض الأعمال",
+      "PRIORITY_APPS": "أولوية التقديم على الوظائف",
+      "SKILL_ANALYTICS": "تحليلات متقدمة لفجوات المهارات",
+      "MOCK_INTERVIEWS": "محاكاة للمقابلات الشخصية"
+    }
+
+},
+
+
+  "CO-OVERVIEW": {
+    "TITLE": "إعلانات الوظائف النشطة",
+    "SEARCH_PLACEHOLDER": "ابحث عن وظيفة...",
+    "FILTER": "تصفية",
+    "DAYS_REMAINING": "أيام متبقية",
+    "OFFER": "العرض",
+    "APPLICATIONS": "طلبات التقديم",
+    "TOP_SCORE": "أعلى تقييم",
+    "QUALIFIED": "مؤهل",
+    "VIEW_APPLICATIONS": "عرض الطلبات",
+    "EDIT_JOB": "تعديل الوظيفة",
+    "CREATE_NEW_JOB": "+ إنشاء إعلان وظيفة جديد",
+    "HIRING_INSIGHTS": "تحليلات التوظيف",
+    "HIGH_QUALITY_CANDIDATES": "مرشحين ذوي جودة عالية",
+    "READY_FOR_INTERVIEWS": "جاهزون للمقابلات بناءً على إعلانات الوظائف الأخيرة.",
+    "AVG_EVALUATION_TIME": "متوسط وقت التقييم",
+    "HOURS": "ساعات",
+    "AI_POWERED": "مدعوم بالذكاء الاصطناعي",
+    "VIEW_RECOMMENDATIONS": "عرض التوصيات",
+    "RECENT_ACTIVITY": "النشاط الأخير",
+    "NO_RECENT_ACTIVITY": "لا يوجد نشاط حديث",
+    "NEW_APPLICATION": "طلب تقديم جديد",
+    "JOB_CLOSED": "تم إغلاق إعلان الوظيفة",
+    "FILTERS_TITLE": "الفلاتر",
+    "STATUS_FILTER": "الحالة",
+    "BUDGET_FILTER": "نطاق الميزانية",
+    "CLEAR_ALL": "مسح الكل",
+    "CANCEL": "إلغاء",
+    "APPLY_FILTERS": "تطبيق الفلاتر",
+    "CATEGORIES": {
+      "TITLE": "نوع الوظيفة",
+      "CODING": "برمجة",
+      "DESIGN": "تصميم",
+      "MARKETING": "تسويق",
+      "DATA_SCIENCE": "علم البيانات",
+      "PRODUCT_MANAGEMENT": "إدارة المنتجات"
+    },
+    "STATUS": {
+      "ACTIVE": "نشطة",
+      "EVALUATING": "قيد التقييم",
+      "CLOSED": "مغلقة"
+    },
+    "FILTERS": {
+      "ACTIVE": "نشطة",
+      "EVALUATING": "قيد التقييم",
+      "CLOSED": "مغلقة",
+      "BUDGET_0_500": "من 0 إلى 500 دولار",
+      "BUDGET_500_1000": "من 500 إلى 1000 دولار",
+      "BUDGET_1000_PLUS": "أكثر من 1000 دولار"
+    }
+  },
+  "SUBMISSIONS": {
+    "TITLE": "جميع طلبات التقديم",
+    "SUBTITLE": "طلبات تم تقييمها بالذكاء الاصطناعي عبر جميع الوظائف",
+    "SELECT_CHALLENGE": "التحديات النشطة",
+    "NO_CHALLENGES": "لا توجد تحديات نشطة حاليًا",
+    "NO_SUBMISSIONS": "لا توجد طلبات لهذا التحدي",
+    "OVERALL": "التقييم العام",
+    "TECHNICAL_QUALITY": "الجودة التقنية",
+    "COMMUNICATION": "التواصل",
+    "FILTERS": {
+      "ALL": "الكل",
+      "NEW": "جديدة",
+      "SHORTLISTED": "مختارة",
+      "REVIEWED": "تمت مراجعتها"
+    },
+    "STATUS": {
+      "NEW": "جديدة",
+      "REVIEWED": "تمت المراجعة",
+      "SHORTLISTED": "مختارة"
+    },
+    "WATCH_VIDEO": "مشاهدة الفيديو",
+    "VIEW_APPLICATION": "عرض الطلب",
+    "CONTACT": "تواصل",
+    "SHORTLIST": "إضافة للقائمة المختصرة"
+  },
+  "TALENT": {
+    "TITLE": "قاعدة المواهب المعتمدة",
+    "SUBTITLE": "استعرض مرشحين تم التحقق منهم بالذكاء الاصطناعي",
+    "SEARCH_PLACEHOLDER": "ابحث بالمهارات أو المسمى الوظيفي أو الاسم...",
+    "FILTERS": "الفلاتر",
+    "ACTIVE_FILTERS": "الفلاتر المفعّلة",
+    "CLEAR_ALL": "مسح الكل",
+    "CLEAR_FILTERS": "إزالة الفلاتر",
+    "NO_RESULTS": "لا توجد نتائج مطابقة لبحثك",
+    "CHALLENGES_COMPLETED": "تحديات مكتملة",
+    "VIEW_PROFILE": "عرض الملف الشخصي",
+    "CONTACT": "تواصل",
+    "CURRENTLY_ENGAGED": "مرتبط حاليًا بمشروع",
+    "CATEGORIES": {
+      "ALL": "كل الفئات",
+      "CODING": "برمجة",
+      "DESIGN": "تصميم",
+      "MARKETING": "تسويق"
+    }
+  },
+  "COMMON": {
+    "LOADING": "جاري التحميل..."
+
+}
+,
+
+   "CHALLENGE_DETAILS": {
+    "GENERAL": "عام",
+    "INTERMEDIATE": "متوسط",
+    "START_CHALLENGE": "ابدأ التحدي",
+    "VIEW_SUBMISSION": "عرض مشروعي",
+    "OVERVIEW_TITLE": "نظرة عامة على التحدي",
+    "REQUIREMENTS_TITLE": "المتطلبات التقنية",
+    "RESOURCES_TITLE": "المصادر والمرفقات",
+    "DOWNLOAD_ATTACHMENT": "تحميل المرفق",
+    "EXTERNAL_LINK": "رابط المشروع الخارجي",
+    "NO_RESOURCES": "لا توجد موارد إضافية مقدمة.",
+    "TECH_STACK_TITLE": "التقنيات المطلوبة",
+    "LOADING": "جاري تحميل تفاصيل التحدي..."
+  },
+    "LEADERBOARD": {
+      "TITLE": "لوحة المتصدرين العالمية",
+      "SUBTITLE": "أفضل المؤدين عبر جميع التحديات",
+      "ALL_TIME": "كل الأوقات",
+      "THIS_MONTH": "هذا الشهر",
+      "THIS_WEEK": "هذا الأسبوع",
+      "LOADING": "جاري تحميل لوحة المتصدرين...",
+      "YOU": "أنت",
+      "CHALLENGES_COMPLETED": "تحديات مكتملة",
+      "TOTAL_SCORE": "الدرجة الإجمالية"
+    },
+    "MY_SUBMISSIONS": {
+      "IN_PROGRESS": "قيد التقدم",
+      "COMPLETED": "مكتمل",
+      "NO_PROGRESS": "لا توجد تحديات قيد التقدم. ابدأ واحداً!",
+      "DEADLINE": "الموعد النهائي",
+      "SUBMIT_SOLUTION": "تقديم الحل",
+      "VIEW_RESULT": "عرض النتيجة والملاحظات",
+      "MODAL": {
+        "TITLE": "قدم عملك",
+        "SUBTITLE": "اختر كيف تريد تقديم مشروعك.",
+        "UPLOAD_FILE": "رفع ملف",
+        "SUBMIT_LINK": "تقديم رابط",
+        "PROJECT_FILE": "ملف المشروع (ZIP/PDF)",
+        "CLICK_SELECT": "انقر لاختيار الملف",
+        "GITHUB_LINK": "رابط GitHub / التصميم",
+        "VIDEO_DEMO": "رابط فيديو تجريبي (Loom/YouTube)",
+        "CANCEL": "إلغاء",
+        "SUBMIT_NOW": "تقديم الآن"
+      }
     }
   },
 
+  "CHALLENGER": {
+      "DASHBOARD": {
+        "TITLE": "مركز إنشاء التحديات",
+        "SUBTITLE": "إنشاء المسابقات، اكتشاف المواهب، بناء المجتمع",
+        "CREATE_CHALLENGE": "إنشاء تحدي",
+        "STATS": {
+          "ACTIVE_CHALLENGES": "التحديات النشطة",
+          "TOTAL_PARTICIPANTS": "إجمالي المشاركين",
+          "PRIZES_AWARDED": "الجوائز الممنوحة",
+          "AVG_SCORE": "متوسط درجة التقديم",
+          "THIS_MONTH": "هذا الشهر",
+          "THIS_WEEK": "هذا الأسبوع",
+          "PAID_OUT": "تم الدفع",
+          "TOP_QUALITY": "جودة عالية"
+        },
+        "TABS": {
+          "ACTIVE": "التحديات النشطة",
+          "COMPLETED": "مكتمل",
+          "CREATE_NEW": "إنشاء جديد",
+          "ANALYTICS": "التحليلات"
+        },
+        "SEARCH_PLACEHOLDER": "بحث عن التحديات...",
+        "FILTER": "فلتر",
+        "WALLET": {
+          "TITLE": "محفظة الأعمال",
+          "AVAILABLE_BALANCE": "الرصيد المتاح",
+          "ESCROW_LOCKED": "الضمان (مقفل)",
+          "TOP_UP": "+ إضافة رصيد"
+        },
+        "ENGAGEMENT_STATS": {
+          "TITLE": "إحصائيات المشاركة",
+          "AVG_PARTICIPANTS": "متوسط المشاركين",
+          "COMPLETION_RATE": "معدل الإكمال"
+        },
+        "TOP_CANDIDATES": {
+          "TITLE": "أفضل المرشحين",
+          "VIEW_ALL": "عرض الكل",
+          "VIDEO_SPECIALIST": "أخصائي فيديو"
+        },
+        "YOUR_CHALLENGES": "تحدياتك النشطة",
+        "COMPLETED_CHALLENGES": "التحديات المكتملة",
+        "LOADING": "جاري تحميل تحدياتك...",
+        "NO_CHALLENGES": "لم يتم العثور على تحديات",
+        "TRY_ADJUSTING": "حاول تعديل الفلاتر أو مصطلحات البحث.",
+        "PRIZE_POOL": "مجموع الجوائز",
+        "TIME_LEFT": "الوقت المتبقي",
+        "PARTICIPANTS": "المشاركون",
+        "TOP_SCORE": "أعلى درجة",
+        "VIEW_SUBMISSIONS": "عرض التقديمات",
+        "VIEW_RESULTS": "عرض النتائج",
+        "EDIT": "تعديل",
+        "WINNER_SELECTED": "تم اختيار الفائز",
+        "FINAL_SCORE": "الدرجة النهائية",
+        "ENDED": "انتهى",
+        "ENDS_TODAY": "ينتهي اليوم",
+        "DAY_LEFT": "يوم متبقي",
+        "DAYS_LEFT": "أيام متبقية",
+        "NO_DEADLINE": "لا يوجد موعد نهائي",
+        "INVALID_DATE": "تاريخ غير صالح",
+        "ACTIVE": "نشط",
+        "CLOSED": "مغلق",
+        "GENERAL": "عام"
+      },
+      "CREATE": {
+        "TITLE": "إنشاء تحدي جديد",
+        "SUBTITLE": "حدد متطلباتك، اضبط الجائزة، ودع الذكاء الاصطناعي يساعدك في العثور على أفضل المواهب.",
+        "BASIC_DETAILS": "التفاصيل الأساسية",
+        "CHALLENGE_TITLE": "عنوان التحدي",
+        "TITLE_PLACEHOLDER": "مثال: بناء إضافة Chrome لإدارة المهام",
+        "REQUIRED": "*",
+        "DESCRIPTION": "الوصف",
+        "DESCRIPTION_PLACEHOLDER": "صف ما يحتاج المشاركون لبنائه...",
+        "CATEGORY_SETTINGS": "الفئة والإعدادات",
+        "SELECT_CATEGORY": "اختر الفئة",
+        "DIFFICULTY": "الصعوبة",
+        "DIFFICULTY_EASY": "سهل (مبتدئ)",
+        "DIFFICULTY_MEDIUM": "متوسط (متوسط)",
+        "DIFFICULTY_HARD": "صعب (خبير)",
+        "DURATION_DAYS": "المدة (أيام)",
+        "REQUIRED_SKILLS": "المهارات المطلوبة",
+        "SKILLS_PLACEHOLDER": "React, Figma, SEO",
+        "REWARDS": "المكافآت",
+        "PRIZE_AMOUNT": "قيمة الجائزة",
+        "PRIZE_PLACEHOLDER": "5000",
+        "OPPORTUNITY_TYPE": "نوع الفرصة",
+        "ONE_TIME_PRIZE": "جائزة لمرة واحدة",
+        "HIRING_JOB": "توظيف / وظيفة",
+        "ESCROW_SUMMARY": "ملخص الضمان",
+        "ESCROW_DESC": "لنشر هذا التحدي، سيتم الاحتفاظ بمبلغ الجائزة بشكل آمن في الضمان حتى تختار الفائز.",
+        "TOTAL_TO_DEDUCT": "المبلغ الإجمالي المراد خصمه:",
+        "CANCEL": "إلغاء",
+        "PUBLISH_NOW": "نشر التحدي الآن",
+        "PUBLISHING": "جاري نشر التحدي...",
+        "SUCCESS": "تم نشر التحدي بنجاح!",
+        "ERROR": "فشل إنشاء التحدي.",
+        "FIX_ERRORS": "يرجى إصلاح الأخطاء في النموذج."
+      },
+      "EDIT": {
+        "TITLE": "تعديل التحدي",
+        "BACK": "العودة إلى لوحة التحكم",
+        "RESTRICTED_MODE": "وضع التعديل المقيد",
+        "RESTRICTED_DESC": "تم استلام التقديمات. الحقول الأساسية (العنوان، الجائزة، الفئة) مقفلة لضمان العدالة.",
+        "BASIC_DETAILS": "التفاصيل الأساسية",
+        "CHALLENGE_TITLE": "عنوان التحدي",
+        "DESCRIPTION": "الوصف",
+        "CATEGORY_SETTINGS": "الفئة والإعدادات",
+        "SELECT_CATEGORY": "اختر الفئة",
+        "DIFFICULTY": "الصعوبة",
+        "DURATION_DAYS": "المدة (أيام)",
+        "REQUIRED_SKILLS": "المهارات المطلوبة",
+        "REWARDS": "المكافآت",
+        "PRIZE_AMOUNT": "قيمة الجائزة",
+        "OPPORTUNITY_TYPE": "نوع الفرصة",
+        "ONE_TIME_PRIZE": "جائزة لمرة واحدة",
+        "HIRING_JOB": "توظيف / وظيفة",
+        "CANCEL": "إلغاء",
+        "SAVE_CHANGES": "حفظ التغييرات",
+        "SAVING": "جاري حفظ التغييرات...",
+        "SUCCESS": "تم تحديث التحدي!",
+        "ERROR": "فشل التحديث"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "مراجعة التقديمات",
+        "BACK": "العودة إلى لوحة التحكم",
+        "LOADING": "جاري تحميل التقديمات...",
+        "NO_SUBMISSIONS": "لا توجد تقديمات بعد",
+        "NO_SUBMISSIONS_DESC": "لا يزال المرشحون يعملون على هذا التحدي.",
+        "AI_SCORE": "درجة الذكاء الاصطناعي",
+        "TECHNICAL_QUALITY": "الجودة التقنية",
+        "COMMUNICATION": "التواصل",
+        "WATCH_VIDEO": "مشاهدة الفيديو",
+        "STATUS": {
+          "NEW": "جديد",
+          "ACCEPTED": "مقبول",
+          "REJECTED": "مرفوض",
+          "PENDING": "قيد الانتظار"
+        }
+      },
+      "WINNER_SOLUTION": {
+        "BACK": "العودة إلى لوحة التحكم",
+        "LOADING": "جاري تحميل الحل الفائز...",
+        "CHALLENGE_WINNER": "فائز التحدي",
+        "PERFECT_SCORE": "حصل على درجة مثالية من",
+        "PRIZE_EARNED": "الجائزة المكتسبة",
+        "VIDEO_SUBMISSION": "تقديم الفيديو",
+        "VIDEO_INVALID": "رابط الفيديو غير صالح أو مفقود.",
+        "ABOUT_SOLUTION": "حول هذا الحل",
+        "NO_DESCRIPTION": "لم يتم تقديم وصف نصي.",
+        "AI_FEEDBACK": "ملاحظات الذكاء الاصطناعي",
+        "TECHNICAL_EXECUTION": "التنفيذ التقني",
+        "TECHNICAL_FEEDBACK": "يظهر الحل فهماً استثنائياً للمتطلبات. هيكل الكود نموذجي ويتبع أفضل الممارسات.",
+        "CREATIVITY": "الإبداع",
+        "CREATIVITY_FEEDBACK": "نهج مبتكر لمشكلة واجهة المستخدم/تجربة المستخدم. كانت انتقالات الرسوم المتحركة سلسة وأضافت قيمة كبيرة.",
+        "AI_EVALUATOR": "SkillMatch AI",
+        "AUTOMATED_EVALUATION": "تقييم آلي"
+      },
+      "ANALYTICS": {
+        "TITLE": "تحليلات التوظيف",
+        "SUBTITLE": "مقاييس ورؤى الأداء",
+        "TOTAL_CHALLENGES": "إجمالي التحديات",
+        "TOTAL_SUBMISSIONS": "إجمالي التقديمات",
+        "APPLICATION_RATE": "معدل التقديم",
+        "CONVERSION_RATE": "معدل التحويل",
+        "AVERAGE_SCORE": "متوسط الدرجة",
+        "TIME_TO_HIRE": "وقت التوظيف",
+        "DAYS": "أيام",
+        "JOB_PERFORMANCE": "أداء إعلانات الوظائف",
+        "SUBMISSIONS": "التقديمات",
+        "AVG_SCORE": "متوسط الدرجة",
+        "HIGHEST_SCORE": "أعلى درجة"
+      },
+      "FILTER": {
+        "CATEGORY": "الفئة",
+        "ALL_CATEGORIES": "جميع الفئات",
+        "DIFFICULTY": "مستوى الصعوبة",
+        "ALL": "الكل",
+        "EASY": "سهل",
+        "MEDIUM": "متوسط",
+        "HARD": "صعب",
+        "RESET_ALL": "إعادة تعيين جميع الفلاتر",
+        "CATEGORIES": {
+          "DEVELOPMENT": "التطوير",
+          "DESIGN": "التصميم",
+          "MARKETING": "التسويق",
+          "WRITING": "الكتابة",
+          "TRANSLATION": "الترجمة",
+          "DATA_ENTRY": "إدخال البيانات"
+        }
+      }
+    },
+
+
   "CHALLENGE": {
     "BACK": "العودة إلى لوحة التحكم",
-
     "CREATE": {
       "TITLE": "إنشاء تحدي جديد",
-      "DESCRIPTION": "أنشئ مهام واقعية ودع الذكاء الاصطناعي يقيم المرشحين من خلال حلولهم وشرحهم بالفيديو.",
-      "BENEFIT_1_TITLE": "تقييم بالذكاء الاصطناعي",
+      "DESCRIPTION": "انشر مهام من العالم الحقيقي ودع الذكاء الاصطناعي يقيّم المرشحين من خلال حلولهم وشروحاتهم بالفيديو.",
+      "BENEFIT_1_TITLE": "تقييم مدعوم بالذكاء الاصطناعي",
       "BENEFIT_1_DESC": "تقييم تلقائي للجودة التقنية ومهارات التواصل",
-      "BENEFIT_2_TITLE": "مهام واقعية",
-      "BENEFIT_2_DESC": "اختبر المرشحين بسيناريوهات عمل حقيقية",
-      "BENEFIT_3_TITLE": "شرح بالفيديو",
-      "BENEFIT_3_DESC": "فهم طريقة تفكير المرشح من خلال الشرح"
+      "BENEFIT_2_TITLE": "مهام من الواقع",
+      "BENEFIT_2_DESC": "اختبر المرشحين بسيناريوهات عمل فعلية، وليس أسئلة نظرية",
+      "BENEFIT_3_TITLE": "شروحات بالفيديو",
+      "BENEFIT_3_DESC": "افهم عملية تفكير المرشح من خلال شروحاته بالفيديو"
     },
-
     "EDIT": {
       "TITLE": "تعديل التحدي",
-      "DESCRIPTION": "قم بتحديث بيانات التحدي بعناية",
-      "RESTRICTED_MODE": "وضع التعديل المقيد",
-      "LOCKED_FIELDS": "حقول مقفلة",
-      "EDITABLE_FIELDS": "حقول قابلة للتعديل",
+      "DESCRIPTION": "حدّث تفاصيل التحدي بعناية",
+      "RESTRICTED_MODE": "وضع التعديل المقيد نشط",
+      "LOCKED_FIELDS": "الحقول المقفلة",
+      "EDITABLE_FIELDS": "لا يزال قابلاً للتعديل",
       "EDITABLE": "قابل للتعديل",
       "FULL_ACCESS": "وصول كامل للتعديل",
-      "FULL_ACCESS_DESC": "لا توجد تقديمات بعد. جميع الحقول متاحة للتعديل."
+      "FULL_ACCESS_DESC": "لا توجد تقديمات بعد. جميع الحقول قابلة للتعديل."
     },
-
     "FORM": {
       "TITLE": "عنوان التحدي",
-      "TITLE_PLACEHOLDER": "مثال: إنشاء تطبيق دردشة فوري",
-      "TITLE_ERROR": "العنوان مطلوب (حد أدنى 5 أحرف)",
+      "TITLE_PLACEHOLDER": "مثال: بناء تطبيق دردشة فوري",
+      "TITLE_ERROR": "العنوان مطلوب (5 أحرف على الأقل)",
       "CATEGORY": "الفئة",
       "SELECT_CATEGORY": "اختر الفئة",
       "DIFFICULTY": "مستوى الصعوبة",
-      "SELECT_DIFFICULTY": "اختر مستوى الصعوبة",
+      "SELECT_DIFFICULTY": "اختر الصعوبة",
       "TYPE": "نوع التحدي",
       "SELECT_TYPE": "اختر النوع",
       "STATUS": "الحالة",
       "DEADLINE": "الموعد النهائي",
       "DESCRIPTION": "وصف التحدي",
-      "DESCRIPTION_PLACEHOLDER": "اشرح تفاصيل التحدي والمتطلبات...",
+      "DESCRIPTION_PLACEHOLDER": "صف التحدي، ما الذي يحتاج المرشح لبنائه، وأي متطلبات خاصة...",
       "SKILLS": "المهارات المطلوبة",
-      "SELECT_SKILLS": "اضغط لاختيار المهارات",
-      "SEARCH_SKILLS": "ابحث عن مهارة...",
-      "NO_SKILLS_FOUND": "لا توجد مهارات مطابقة",
-      "SKILLS_SELECTED": "تم اختيار",
-      "SKILLS_AVAILABLE": "متاح",
-      "SELECT_CATEGORY_FIRST": "اختر الفئة أولًا لعرض المهارات",
-      "SALARY": "الراتب (دولار شهريًا)",
+      "SELECT_SKILLS": "انقر لاختيار المهارات",
+      "SEARCH_SKILLS": "بحث المهارات...",
+      "NO_SKILLS_FOUND": "لم يتم العثور على مهارات تطابق بحثك",
+      "SKILLS_SELECTED": "محددة",
+      "SKILLS_AVAILABLE": "متاحة",
+      "SELECT_CATEGORY_FIRST": "اختر فئة أولاً لرؤية المهارات ذات الصلة",
+      "SALARY": "الراتب (دولار/شهر)",
       "SALARY_PLACEHOLDER": "مثال: 5000",
       "PRIZE": "قيمة الجائزة (دولار)",
       "PRIZE_PLACEHOLDER": "مثال: 1000",
@@ -148,149 +651,71 @@
       "PUBLISHING": "جاري النشر...",
       "SAVING_DRAFT": "جاري الحفظ..."
     },
-    "ADMIN": {
-      "USER_DISTRIBUTION": "توزيع المستخدمين",
-      "RECENT_ACTIVITY": "النشاط الأخير",
-      "TODAY_STATS": "إحصائيات اليوم",
-      "TOP_CHALLENGES": "أفضل التحديات",
-      "TOP_CHALLENGES_SUBTITLE": "بناءً على المشاركة وتقييم الذكاء الاصطناعي",
-      "NEW_SIGNUPS": "تسجيلات جديدة",
-      "CHALLENGES_POSTED": "تحديات منشورة",
-      "USERS": {
-        "TITLE": "إدارة المستخدمين",
-        "SUBTITLE": "إدارة المستخدمين، الأدوار، والصلاحيات",
-        "ALL_USERS": "كل المستخدمين",
-        "VIEW_ID": "عرض الهوية",
-        "VIEW_TAX": "عرض البطاقة الضريبية",
-        "VERIFY": "توثيق",
-        "REJECT": "رفض"
-      },
-      "CHALLENGES": {
-        "TITLE": "إدارة التحديات",
-        "SUBTITLE": "مراقبة وإدارة جميع التحديات",
-        "VIEW": "عرض التفاصيل",
-        "ALL": "كل التحديات",
-        "NO_CHALLENGES": "لا توجد تحديات بهذه الحالة.",
-        "ACTIVE": "نشطة",
-        "PENDING": "قيد الانتظار",
-        "COMPLETED": "مكتملة",
-        "AVG_SCORE": "متوسط التقييم"
-      },
-      "MODERATION": {
-        "TITLE": "المراقبة",
-        "SUBTITLE": "مراجعة المحتوى المبلغ عنه ({{ count }} عنصر)",
-        "NO_REPORTS": "No reports found",
-        "NO_REPORTS_SUBTITLE": "لا توجد تقارير {{ status }}.",
-        "PENDING": "قيد الانتظار",
-        "RESOLVED": "محلول",
-        "DISMISSED": "متجاهل",
-        "REVIEW": "مراجعة",
-        "DISMISS": "تجاهل",
-        "RESOLVE": "حل & حذف",
-        "CHALLENGE": "تحدي",
-        "USER": "مستخدم",
-        "SUBMISSION": "مشاركة",
-        "REASON": "السبب",
-        "REPORTED_BY": "تم التبليغ بواسطة",
-        "ON": "في"
-      },
-      "ANALYTICS": {
-        "TITLE": "التحليلات النظامية",
-        "SUBTITLE": "التحليلات النظامية المتكاملة (الشهر الماضي)",
-        "USER_GROWTH": "نمو المستخدمين",
-        "VS_LAST_MONTH": "مقارنة مع الشهر الماضي",
-        "ACTIVE_USERS": "المستخدمون النشطون",
-        "ACTIVE_SUBTITLE": "المستخدمون النشطون هذا الاسبوع",
-        "REVENUE": "الإيرادات",
-        "REVENUE_SUBTITLE": "المصاريف النظامية المكتسبة",
-        "CONVERSION": "نسبة التحويل",
-        "NO_DATA": "لا توجد بيانات حالياً.",
-        "REVENUE_DISTRIBUTION": "توزيع الإيرادات",
-        "COMPANY_CHALLENGES": "تحديات الشركة",
-        "PREMIUM_FEATURES": "ميزات المميزة",
-        "COMMISSIONS": "العمولات",
-        "PLATFORM_HEALTH": "صحة النظام",
-        "AVG_SESSION": "متوسط طول الجلسة",
-        "CHALLENGES_PER_USER": "تحديات لكل مستخدم",
-        "RETENTION": "نسبة الحفاظة"
-      }
-    },
-
     "CATEGORIES": {
       "DEVELOPMENT": "البرمجة والتطوير",
       "DESIGN": "التصميم والإبداع",
       "MARKETING": "التسويق والنمو",
-      "WRITING": "الكتابة وصناعة المحتوى",
+      "WRITING": "الكتابة والمحتوى",
       "TRANSLATION": "الترجمة والتوطين",
-      "DATA ENTRY": "إدخال البيانات"
+      "DATA ENTRY": "إدخال البيانات ومعالجتها"
     },
-
     "DIFFICULTY": {
       "EASY": "سهل",
       "MEDIUM": "متوسط",
       "HARD": "صعب"
     },
-
     "TYPES": {
       "JOB": "فرصة عمل",
-      "PRIZE": "مسابقة بجائزة"
+      "PRIZE": "مسابقة بجوائز"
     },
-
     "STATUS": {
       "DRAFT": "مسودة",
       "PUBLISHED": "منشور",
       "CLOSED": "مغلق"
     },
-
     "SUCCESS": {
       "TITLE": "تم إنشاء التحدي بنجاح!",
-      "MESSAGE": "سيتم تحويلك إلى لوحة التحكم...",
+      "MESSAGE": "جاري التوجيه إلى لوحة التحكم...",
       "UPDATE_TITLE": "تم تحديث التحدي!",
       "UPDATE_MESSAGE": "تم حفظ التغييرات بنجاح."
     },
-
     "ERROR": {
       "TITLE": "خطأ",
       "MESSAGE": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
-
     "RESTRICTED": {
       "TITLE": "وضع التعديل المقيد",
-      "MESSAGE": "تم اكتشاف تقديمات نشطة. بعض الحقول مقفلة لحماية تجربة المرشحين.",
-      "ALLOWED": "يمكنك تعديل: الوصف، الموعد النهائي، والحالة فقط."
+      "MESSAGE": "تم اكتشاف تقديمات نشطة. الحقول الأساسية مقفلة لحماية تجربة المرشح.",
+      "ALLOWED": "يمكنك فقط تعديل: الوصف، الموعد النهائي، والحالة."
     }
   },
   "ANALYTICS": {
     "TITLE": "تحليلات التوظيف",
-    "SUBTITLE": "مؤشرات الأداء والرؤى",
+    "SUBTITLE": "مقاييس ورؤى الأداء",
     "TOTAL_CHALLENGES": "إجمالي التحديات",
-    "TOTAL_SUBMISSIONS": "إجمالي الطلبات",
+    "TOTAL_SUBMISSIONS": "إجمالي التقديمات",
     "APP_RATE": "معدل التقديم",
     "CONVERSION": "معدل التحويل",
-    "AVG_SCORE": "متوسط النقاط",
-    "TIME_TO_HIRE": "مدة التوظيف",
+    "AVG_SCORE": "متوسط الدرجة",
+    "TIME_TO_HIRE": "وقت التوظيف",
     "DAYS": "أيام",
-    "PERFORMANCE_LIST": "أداء الوظائف المنشورة",
-    "TOP_SCORE": "أعلى نقطة",
-    "SUBMISSIONS_COUNT": "عدد الطلبات"
+    "PERFORMANCE_LIST": "أداء إعلانات الوظائف",
+    "TOP_SCORE": "أعلى درجة",
+    "SUBMISSIONS_COUNT": "التقديمات"
   },
   "SORT": {
-    "NEWEST": "الأحدث أولًا",
-    "OLDEST": "الأقدم أولًا"
+    "NEWEST": "الأحدث أولاً",
+    "OLDEST": "الأقدم أولاً"
   },
-
   "TIME": {
-    "DAYS_LEFT": "أيام متبقية"
+    "DAYS_LEFT": "يوم متبقي"
   },
-
   "BTN": {
     "CONTINUE": "متابعة",
     "VIEW_MATCH": "عرض التطابق"
   },
-
   "AI": {
     "ANALYZING": "جاري تحليل ملفك الشخصي..."
   },
-
-  "NO_DATA": "لا توجد بيانات متاحة حاليًا."
+  "NO_DATA": "لا توجد بيانات متاحة حالياً."
 }

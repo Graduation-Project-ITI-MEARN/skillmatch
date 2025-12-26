@@ -2,11 +2,13 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Brain, BookOpen, ChevronRight } from 'lucide-angular';
 import { PricingModal } from '@shared/components/pricing-modal/pricing-modal';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-coach',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, PricingModal],
+  imports: [CommonModule, LucideAngularModule, PricingModal, TranslateModule],
   templateUrl: './coach.html'
 })
 export class Coach {

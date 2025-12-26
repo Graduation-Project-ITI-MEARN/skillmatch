@@ -1,137 +1,141 @@
-<div class="min-h-screen bg-gray-50 p-6 lg:p-8">
-  <!-- Header -->
-  <div class="flex items-center gap-4 mb-8">
-    <a
-      routerLink="/dashboard/challenger"
-      class="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="m15 18-6-6 6-6" />
-      </svg>
-    </a>
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Submissions Review</h1>
-      <p class="text-gray-500">{{ challengeTitle }}</p>
-    </div>
-  </div>
-
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="text-center py-12">
-    <div
-      class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"
-    ></div>
-    <p class="mt-4 text-gray-500">Loading submissions...</p>
-  </div>
-
-  <!-- Empty State -->
-  <div
-    *ngIf="!isLoading && submissions.length === 0"
-    class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300"
-  >
-    <div
-      class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="32"
-        height="32"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-        <polyline points="14 2 14 8 20 8"></polyline>
-      </svg>
-    </div>
-    <h3 class="text-lg font-bold text-gray-900">No submissions yet</h3>
-    <p class="text-gray-500">Candidates are still working on this challenge.</p>
-  </div>
-
-  <!-- List -->
-  <div *ngIf="!isLoading && submissions.length > 0" class="space-y-4">
-    <div
-      *ngFor="let sub of submissions"
-      class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all"
-    >
-      <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
-        <div class="flex gap-4 items-center">
-          <div
-            class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-sm"
+<div class="space-y-10 p-6">
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">{{ 'DASHBOARD.MY_SUBMISSIONS.IN_PROGRESS' | translate }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (sub of inProgressChallenges; track sub._id) {
+      <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-sm text-gray-500">
+            <span class="block font-semibold text-dark-900">{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span>
+            {{ sub.createdAt | date }}
+          </div>
+          <button
+            (click)="openSubmitModal(sub)"
+            class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold cursor-pointer transition-all"
           >
-            {{ sub.initials }}
-          </div>
-          <div>
-            <h3 class="font-bold text-lg text-gray-900">{{ sub.name }}</h3>
-            <p class="text-gray-500 text-sm">{{ sub.role }}</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <span
-            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide"
-            [ngClass]="getStatusClass(sub.status)"
-          >
-            {{ sub.status }}
-          </span>
-          <div class="text-right">
-            <div class="text-2xl font-black text-gray-900">{{ sub.score }}</div>
-            <div class="text-xs text-gray-500 font-bold uppercase">AI Score</div>
-          </div>
+            {{ 'DASHBOARD.MY_SUBMISSIONS.SUBMIT_SOLUTION' | translate }}
+          </button>
         </div>
       </div>
-
-      <!-- Metrics -->
-      <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
-        <div>
-          <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-            <span>Technical Quality</span>
-            <span>{{ sub.techScore }}%</span>
-          </div>
-          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-blue-500" [style.width.%]="sub.techScore"></div>
-          </div>
-        </div>
-        <div>
-          <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-            <span>Communication</span>
-            <span>{{ sub.commScore }}%</span>
-          </div>
-          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-purple-500" [style.width.%]="sub.commScore"></div>
-          </div>
-        </div>
+      } @empty {
+      <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed text-gray-400">
+        {{ 'DASHBOARD.MY_SUBMISSIONS.NO_PROGRESS' | translate }}
       </div>
+      }
+    </div>
+  </section>
 
-      <div class="flex gap-3">
-        <button
-          (click)="watchVideo(sub.videoUrl)"
-          class="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 text-sm font-bold"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-          Watch Video
+  <!-- Completed Challenges Section -->
+  <section>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">{{ 'DASHBOARD.MY_SUBMISSIONS.COMPLETED' | translate }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (sub of completedChallenges; track sub._id) {
+      <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div class="flex justify-between items-start">
+          <h3 class="text-lg font-bold text-gray-700">{{ sub.challengeId?.title }}</h3>
+          <div class="bg-gray-700 text-white px-3 py-1 rounded-full text-xs font-bold">
+            {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}: {{ sub.aiScore }}
+          </div>
+        </div>
+        <button class="mt-4 font-semibold text-dark-900  text-sm hover:underline cursor-pointer">
+          {{ 'DASHBOARD.MY_SUBMISSIONS.VIEW_RESULT' | translate }}
         </button>
       </div>
+      }
+    </div>
+  </section>
+
+  <!-- Submit Modal -->
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+  >
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transition-all">
+      <h2 class="text-2xl font-bold mb-2">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.TITLE' | translate }}</h2>
+      <p class="text-gray-500 text-sm mb-6">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.SUBTITLE' | translate }}</p>
+
+      <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
+        <button
+          (click)="activeTab = 'file'"
+          [class.bg-white]="activeTab === 'file'"
+          [class.shadow-sm]="activeTab === 'file'"
+          class="flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer"
+        >
+          {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.UPLOAD_FILE' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'link'"
+          [class.bg-white]="activeTab === 'link'"
+          [class.shadow-sm]="activeTab === 'link'"
+          class="flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer"
+        >
+          {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.SUBMIT_LINK' | translate }}
+        </button>
+      </div>
+
+      <form [formGroup]="submitForm" (ngSubmit)="onFinalSubmit()" class="space-y-4">
+        <!-- File Upload Tab -->
+        <div *ngIf="activeTab === 'file'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.PROJECT_FILE' | translate }}</label>
+          <div class="relative group">
+            <input type="file" (change)="onFileSelected($event)" class="hidden" #fileInput />
+            <div
+              (click)="fileInput.click()"
+              class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer"
+            >
+              <lucide-icon [img]="icons.FileUp" class="text-gray-400"></lucide-icon>
+              <span class="text-xs font-bold text-gray-500">
+                {{ selectedFile ? selectedFile.name : ('DASHBOARD.MY_SUBMISSIONS.MODAL.CLICK_SELECT' | translate) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Link Tab -->
+        <div *ngIf="activeTab === 'link'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.GITHUB_LINK' | translate }}</label>
+          <input
+            formControlName="solutionUrl"
+            type="url"
+            placeholder="https://github.com/..."
+            class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <!-- Video URL -->
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.VIDEO_DEMO' | translate }}</label>
+          <input
+            formControlName="videoUrl"
+            type="url"
+            placeholder="https://loom.com/..."
+            class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 pt-4">
+          <button
+            type="button"
+            (click)="showModal = false"
+            class="flex-1 py-3 font-bold text-gray-600 hover:bg-gray-100 rounded-xl transition-all cursor-pointer"
+          >
+            {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.CANCEL' | translate }}
+          </button>
+          <button
+            type="submit"
+            [disabled]="
+              submitForm.get('videoUrl')?.invalid ||
+              (activeTab === 'file' && !selectedFile) ||
+              (activeTab === 'link' && !submitForm.get('solutionUrl')?.value)
+            "
+            class="flex-1 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer"
+          >
+            {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.SUBMIT_NOW' | translate }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

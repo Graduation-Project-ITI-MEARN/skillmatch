@@ -53,3 +53,15 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+
+  .custom-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none;
+  }
+  /* لإزالة سهم IE */
+  .custom-select::-ms-expand {
+    display: none;
+  }

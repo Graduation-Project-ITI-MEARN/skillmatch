@@ -12,41 +12,95 @@
     <div class="col-span-1 lg:col-span-2 space-y-4">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Available Challenges</h2>
+        <h2 class="text-2xl font-bold text-gray-800">{{ 'DASHBOARD.OVERVIEW.TITLE' | translate }}</h2>
         <div class="flex gap-2">
-          <!-- Filters (Mock) -->
+          <!-- All Fields Dropdown -->
+          <div class="relative inline-block text-left">
+            <button
+              (click)="activeDropdown = activeDropdown === 'main_field' ? null : 'main_field'"
+              class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-slate-50 transition-all text-slate-700 font-medium flex items-center gap-3 min-w-[140px] justify-between shadow-sm outline-none"
+            >
+              <span>{{ selectedField === 'all' ? ('DASHBOARD.OVERVIEW.ALL_FIELDS' | translate) : selectedField }}</span>
+              <svg
+                class="w-4 h-4 text-slate-400 transition-transform duration-200"
+                [class.rotate-180]="activeDropdown === 'main_field'"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+
+            @if (activeDropdown === 'main_field') {
+            <div
+              class="absolute left-0 mt-2 w-56 origin-top-left bg-white border border-slate-100 rounded-xl shadow-xl z-[10020] animate-scale-up py-1"
+            >
+              <button
+                (click)="onFieldChange('all')"
+                class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 flex items-center"
+                [class.bg-slate-50]="selectedField === 'all'"
+              >
+                {{ 'DASHBOARD.OVERVIEW.ALL_FIELDS' | translate }}
+              </button>
+
+              @for (cat of categories; track cat) {
+              <button
+                (click)="onFieldChange(cat)"
+                class="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center"
+                [class.bg-slate-50]="selectedField === cat"
+              >
+                {{ cat }}
+              </button>
+              }
+            </div>
+            }
+          </div>
+
+          <!-- Filters Button -->
           <button
-            class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-all text-gray-700 font-medium"
+            (click)="toggleFilterPanel()"
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-slate-50 transition-all text-slate-700 font-medium flex items-center gap-2 outline-none"
           >
-            All Fields
-          </button>
-          <button
-            class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-all text-gray-700 font-medium"
-          >
-            Filters
+            <lucide-icon [img]="icons.Filter" class="w-4 h-4 text-slate-500"></lucide-icon>
+            <span>{{ 'DASHBOARD.OVERVIEW.FILTERS' | translate }}</span>
           </button>
         </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="text-sm text-gray-600 font-medium mb-4">
+        {{ 'DASHBOARD.OVERVIEW.SHOWING' | translate }} {{ activeChallenges.length }} {{ activeChallenges.length !== 1 ? ('DASHBOARD.OVERVIEW.CHALLENGES' | translate) : ('DASHBOARD.OVERVIEW.CHALLENGE' | translate) }}
       </div>
 
       <!-- Empty State -->
       @if (activeChallenges.length === 0) {
       <div class="p-10 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-        <p class="text-gray-500">No active challenges found.</p>
+        <p class="text-gray-500 mb-2">{{ 'DASHBOARD.OVERVIEW.NO_CHALLENGES' | translate }}</p>
+        <button
+          (click)="resetFilters()"
+          class="text-sm text-gray-900 font-semibold hover:underline"
+        >
+          {{ 'DASHBOARD.OVERVIEW.RESET_FILTERS' | translate }}
+        </button>
       </div>
       }
 
       <!-- Loop: Challenge Cards -->
       @for (challenge of activeChallenges; track challenge._id) {
       <div
-        class="relative bg-white rounded-2xl p-6 group hover:bg-gray-50 transition-all border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md"
+        class="relative bg-white rounded-2xl p-6 group hover:bg-gray-50 transition-all border border-gray-200"
       >
         <!-- Top Row: Title, Tags, Prize -->
         <div class="flex items-start justify-between mb-4">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2 flex-wrap">
-              <h3
-                class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors"
-              >
+              <h3 class="text-xl font-bold text-gray-900">
                 {{ challenge.title }}
               </h3>
 
@@ -60,7 +114,7 @@
                 class="px-3 py-1 rounded-full text-xs font-semibold"
                 [ngClass]="challenge.levelColor"
               >
-                {{ challenge.difficulty || 'Intermediate' }}
+                {{ challenge.difficulty || 'medium' }}
               </span>
             </div>
             <p class="text-sm text-gray-600 font-medium">
@@ -71,7 +125,7 @@
           <!-- Prize -->
           <div class="text-right pl-4">
             <div class="text-2xl font-bold text-gray-900 mb-1">${{ challenge.prize }}</div>
-            <div class="text-xs text-gray-500 uppercase font-semibold">Prize</div>
+            <div class="text-xs text-gray-500 uppercase font-semibold">{{ 'DASHBOARD.OVERVIEW.PRIZE' | translate }}</div>
           </div>
         </div>
 
@@ -79,11 +133,11 @@
         <div class="flex items-center gap-6 mb-4 text-sm text-gray-600 font-medium">
           <div class="flex items-center gap-2" [class.text-red-600]="challenge.daysLeft < 3">
             <lucide-icon [img]="icons.Clock" class="w-4 h-4"></lucide-icon>
-            {{ challenge.daysLeft }} days left
+            {{ challenge.daysLeft }} {{ 'DASHBOARD.OVERVIEW.DAYS_LEFT' | translate }}
           </div>
           <div class="flex items-center gap-2">
             <lucide-icon [img]="icons.Trophy" class="w-4 h-4"></lucide-icon>
-            {{ challenge.competitors }} competing
+            {{ challenge.competitors }} {{ 'DASHBOARD.OVERVIEW.COMPETING' | translate }}
           </div>
         </div>
 
@@ -104,7 +158,7 @@
             [routerLink]="['../challenge', challenge._id]"
             class="cursor-pointer flex items-center gap-2 px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all font-medium text-sm shadow-lg shadow-gray-900/10"
           >
-            View Details
+            {{ 'DASHBOARD.OVERVIEW.VIEW_DETAILS' | translate }}
             <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4"></lucide-icon>
           </button>
         </div>
@@ -115,37 +169,43 @@
     <!-- RIGHT COLUMN: Sidebar (AI, Submissions, Stats) -->
     <div class="space-y-6 col-span-1">
       <!-- 1. AI Recommendations -->
-      <div
-        class="bg-gradient-to-bottom from-blue-400/10 to-purple-400/10 rounded-2xl p-6 border border-blue-200"
-      >
-        <div class="flex items-center gap-2 mb-4 text-blue-900">
-          <lucide-icon [img]="icons.Brain" class="w-5 h-5"></lucide-icon>
-          <h3 class="text-lg font-bold">AI Recommendations</h3>
+      <div class="bg-[#f5f8ff] rounded-[24px] p-8 border border-[#e2eaff] shadow-sm max-w-md">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="text-slate-900">
+            <lucide-icon [img]="icons.Brain" class="w-6 h-6"></lucide-icon>
+          </div>
+          <h3 class="text-xl font-bold text-[#0f172a]">{{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.TITLE' | translate }}</h3>
         </div>
 
         @if (aiRecommendations.length > 0) {
-        <p class="text-sm text-gray-700 mb-4 leading-relaxed">
-          Based on your skills, we recommend starting with the
-          <strong class="text-gray-900">{{ aiRecommendations[0].role || 'Next Challenge' }}</strong
-          >. It matches <span class="font-bold text-blue-600">94%</span> with your expertise.
+        <p class="text-[17px] text-[#475569] mb-8 leading-[1.6]">
+          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.BASED_ON' | translate }}
+          <strong class="text-[#1e293b] font-extrabold">{{
+            aiRecommendations[0].role || 'Real-Time Chat Analytics'
+          }}</strong>
+          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.CHALLENGE' | translate }} <span class="font-medium">94%</span> {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.WITH_EXPERTISE' | translate }}
         </p>
+
         <button
-          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all text-sm font-medium shadow-md"
+          class="w-full py-4 bg-[#0f172a] text-white rounded-[14px] hover:bg-slate-800 transition-all text-base font-semibold shadow-lg shadow-slate-200"
         >
-          View Match Details
+          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.VIEW_MATCH' | translate }}
         </button>
         } @else {
-        <p class="text-sm text-gray-600 italic">Analyzing your profile for recommendations...</p>
+        <div class="py-4 flex flex-col items-center gap-2">
+          <div class="animate-pulse w-full h-4 bg-slate-200 rounded"></div>
+          <p class="text-sm text-slate-500 italic">{{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.ANALYZING' | translate }}</p>
+        </div>
         }
       </div>
 
-      <!-- 2. Recent Submissions (Moved from Portfolio) -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-        <h3 class="text-lg font-bold mb-4 text-gray-800">Recent Submissions</h3>
+      <!-- 2. Recent Submissions -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 ">
+        <h3 class="text-lg font-bold mb-4 text-gray-800">{{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.TITLE' | translate }}</h3>
 
         <div class="space-y-3">
           @if (recentSubmissions.length === 0) {
-          <p class="text-sm text-gray-400 italic">No submissions yet.</p>
+          <p class="text-sm text-gray-400 italic">{{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.NO_SUBMISSIONS' | translate }}</p>
           } @for (sub of recentSubmissions; track sub._id) {
           <div
             class="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all cursor-pointer group border border-gray-100"
@@ -156,10 +216,10 @@
                   class="text-sm font-bold text-gray-900 mb-1 line-clamp-1"
                   [title]="sub.challengeId?.title"
                 >
-                  {{ sub.challengeId?.title || 'Unknown Challenge' }}
+                  {{ sub.challengeId?.title || ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNKNOWN_CHALLENGE' | translate) }}
                 </h4>
                 <p class="text-xs text-gray-500 font-medium">
-                  {{ sub.aiScore ? 'Evaluated' : 'Under Review' }}
+                  {{ sub.aiScore ? ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.EVALUATED' | translate) : ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNDER_REVIEW' | translate) }}
                 </p>
               </div>
 
@@ -167,7 +227,7 @@
               <span
                 class="px-2 py-1 bg-gradient-to-right from-blue-400 to-purple-400 text-white rounded-lg text-[10px] font-bold"
               >
-                Score: {{ sub.aiScore }}
+                {{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.SCORE' | translate }}: {{ sub.aiScore }}
               </span>
               }
             </div>
@@ -189,27 +249,27 @@
         </div>
       </div>
 
-      <!-- 3. This Week Stats (Mock/Calculated) -->
+      <!-- 3. This Week Stats -->
       <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-        <h3 class="text-lg font-bold mb-4 text-gray-800">This Week</h3>
+        <h3 class="text-lg font-bold mb-4 text-gray-800">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.TITLE' | translate }}</h3>
         <div class="space-y-4">
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">Challenges Started</span>
+            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.CHALLENGES_STARTED' | translate }}</span>
             <span class="text-xl font-bold text-gray-900">{{ weeklyStats.started }}</span>
           </div>
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">Videos Recorded</span>
+            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.VIDEOS_RECORDED' | translate }}</span>
             <span class="text-xl font-bold text-gray-900">{{ weeklyStats.videos }}</span>
           </div>
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">Avg. Score</span>
-            <span class="text-xl font-bold text-blue-600">{{ weeklyStats.avgScore }}</span>
+            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.AVG_SCORE' | translate }}</span>
+            <span class="text-xl font-bold text-gray-900">{{ weeklyStats.avgScore }}</span>
           </div>
         </div>
       </div>
@@ -217,3 +277,272 @@
   </div>
   }
 </div>
+
+<!-- Filter Modal -->
+@if (showFilterPanel) {
+<div
+  class="fixed inset-0 z-9999 animate-fade-in flex justify-center p-4"
+  (click)="toggleFilterPanel()"
+>
+  <div
+    class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[85vh] flex flex-col animate-scale-up h-fit"
+    (click)="$event.stopPropagation()"
+    style="z-index: 10000; margin-top: 70px"
+  >
+    <div
+      class="bg-linear-to-r from-slate-800 to-slate-700 px-6 py-4 flex items-center justify-between rounded-t-2xl shrink-0"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm"
+        >
+          <lucide-icon [img]="icons.Filter" class="w-4 h-4 text-white"></lucide-icon>
+        </div>
+        <h3 class="text-lg font-bold text-white">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.TITLE' | translate }}</h3>
+      </div>
+      <button
+        (click)="toggleFilterPanel()"
+        class="w-7 h-7 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
+      >
+        <lucide-icon [img]="icons.X" class="w-4 h-4 text-white"></lucide-icon>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+            <svg
+              class="w-4 h-4 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.SEARCH' | translate }}
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="filters.searchTerm"
+            (ngModelChange)="applyFilters()"
+            [placeholder]="'DASHBOARD.OVERVIEW.FILTER_MODAL.SEARCH_PLACEHOLDER' | translate"
+            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:border-slate-400 text-sm bg-white"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="relative">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.CATEGORY' | translate }}</label>
+            <button
+              (click)="activeDropdown = activeDropdown === 'cat' ? null : 'cat'"
+              class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
+            >
+              <span>{{ filters.category === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_CATEGORIES' | translate) : filters.category }}</span>
+              <svg
+                class="w-4 h-4 text-slate-400"
+                [class.rotate-180]="activeDropdown === 'cat'"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 9l-7 7-7-7"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            @if (activeDropdown === 'cat') {
+            <div
+              class="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl py-1 animate-scale-up"
+            >
+              <button
+                (click)="filters.category = 'all'; applyFilters(); activeDropdown = null"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+              >
+                {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_CATEGORIES' | translate }}
+              </button>
+              @for (cat of categories; track cat) {
+              <button
+                (click)="filters.category = cat; applyFilters(); activeDropdown = null"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+              >
+                {{ cat }}
+              </button>
+              }
+            </div>
+            }
+          </div>
+
+          <div class="relative">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.DIFFICULTY' | translate }}</label>
+            <button
+              (click)="activeDropdown = activeDropdown === 'diff' ? null : 'diff'"
+              class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
+            >
+              <span>{{
+                filters.difficulty === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_LEVELS' | translate) : (filters.difficulty | titlecase)
+              }}</span>
+              <svg
+                class="w-4 h-4 text-slate-400"
+                [class.rotate-180]="activeDropdown === 'diff'"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 9l-7 7-7-7"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            @if (activeDropdown === 'diff') {
+            <div
+              class="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl py-1 animate-scale-up"
+            >
+              <button
+                (click)="filters.difficulty = 'all'; applyFilters(); activeDropdown = null"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+              >
+                {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_LEVELS' | translate }}
+              </button>
+              @for (level of difficultyLevels; track level) {
+              <button
+                (click)="filters.difficulty = level; applyFilters(); activeDropdown = null"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+              >
+                {{ level | titlecase }}
+              </button>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+        <div class="relative">
+          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+            <lucide-icon [img]="icons.Clock" class="w-4 h-4 text-slate-500"></lucide-icon>
+            {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.DEADLINE' | translate }}
+          </label>
+          <button
+            (click)="activeDropdown = activeDropdown === 'time' ? null : 'time'"
+            class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
+          >
+            <span>{{
+              filters.daysLeft === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ANY_TIME' | translate) : ('DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: filters.daysLeft })
+            }}</span>
+            <svg
+              class="w-4 h-4 text-slate-400"
+              [class.rotate-180]="activeDropdown === 'time'"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 9l-7 7-7-7"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          @if (activeDropdown === 'time') {
+          <div
+            class="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl py-1 animate-scale-up"
+          >
+            <button
+              (click)="filters.daysLeft = 'all'; applyFilters(); activeDropdown = null"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.ANY_TIME' | translate }}
+            </button>
+            <button
+              (click)="filters.daysLeft = '3'; applyFilters(); activeDropdown = null"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 3 } }}
+            </button>
+            <button
+              (click)="filters.daysLeft = '7'; applyFilters(); activeDropdown = null"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 7 } }}
+            </button>
+            <button
+              (click)="filters.daysLeft = '30'; applyFilters(); activeDropdown = null"
+              class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
+            >
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 30 } }}
+            </button>
+          </div>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+            <lucide-icon [img]="icons.Trophy" class="w-4 h-4 text-slate-500"></lucide-icon>
+            {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.PRIZE_RANGE' | translate }}
+          </label>
+          <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-center flex-1">
+                <div class="text-xl font-bold text-slate-800">${{ filters.prizeMin }}</div>
+                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MIN' | translate }}</div>
+              </div>
+              <div class="w-10 h-0.5 bg-slate-300 mx-3 rounded-full"></div>
+              <div class="text-center flex-1">
+                <div class="text-xl font-bold text-slate-800">${{ filters.prizeMax }}</div>
+                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MAX' | translate }}</div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <input
+                type="range"
+                [(ngModel)]="filters.prizeMin"
+                (ngModelChange)="applyFilters()"
+                min="0"
+                max="5000"
+                step="100"
+                class="w-full accent-slate-700"
+              />
+              <input
+                type="range"
+                [(ngModel)]="filters.prizeMax"
+                (ngModelChange)="applyFilters()"
+                min="100"
+                max="10000"
+                step="100"
+                class="w-full accent-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-50 px-6 py-4 flex gap-3 border-t border-slate-200 rounded-b-2xl shrink-0">
+      <button
+        (click)="resetFilters()"
+        class="flex-1 px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 font-semibold text-sm"
+      >
+        {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.RESET_ALL' | translate }}
+      </button>
+      <button
+        (click)="applyFilters(); toggleFilterPanel()"
+        class="flex-1 px-5 py-2.5 bg-gradient-to-r from-slate-800 to-slate-700 text-white rounded-lg font-semibold text-sm shadow-lg shadow-slate-900/20"
+      >
+        {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.APPLY_FILTERS' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+}

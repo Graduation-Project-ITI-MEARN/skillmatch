@@ -4,11 +4,12 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CandidateService } from 'src/app/core/services/candidateService';
 import { ToastrService } from 'ngx-toastr';
 import { LucideAngularModule, Clock, CheckCircle, FileUp, X } from 'lucide-angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-my-submissions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslateModule],
   templateUrl: './my-submissions.html',
 })
 export class MySubmissions implements OnInit {

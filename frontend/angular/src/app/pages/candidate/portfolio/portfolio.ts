@@ -1,11 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CandidateService } from 'src/app/core/services/candidateService';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-portfolio',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './portfolio.html',
 })
 export class PortfolioComponent implements OnInit {
