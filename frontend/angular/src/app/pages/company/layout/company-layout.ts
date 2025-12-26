@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -12,6 +12,8 @@ import { ThemeService } from 'src/app/core/services/theme';
 import { AuthService } from 'src/app/core/services/auth';
 import { NotificationsDropdownComponent } from '@shared/components/notifications-dropdown/notifications-dropdown.component';
 import { environment } from 'src/environments/environment';
+import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
+import { checkVerification } from 'src/app/core/guards/verification.guard';
 
 interface CompanyStats {
   totalChallenges: number;
@@ -23,7 +25,15 @@ interface CompanyStats {
 @Component({
   selector: 'app-company-shell',
   standalone: true,
-  imports: [CommonModule, DashboardLayoutComponent, ZardStatComponent, LucideAngularModule, TranslateModule, RouterModule, NotificationsDropdownComponent],
+  imports: [
+    CommonModule,
+    DashboardLayoutComponent,
+    ZardStatComponent,
+    LucideAngularModule,
+    TranslateModule,
+    RouterModule,
+    NotificationsDropdownComponent,
+  ],
   templateUrl: './company-layout.html',
 })
 export class CompanyShellComponent implements OnInit {
@@ -31,6 +41,8 @@ export class CompanyShellComponent implements OnInit {
   private authService = inject(AuthService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private dialog = inject(ZardDialogService);
+  private router = inject(Router);
 
   name = '';
   initials = '';
@@ -39,7 +51,11 @@ export class CompanyShellComponent implements OnInit {
 
   tabs: DashboardTab[] = [
     { labelKey: 'DASHBOARD.TABS.OVERVIEW', route: '/dashboard/company/overview', icon: BarChart3 },
-    { labelKey: 'DASHBOARD.TABS.SUBMISSIONS', route: '/dashboard/company/submissions', icon: FileText },
+    {
+      labelKey: 'DASHBOARD.TABS.SUBMISSIONS',
+      route: '/dashboard/company/submissions',
+      icon: FileText,
+    },
     { labelKey: 'DASHBOARD.TABS.TALENT', route: '/dashboard/company/talent', icon: Users },
     { labelKey: 'DASHBOARD.TABS.ANALYTICS', route: '/dashboard/company/analytics', icon: Eye },
   ];
@@ -52,6 +68,13 @@ export class CompanyShellComponent implements OnInit {
     await this.loadStats();
     this.isLoading = false;
     this.cdr.detectChanges();
+  }
+
+  handleCreateChallenge() {
+    // Check verification before navigating to create challenge
+    if (checkVerification(this.authService.currentUser(), this.dialog)) {
+      this.router.navigate(['/dashboard/company/create']);
+    }
   }
 
   private async loadUserData() {
@@ -71,7 +94,6 @@ export class CompanyShellComponent implements OnInit {
         this.http.get<CompanyStats>(`${environment.apiUrl}/stats/company`)
       );
 
-      // تعبئة الـ 4 بطاقات يدوياً لضمان ظهورهم حتى لو كانت القيمة 0
       this.stats = [
         {
           labelKey: 'DASHBOARD.STATS.ACTIVE_JOBS',
@@ -115,6 +137,8 @@ export class CompanyShellComponent implements OnInit {
 
   private generateInitials(name: string): string {
     const words = name.trim().split(/\s+/);
-    return words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+    return words.length >= 2
+      ? (words[0][0] + words[1][0]).toUpperCase()
+      : name.substring(0, 2).toUpperCase();
   }
 }

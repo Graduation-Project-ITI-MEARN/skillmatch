@@ -12,8 +12,9 @@
 
   <div actions class="flex items-center gap-2 sm:gap-3">
     <app-notifications-dropdown />
+    <!-- Modified: routerLink removed in favor of handleCreateChallenge() click event -->
     <button
-      routerLink="/dashboard/company/create"
+      (click)="handleCreateChallenge()"
       class="whitespace-nowrap px-3 py-2 md:px-6 md:py-2 bg-gray-900 text-white rounded-lg hover:opacity-90 transition-all font-medium text-[11px] sm:text-sm md:text-base shadow-xl"
     >
       {{ 'DASHBOARD.ACTIONS.CREATE_CHALLENGE' | translate }}
