@@ -59,4 +59,13 @@ export class AuthService {
   get type(): string {
     return this.currentUser()?.type || this.cookiesService.get('user_type') || '';
   }
+    refreshUserProfile(): Observable<any> {
+    return this.verifyUser(); 
+  }
+
+  get isSubscribed(): boolean {
+    return this.currentUser()?.subscriptionStatus === 'active';
+  }
+
+  
 }
