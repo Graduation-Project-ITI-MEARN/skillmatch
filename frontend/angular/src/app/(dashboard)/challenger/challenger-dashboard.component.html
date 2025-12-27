@@ -1,78 +1,47 @@
-<!-- WRAPPER CONTAINER: Adds Padding & Background -->
+
+<!-- WRAPPER CONTAINER -->
 <div class="min-h-screen bg-gray-50 p-6 lg:p-8">
   <!-- HEADER SECTION -->
-  <header
-    class="bg-primary-gradient p-8 rounded-2xl mb-8 shadow-xl flex justify-between items-start relative overflow-hidden"
-  >
-    <!-- Decorative Background overlay -->
-    <div class="absolute inset-0 bg-white/5 opacity-50 pattern-grid-lg"></div>
-
-    <div class="relative z-10">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="text-white"
-          >
-            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-            <path d="M4 22h16" />
-            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-          </svg>
-        </div>
-        <h1 class="text-3xl font-bold text-white tracking-tight">Challenge Creator Hub</h1>
+  <header class="mb-12 flex flex-row justify-between items-center gap-1 md:gap-6">
+    <div class="flex items-center gap-1 md:gap-5">
+      <div class="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center bg-primary-gradient shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white md:w-6 md:h-6">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+          <path d="M4 22h16" />
+          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+        </svg>
       </div>
-      <p class="text-blue-50 text-lg font-medium pl-14">
-        Create competitions, discover talent, build community
-      </p>
+      <div class="flex flex-col min-w-0">
+        <h1 class="text-[15px] md:text-2xl font-bold text-gray-900 tracking-tight mb-2 leading-none">
+          {{ 'CHALLENGER.DASHBOARD.TITLE' | translate }}
+        </h1>
+        <p class="text-gray-500 text-[10px] md:text-lg font-medium leading-tight">
+          {{ 'CHALLENGER.DASHBOARD.SUBTITLE' | translate }}
+        </p>
+      </div>
     </div>
-
-    <div class="relative z-10 flex items-center gap-4">
-      <div class="text-right hidden sm:block">
-        <p class="text-xs text-blue-100 font-medium uppercase tracking-wider">Challenger Account</p>
-        <p class="text-sm text-white font-bold">mancy@mail.com</p>
+    <div class="flex items-center gap-1 md:gap-4 shrink-0">
+      <div class="relative p-1 hover:bg-gray-50 rounded-full transition-colors cursor-pointer">
+        <app-notifications-dropdown />
       </div>
-      <img
-        src="https://ui-avatars.com/api/?name=Mancy&background=random&color=fff"
-        alt="User"
-        class="w-12 h-12 rounded-full border-4 border-white/20 shadow-sm"
-      />
+      <button (click)="switchTab('create')" class="whitespace-nowrap px-3 py-2 md:px-6 md:py-2 bg-gray-900 text-white rounded-lg hover:opacity-90 transition-all font-medium text-[11px] sm:text-sm md:text-base shadow-xl">
+        {{ 'CHALLENGER.DASHBOARD.CREATE_CHALLENGE' | translate }}
+      </button>
     </div>
   </header>
 
   <!-- STATS GRID -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <!-- Active Challenges -->
-    <div
-      class="relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm group hover:shadow-md transition-all overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"
-      ></div>
+    <div class="relative bg-white rounded-xl px-6 py-3 shadow-sm group hover:shadow-md transition-all overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div class="relative">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+          <div class="rounded-lg text-gray">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
               <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
               <path d="M4 22h16" />
@@ -81,377 +50,275 @@
               <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
             </svg>
           </div>
-          <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full"
-            >+2 this month</span
-          >
+          <span class="text-xs text-green-600 px-2 py-1 rounded-full">+2 {{ 'CHALLENGER.DASHBOARD.STATS.THIS_MONTH' | translate }}</span>
         </div>
-        <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.activeCount || 0 }}</div>
-        <div class="text-sm text-gray-500 font-medium">Active Challenges</div>
+        <div class="text-xl font-bold text-gray-900 mb-1">{{ stats.activeCount || 0 }}</div>
+        <div class="text-sm text-gray-500 font-medium">{{ 'CHALLENGER.DASHBOARD.STATS.ACTIVE_CHALLENGES' | translate }}</div>
       </div>
     </div>
 
     <!-- Total Participants -->
-    <div
-      class="relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm group hover:shadow-md transition-all overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"
-      ></div>
+    <div class="relative bg-white rounded-xl px-6 py-3 shadow-sm group hover:shadow-md transition-all overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div class="relative">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+          <div class="rounded-lg text-gray">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
           </div>
-          <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full"
-            >+12 this week</span
-          >
+          <span class="text-xs text-green-600 px-2 py-1 rounded-full">+12 {{ 'CHALLENGER.DASHBOARD.STATS.THIS_WEEK' | translate }}</span>
         </div>
-        <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.totalSubmissions || 0 }}</div>
-        <div class="text-sm text-gray-500 font-medium">Total Participants</div>
+        <div class="text-xl font-bold text-gray-900 mb-1">{{ stats.totalSubmissions || 0 }}</div>
+        <div class="text-sm text-gray-500 font-medium">{{ 'CHALLENGER.DASHBOARD.STATS.TOTAL_PARTICIPANTS' | translate }}</div>
       </div>
     </div>
 
     <!-- Prizes Awarded -->
-    <div
-      class="relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm group hover:shadow-md transition-all overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"
-      ></div>
+    <div class="relative bg-white rounded-xl px-6 py-3 shadow-sm group hover:shadow-md transition-all overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div class="relative">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-2 bg-green-50 rounded-lg text-green-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+          <div class="rounded-lg text-gray">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" x2="12" y1="2" y2="22" />
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
           </div>
-          <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full"
-            >Paid Out</span
-          >
+          <span class="text-xs text-green-600 px-2 py-1 rounded-full">{{ 'CHALLENGER.DASHBOARD.STATS.PAID_OUT' | translate }}</span>
         </div>
-        <div class="text-3xl font-bold text-gray-900 mb-1">
-          {{ stats.totalPrizes || 0 | currency : 'EGP ' : 'symbol' : '1.0-0' }}
-        </div>
-        <div class="text-sm text-gray-500 font-medium">Prizes Awarded</div>
+        <div class="text-xl font-bold text-gray-900 mb-1">{{ stats.totalPrizes || 0 | currency : 'EGP ' : 'symbol' : '1.0-0' }}</div>
+        <div class="text-sm text-gray-500 font-medium">{{ 'CHALLENGER.DASHBOARD.STATS.PRIZES_AWARDED' | translate }}</div>
       </div>
     </div>
 
     <!-- Avg Score -->
-    <div
-      class="relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm group hover:shadow-md transition-all overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"
-      ></div>
+    <div class="relative bg-white rounded-xl px-6 py-3 shadow-sm group hover:shadow-md transition-all overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div class="relative">
         <div class="flex items-center justify-between mb-4">
-          <div class="p-2 bg-orange-50 rounded-lg text-orange-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polygon
-                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-              />
+          <div class="rounded-lg text-gray">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
           </div>
-          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full"
-            >Top Quality</span
-          >
+          <span class="text-xs text-green-600 px-2 py-1 rounded-full">{{ 'CHALLENGER.DASHBOARD.STATS.TOP_QUALITY' | translate }}</span>
         </div>
-        <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.averageScore || 0 }}</div>
-        <div class="text-sm text-gray-500 font-medium">Avg Submission Score</div>
+        <div class="text-xl font-bold text-gray-900 mb-1">{{ stats.averageScore || 0 }}</div>
+        <div class="text-sm text-gray-500 font-medium">{{ 'CHALLENGER.DASHBOARD.STATS.AVG_SCORE' | translate }}</div>
       </div>
     </div>
   </div>
 
   <!-- MODERN TABS -->
   <div class="flex gap-8 border-b border-gray-200 mb-8 px-2">
-    <button
-      (click)="switchTab('active')"
-      [class]="
-        activeTab === 'active'
-          ? 'text-gray-900 border-b-2 border-blue-600 pb-4 font-semibold'
-          : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'
-      "
-      class="flex items-center gap-2 text-sm"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <button (click)="switchTab('active')" [class]="activeTab === 'active' ? 'text-gray-900 pb-4 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary-gradient' : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:transition-all'" class="flex items-center gap-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
       </svg>
-      Active Challenges
+      {{ 'CHALLENGER.DASHBOARD.TABS.ACTIVE' | translate }}
     </button>
-    <button
-      (click)="switchTab('completed')"
-      [class]="
-        activeTab === 'completed'
-          ? 'text-gray-900 border-b-2 border-blue-600 pb-4 font-semibold'
-          : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'
-      "
-      class="flex items-center gap-2 text-sm"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <button (click)="switchTab('completed')" [class]="activeTab === 'completed' ? 'text-gray-900 pb-4 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary-gradient' : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'" class="flex items-center gap-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
         <polyline points="22 4 12 14.01 9 11.01" />
       </svg>
-      Completed
+      {{ 'CHALLENGER.DASHBOARD.TABS.COMPLETED' | translate }}
     </button>
-    <button
-      (click)="switchTab('create')"
-      [class]="
-        activeTab === 'create'
-          ? 'text-gray-900 border-b-2 border-blue-600 pb-4 font-semibold'
-          : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'
-      "
-      class="flex items-center gap-2 text-sm"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <button (click)="switchTab('create')" [class]="activeTab === 'create' ? 'text-gray-900 pb-4 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary-gradient' : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'" class="flex items-center gap-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="5" x2="12" y2="19" />
         <line x1="5" y1="12" x2="19" y2="12" />
       </svg>
-      Create New
+      {{ 'CHALLENGER.DASHBOARD.TABS.CREATE_NEW' | translate }}
     </button>
-    <button
-      (click)="switchTab('analytics')"
-      [class]="
-        activeTab === 'analytics'
-          ? 'text-gray-900 border-b-2 border-blue-600 pb-4 font-semibold'
-          : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'
-      "
-      class="flex items-center gap-2 text-sm"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <button (click)="switchTab('analytics')" [class]="activeTab === 'analytics' ? 'text-gray-900 pb-4 font-semibold relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary-gradient' : 'text-gray-500 hover:text-gray-700 pb-4 font-medium transition-colors'" class="flex items-center gap-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
       </svg>
-      Analytics
+      {{ 'CHALLENGER.DASHBOARD.TABS.ANALYTICS' | translate }}
     </button>
   </div>
 
   <!-- DASHBOARD CONTENT AREA -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- LEFT COLUMN (Main Content) -->
-    <div
-      class="lg:col-span-2 space-y-6"
-      *ngIf="activeTab !== 'create' && activeTab !== 'analytics'"
-    >
-      <div class="flex items-center justify-between" *ngIf="!isLoading">
-        <h2 class="text-xl font-bold text-gray-800">
-          {{ activeTab === 'active' ? 'Your Active Challenges' : 'Completed Challenges' }}
-        </h2>
-        <div class="flex gap-2">
-          <button
-            class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
-          >
-            Filter
-          </button>
+    <!-- MAIN CONTENT (Active/Completed Challenges) -->
+    <div class="lg:col-span-2 space-y-6" *ngIf="activeTab !== 'create' && activeTab !== 'analytics'">
+      <div class="space-y-4" *ngIf="!isLoading">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl text-gray-800">
+            {{ activeTab === 'active' ? ('CHALLENGER.DASHBOARD.YOUR_CHALLENGES' | translate) : ('CHALLENGER.DASHBOARD.COMPLETED_CHALLENGES' | translate) }}
+          </h2>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="flex items-center gap-3">
+          <div class="relative flex-1">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </span>
+            <input type="text" [(ngModel)]="filterCriteria.searchQuery" (input)="applyFilters()" [placeholder]="'CHALLENGER.DASHBOARD.SEARCH_PLACEHOLDER' | translate" class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-1 focus:ring-gray-900 outline-none transition-all" />
+          </div>
+
+          <!-- Filter Button -->
+          <div class="relative filter-container">
+            <button (click)="showFilterMenu = !showFilterMenu" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 3H2l8 9v6l4 2V12L22 3z" />
+              </svg>
+              {{ 'CHALLENGER.DASHBOARD.FILTER' | translate }}
+              <span *ngIf="filterCriteria.category !== 'all' || filterCriteria.difficulty !== 'all'" class="w-2 h-2 bg-gray-900 rounded-full"></span>
+            </button>
+
+            <!-- Filter Menu -->
+            <div *ngIf="showFilterMenu" class="absolute right-0 mt-2 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 p-5 animate-in fade-in zoom-in duration-150">
+              <div class="space-y-6">
+                <!-- Category Filter -->
+                <div>
+                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">{{ 'CHALLENGER.FILTER.CATEGORY' | translate }}</label>
+                  <div class="relative">
+                    <button type="button" (click)="isCategoryOpen = !isCategoryOpen; isDifficultyOpen = false" class="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 hover:bg-gray-100 transition-all">
+                      {{ filterCriteria.category === 'all' ? ('CHALLENGER.FILTER.ALL_CATEGORIES' | translate) : filterCriteria.category }}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.rotate-180]="isCategoryOpen" class="text-gray-400 transition-transform">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </button>
+                    <div *ngIf="isCategoryOpen" class="mt-2 bg-gray-50/50 border border-gray-100 rounded-xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
+                      <div (click)="selectCategory('all')" class="px-4 py-2.5 text-sm text-gray-600 hover:bg-white hover:text-gray-900 cursor-pointer flex justify-between items-center border-b border-gray-100/50">
+                        {{ 'CHALLENGER.FILTER.ALL_CATEGORIES' | translate }}
+                        <span *ngIf="filterCriteria.category === 'all'" class="text-gray-600 text-xs">●</span>
+                      </div>
+                      <div *ngFor="let cat of categories" (click)="selectCategory(cat.name)" class="px-4 py-2.5 text-sm text-gray-600 hover:bg-white hover:text-gray-900 cursor-pointer flex justify-between items-center border-b border-gray-100/50 last:border-0">
+                        {{ 'CHALLENGER.FILTER.CATEGORIES.' + cat.key | translate }}
+                        <span *ngIf="filterCriteria.category === cat.name" class="text-gray-600 text-xs">●</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Difficulty Filter -->
+                <div>
+                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">{{ 'CHALLENGER.FILTER.DIFFICULTY' | translate }}</label>
+                  <div class="relative">
+                    <button type="button" (click)="isDifficultyOpen = !isDifficultyOpen; isCategoryOpen = false" class="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 hover:bg-gray-100 transition-all">
+                      <span class="capitalize">{{ filterCriteria.difficulty === 'all' ? ('CHALLENGER.FILTER.ALL' | translate) : ('CHALLENGER.FILTER.' + filterCriteria.difficulty.toUpperCase() | translate) }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.rotate-180]="isDifficultyOpen" class="text-gray-400 transition-transform">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </button>
+                    <div *ngIf="isDifficultyOpen" class="mt-2 bg-gray-50/50 border border-gray-100 rounded-xl overflow-hidden animate-in slide-in-from-top-2 duration-200">
+                      <div (click)="selectDifficulty('all')" class="px-4 py-2.5 text-sm text-gray-600 hover:bg-white hover:text-gray-900 cursor-pointer capitalize flex justify-between items-center border-b border-gray-100/50">
+                        {{ 'CHALLENGER.FILTER.ALL' | translate }}
+                        <span *ngIf="filterCriteria.difficulty === 'all'" class="text-gray-600 text-xs">●</span>
+                      </div>
+                      <div *ngFor="let level of ['easy', 'medium', 'hard']" (click)="selectDifficulty(level)" class="px-4 py-2.5 text-sm text-gray-600 hover:bg-white hover:text-gray-900 cursor-pointer capitalize flex justify-between items-center border-b border-gray-100/50 last:border-0">
+                        {{ 'CHALLENGER.FILTER.' + level.toUpperCase() | translate }}
+                        <span *ngIf="filterCriteria.difficulty === level" class="text-gray-600 text-xs">●</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Reset Button -->
+                <div class="pt-4 border-t border-gray-100">
+                  <button (click)="resetFilters(); isCategoryOpen = false; isDifficultyOpen = false" class="w-full py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all uppercase tracking-widest">
+                    {{ 'CHALLENGER.FILTER.RESET_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Loading State -->
       <div *ngIf="isLoading" class="p-8 text-center bg-white rounded-2xl border border-gray-100">
-        <div
-          class="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
-        ></div>
-        <p class="text-gray-500">Loading your challenges...</p>
+        <div class="animate-spin w-8 h-8 border-4 border-black-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+        <p class="text-gray-500">{{ 'CHALLENGER.DASHBOARD.LOADING' | translate }}</p>
       </div>
 
-      <!-- CHALLENGE CARD (Loop) -->
-      <div
-        *ngFor="let challenge of challenges"
-        class="bg-white rounded-2xl p-6 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
-      >
-        <!-- Top Row -->
+      <!-- Challenge Cards -->
+      <div *ngFor="let challenge of filteredChallenges" class="bg-white rounded-2xl p-6 hover:shadow-md transition-all cursor-pointer group">
         <div class="flex items-start justify-between mb-6">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2">
-              <h3
-                class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors"
-              >
-                {{ challenge.title }}
-              </h3>
-              <span
-                class="px-2.5 py-0.5 bg-gray-100 text-gray-600 rounded-md text-xs font-medium uppercase tracking-wide"
-                >{{ challenge.category || 'General' }}</span
-              >
-              <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold border"
-                [ngClass]="{
-                  'bg-green-50 text-green-700 border-green-200':
-                    challenge.status === 'published' || challenge.status === 'active',
-                  'bg-gray-100 text-gray-600 border-gray-200': challenge.status === 'closed'
-                }"
-              >
-                {{ challenge.status === 'published' ? 'Active' : (challenge.status | titlecase) }}
+              <h3 class="text-lg text-gray-900">{{ challenge.title }}</h3>
+              <span class="px-2.5 py-0.5 bg-gray-100 text-gray-600 rounded-md text-xs font-medium uppercase tracking-wide">
+                {{ challenge.category || ('CHALLENGER.DASHBOARD.GENERAL' | translate) }}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs" [ngClass]="{'bg-green-50 text-green-700 ': challenge.status === 'published' || challenge.status === 'active', 'bg-gray-100 text-gray-600 border-gray-200': challenge.status === 'closed'}">
+                {{ challenge.status === 'published' ? ('CHALLENGER.DASHBOARD.ACTIVE' | translate) : ('CHALLENGER.DASHBOARD.CLOSED' | translate) }}
               </span>
             </div>
             <p class="text-sm text-gray-500 line-clamp-2">{{ challenge.description }}</p>
           </div>
           <div class="text-right pl-4">
-            <div class="text-2xl font-bold text-gray-900">
-              {{ challenge.prizeAmount || 0 | currency : 'EGP ' }}
-            </div>
-            <div class="text-xs text-gray-500 uppercase font-medium tracking-wide">Prize Pool</div>
+            <div class="text-xl text-gray-900">{{ challenge.prizeAmount || 0 | currency : 'EGP ' }}</div>
+            <div class="text-xs text-gray-600 uppercase font-medium tracking-wide">{{ 'CHALLENGER.DASHBOARD.PRIZE_POOL' | translate }}</div>
           </div>
         </div>
 
-        <!-- Winner Section (Closed Only) -->
-        <div
-          *ngIf="challenge.status === 'closed' && challenge.winner"
-          class="mb-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100"
-        >
+        <!-- Winner Card -->
+        <div *ngIf="challenge.status === 'closed' && challenge.winner" class="mb-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
           <div class="flex items-center gap-4">
             <div class="p-2 bg-white rounded-full shadow-sm text-yellow-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="8" r="7" />
                 <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
               </svg>
             </div>
             <div class="flex-1">
-              <div class="text-xs text-green-700 font-bold uppercase mb-0.5">Winner Selected</div>
-              <div class="text-base font-bold text-gray-900">
-                {{ challenge.winner.name || 'Unknown Candidate' }}
-              </div>
+              <div class="text-xs text-green-700 font-bold uppercase mb-0.5">{{ 'CHALLENGER.DASHBOARD.WINNER_SELECTED' | translate }}</div>
+              <div class="text-base font-bold text-gray-900">{{ challenge.winner.name || ('CHALLENGER.DASHBOARD.UNKNOWN_CANDIDATE' | translate) }}</div>
             </div>
             <div class="text-right">
               <div class="text-2xl font-bold text-gray-900">{{ challenge.winnerScore || 95 }}</div>
-              <div class="text-xs text-gray-500 font-medium">Final Score</div>
+              <div class="text-xs text-gray-500 font-medium">{{ 'CHALLENGER.DASHBOARD.FINAL_SCORE' | translate }}</div>
             </div>
           </div>
         </div>
 
-        <!-- Info Grid (Active Only) -->
+        <!-- Stats (Active Only) -->
         <div *ngIf="challenge.status !== 'closed'" class="grid grid-cols-3 gap-4 mb-6">
           <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
             <div class="flex items-center gap-2 mb-1">
-              <svg
-                class="w-3.5 h-3.5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+              <svg class="w-3.5 h-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
               </svg>
-              <span class="text-xs font-medium text-gray-500">Time Left</span>
+              <span class="text-xs font-medium text-gray-500">{{ 'CHALLENGER.DASHBOARD.TIME_LEFT' | translate }}</span>
             </div>
-            <!-- 👇 UPDATED: Uses the getDaysLeft() helper from TS -->
-            <div
-              class="text-lg font-bold text-gray-800"
-              [class.text-red-500]="getDaysLeft(challenge.deadline).includes('Ended')"
-            >
+            <div class="text-lg text-gray-800" [class.text-red-500]="getDaysLeft(challenge.deadline).includes('Ended')">
               {{ getDaysLeft(challenge.deadline) }}
             </div>
           </div>
           <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
             <div class="flex items-center gap-2 mb-1">
-              <svg
-                class="w-3.5 h-3.5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+              <svg class="w-3.5 h-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <span class="text-xs font-medium text-gray-500">Participants</span>
+              <span class="text-xs font-medium text-gray-500">{{ 'CHALLENGER.DASHBOARD.PARTICIPANTS' | translate }}</span>
             </div>
-            <div class="text-lg font-bold text-gray-800">{{ challenge.submissionCount || 0 }}</div>
+            <div class="text-lg text-gray-800">{{ challenge.submissionCount || 0 }}</div>
           </div>
+
+
+
+
+
+
+
           <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
             <div class="flex items-center gap-2 mb-1">
               <svg
@@ -468,23 +335,20 @@
                   points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
                 />
               </svg>
-              <span class="text-xs font-medium text-gray-500">Top Score</span>
+              <span class="text-xs font-medium text-gray-500">{{ 'CHALLENGER.DASHBOARD.TOP_SCORE' | translate }}</span>
             </div>
-            <div class="text-lg font-bold text-gray-800">--</div>
+            <div class="text-lg text-gray-800">--</div>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <!-- Action Buttons -->
         <div class="flex gap-3">
-          <!-- VIEW BUTTON: Dynamically routes to 'solution' (if closed) or 'submissions' (if active) -->
           <a
             [routerLink]="[
               '/dashboard/challenger/challenge',
               challenge._id,
               challenge.status === 'closed' ? 'solution' : 'submissions'
             ]"
-            class="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium text-sm shadow-sm hover:shadow cursor-pointer no-underline"
+            class="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium text-sm shadow-sm hover:shadow cursor-pointer no-underline"
           >
             <svg
               class="w-4 h-4"
@@ -499,22 +363,22 @@
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
             </svg>
-            {{ challenge.status === 'closed' ? 'View Results' : 'View Submissions' }}
+            {{ challenge.status === 'closed' ? ('CHALLENGER.DASHBOARD.VIEW_RESULTS' | translate) : ('CHALLENGER.DASHBOARD.VIEW_SUBMISSIONS' | translate) }}
           </a>
-
-          <!-- EDIT BUTTON: Removed 'disabled', changed to <a> tag for routing -->
           <a
             [routerLink]="['/dashboard/challenger/challenge', challenge._id, 'edit']"
-            class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all font-medium text-sm border border-gray-200 cursor-pointer no-underline flex items-center"
+            class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-all font-medium text-sm border border-gray-200 cursor-pointer no-underline flex items-center"
           >
-            Edit
+            {{ 'CHALLENGER.DASHBOARD.EDIT' | translate }}
           </a>
         </div>
       </div>
 
-      <!-- Empty State -->
+
+
+
       <div
-        *ngIf="!isLoading && challenges.length === 0"
+        *ngIf="!isLoading && filteredChallenges.length === 0"
         class="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300"
       >
         <div
@@ -535,28 +399,16 @@
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900">No challenges found</h3>
-        <p class="text-gray-500 mb-6">You haven't created any {{ activeTab }} challenges yet.</p>
-        <button
-          *ngIf="activeTab === 'active'"
-          (click)="switchTab('create')"
-          class="text-blue-600 font-medium hover:underline"
-        >
-          Create your first challenge
-        </button>
+        <h3 class="text-lg font-medium text-gray-900">{{ 'CHALLENGER.DASHBOARD.NO_CHALLENGES' | translate }}</h3>
+        <p class="text-gray-500 mb-6">{{ 'CHALLENGER.DASHBOARD.TRY_ADJUSTING' | translate }}</p>
       </div>
     </div>
 
-    <!-- RIGHT SIDEBAR (Wallet & Performance) -->
     <div class="space-y-6" *ngIf="activeTab !== 'create' && activeTab !== 'analytics'">
-      <!-- Wallet Card (Modern) -->
-      <div
-        class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl shadow-blue-200 relative overflow-hidden"
-      >
+      <div class="bg-gray-100 rounded-2xl p-6 text-dark-900 shadow-xl relative overflow-hidden">
         <div
           class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"
         ></div>
-
         <div class="relative z-10">
           <div class="flex items-center gap-2 mb-6 opacity-80">
             <svg
@@ -572,62 +424,55 @@
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
               <line x1="1" y1="10" x2="23" y2="10"></line>
             </svg>
-            <span class="text-sm font-medium tracking-wide">Business Wallet</span>
+            <span class="text-sm font-medium tracking-wide">{{ 'CHALLENGER.DASHBOARD.WALLET.TITLE' | translate }}</span>
           </div>
-
           <div class="mb-6">
-            <p class="text-sm opacity-70 mb-1">Available Balance</p>
+            <p class="text-sm opacity-70 mb-1">{{ 'CHALLENGER.DASHBOARD.WALLET.AVAILABLE_BALANCE' | translate }}</p>
             <h3 class="text-3xl font-bold tracking-tight">
               {{ wallet.balance - wallet.escrow || 0 | currency : 'EGP ' }}
             </h3>
           </div>
-
           <div class="flex items-center justify-between pt-4 border-t border-white/20">
             <div>
-              <p class="text-xs opacity-60">Escrow (Locked)</p>
+              <p class="text-xs opacity-60">{{ 'CHALLENGER.DASHBOARD.WALLET.ESCROW_LOCKED' | translate }}</p>
               <p class="font-semibold">{{ wallet.escrow || 0 | currency : 'EGP ' }}</p>
             </div>
             <button
               class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors backdrop-blur-md"
             >
-              + Top Up
+              {{ 'CHALLENGER.DASHBOARD.WALLET.TOP_UP' | translate }}
             </button>
           </div>
         </div>
       </div>
-
-      <!-- Performance Metrics -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-        <h3 class="text-lg font-bold text-slate-900 mb-5">Engagement Stats</h3>
+      <div class="bg-gray-100 rounded-2xl p-6 text-dark-900 shadow-xl relative overflow-hidden">
+        <h3 class="text-lg font-bold text-slate-900 mb-5">{{ 'CHALLENGER.DASHBOARD.ENGAGEMENT_STATS.TITLE' | translate }}</h3>
         <div class="space-y-4">
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-slate-500 font-medium">Avg Participants</span>
-              <span class="font-bold text-slate-800">58</span>
+              <span class="text-dark-500 font-medium">{{ 'CHALLENGER.DASHBOARD.ENGAGEMENT_STATS.AVG_PARTICIPANTS' | translate }}</span>
+              <span class="font-bold text-dark-800">58</span>
             </div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-500 w-[58%] rounded-full"></div>
+            <div class="h-1 w-full bg-dark-100 rounded-full overflow-hidden">
+              <div class="h-full bg-gray-700 w-[58%] rounded-full"></div>
             </div>
           </div>
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-slate-500 font-medium">Completion Rate</span>
+              <span class="text-dark-500 font-medium">{{ 'CHALLENGER.DASHBOARD.ENGAGEMENT_STATS.COMPLETION_RATE' | translate }}</span>
               <span class="font-bold text-slate-800">82%</span>
             </div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div class="h-full bg-purple-500 w-[82%] rounded-full"></div>
+            <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full bg-gray-700 w-[82%] rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Leaderboard -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+      <div class="bg-gray-100 rounded-2xl p-6 text-dark-900 shadow-xl relative overflow-hidden">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-slate-900">Top Candidates</h3>
-          <a href="#" class="text-xs text-blue-600 font-bold hover:underline">View All</a>
+          <h3 class="text-lg font-bold text-slate-900">{{ 'CHALLENGER.DASHBOARD.TOP_CANDIDATES.TITLE' | translate }}</h3>
+          <a href="#" class="text-xs text-slate-600 font-bold hover:underline">{{ 'CHALLENGER.DASHBOARD.TOP_CANDIDATES.VIEW_ALL' | translate }}</a>
         </div>
-
         <div class="space-y-3">
           <div
             *ngFor="let candidate of topCandidates; let i = index"
@@ -651,12 +496,10 @@
                 {{ i + 1 }}
               </div>
             </div>
-
             <div class="flex-1 min-w-0">
               <h4 class="text-sm font-bold text-slate-900 truncate">{{ candidate.name }}</h4>
-              <p class="text-xs text-slate-500">Video Specialist</p>
+              <p class="text-xs text-slate-500">{{ 'CHALLENGER.DASHBOARD.TOP_CANDIDATES.VIDEO_SPECIALIST' | translate }}</p>
             </div>
-
             <div class="text-sm font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-md">
               {{ candidate.score }}
             </div>
@@ -665,80 +508,64 @@
       </div>
     </div>
 
-    <!-- CREATE CHALLENGE FORM (Centered) -->
     <div
       class="lg:col-span-3 max-w-4xl mx-auto w-full animate-fade-in"
       *ngIf="activeTab === 'create'"
     >
       <div class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-slate-900 mb-2">Create New Challenge</h2>
+        <h2 class="text-3xl font-bold text-slate-900 mb-2">{{ 'CHALLENGER.CREATE.TITLE' | translate }}</h2>
         <p class="text-slate-500 max-w-lg mx-auto">
-          Define your requirements, set the prize, and let our AI help you find the best talent.
+          {{ 'CHALLENGER.CREATE.SUBTITLE' | translate }}
         </p>
       </div>
-
       <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-200/50">
         <form [formGroup]="createForm" (ngSubmit)="onSubmitChallenge()" class="space-y-8">
-          <!-- Section 1: Basic Info -->
           <div>
             <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
               <span
                 class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                 >1</span
               >
-              Basic Details
+              {{ 'CHALLENGER.CREATE.BASIC_DETAILS' | translate }}
             </h3>
-
             <div class="space-y-4 pl-8">
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2"
-                  >Challenge Title <span class="text-red-500">*</span></label
+                  >{{ 'CHALLENGER.CREATE.CHALLENGE_TITLE' | translate }} <span class="text-red-500">{{ 'CHALLENGER.CREATE.REQUIRED' | translate }}</span></label
                 >
                 <input
                   formControlName="title"
                   type="text"
                   [class.border-red-500]="isFieldInvalid('title')"
-                  placeholder="e.g. Build a Task Management Chrome Extension"
+                  [placeholder]="'CHALLENGER.CREATE.TITLE_PLACEHOLDER' | translate"
                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm"
                 />
-                <p *ngIf="isFieldInvalid('title')" class="text-red-500 text-xs mt-1">
-                  Title is required (min 5 chars)
-                </p>
               </div>
-
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2"
-                  >Description <span class="text-red-500">*</span></label
+                  >{{ 'CHALLENGER.CREATE.DESCRIPTION' | translate }} <span class="text-red-500">{{ 'CHALLENGER.CREATE.REQUIRED' | translate }}</span></label
                 >
                 <textarea
                   formControlName="description"
                   rows="4"
                   [class.border-red-500]="isFieldInvalid('description')"
-                  placeholder="Describe what participants need to build, expected outcomes, and technical requirements..."
+                  [placeholder]="'CHALLENGER.CREATE.DESCRIPTION_PLACEHOLDER' | translate"
                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm resize-none"
                 ></textarea>
-                <p *ngIf="isFieldInvalid('description')" class="text-red-500 text-xs mt-1">
-                  Description is required
-                </p>
               </div>
             </div>
           </div>
-
           <hr class="border-slate-100" />
-
-          <!-- Section 2: Category & Settings -->
           <div>
             <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
               <span
                 class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                 >2</span
               >
-              Category & Settings
+              {{ 'CHALLENGER.CREATE.CATEGORY_SETTINGS' | translate }}
             </h3>
-
             <div class="pl-8">
-              <label class="text-sm font-bold text-slate-700 block mb-3">Select Category</label>
-              <!-- High-Performance Tile Selection -->
+              <label class="text-sm font-bold text-slate-700 block mb-3">{{ 'CHALLENGER.CREATE.SELECT_CATEGORY' | translate }}</label>
               <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                 <label
                   *ngFor="let cat of categories; trackBy: trackByName"
@@ -750,14 +577,10 @@
                     [value]="cat.name"
                     class="peer sr-only"
                   />
-
-                  <!-- The Modern Tile -->
                   <div
                     class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 bg-white transition-all duration-200 ease-in-out hover:border-slate-300 hover:bg-slate-50 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:ring-1 peer-checked:ring-blue-600"
                   >
-                    <!-- Icon -->
                     <div class="mb-2 text-slate-400 peer-checked:text-blue-600 transition-colors">
-                      <!-- Dynamic SVG based on Icon Name -->
                       <svg
                         *ngIf="cat.icon === 'code'"
                         xmlns="http://www.w3.org/2000/svg"
@@ -839,33 +662,28 @@
                         <polyline points="10 9 9 9 8 9"></polyline>
                       </svg>
                     </div>
-
                     <span
                       class="text-xs font-bold text-slate-600 peer-checked:text-blue-700 tracking-wide"
-                      >{{ cat.name }}</span
+                      >{{ 'CHALLENGER.FILTER.CATEGORIES.' + cat.key | translate }}</span
                     >
                   </div>
                 </label>
               </div>
-
-              <!-- Details Grid -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 mb-2">Difficulty</label>
+                  <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'CHALLENGER.CREATE.DIFFICULTY' | translate }}</label>
                   <select
                     formControlName="difficulty"
                     class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="easy">Easy (Beginner)</option>
-                    <option value="medium">Medium (Intermediate)</option>
-                    <option value="hard">Hard (Expert)</option>
+                    <option value="easy">{{ 'CHALLENGER.CREATE.DIFFICULTY_EASY' | translate }}</option>
+                    <option value="medium">{{ 'CHALLENGER.CREATE.DIFFICULTY_MEDIUM' | translate }}</option>
+                    <option value="hard">{{ 'CHALLENGER.CREATE.DIFFICULTY_HARD' | translate }}</option>
                   </select>
                 </div>
-
-                <!-- Duration Input -->
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2"
-                    >Duration (Days)</label
+                    >{{ 'CHALLENGER.CREATE.DURATION_DAYS' | translate }}</label
                   >
                   <input
                     formControlName="duration"
@@ -876,39 +694,34 @@
                     class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold"
                   />
                 </div>
-
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2"
-                    >Required Skills</label
+                    >{{ 'CHALLENGER.CREATE.REQUIRED_SKILLS' | translate }}</label
                   >
                   <input
                     formControlName="skills"
                     type="text"
-                    placeholder="React, Figma, SEO"
+                    [placeholder]="'CHALLENGER.CREATE.SKILLS_PLACEHOLDER' | translate"
                     class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
             </div>
           </div>
-
           <hr class="border-slate-100" />
-
-          <!-- Section 3: Rewards -->
           <div>
             <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
               <span
                 class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                 >3</span
               >
-              Rewards
+              {{ 'CHALLENGER.CREATE.REWARDS' | translate }}
             </h3>
-
             <div class="pl-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2"
-                    >Prize Amount</label
+                    >{{ 'CHALLENGER.CREATE.PRIZE_AMOUNT' | translate }}</label
                   >
                   <div class="relative group">
                     <span
@@ -918,23 +731,17 @@
                     <input
                       formControlName="prizeAmount"
                       type="number"
-                      placeholder="5000"
+                      [placeholder]="'CHALLENGER.CREATE.PRIZE_PLACEHOLDER' | translate"
                       [class.border-red-500]="isFieldInvalid('prizeAmount')"
                       class="w-full pl-14 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-mono font-bold text-slate-900 text-lg"
                     />
                   </div>
-                  <p *ngIf="isFieldInvalid('prizeAmount')" class="text-red-500 text-xs mt-1">
-                    Minimum prize is 100 EGP
-                  </p>
                 </div>
-
-                <!-- Optimized Type Selection -->
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2"
-                    >Opportunity Type</label
+                    >{{ 'CHALLENGER.CREATE.OPPORTUNITY_TYPE' | translate }}</label
                   >
                   <div class="flex gap-4">
-                    <!-- Type 1 -->
                     <label class="flex-1 cursor-pointer">
                       <input
                         type="radio"
@@ -946,36 +753,32 @@
                         class="px-4 py-3 rounded-xl border-2 border-slate-100 bg-white hover:border-slate-300 peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all text-center"
                       >
                         <span class="text-sm font-bold text-slate-700 peer-checked:text-blue-700"
-                          >One-time Prize</span
+                          >{{ 'CHALLENGER.CREATE.ONE_TIME_PRIZE' | translate }}</span
                         >
                       </div>
                     </label>
-                    <!-- Type 2 -->
                     <label class="flex-1 cursor-pointer">
                       <input type="radio" formControlName="type" value="job" class="peer sr-only" />
                       <div
                         class="px-4 py-3 rounded-xl border-2 border-slate-100 bg-white hover:border-slate-300 peer-checked:border-purple-600 peer-checked:bg-purple-50 transition-all text-center"
                       >
                         <span class="text-sm font-bold text-slate-700 peer-checked:text-purple-700"
-                          >Hiring / Job</span
+                          >{{ 'CHALLENGER.CREATE.HIRING_JOB' | translate }}</span
                         >
                       </div>
                     </label>
                   </div>
                 </div>
               </div>
-
-              <!-- Summary Box -->
               <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
-                <h4 class="font-bold text-blue-900 mb-2 text-sm">Escrow Summary</h4>
+                <h4 class="font-bold text-blue-900 mb-2 text-sm">{{ 'CHALLENGER.CREATE.ESCROW_SUMMARY' | translate }}</h4>
                 <p class="text-xs text-blue-700/80 mb-4 leading-relaxed">
-                  To publish this challenge, the prize amount will be securely held in Escrow until
-                  you select a winner.
+                  {{ 'CHALLENGER.CREATE.ESCROW_DESC' | translate }}
                 </p>
                 <div
                   class="flex items-center justify-between text-sm font-semibold text-blue-900 pt-3 border-t border-blue-200/50"
                 >
-                  <span>Total to deduct:</span>
+                  <span>{{ 'CHALLENGER.CREATE.TOTAL_TO_DEDUCT' | translate }}</span>
                   <span class="text-lg">{{
                     createForm.value.prizeAmount || 0 | currency : 'EGP '
                   }}</span>
@@ -983,15 +786,13 @@
               </div>
             </div>
           </div>
-
-          <!-- Form Actions -->
           <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-100 mt-8">
             <button
               type="button"
               (click)="switchTab('active')"
               class="px-8 py-3.5 bg-white text-slate-700 rounded-xl hover:bg-slate-50 transition-all font-bold border border-slate-200 order-2 sm:order-1"
             >
-              Cancel
+              {{ 'CHALLENGER.CREATE.CANCEL' | translate }}
             </button>
             <button
               type="submit"
@@ -1019,20 +820,25 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              {{ isLoading ? 'Publishing Challenge...' : 'Publish Challenge Now' }}
+              {{ isLoading ? ('CHALLENGER.CREATE.PUBLISHING' | translate) : ('CHALLENGER.CREATE.PUBLISH_NOW' | translate) }}
             </button>
           </div>
         </form>
       </div>
     </div>
   </div>
-
   <div class="lg:col-span-2 space-y-8" *ngIf="activeTab === 'analytics'">
     <div class="animate-fadeIn">
-      <h2 class="text-2xl font-bold text-slate-900 mb-1">Hiring Analytics</h2>
-      <p class="text-slate-500 text-sm mb-6 font-medium">Performance metrics and insights</p>
+      <h2 class="text-2xl font-bold text-slate-900 mb-1">{{ 'CHALLENGER.ANALYTICS.TITLE' | translate }}</h2>
+      <p class="text-slate-500 text-sm mb-6 font-medium">{{ 'CHALLENGER.ANALYTICS.SUBTITLE' | translate }}</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <!-- Loading State for Analytics -->
+      <div *ngIf="isAnalyticsLoading" class="flex items-center justify-center py-12">
+        <div class="animate-spin w-8 h-8 border-4 border-black-600 border-t-transparent rounded-full"></div>
+        <span class="ml-3 text-slate-600">{{ 'COMMON.LOADING' | translate }}</span>
+      </div>
+
+      <div *ngIf="!isAnalyticsLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
         <div
           class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5"
         >
@@ -1056,7 +862,7 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Total Challenges
+              {{ 'CHALLENGER.ANALYTICS.TOTAL_CHALLENGES' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">{{ hiringStats?.totalChallenges || 0 }}</p>
           </div>
@@ -1083,7 +889,7 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Total Submissions
+              {{ 'CHALLENGER.ANALYTICS.TOTAL_SUBMISSIONS' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">
               {{ hiringStats?.totalSubmissions || 0 }}
@@ -1113,7 +919,7 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Application Rate
+              {{ 'CHALLENGER.ANALYTICS.APPLICATION_RATE' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">
               {{ hiringStats?.applicationRate * 100 | number : '1.0-0' }}%
@@ -1143,7 +949,7 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Conversion Rate
+              {{ 'CHALLENGER.ANALYTICS.CONVERSION_RATE' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">{{ hiringStats?.conversion || 0 }}%</p>
           </div>
@@ -1171,7 +977,7 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Average Score
+              {{ 'CHALLENGER.ANALYTICS.AVERAGE_SCORE' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">{{ hiringStats?.avgScore || 0 }}/100</p>
           </div>
@@ -1199,61 +1005,61 @@
           </div>
           <div>
             <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-1">
-              Time to Hire
+              {{ 'CHALLENGER.ANALYTICS.TIME_TO_HIRE' | translate }}
             </p>
             <p class="text-2xl font-bold text-slate-900">
-              {{ hiringStats?.avgTimeToHireDays || 0 }} Days
+              {{ hiringStats?.avgTimeToHireDays || 0 }} {{ 'CHALLENGER.ANALYTICS.DAYS' | translate }}
             </p>
           </div>
         </div>
       </div>
     </div>
+    </div>
 
+    <section class="mb-14 pt-6 animate-fadeIn" *ngIf="activeTab === 'analytics'">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-slate-800">{{ 'CHALLENGER.ANALYTICS.JOB_PERFORMANCE' | translate }}</h2>
+      </div>
 
-      <section class="mb-14 pt-6 animate-fadeIn" *ngIf="activeTab === 'analytics'">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-slate-800">Job Posting Performance</h2>
-        </div>
+      <div class="grid gap-5">
+        <div
+          *ngFor="let job of performanceData"
+          class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+        >
+          <div class="flex flex-col gap-6">
+            <div class="flex-1">
+              <h4 class="text-base font-bold text-slate-900 leading-tight">
+                {{ job.title }}
+              </h4>
+              <p class="text-xs text-slate-800 mt-2">{{ job.submissionsCount }} {{ 'CHALLENGER.ANALYTICS.SUBMISSIONS' | translate }}</p>
+            </div>
 
-        <div class="grid gap-5">
-          <div
-            *ngFor="let job of performanceData"
-            class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200"
-          >
-            <div class="flex flex-col gap-6">
-              <div class="flex-1">
-                <h4 class="text-base font-bold text-slate-900 leading-tight">
-                  {{ job.title }}
-                </h4>
-                <p class="text-xs text-slate-800 mt-2">{{ job.submissionsCount }} Submissions</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center text-center p-4">
+              <div
+                class="px-3 py-3 rounded-xl bg-white border border-indigo-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-auto w-full sm:mx-5"
+              >
+                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">
+                  {{ 'CHALLENGER.ANALYTICS.AVG_SCORE' | translate }}
+                </p>
+                <p class="text-xl font-bold text-indigo-600 mt-1">
+                  {{ job.avgScore || 0 }}
+                </p>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center text-center p-4">
-                <div
-                  class="px-3 py-3 rounded-xl bg-white border border-indigo-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-auto w-full sm:mx-5"
-                >
-                  <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">
-                    Average Score
-                  </p>
-                  <p class="text-xl font-bold text-indigo-600 mt-1">
-                    {{ job.avgScore || 0 }}
-                  </p>
-                </div>
-
-                <div
-                  class="px-3 py-3 rounded-xl bg-white border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-auto w-full sm:mx-5"
-                >
-                  <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
-                    Highest Score
-                  </p>
-                  <p class="text-xl font-bold text-emerald-600 mt-1">
-                    {{ job.topScore || 0 }}
-                  </p>
-                </div>
+              <div
+                class="px-3 py-3 rounded-xl bg-white border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-auto w-full sm:mx-5"
+              >
+                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
+                  {{ 'CHALLENGER.ANALYTICS.HIGHEST_SCORE' | translate }}
+                </p>
+                <p class="text-xl font-bold text-emerald-600 mt-1">
+                  {{ job.topScore || 0 }}
+                </p>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </div>
+

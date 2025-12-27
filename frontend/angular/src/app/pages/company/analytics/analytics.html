@@ -120,50 +120,62 @@
         </h2>
       </div>
 
-      <div class="grid gap-5">
+      <div *ngIf="isLoading" class="text-center py-12">
         <div
-          *ngFor="let job of jobPerformance"
-          class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200"
-        >
-          <div class="flex flex-col gap-6">
-            <!-- Job Info -->
-            <div class="flex-1">
-              <h4 class="text-base font-bold text-slate-900 leading-tight">
-                {{ job.title }}
-              </h4>
-              <p class="text-xs text-slate-800 mt-2">
-                {{ job.submissionsCount }}
-                {{ 'ANALYTICS.SUBMISSIONS_COUNT' | translate }}
-              </p>
-            </div>
+          class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"
+        ></div>
+        <p class="mt-2 text-gray-600">{{ 'COMMON.LOADING' | translate }}</p>
+      </div>
 
-            <!-- Metrics -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center text-center">
-              <!-- Avg Score -->
-              <div
-                class="px-3 py-3 rounded-xl bg-white border border-indigo-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
-              >
-                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">
-                  {{ 'ANALYTICS.AVG_SCORE' | translate }}
-                </p>
-                <p class="text-xl font-bold text-indigo-600 mt-1">
-                  {{ job.avgScore }}
+      <div *ngIf="!isLoading">
+        <div class="grid gap-5" *ngIf="jobPerformance && jobPerformance.length > 0">
+          <div
+            *ngFor="let job of jobPerformance"
+            class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
+            <div class="flex flex-col gap-6">
+              <div class="flex-1">
+                <h4 class="text-base font-bold text-slate-900 leading-tight">
+                  {{ job.title }}
+                </h4>
+                <p class="text-xs text-slate-800 mt-2">
+                  {{ job.submissionsCount }}
+                  {{ 'ANALYTICS.SUBMISSIONS_COUNT' | translate }}
                 </p>
               </div>
 
-              <!-- Top Score -->
-              <div
-                class="px-3 py-3 rounded-xl bg-white border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
-              >
-                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
-                  {{ 'ANALYTICS.TOP_SCORE' | translate }}
-                </p>
-                <p class="text-xl font-bold text-emerald-600 mt-1">
-                  {{ job.topScore }}
-                </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center text-center">
+                <div
+                  class="px-3 py-3 rounded-xl bg-white border border-indigo-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
+                >
+                  <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wide">
+                    {{ 'ANALYTICS.AVG_SCORE' | translate }}
+                  </p>
+                  <p class="text-xl font-bold text-indigo-600 mt-1">
+                    {{ job.avgScore }}
+                  </p>
+                </div>
+
+                <div
+                  class="px-3 py-3 rounded-xl bg-white border border-emerald-200 shadow-sm hover:shadow-md transition-shadow duration-200 max-w-xs mx-5"
+                >
+                  <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">
+                    {{ 'ANALYTICS.TOP_SCORE' | translate }}
+                  </p>
+                  <p class="text-xl font-bold text-emerald-600 mt-1">
+                    {{ job.topScore }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div
+          *ngIf="jobPerformance && jobPerformance.length === 0"
+          class="text-center py-12 text-gray-500"
+        >
+          <p>{{ 'NO_DATA' | translate }}</p>
         </div>
       </div>
     </section>

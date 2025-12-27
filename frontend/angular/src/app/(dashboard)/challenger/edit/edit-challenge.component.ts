@@ -2,13 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChallengerService } from '../challenger.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-challenge',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, RouterModule],
   template: `
     <div class="min-h-screen bg-gray-50 p-6 lg:p-8">
       <div class="max-w-4xl mx-auto">
@@ -32,7 +34,7 @@ import { ToastrService } from 'ngx-toastr';
               <path d="m15 18-6-6 6-6" />
             </svg>
           </a>
-          <h1 class="text-2xl font-bold text-gray-900">Edit Challenge</h1>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'CHALLENGER.EDIT.TITLE' | translate }}</h1>
         </div>
 
         <!-- Warning if Locked -->
@@ -56,10 +58,9 @@ import { ToastrService } from 'ngx-toastr';
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
           <div>
-            <p class="font-bold">Restricted Editing Mode</p>
+            <p class="font-bold">{{ 'CHALLENGER.EDIT.RESTRICTED_MODE' | translate }}</p>
             <p class="text-sm mt-1">
-              Submissions received. Core fields (Title, Prize, Category) are locked to ensure
-              fairness.
+              {{ 'CHALLENGER.EDIT.RESTRICTED_DESC' | translate }}
             </p>
           </div>
         </div>
@@ -74,13 +75,13 @@ import { ToastrService } from 'ngx-toastr';
                   class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                   >1</span
                 >
-                Basic Details
+                {{ 'CHALLENGER.EDIT.BASIC_DETAILS' | translate }}
               </h3>
 
               <div class="space-y-4 pl-8">
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2"
-                    >Challenge Title</label
+                    >{{ 'CHALLENGER.EDIT.CHALLENGE_TITLE' | translate }}</label
                   >
                   <input
                     formControlName="title"
@@ -91,7 +92,7 @@ import { ToastrService } from 'ngx-toastr';
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+                  <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'CHALLENGER.EDIT.DESCRIPTION' | translate }}</label>
                   <textarea
                     formControlName="description"
                     rows="4"
@@ -110,11 +111,11 @@ import { ToastrService } from 'ngx-toastr';
                   class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                   >2</span
                 >
-                Category & Settings
+                {{ 'CHALLENGER.EDIT.CATEGORY_SETTINGS' | translate }}
               </h3>
 
               <div class="pl-8">
-                <label class="text-sm font-bold text-slate-700 block mb-3">Select Category</label>
+                <label class="text-sm font-bold text-slate-700 block mb-3">{{ 'CHALLENGER.EDIT.SELECT_CATEGORY' | translate }}</label>
 
                 <!-- Category Tiles -->
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -206,24 +207,23 @@ import { ToastrService } from 'ngx-toastr';
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2"
-                      >Difficulty</label
+                      >{{ 'CHALLENGER.EDIT.DIFFICULTY' | translate }}</label
                     >
                     <select
                       formControlName="difficulty"
                       [class.opacity-50]="isLocked"
                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="easy">Easy (Beginner)</option>
-                      <option value="medium">Medium (Intermediate)</option>
-                      <option value="hard">Hard (Expert)</option>
+                      <option value="easy">{{ 'CHALLENGER.CREATE.DIFFICULTY_EASY' | translate }}</option>
+                      <option value="medium">{{ 'CHALLENGER.CREATE.DIFFICULTY_MEDIUM' | translate }}</option>
+                      <option value="hard">{{ 'CHALLENGER.CREATE.DIFFICULTY_HARD' | translate }}</option>
                     </select>
                   </div>
 
                   <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2"
-                      >Duration (Days)</label
+                      >{{ 'CHALLENGER.EDIT.DURATION_DAYS' | translate }}</label
                     >
-                    <!-- Note: Editing duration updates the deadline relative to *today* -->
                     <input
                       formControlName="duration"
                       type="number"
@@ -236,7 +236,7 @@ import { ToastrService } from 'ngx-toastr';
 
                   <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2"
-                      >Required Skills</label
+                      >{{ 'CHALLENGER.EDIT.REQUIRED_SKILLS' | translate }}</label
                     >
                     <input
                       formControlName="skills"
@@ -257,14 +257,14 @@ import { ToastrService } from 'ngx-toastr';
                   class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs"
                   >3</span
                 >
-                Rewards
+                {{ 'CHALLENGER.EDIT.REWARDS' | translate }}
               </h3>
 
               <div class="pl-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                 <div class="space-y-4">
                   <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2"
-                      >Prize Amount</label
+                      >{{ 'CHALLENGER.EDIT.PRIZE_AMOUNT' | translate }}</label
                     >
                     <div class="relative group">
                       <span
@@ -282,7 +282,7 @@ import { ToastrService } from 'ngx-toastr';
 
                   <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2"
-                      >Opportunity Type</label
+                      >{{ 'CHALLENGER.EDIT.OPPORTUNITY_TYPE' | translate }}</label
                     >
                     <div class="flex gap-4">
                       <label class="flex-1 cursor-pointer">
@@ -297,7 +297,7 @@ import { ToastrService } from 'ngx-toastr';
                           class="px-4 py-3 rounded-xl border-2 border-slate-100 bg-white hover:border-slate-300 peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all text-center"
                         >
                           <span class="text-sm font-bold text-slate-700 peer-checked:text-blue-700"
-                            >One-time Prize</span
+                            >{{ 'CHALLENGER.EDIT.ONE_TIME_PRIZE' | translate }}</span
                           >
                         </div>
                       </label>
@@ -314,7 +314,7 @@ import { ToastrService } from 'ngx-toastr';
                         >
                           <span
                             class="text-sm font-bold text-slate-700 peer-checked:text-purple-700"
-                            >Hiring / Job</span
+                            >{{ 'CHALLENGER.EDIT.HIRING_JOB' | translate }}</span
                           >
                         </div>
                       </label>
@@ -330,7 +330,7 @@ import { ToastrService } from 'ngx-toastr';
                 routerLink="/dashboard/challenger"
                 class="px-8 py-3.5 bg-white text-slate-700 rounded-xl hover:bg-slate-50 transition-all font-bold border border-slate-200"
               >
-                Cancel
+                {{ 'CHALLENGER.EDIT.CANCEL' | translate }}
               </button>
               <button
                 type="submit"
@@ -358,7 +358,7 @@ import { ToastrService } from 'ngx-toastr';
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                {{ isLoading ? 'Saving Changes...' : 'Save Changes' }}
+                {{ isLoading ? ('CHALLENGER.EDIT.SAVING' | translate) : ('CHALLENGER.EDIT.SAVE_CHANGES' | translate) }}
               </button>
             </div>
           </form>
@@ -373,13 +373,13 @@ export class EditChallengeComponent implements OnInit {
   private challengerService = inject(ChallengerService);
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
+  private translate = inject(TranslateService);
 
   challengeId: string = '';
   isLocked = false;
   isLoading = false;
   currentStatus = 'published';
 
-  // Available Categories (Matches Backend)
   categories = [
     { name: 'Development', icon: 'code' },
     { name: 'Design', icon: 'pen-tool' },
@@ -420,15 +420,13 @@ export class EditChallengeComponent implements OnInit {
       const c = res.data;
       this.currentStatus = c.status;
 
-      // Reverse calculate duration (Deadline - Now)
       let duration = 7;
       if (c.deadline) {
         const diff = new Date(c.deadline).getTime() - new Date().getTime();
         duration = Math.ceil(diff / (1000 * 60 * 60 * 24));
-        if (duration < 1) duration = 1; // Minimum 1 day if editing expired
+        if (duration < 1) duration = 1;
       }
 
-      // Convert skills array back to comma-string
       const skillsString = Array.isArray(c.skills) ? c.skills.join(', ') : c.skills || '';
 
       this.form.patchValue({
@@ -442,7 +440,6 @@ export class EditChallengeComponent implements OnInit {
         skills: skillsString,
       });
 
-      // Lock Logic
       const hasSubmissions = (c.submissionCount || 0) > 0;
       if (c.status === 'closed' || (c.status === 'published' && hasSubmissions)) {
         this.isLocked = true;
@@ -459,12 +456,11 @@ export class EditChallengeComponent implements OnInit {
     if (this.form.invalid) return;
     this.isLoading = true;
 
-    // Recalculate new deadline based on current Date + Edited Duration
     const durationDays = Number(this.form.get('duration')?.value) || 7;
     const deadlineDate = new Date();
     deadlineDate.setDate(deadlineDate.getDate() + durationDays);
 
-    const formData = this.form.getRawValue(); // use getRawValue to include disabled fields
+    const formData = this.form.getRawValue();
     const skillsArray =
       typeof formData.skills === 'string'
         ? formData.skills.split(',').map((s: string) => s.trim())
@@ -480,11 +476,11 @@ export class EditChallengeComponent implements OnInit {
 
     this.challengerService.updateChallenge(this.challengeId, payload).subscribe({
       next: () => {
-        this.toastr.success('Challenge updated!');
+        this.toastr.success(this.translate.instant('CHALLENGER.EDIT.SUCCESS'));
         this.router.navigate(['/dashboard/challenger']);
       },
       error: () => {
-        this.toastr.error('Update failed');
+        this.toastr.error(this.translate.instant('CHALLENGER.EDIT.ERROR'));
         this.isLoading = false;
       },
     });

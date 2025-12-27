@@ -1,35 +1,26 @@
-<!-- نستخدم المتغير loading الموجود في الـ TS -->
 <div class="p-6 max-w-7-xl mx-auto space-y-8" *ngIf="!loading; else loadingState">
-  <!-- Hero Section -->
   <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm relative overflow-hidden">
-    <!-- Category Badge -->
-    <div class="absolute top-0 right-0 p-6">
-      <span
-        class="px-4 py-2 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 uppercase tracking-wider"
-      >
-        {{ challenge?.category || 'General' }}
-      </span>
-    </div>
-
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div class="space-y-4">
-        <!-- عنوان التحدي -->
         <h1 class="text-3xl font-extrabold text-gray-900">{{ challenge?.title }}</h1>
 
         <div class="flex flex-wrap gap-4 text-sm text-gray-500">
-          <!-- الصعوبة -->
           <div class="flex items-center gap-1.5 px-3 py-1 bg-gray-50 rounded-lg">
             <lucide-icon [img]="icons.BarChart" class="w-4 h-4 text-orange-500"></lucide-icon>
             <span class="font-medium capitalize">{{
-              challenge?.difficulty || 'Intermediate'
+              challenge?.difficulty || ('DASHBOARD.CHALLENGE_DETAILS.INTERMEDIATE' | translate)
             }}</span>
           </div>
-          <!-- الجائزة -->
           <div
             class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 rounded-lg text-emerald-700"
           >
             <lucide-icon [img]="icons.Award" class="w-4 h-4"></lucide-icon>
             <span class="font-bold">${{ challenge?.prize || '0' }}</span>
+          </div>
+          <div
+            class="px-4 py-2 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 uppercase tracking-wider"
+          >
+            {{ challenge?.category || ('DASHBOARD.CHALLENGE_DETAILS.GENERAL' | translate) }}
           </div>
         </div>
       </div>
@@ -41,59 +32,57 @@
             ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100'
             : 'bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200'
         "
-        class="cursor-pointer px-10 py-4 rounded-xl font-bold transition-all active:scale-95 flex items-center gap-2"
+        class="cursor-pointer px-8 py-3 mt-12 rounded-xl font-bold transition-all active:scale-95 flex items-center gap-2"
       >
         <lucide-icon *ngIf="isSubmitted" [img]="icons.Award" class="w-5 h-5"></lucide-icon>
-        {{ isSubmitted ? 'View My Submission' : 'Start Challenge' }}
+        {{
+          (isSubmitted
+            ? 'DASHBOARD.CHALLENGE_DETAILS.VIEW_SUBMISSION'
+            : 'DASHBOARD.CHALLENGE_DETAILS.START_CHALLENGE'
+          ) | translate
+        }}
       </button>
     </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- المحتوى الأيسر -->
     <div class="lg:col-span-2 space-y-6">
-      <!-- الوصف -->
       <section class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
         <h3 class="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
           <lucide-icon [img]="icons.Layout" class="w-5 h-5 text-indigo-500"></lucide-icon>
-          Challenge Overview
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.OVERVIEW_TITLE' | translate }}
         </h3>
         <p class="text-gray-600 leading-relaxed whitespace-pre-line">
           {{ challenge?.description }}
         </p>
       </section>
 
-      <!-- المتطلبات التقنية -->
       <section class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
         <h3 class="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
           <lucide-icon [img]="icons.Code" class="w-5 h-5 text-indigo-500"></lucide-icon>
-          Technical Requirements
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.REQUIREMENTS_TITLE' | translate }}
         </h3>
         <div class="text-gray-600 leading-relaxed">
-          <!-- إذا كانت المتطلبات نص طويل -->
           {{ challenge?.requirements }}
         </div>
       </section>
     </div>
 
-    <!-- الشريط الجانبي (الأيمن) -->
     <div class="space-y-6">
-      <!-- الروابط والملفات -->
       <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <h3
           class="font-bold text-gray-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-widest"
         >
-          Resources
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.RESOURCES_TITLE' | translate }}
         </h3>
         <div class="space-y-3">
-          <!-- عرض الملفات المرفقة إن وجدت -->
           @for (file of challenge?.fileUrls; track $index) {
           <button
             (click)="downloadFile(file)"
             class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-50 bg-gray-50/50 hover:bg-indigo-50 hover:border-indigo-100 transition-all text-sm group cursor-pointer"
           >
             <span class="truncate text-gray-700 font-medium group-hover:text-indigo-600">
-              Download Attachment {{ $index + 1 }}
+              {{ 'DASHBOARD.CHALLENGE_DETAILS.DOWNLOAD_ATTACHMENT' | translate }} {{ $index + 1 }}
             </span>
             <lucide-icon
               [img]="icons.FileDown"
@@ -102,36 +91,32 @@
           </button>
           }
 
-          <!-- رابط المشروع (مثل Figma أو GitHub) -->
           <a
             *ngIf="challenge?.linkUrl"
             [href]="challenge.linkUrl"
             target="_blank"
             class="w-full flex items-center justify-between p-3 rounded-xl border border-indigo-50 bg-indigo-50/30 text-indigo-600 hover:bg-indigo-50 transition-all text-sm font-semibold"
           >
-            <span>Project External Link</span>
+            <span>{{ 'DASHBOARD.CHALLENGE_DETAILS.EXTERNAL_LINK' | translate }}</span>
             <lucide-icon [img]="icons.Link" class="w-4 h-4"></lucide-icon>
           </a>
 
-          <!-- حالة عدم وجود موارد -->
           <p
             *ngIf="
               !challenge?.linkUrl && (!challenge?.fileUrls || challenge?.fileUrls.length === 0)
             "
             class="text-xs text-gray-400 italic text-center"
           >
-            No additional resources provided.
+            {{ 'DASHBOARD.CHALLENGE_DETAILS.NO_RESOURCES' | translate }}
           </p>
         </div>
       </div>
 
-      <!-- المهارات المطلوبة (Tags) -->
       <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <h3 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-widest">
-          Required Tech Stack
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.TECH_STACK_TITLE' | translate }}
         </h3>
         <div class="flex flex-wrap gap-2">
-          <!-- نستخدم techStack أو tags حسب ما يرسله الـ API -->
           @for (tag of (challenge?.techStack || challenge?.tags); track tag) {
           <span
             class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold border border-gray-200"
@@ -145,12 +130,11 @@
   </div>
 </div>
 
-<!-- Loading Skeleton -->
 <ng-template #loadingState>
   <div class="flex flex-col items-center justify-center h-96 space-y-4">
     <div
       class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"
     ></div>
-    <p class="text-gray-500 font-medium">Loading challenge details...</p>
+    <p class="text-gray-500 font-medium">{{ 'DASHBOARD.CHALLENGE_DETAILS.LOADING' | translate }}</p>
   </div>
 </ng-template>

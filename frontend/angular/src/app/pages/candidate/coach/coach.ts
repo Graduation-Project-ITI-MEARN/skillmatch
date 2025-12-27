@@ -2,16 +2,13 @@ import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Brain, BookOpen, ChevronRight } from 'lucide-angular';
 import { PricingModal } from '@shared/components/pricing-modal/pricing-modal';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { PaymentIframe } from '@shared/components/payment-iframe/payment-iframe';
-import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '@/core/services/auth';
-import { PaymentService } from '@/core/services/payment';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-coach',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, PricingModal, MatDialogModule],
+  imports: [CommonModule, LucideAngularModule, PricingModal, TranslateModule, MatDialogModule],
   templateUrl: './coach.html'
 })
 export class Coach implements OnInit {

@@ -151,6 +151,105 @@
       }
     },
     "OVERVIEW": {
+      "TITLE": "Available Challenges",
+      "SHOWING": "Showing",
+      "CHALLENGE": "challenge",
+      "CHALLENGES": "challenges",
+      "NO_CHALLENGES": "No challenges match your filters.",
+      "RESET_FILTERS": "Reset filters",
+      "PRIZE": "Prize",
+      "DAYS_LEFT": "days left",
+      "COMPETING": "competing",
+      "VIEW_DETAILS": "View Details",
+      "ALL_FIELDS": "All Fields",
+      "FILTERS": "Filters",
+      "AI_RECOMMENDATIONS": {
+        "TITLE": "AI Recommendations",
+        "BASED_ON": "Based on your skills, we recommend starting with the",
+        "CHALLENGE": "challenge. It matches",
+        "WITH_EXPERTISE": "with your expertise.",
+        "VIEW_MATCH": "View Match Details",
+        "ANALYZING": "Analyzing your profile for recommendations"
+      },
+      "RECENT_SUBMISSIONS": {
+        "TITLE": "Recent Submissions",
+        "NO_SUBMISSIONS": "No submissions yet.",
+        "UNKNOWN_CHALLENGE": "Unknown Challenge",
+        "EVALUATED": "Evaluated",
+        "UNDER_REVIEW": "Under Review",
+        "SCORE": "Score"
+      },
+      "WEEKLY_STATS": {
+        "TITLE": "This Week",
+        "CHALLENGES_STARTED": "Challenges Started",
+        "VIDEOS_RECORDED": "Videos Recorded",
+        "AVG_SCORE": "Avg. Score"
+      },
+      "FILTER_MODAL": {
+        "TITLE": "Filter Challenges",
+        "SEARCH": "Search",
+        "SEARCH_PLACEHOLDER": "Search by title, company...",
+        "CATEGORY": "Category",
+        "ALL_CATEGORIES": "All Categories",
+        "DIFFICULTY": "Difficulty",
+        "ALL_LEVELS": "All Levels",
+        "DEADLINE": "Deadline",
+        "ANY_TIME": "Any Time",
+        "WITHIN_DAYS": "Within {{days}} days",
+        "PRIZE_RANGE": "Prize Range",
+        "MIN": "Min",
+        "MAX": "Max",
+        "RESET_ALL": "Reset All",
+        "APPLY_FILTERS": "Apply Filters"
+      }
+    },
+    "PORTFOLIO": {
+      "TITLE": "AI-Verified Portfolio",
+      "SUBTITLE": "Auto-updating with every challenge completion",
+      "SHARE_PORTFOLIO": "Share Portfolio",
+      "CODING": "Coding",
+      "DESIGN": "Design",
+      "MARKETING": "Marketing",
+      "COMPLETED": "Completed",
+      "AVG_SCORE": "Avg Score",
+      "VERIFIED_ACHIEVEMENTS": "Verified Achievements",
+      "NO_ACHIEVEMENTS": "No achievements yet. Complete challenges to build your portfolio!",
+      "COMPLETED_ON": "Completed",
+      "SCORE": "Score",
+      "WATCH_VIDEO": "Watch Explanation Video",
+      "NO_VIDEO": "No video attached"
+    },
+    "COACH": {
+      "TITLE": "AI Career Coach",
+      "SUBTITLE": "Personalized learning path based on your performance",
+      "CURRENT_PATH": "Your Current Learning Path",
+      "IN_PROGRESS": "In Progress",
+      "NEXT": "Next",
+      "RECOMMENDED_CHALLENGES": "Recommended Challenges",
+      "PERFECT_FOR": "Perfect for improving your weak areas",
+      "START": "Start",
+      "SKILL_GAPS": "Skill Gaps Detected",
+      "LEARNING_RESOURCES": "Learning Resources",
+      "PREMIUM_FEATURE": "Premium Feature",
+      "PREMIUM_DESC": "Get personalized career coaching and unlock your learning path.",
+      "UPGRADE_TO_PRO": "Upgrade to Pro"
+    },
+    "PRICING": {
+      "PLAN_NAME": "Premium Plan",
+      "TITLE": "Unlock Your Full Potential",
+      "PRICE": "$9.99",
+      "PERIOD": "/month",
+      "UPGRADE_BTN": "Upgrade Now",
+      "FOOTER_NOTE": "Cancel anytime. No hidden fees.",
+      "FEATURES": {
+        "UNLIMITED_COACHING": "Unlimited AI Career Coaching",
+        "PORTFOLIO_ANALYSIS": "Detailed CV & Portfolio Analysis",
+        "PRIORITY_APPS": "Priority Job Applications",
+        "SKILL_ANALYTICS": "Advanced Skill Gap Analytics",
+        "MOCK_INTERVIEWS": "Mock Interview Simulations"
+      }
+    },
+    "CO-OVERVIEW": {
       "TITLE": "Active Job Postings",
       "SEARCH_PLACEHOLDER": "Search jobs...",
       "FILTER": "Filter",
@@ -246,10 +345,247 @@
         "MARKETING": "Marketing"
       }
     },
-    "COMMON": {
-      "LOADING": "Loading..."
+    "CHALLENGE_DETAILS": {
+      "GENERAL": "General",
+      "INTERMEDIATE": "Intermediate",
+      "START_CHALLENGE": "Start Challenge",
+      "VIEW_SUBMISSION": "View My Submission",
+      "OVERVIEW_TITLE": "Challenge Overview",
+      "REQUIREMENTS_TITLE": "Technical Requirements",
+      "RESOURCES_TITLE": "Resources",
+      "DOWNLOAD_ATTACHMENT": "Download Attachment",
+      "EXTERNAL_LINK": "Project External Link",
+      "NO_RESOURCES": "No additional resources provided.",
+      "TECH_STACK_TITLE": "Required Tech Stack",
+      "LOADING": "Loading challenge details..."
+    },
+    "LEADERBOARD": {
+      "TITLE": "Global Leaderboard",
+      "SUBTITLE": "Top performers across all challenges",
+      "ALL_TIME": "All Time",
+      "THIS_MONTH": "This Month",
+      "THIS_WEEK": "This Week",
+      "LOADING": "Loading leaderboard...",
+      "YOU": "You",
+      "CHALLENGES_COMPLETED": "challenges completed",
+      "TOTAL_SCORE": "Total Score"
+    },
+
+    "MY_SUBMISSIONS": {
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "NO_PROGRESS": "No challenges in progress. Go start one!",
+      "DEADLINE": "Deadline",
+      "SUBMIT_SOLUTION": "Submit Solution",
+      "VIEW_RESULT": "View Result & Feedback",
+      "MODAL": {
+        "TITLE": "Submit Your Work",
+        "SUBTITLE": "Choose how you want to submit your project.",
+        "UPLOAD_FILE": "Upload File",
+        "SUBMIT_LINK": "Submit Link",
+        "PROJECT_FILE": "Project File (ZIP/PDF)",
+        "CLICK_SELECT": "Click to select file",
+        "GITHUB_LINK": "GitHub / Design Link",
+        "VIDEO_DEMO": "Video Demo Link (Loom/YouTube)",
+        "CANCEL": "Cancel",
+        "SUBMIT_NOW": "Submit Now"
+      }
     }
   },
+
+ "CHALLENGER": {
+      "DASHBOARD": {
+        "TITLE": "Challenge Creator Hub",
+        "SUBTITLE": "Create competitions, discover talent, build community",
+        "CREATE_CHALLENGE": "CREATE CHALLENGE",
+        "STATS": {
+          "ACTIVE_CHALLENGES": "Active Challenges",
+          "TOTAL_PARTICIPANTS": "Total Participants",
+          "PRIZES_AWARDED": "Prizes Awarded",
+          "AVG_SCORE": "Avg Submission Score",
+          "THIS_MONTH": "this month",
+          "THIS_WEEK": "this week",
+          "PAID_OUT": "Paid Out",
+          "TOP_QUALITY": "Top Quality"
+        },
+        "TABS": {
+          "ACTIVE": "Active Challenges",
+          "COMPLETED": "Completed",
+          "CREATE_NEW": "Create New",
+          "ANALYTICS": "Analytics"
+        },
+        "SEARCH_PLACEHOLDER": "Search challenges...",
+        "FILTER": "Filter",
+        "WALLET": {
+          "TITLE": "Business Wallet",
+          "AVAILABLE_BALANCE": "Available Balance",
+          "ESCROW_LOCKED": "Escrow (Locked)",
+          "TOP_UP": "+ Top Up"
+        },
+        "ENGAGEMENT_STATS": {
+          "TITLE": "Engagement Stats",
+          "AVG_PARTICIPANTS": "Avg Participants",
+          "COMPLETION_RATE": "Completion Rate"
+        },
+        "TOP_CANDIDATES": {
+          "TITLE": "Top Candidates",
+          "VIEW_ALL": "View All",
+          "VIDEO_SPECIALIST": "Video Specialist"
+        },
+        "YOUR_CHALLENGES": "Your Active Challenges",
+        "COMPLETED_CHALLENGES": "Completed Challenges",
+        "LOADING": "Loading your challenges...",
+        "NO_CHALLENGES": "No challenges found",
+        "TRY_ADJUSTING": "Try adjusting your filters or search terms.",
+        "PRIZE_POOL": "Prize Pool",
+        "TIME_LEFT": "Time Left",
+        "PARTICIPANTS": "Participants",
+        "TOP_SCORE": "Top Score",
+        "VIEW_SUBMISSIONS": "View Submissions",
+        "VIEW_RESULTS": "View Results",
+        "EDIT": "Edit",
+        "WINNER_SELECTED": "Winner Selected",
+        "FINAL_SCORE": "Final Score",
+        "ENDED": "Ended",
+        "ENDS_TODAY": "Ends Today",
+        "DAY_LEFT": "Day Left",
+        "DAYS_LEFT": "Days Left",
+        "NO_DEADLINE": "No Deadline",
+        "INVALID_DATE": "Invalid Date",
+        "ACTIVE": "Active",
+        "CLOSED": "Closed",
+        "GENERAL": "General",
+        "UNKNOWN_CANDIDATE": "Unknown Candidate"
+      },
+      "CREATE": {
+        "TITLE": "Create New Challenge",
+        "SUBTITLE": "Define your requirements, set the prize, and let our AI help you find the best talent.",
+        "BASIC_DETAILS": "Basic Details",
+        "CHALLENGE_TITLE": "Challenge Title",
+        "TITLE_PLACEHOLDER": "e.g. Build a Task Management Chrome Extension",
+        "REQUIRED": "*",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "Describe what participants need to build...",
+        "CATEGORY_SETTINGS": "Category & Settings",
+        "SELECT_CATEGORY": "Select Category",
+        "DIFFICULTY": "Difficulty",
+        "DIFFICULTY_EASY": "Easy (Beginner)",
+        "DIFFICULTY_MEDIUM": "Medium (Intermediate)",
+        "DIFFICULTY_HARD": "Hard (Expert)",
+        "DURATION_DAYS": "Duration (Days)",
+        "REQUIRED_SKILLS": "Required Skills",
+        "SKILLS_PLACEHOLDER": "React, Figma, SEO",
+        "REWARDS": "Rewards",
+        "PRIZE_AMOUNT": "Prize Amount",
+        "PRIZE_PLACEHOLDER": "5000",
+        "OPPORTUNITY_TYPE": "Opportunity Type",
+        "ONE_TIME_PRIZE": "One-time Prize",
+        "HIRING_JOB": "Hiring / Job",
+        "ESCROW_SUMMARY": "Escrow Summary",
+        "ESCROW_DESC": "To publish this challenge, the prize amount will be securely held in Escrow until you select a winner.",
+        "TOTAL_TO_DEDUCT": "Total to deduct:",
+        "CANCEL": "Cancel",
+        "PUBLISH_NOW": "Publish Challenge Now",
+        "PUBLISHING": "Publishing Challenge...",
+        "SUCCESS": "Challenge Published Successfully!",
+        "ERROR": "Failed to create challenge.",
+        "FIX_ERRORS": "Please fix the errors in the form."
+      },
+      "EDIT": {
+        "TITLE": "Edit Challenge",
+        "BACK": "Back to Dashboard",
+        "RESTRICTED_MODE": "Restricted Editing Mode",
+        "RESTRICTED_DESC": "Submissions received. Core fields (Title, Prize, Category) are locked to ensure fairness.",
+        "BASIC_DETAILS": "Basic Details",
+        "CHALLENGE_TITLE": "Challenge Title",
+        "DESCRIPTION": "Description",
+        "CATEGORY_SETTINGS": "Category & Settings",
+        "SELECT_CATEGORY": "Select Category",
+        "DIFFICULTY": "Difficulty",
+        "DURATION_DAYS": "Duration (Days)",
+        "REQUIRED_SKILLS": "Required Skills",
+        "REWARDS": "Rewards",
+        "PRIZE_AMOUNT": "Prize Amount",
+        "OPPORTUNITY_TYPE": "Opportunity Type",
+        "ONE_TIME_PRIZE": "One-time Prize",
+        "HIRING_JOB": "Hiring / Job",
+        "CANCEL": "Cancel",
+        "SAVE_CHANGES": "Save Changes",
+        "SAVING": "Saving Changes...",
+        "SUCCESS": "Challenge updated!",
+        "ERROR": "Update failed"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "Submissions Review",
+        "BACK": "Back to Dashboard",
+        "LOADING": "Loading submissions...",
+        "NO_SUBMISSIONS": "No submissions yet",
+        "NO_SUBMISSIONS_DESC": "Candidates are still working on this challenge.",
+        "AI_SCORE": "AI Score",
+        "TECHNICAL_QUALITY": "Technical Quality",
+        "COMMUNICATION": "Communication",
+        "WATCH_VIDEO": "Watch Video",
+        "STATUS": {
+          "NEW": "New",
+          "ACCEPTED": "Accepted",
+          "REJECTED": "Rejected",
+          "PENDING": "Pending"
+        }
+      },
+      "WINNER_SOLUTION": {
+        "BACK": "Back to Dashboard",
+        "LOADING": "Loading winning solution...",
+        "CHALLENGE_WINNER": "Challenge Winner",
+        "PERFECT_SCORE": "Achieved a perfect score of",
+        "PRIZE_EARNED": "Prize Earned",
+        "VIDEO_SUBMISSION": "Video Submission",
+        "VIDEO_INVALID": "Video URL is invalid or missing.",
+        "ABOUT_SOLUTION": "About this Solution",
+        "NO_DESCRIPTION": "No text description provided.",
+        "AI_FEEDBACK": "AI Judge Feedback",
+        "TECHNICAL_EXECUTION": "Technical Execution",
+        "TECHNICAL_FEEDBACK": "The solution demonstrates exceptional understanding of the requirements. The code structure is modular and follows best practices.",
+        "CREATIVITY": "Creativity",
+        "CREATIVITY_FEEDBACK": "Innovative approach to the UI/UX problem. The animation transitions were smooth and added significant value.",
+        "AI_EVALUATOR": "SkillMatch AI",
+        "AUTOMATED_EVALUATION": "Automated Evaluation"
+      },
+      "ANALYTICS": {
+        "TITLE": "Hiring Analytics",
+        "SUBTITLE": "Performance metrics and insights",
+        "TOTAL_CHALLENGES": "Total Challenges",
+        "TOTAL_SUBMISSIONS": "Total Submissions",
+        "APPLICATION_RATE": "Application Rate",
+        "CONVERSION_RATE": "Conversion Rate",
+        "AVERAGE_SCORE": "Average Score",
+        "TIME_TO_HIRE": "Time to Hire",
+        "DAYS": "Days",
+        "JOB_PERFORMANCE": "Job Posting Performance",
+        "SUBMISSIONS": "Submissions",
+        "AVG_SCORE": "Average Score",
+        "HIGHEST_SCORE": "Highest Score"
+      },
+      "FILTER": {
+        "CATEGORY": "Category",
+        "ALL_CATEGORIES": "All Categories",
+        "DIFFICULTY": "Difficulty Level",
+        "ALL": "All",
+        "EASY": "Easy",
+        "MEDIUM": "Medium",
+        "HARD": "Hard",
+        "RESET_ALL": "Reset All Filters",
+        "CATEGORIES": {
+          "DEVELOPMENT": "Development",
+          "DESIGN": "Design",
+          "MARKETING": "Marketing",
+          "WRITING": "Writing",
+          "TRANSLATION": "Translation",
+          "DATA_ENTRY": "Data Entry"
+        }
+      }
+    },
+
+
   "CHALLENGE": {
     "BACK": "Back to Dashboard",
     "CREATE": {
@@ -345,7 +681,6 @@
       "ALLOWED": "You can only edit: Description, Deadline, and Status."
     }
   },
-
   "ANALYTICS": {
     "TITLE": "Hiring Analytics",
     "SUBTITLE": "Performance metrics and insights",
@@ -373,6 +708,191 @@
   },
   "AI": {
     "ANALYZING": "Analyzing your profile..."
+  },
+  "COMMON": {
+    "LOADING": "Loading..."
+  },
+  "CHALLENGER": {
+    "DASHBOARD": {
+      "TITLE": "Challenge Creator Hub",
+      "SUBTITLE": "Create competitions, discover talent, build community",
+      "CREATE_CHALLENGE": "CREATE CHALLENGE",
+      "STATS": {
+        "ACTIVE_CHALLENGES": "Active Challenges",
+        "TOTAL_PARTICIPANTS": "Total Participants",
+        "PRIZES_AWARDED": "Prizes Awarded",
+        "AVG_SCORE": "Avg Submission Score",
+        "THIS_MONTH": "this month",
+        "THIS_WEEK": "this week",
+        "PAID_OUT": "Paid Out",
+        "TOP_QUALITY": "Top Quality"
+      },
+      "TABS": {
+        "ACTIVE": "Active Challenges",
+        "COMPLETED": "Completed",
+        "CREATE_NEW": "Create New",
+        "ANALYTICS": "Analytics"
+      },
+      "SEARCH_PLACEHOLDER": "Search challenges...",
+      "FILTER": "Filter",
+      "WALLET": {
+        "TITLE": "Business Wallet",
+        "AVAILABLE_BALANCE": "Available Balance",
+        "ESCROW_LOCKED": "Escrow (Locked)",
+        "TOP_UP": "+ Top Up"
+      },
+      "ENGAGEMENT_STATS": {
+        "TITLE": "Engagement Stats",
+        "AVG_PARTICIPANTS": "Avg Participants",
+        "COMPLETION_RATE": "Completion Rate"
+      },
+      "TOP_CANDIDATES": {
+        "TITLE": "Top Candidates",
+        "VIEW_ALL": "View All",
+        "VIDEO_SPECIALIST": "Video Specialist"
+      },
+      "YOUR_CHALLENGES": "Your Active Challenges",
+      "COMPLETED_CHALLENGES": "Completed Challenges",
+      "LOADING": "Loading your challenges...",
+      "NO_CHALLENGES": "No challenges found",
+      "TRY_ADJUSTING": "Try adjusting your filters or search terms.",
+      "PRIZE_POOL": "Prize Pool",
+      "TIME_LEFT": "Time Left",
+      "PARTICIPANTS": "Participants",
+      "TOP_SCORE": "Top Score",
+      "VIEW_SUBMISSIONS": "View Submissions",
+      "VIEW_RESULTS": "View Results",
+      "EDIT": "Edit",
+      "WINNER_SELECTED": "Winner Selected",
+      "FINAL_SCORE": "Final Score",
+      "ENDED": "Ended",
+      "ENDS_TODAY": "Ends Today",
+      "DAY_LEFT": "Day Left",
+      "DAYS_LEFT": "Days Left",
+      "NO_DEADLINE": "No Deadline",
+      "INVALID_DATE": "Invalid Date",
+      "ACTIVE": "Active",
+      "CLOSED": "Closed",
+      "GENERAL": "General"
+    },
+    "CREATE": {
+      "TITLE": "Create New Challenge",
+      "SUBTITLE": "Define your requirements, set the prize, and let our AI help you find the best talent.",
+      "BASIC_DETAILS": "Basic Details",
+      "CHALLENGE_TITLE": "Challenge Title",
+      "TITLE_PLACEHOLDER": "e.g. Build a Task Management Chrome Extension",
+      "REQUIRED": "*",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Describe what participants need to build...",
+      "CATEGORY_SETTINGS": "Category & Settings",
+      "SELECT_CATEGORY": "Select Category",
+      "DIFFICULTY": "Difficulty",
+      "DIFFICULTY_EASY": "Easy (Beginner)",
+      "DIFFICULTY_MEDIUM": "Medium (Intermediate)",
+      "DIFFICULTY_HARD": "Hard (Expert)",
+      "DURATION_DAYS": "Duration (Days)",
+      "REQUIRED_SKILLS": "Required Skills",
+      "SKILLS_PLACEHOLDER": "React, Figma, SEO",
+      "REWARDS": "Rewards",
+      "PRIZE_AMOUNT": "Prize Amount",
+      "PRIZE_PLACEHOLDER": "5000",
+      "OPPORTUNITY_TYPE": "Opportunity Type",
+      "ONE_TIME_PRIZE": "One-time Prize",
+      "HIRING_JOB": "Hiring / Job",
+      "ESCROW_SUMMARY": "Escrow Summary",
+      "ESCROW_DESC": "To publish this challenge, the prize amount will be securely held in Escrow until you select a winner.",
+      "TOTAL_TO_DEDUCT": "Total to deduct:",
+      "CANCEL": "Cancel",
+      "PUBLISH_NOW": "Publish Challenge Now",
+      "PUBLISHING": "Publishing Challenge...",
+      "SUCCESS": "Challenge Published Successfully!",
+      "ERROR": "Failed to create challenge.",
+      "FIX_ERRORS": "Please fix the errors in the form."
+    },
+    "EDIT": {
+      "TITLE": "Edit Challenge",
+      "BACK": "Back to Dashboard",
+      "RESTRICTED_MODE": "Restricted Editing Mode",
+      "RESTRICTED_DESC": "Submissions received. Core fields (Title, Prize, Category) are locked to ensure fairness.",
+      "BASIC_DETAILS": "Basic Details",
+      "CHALLENGE_TITLE": "Challenge Title",
+      "DESCRIPTION": "Description",
+      "CATEGORY_SETTINGS": "Category & Settings",
+      "SELECT_CATEGORY": "Select Category",
+      "DIFFICULTY": "Difficulty",
+      "DURATION_DAYS": "Duration (Days)",
+      "REQUIRED_SKILLS": "Required Skills",
+      "REWARDS": "Rewards",
+      "PRIZE_AMOUNT": "Prize Amount",
+      "OPPORTUNITY_TYPE": "Opportunity Type",
+      "ONE_TIME_PRIZE": "One-time Prize",
+      "HIRING_JOB": "Hiring / Job",
+      "CANCEL": "Cancel",
+      "SAVE_CHANGES": "Save Changes",
+      "SAVING": "Saving Changes...",
+      "SUCCESS": "Challenge updated!",
+      "ERROR": "Update failed"
+    },
+    "SUBMISSIONS": {
+      "TITLE": "Submissions Review",
+      "BACK": "Back to Dashboard",
+      "LOADING": "Loading submissions...",
+      "NO_SUBMISSIONS": "No submissions yet",
+      "NO_SUBMISSIONS_DESC": "Candidates are still working on this challenge.",
+      "AI_SCORE": "AI Score",
+      "TECHNICAL_QUALITY": "Technical Quality",
+      "COMMUNICATION": "Communication",
+      "WATCH_VIDEO": "Watch Video",
+      "STATUS": {
+        "NEW": "New",
+        "ACCEPTED": "Accepted",
+        "REJECTED": "Rejected",
+        "PENDING": "Pending"
+      }
+    },
+    "WINNER_SOLUTION": {
+      "BACK": "Back to Dashboard",
+      "LOADING": "Loading winning solution...",
+      "CHALLENGE_WINNER": "Challenge Winner",
+      "PERFECT_SCORE": "Achieved a perfect score of",
+      "PRIZE_EARNED": "Prize Earned",
+      "VIDEO_SUBMISSION": "Video Submission",
+      "VIDEO_INVALID": "Video URL is invalid or missing.",
+      "ABOUT_SOLUTION": "About this Solution",
+      "NO_DESCRIPTION": "No text description provided.",
+      "AI_FEEDBACK": "AI Judge Feedback",
+      "TECHNICAL_EXECUTION": "Technical Execution",
+      "TECHNICAL_FEEDBACK": "The solution demonstrates exceptional understanding of the requirements. The code structure is modular and follows best practices.",
+      "CREATIVITY": "Creativity",
+      "CREATIVITY_FEEDBACK": "Innovative approach to the UI/UX problem. The animation transitions were smooth and added significant value.",
+      "AI_EVALUATOR": "SkillMatch AI",
+      "AUTOMATED_EVALUATION": "Automated Evaluation"
+    },
+    "ANALYTICS": {
+      "TITLE": "Hiring Analytics",
+      "SUBTITLE": "Performance metrics and insights",
+      "TOTAL_CHALLENGES": "Total Challenges",
+      "TOTAL_SUBMISSIONS": "Total Submissions",
+      "APPLICATION_RATE": "Application Rate",
+      "CONVERSION_RATE": "Conversion Rate",
+      "AVERAGE_SCORE": "Average Score",
+      "TIME_TO_HIRE": "Time to Hire",
+      "DAYS": "Days",
+      "JOB_PERFORMANCE": "Job Posting Performance",
+      "SUBMISSIONS": "Submissions",
+      "AVG_SCORE": "Average Score",
+      "HIGHEST_SCORE": "Highest Score"
+    },
+    "FILTER": {
+      "CATEGORY": "Category",
+      "ALL_CATEGORIES": "All Categories",
+      "DIFFICULTY": "Difficulty Level",
+      "ALL": "All",
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard",
+      "RESET_ALL": "Reset All Filters"
+    }
   },
   "NO_DATA": "No data available currently."
 }

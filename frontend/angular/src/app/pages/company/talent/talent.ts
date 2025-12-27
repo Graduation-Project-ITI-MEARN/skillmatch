@@ -26,7 +26,7 @@ interface TalentProfile {
   role?: string;
 }
 
-type CategoryFilter = 'all' | 'coding' | 'design' | 'marketing';
+type CategoryFilter = 'all' | 'coding' | 'design' | 'marketing' ;
 
 @Component({
   selector: 'app-talent-pool',
@@ -53,16 +53,30 @@ export class Talent implements OnInit {
     await this.loadTalent();
   }
 
-  private async loadTalent() {
+ private async loadTalent() {
   try {
     this.isLoading = true;
-    // جربي إضافة /talent مرة أخرى في نهاية الرابط
+
+    // 1. تجهيز الـ Params لإرسالها للسيرفر
+    let params: any = {};
+
+    if (this.categoryFilter !== 'all') {
+      // بنبعت التصنيف للباك-إند (تأكد أن الباك-إند بيفهم كلمة skills)
+      params.skills = this.categoryFilter;
+    }
+
+    if (this.searchQuery) {
+      params.name = this.searchQuery; // أو حسب ما الباك-إند بيستقبل البحث
+    }
+
     const response: any = await firstValueFrom(
-      this.http.get(`${environment.apiUrl}/talent/talent`)
+      this.http.get(`${environment.apiUrl}/talent/talent`, { params })
     );
 
+    // 2. تحديث القائمة بالبيانات اللي جات من السيرفر مفلترة جاهزة
     this.talentList = response.data || [];
-    this.applyFilters();
+    this.filteredTalentList = this.talentList;
+
   } catch (error) {
     console.error('Error loading talent:', error);
   } finally {
@@ -70,33 +84,9 @@ export class Talent implements OnInit {
   }
 }
 
-  applyFilters() {
-    let results = [...this.talentList];
-
-    // Filter by category
-    if (this.categoryFilter !== 'all') {
-      results = results.filter(p =>
-        p.skills?.some(skill =>
-          skill.toLowerCase().includes(this.categoryFilter)
-        )
-      );
-    }
-
-    // Filter by search query
-    const query = this.searchQuery.toLowerCase().trim();
-    if (query) {
-      results = results.filter(
-        (person) =>
-          person.name.toLowerCase().includes(query) ||
-          person.email.toLowerCase().includes(query) ||
-          person.role?.toLowerCase().includes(query) ||
-          person.skills?.some((skill) => skill.toLowerCase().includes(query))
-      );
-    }
-
-    this.filteredTalentList = results;
-  }
-
+applyFilters() {
+  this.loadTalent();
+}
   onSearchChange() {
     this.applyFilters();
   }

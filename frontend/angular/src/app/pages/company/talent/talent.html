@@ -9,7 +9,7 @@
   </div>
 
   <div class="flex flex-col sm:flex-row gap-4 mb-6">
-    <div class="flex-1 relative">
+    <div class="relative w-full sm:max-w-lg">
       <lucide-icon
         [img]="icons.Search"
         class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
@@ -19,7 +19,7 @@
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange()"
         [placeholder]="'DASHBOARD.TALENT.SEARCH_PLACEHOLDER' | translate"
-        class="w-full pl-12 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white"
+        class="w-full pl-12 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 bg-white"
       />
       <button
         *ngIf="searchQuery"

@@ -10,5 +10,6 @@ import { LanguageService } from './core/services/language';
 })
 // Standard convention is AppComponent
 export class App {
+  
   constructor(private languageService: LanguageService) {}
 }

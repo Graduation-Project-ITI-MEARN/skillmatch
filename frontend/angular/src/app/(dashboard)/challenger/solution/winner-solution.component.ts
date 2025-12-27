@@ -1,13 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChallengerService } from '../challenger.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-winner-solution',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   template: `
     <div class="min-h-screen bg-gray-50 p-6 lg:p-12">
       <!-- Back Button -->
@@ -28,14 +29,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         >
           <path d="m15 18-6-6 6-6" />
         </svg>
-        Back to Dashboard
+        {{ 'CHALLENGER.WINNER_SOLUTION.BACK' | translate }}
       </a>
 
       <div *ngIf="isLoading" class="text-center py-20">
         <div
           class="animate-spin w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
         ></div>
-        <p class="text-gray-500">Loading winning solution...</p>
+        <p class="text-gray-500">{{ 'CHALLENGER.WINNER_SOLUTION.LOADING' | translate }}</p>
       </div>
 
       <div *ngIf="!isLoading && winner" class="max-w-5xl mx-auto animate-fade-in">
@@ -43,7 +44,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
         <div
           class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl overflow-hidden relative mb-10"
         >
-          <!-- Confetti/Decorations -->
           <div
             class="absolute top-0 right-0 w-64 h-64 bg-yellow-500/20 rounded-full blur-3xl -mr-16 -mt-16"
           ></div>
@@ -71,11 +71,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                     d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                   />
                 </svg>
-                Challenge Winner
+                {{ 'CHALLENGER.WINNER_SOLUTION.CHALLENGE_WINNER' | translate }}
               </div>
               <h1 class="text-4xl md:text-5xl font-black mb-2">{{ winner.name }}</h1>
               <p class="text-gray-300 text-lg">
-                Achieved a perfect score of
+                {{ 'CHALLENGER.WINNER_SOLUTION.PERFECT_SCORE' | translate }}
                 <span class="text-white font-bold">{{ winner.score }}%</span>
               </p>
             </div>
@@ -84,7 +84,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
             <div
               class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 min-w-[200px] text-center"
             >
-              <p class="text-gray-400 text-sm font-medium uppercase mb-1">Prize Earned</p>
+              <p class="text-gray-400 text-sm font-medium uppercase mb-1">{{ 'CHALLENGER.WINNER_SOLUTION.PRIZE_EARNED' | translate }}</p>
               <p class="text-3xl font-black text-green-400">
                 {{ prizeAmount | currency : 'EGP ' }}
               </p>
@@ -94,7 +94,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
         <!-- TWO COLUMN LAYOUT -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <!-- VIDEO EMBED (Main Content) -->
+          <!-- VIDEO EMBED -->
           <div class="lg:col-span-2">
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <svg
@@ -109,7 +109,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 <polygon points="23 7 16 12 23 17 23 7" />
                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
               </svg>
-              Video Submission
+              {{ 'CHALLENGER.WINNER_SOLUTION.VIDEO_SUBMISSION' | translate }}
             </h2>
             <div class="bg-black rounded-2xl overflow-hidden shadow-lg aspect-video relative group">
               <iframe
@@ -125,19 +125,19 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                 *ngIf="!safeVideoUrl"
                 class="absolute inset-0 flex items-center justify-center text-gray-500"
               >
-                <p>Video URL is invalid or missing.</p>
+                <p>{{ 'CHALLENGER.WINNER_SOLUTION.VIDEO_INVALID' | translate }}</p>
               </div>
             </div>
 
             <div class="mt-6 bg-white rounded-2xl p-6 border border-gray-200">
-              <h3 class="font-bold text-gray-900 mb-2">About this Solution</h3>
+              <h3 class="font-bold text-gray-900 mb-2">{{ 'CHALLENGER.WINNER_SOLUTION.ABOUT_SOLUTION' | translate }}</h3>
               <p class="text-gray-600 leading-relaxed">
-                {{ winner.description || 'No text description provided.' }}
+                {{ winner.description || ('CHALLENGER.WINNER_SOLUTION.NO_DESCRIPTION' | translate) }}
               </p>
             </div>
           </div>
 
-          <!-- JUDGE'S COMMENTS (Hardcoded per Task) -->
+          <!-- AI FEEDBACK -->
           <div class="lg:col-span-1">
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <svg
@@ -151,7 +151,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
               >
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              AI Judge Feedback
+              {{ 'CHALLENGER.WINNER_SOLUTION.AI_FEEDBACK' | translate }}
             </h2>
 
             <div
@@ -163,18 +163,16 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
               <div class="space-y-6 relative z-10">
                 <div>
-                  <p class="text-xs font-bold text-gray-400 uppercase mb-1">Technical Execution</p>
+                  <p class="text-xs font-bold text-gray-400 uppercase mb-1">{{ 'CHALLENGER.WINNER_SOLUTION.TECHNICAL_EXECUTION' | translate }}</p>
                   <p class="text-gray-700 italic">
-                    "The solution demonstrates exceptional understanding of the requirements. The
-                    code structure is modular and follows best practices."
+                    "{{ 'CHALLENGER.WINNER_SOLUTION.TECHNICAL_FEEDBACK' | translate }}"
                   </p>
                 </div>
 
                 <div>
-                  <p class="text-xs font-bold text-gray-400 uppercase mb-1">Creativity</p>
+                  <p class="text-xs font-bold text-gray-400 uppercase mb-1">{{ 'CHALLENGER.WINNER_SOLUTION.CREATIVITY' | translate }}</p>
                   <p class="text-gray-700 italic">
-                    "Innovative approach to the UI/UX problem. The animation transitions were smooth
-                    and added significant value."
+                    "{{ 'CHALLENGER.WINNER_SOLUTION.CREATIVITY_FEEDBACK' | translate }}"
                   </p>
                 </div>
 
@@ -186,8 +184,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
                       AI
                     </div>
                     <div>
-                      <p class="text-sm font-bold text-gray-900">SkillMatch AI</p>
-                      <p class="text-xs text-gray-500">Automated Evaluation</p>
+                      <p class="text-sm font-bold text-gray-900">{{ 'CHALLENGER.WINNER_SOLUTION.AI_EVALUATOR' | translate }}</p>
+                      <p class="text-xs text-gray-500">{{ 'CHALLENGER.WINNER_SOLUTION.AUTOMATED_EVALUATION' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -232,7 +230,6 @@ export class WinnerSolutionComponent implements OnInit {
   }
 
   loadData(challengeId: string) {
-    // 1. Get Challenge to find Winner ID & Prize
     this.challengerService.getChallengeById(challengeId).subscribe((res: any) => {
       const challenge = res.data;
       if (!challenge || !challenge.winner) {
@@ -242,12 +239,8 @@ export class WinnerSolutionComponent implements OnInit {
 
       this.prizeAmount = challenge.prizeAmount || 0;
 
-      // 2. Fetch the specific submission of the winner to get the video
-      // Since we don't have the submission ID directly in the challenge model (only winner ID),
-      // we fetch all submissions and find the one by this user.
       this.challengerService.getSubmissionsByChallenge(challengeId).subscribe((subRes: any) => {
         const submissions = subRes.data || [];
-        // Find submission where candidateId._id matches challenge.winner
         const winningSub = submissions.find(
           (s: any) =>
             (s.candidateId?._id || s.candidateId) === (challenge.winner._id || challenge.winner)
@@ -261,9 +254,7 @@ export class WinnerSolutionComponent implements OnInit {
             description: winningSub.textContent,
           };
 
-          // Sanitize YouTube/Vimeo URL for iframe
           if (winningSub.videoExplanationUrl) {
-            // Convert standard youtube watch URL to embed if needed (basic check)
             let videoUrl = winningSub.videoExplanationUrl;
             if (videoUrl.includes('youtube.com/watch?v=')) {
               videoUrl = videoUrl.replace('watch?v=', 'embed/');

@@ -16,7 +16,129 @@
     [ngClass]="{ 'blur-md pointer-events-none select-none': !isPremium() }"
     class="transition-all duration-700"
   >
-    <!-- كود التصميم اللي بعته يوضع هنا بالكامل -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column: Career Coach Main -->
+      <div class="lg:col-span-2 space-y-8">
+        <div
+          class="bg-gradient-to-bottom from-blue-400/10 to-purple-400/10 rounded-2xl p-8 border border-blue-200"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-12 h-12 rounded-full bg-gradient-to-bottom from-blue-400 to-purple-400 flex items-center justify-center text-white"
+            >
+              <lucide-icon [img]="icons.Brain" class="w-6 h-6"></lucide-icon>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold">{{ 'DASHBOARD.COACH.TITLE' | translate }}</h2>
+              <p class="text-gray-600 text-sm">
+                {{ 'DASHBOARD.COACH.SUBTITLE' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-white/70 rounded-xl p-6 border border-blue-200">
+              <h3 class="mb-4 font-semibold">{{ 'DASHBOARD.COACH.CURRENT_PATH' | translate }}</h3>
+              <div class="space-y-5">
+                <!-- Path Item 1 -->
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold"
+                  >
+                    1
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-sm font-medium">Master TypeScript Advanced Patterns</span>
+                      <span class="text-xs text-blue-600 font-bold uppercase">{{ 'DASHBOARD.COACH.IN_PROGRESS' | translate }}</span>
+                    </div>
+                    <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        class="h-full bg-gradient-to-right from-blue-400 to-purple-400"
+                        style="width: 65%"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Path Item 2 -->
+                <div class="flex items-center gap-4 opacity-60">
+                  <div
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold"
+                  >
+                    2
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium">System Design Fundamentals</span>
+                      <span class="text-xs text-gray-500">{{ 'DASHBOARD.COACH.NEXT' | translate }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended Challenges -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">{{ 'DASHBOARD.COACH.RECOMMENDED_CHALLENGES' | translate }}</h3>
+          <div class="space-y-4">
+            <div
+              *ngFor="let i of [1, 2, 3]"
+              class="bg-white rounded-xl p-6 hover:shadow-md transition-all border border-gray-100 flex items-center justify-between group"
+            >
+              <div>
+                <h4 class="font-bold mb-1 group-hover:text-indigo-600 transition-colors">
+                  Advanced TypeScript Patterns Challenge
+                </h4>
+                <p class="text-sm text-gray-500">{{ 'DASHBOARD.COACH.PERFECT_FOR' | translate }}</p>
+              </div>
+              <button
+                class="px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all text-sm font-medium"
+              >
+                {{ 'DASHBOARD.COACH.START' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Sidebar -->
+      <div class="space-y-6">
+        <!-- Skill Gaps -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="text-lg font-bold mb-4">{{ 'DASHBOARD.COACH.SKILL_GAPS' | translate }}</h3>
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-medium text-gray-700">TypeScript Patterns</span>
+                <span class="text-indigo-600 font-bold">65%</span>
+              </div>
+              <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-500" style="width: 65%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="text-lg font-bold mb-4">{{ 'DASHBOARD.COACH.LEARNING_RESOURCES' | translate }}</h3>
+          <div class="space-y-3">
+            <div
+              *ngFor="let res of ['TypeScript Deep Dive', 'System Design Primer']"
+              class="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all cursor-pointer flex items-center justify-between border border-transparent hover:border-gray-200"
+            >
+              <div class="flex items-center gap-3">
+                <lucide-icon [img]="icons.BookOpen" class="w-4 h-4 text-gray-400"></lucide-icon>
+                <span class="text-sm font-medium">{{ res }}</span>
+              </div>
+              <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4 text-gray-300"></lucide-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Locked Overlay (يظهر فقط إذا لم يكن بريميوم) -->
@@ -31,15 +153,15 @@
         [img]="icons.Brain"
         class="w-16 h-16 text-indigo-600 mx-auto mb-6 opacity-80"
       ></lucide-icon>
-      <h3 class="text-2xl font-black text-gray-900 mb-3">Premium Feature</h3>
-      <p class="text-gray-600 mb-8 leading-relaxed">
-        فتح مدرب التوظيف الذكي ومسارات التعلم المخصصة.
+      <h3 class="text-xl font-black text-gray-900 mb-2">{{ 'DASHBOARD.COACH.PREMIUM_FEATURE' | translate }}</h3>
+      <p class="text-gray-600 mb-6 max-width-[250px]">
+        {{ 'DASHBOARD.COACH.PREMIUM_DESC' | translate }}
       </p>
       <button
         (click)="showPricingModal = true"
         class="w-full px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"
       >
-        Upgrade to Pro — 200 EGP
+        {{ 'DASHBOARD.COACH.UPGRADE_TO_PRO' | translate }}
       </button>
     </div>
   </div>
