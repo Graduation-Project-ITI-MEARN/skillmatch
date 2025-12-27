@@ -270,7 +270,7 @@ export default function LeaderboardPage() {
                           : "text-gray-400 hover:text-gray-600"
                       )}
                     >
-                      {/* التعديل هنا لتحويل الأرقام بناءً على اللغة */}
+                     
                       {locale === "ar" ? p.toLocaleString("ar-EG") : p}
                     </button>
                   )
