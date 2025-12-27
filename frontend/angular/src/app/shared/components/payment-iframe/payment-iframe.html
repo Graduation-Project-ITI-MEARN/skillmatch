@@ -1,0 +1,31 @@
+<!-- فرض عرض وطول ثابتين هنا يحل مشكلة الاختفاء -->
+<div
+  class="flex flex-col w-[550px] h-[80vh] max-w-[95vw] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-2xl"
+>
+  <div class="p-4 border-b flex justify-between items-center bg-gray-50 shrink-0">
+    <h3 class="font-bold text-gray-800 m-0">بوابة الدفع الآمنة</h3>
+    <button
+      (click)="close()"
+      class="text-gray-400 hover:text-black border-none bg-transparent text-2xl cursor-pointer"
+    >
+      ✕
+    </button>
+  </div>
+
+  <div class="flex-grow w-full relative bg-gray-50">
+    <iframe
+      [src]="safeUrl"
+      class="absolute inset-0 w-full h-full border-none"
+      allow="payment"
+    ></iframe>
+  </div>
+
+  <div class="p-4 bg-indigo-50 border-t shrink-0">
+    <button
+      (click)="close('CHECK_STATUS')"
+      class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-all active:scale-95 cursor-pointer border-none"
+    >
+      لقد أتممت عملية الدفع بنجاح
+    </button>
+  </div>
+</div>

@@ -6,8 +6,8 @@ import { LoginFormData, loginSchema } from "@/app/lib/validation";
 import InputField from "./InputField";
 import Link from "next/link";
 import { useState } from "react";
-import SplitButton from "./Button";
 import { useLocale } from "next-intl";
+import SplitButton from "../ui/SplitButton";
 
 const LoginForm = () => {
    const [errorMessage, setErrorMessage] = useState<string>("");
@@ -108,7 +108,13 @@ const LoginForm = () => {
                </a>
             </div>
 
-            <SplitButton buttonText="Log in" isSubmitting={isSubmitting} />
+            <SplitButton
+               buttonText="Log in"
+               isSubmitting={isSubmitting}
+               backgroundColor="#39594d"
+               hoverColor="#191f1de8"
+               textColor="#fff"
+            />
          </form>
 
          <p className="mt-6 text-center text-sm text-gray-600">

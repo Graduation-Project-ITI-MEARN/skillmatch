@@ -5,6 +5,7 @@ import {
   getAllCompanies,
   getAllUsers,
   getUserById,
+  verifyUser, // Imported the new controller
 } from "../controllers/userController";
 
 import User from "../models/User";
@@ -27,6 +28,9 @@ router.get("/candidates", auth, restrictTo(["admin"]), getAllCandidates);
 router.get("/companies", auth, restrictTo(["admin"]), getAllCompanies);
 router.get("/challengers", auth, restrictTo(["admin"]), getAllChallengers);
 router.get("/profile/ai-skills", auth, getAISkills);
+
+// New Verification Route
+router.post("/verify", auth, verifyUser);
 
 router.get("/:id", auth, restrictTo(["admin"]), getUserById);
 

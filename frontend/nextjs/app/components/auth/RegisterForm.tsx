@@ -1,6 +1,5 @@
 "use client";
 import { RegisterFormData, registerSchema } from "@/app/lib/validation";
-import SplitButton from "./Button";
 import InputField from "./InputField";
 import UserTypeTabs, { UserType } from "./UserTypeTabs";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -8,6 +7,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import SplitButton from "../ui/SplitButton";
 
 const RegisterForm = () => {
    const [userType, setUserType] = useState<UserType>("candidate");

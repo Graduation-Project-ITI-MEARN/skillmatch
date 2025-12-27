@@ -102,15 +102,63 @@ const updateUser = catchError(async (req: Request, res: Response) => {
   });
 
   // ✅ Log Activity: User updated profile
-  // FIX: Added check to ensure req.user exists before logging
   if (req.user) {
     await logActivity(
       req.user._id,
       "user_update",
       `Updated profile details for user: ${updatedUser?.name}`,
+      "success",
       updatedUser?._id
     );
   }
+
+  res.status(200).json({
+    success: true,
+    data: updatedUser,
+  });
+});
+
+/**
+ * @desc    Submit verification request
+ * @route   POST /api/users/verify
+ * @access  Private
+ */
+const verifyUser = catchError(async (req: Request, res: Response) => {
+  // Fix: Check if user exists to satisfy TypeScript
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+
+  const { nationalId, documentUrl } = req.body;
+
+  if (!nationalId || !documentUrl) {
+    return res.status(400).json({
+      success: false,
+      message: "National ID and document URL are required",
+    });
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      nationalId,
+      verificationDocument: documentUrl,
+      verificationStatus: "pending",
+    },
+    { new: true, runValidators: true }
+  );
+
+  // Log Activity
+  await logActivity(
+    req.user._id,
+    "user_verification_submit",
+    `User submitted identity verification documents`,
+    "success",
+    req.user._id
+  );
 
   res.status(200).json({
     success: true,
@@ -138,7 +186,7 @@ const getAISkills = catchError(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
-        from: "challenges", // Match the collection name exactly as in MongoDB
+        from: "challenges",
         localField: "challengeId",
         foreignField: "_id",
         as: "challenge",
@@ -171,13 +219,6 @@ const getAISkills = catchError(async (req: Request, res: Response) => {
     success: true,
     data: skills,
   });
-
-  // Debug: log submissions to verify
-  const testResults = await Submission.find({
-    candidateId: user._id,
-    status: "accepted",
-  });
-  console.log("Found submissions:", testResults);
 });
 
 export {
@@ -188,4 +229,5 @@ export {
   getUserById,
   updateUser,
   getAISkills,
+  verifyUser,
 };

@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
 import { PRIMARY_COLOR } from "@/app/lib/constants"; // Adjust path
-import { AngledCard, AngledContainer, ShapeVariant } from "../AngledSplitCard";
+import {
+   AngledCard,
+   AngledContainer,
+   ShapeVariant,
+} from "../ui/AngledSplitCard";
 
 export type UserType = "candidate" | "company" | "challenger";
 

@@ -4,6 +4,7 @@ import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { RTLProvider } from "../components/RTLContext";
 
 export const metadata: Metadata = {
    title: "SkillMatch",
@@ -27,13 +28,17 @@ export default async function RootLayout({
    // Providing all messages to the client
    const messages = await getMessages();
 
-   // Determine direction
-   const direction = locale === "ar" ? "rtl" : "ltr";
+   // Determine direction and isRTL boolean
+   const isRTL = locale === "ar"; // True if locale is Arabic
+   const direction = isRTL ? "rtl" : "ltr";
+
    return (
       <html lang={locale} dir={direction}>
-         <body className={direction === "rtl" ? "font-arabic" : "font-english"}>
+         <body
+            className={direction === "rtl" ? "font-arabic-sans" : "font-sans"}>
             <NextIntlClientProvider locale={locale} messages={messages}>
-               {children}
+               {/* Wrap your children with RTLProvider */}
+               <RTLProvider isRTL={isRTL}>{children}</RTLProvider>
             </NextIntlClientProvider>
          </body>
       </html>
