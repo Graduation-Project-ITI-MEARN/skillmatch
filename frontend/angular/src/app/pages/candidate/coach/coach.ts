@@ -3,13 +3,17 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Brain, BookOpen, ChevronRight } from 'lucide-angular';
 import { PricingModal } from '@shared/components/pricing-modal/pricing-modal';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { AuthService } from '@/core/services/auth';
+import { PaymentService } from '@/core/services/payment';
+import { ToastrService } from 'ngx-toastr';
+import { PaymentIframe } from '@shared/components/payment-iframe/payment-iframe';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-coach',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, PricingModal, TranslateModule, MatDialogModule],
-  templateUrl: './coach.html'
+  imports: [CommonModule, LucideAngularModule, PricingModal, TranslateModule],
+  templateUrl: './coach.html',
 })
 export class Coach implements OnInit {
   private authService = inject(AuthService);
@@ -19,7 +23,7 @@ export class Coach implements OnInit {
 
   // مراقبة الـ Signal تلقائياً
   isPremium = computed(() => this.authService.currentUser()?.subscriptionStatus === 'active');
-  
+
   showPricingModal = false;
   isLoading = false;
   readonly icons = { Brain, BookOpen, ChevronRight };
@@ -38,10 +42,10 @@ export class Coach implements OnInit {
           data: { url: res.data.iframeUrl },
           width: '550px',
           maxWidth: '95vw',
-          disableClose: true
+          disableClose: true,
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
           if (result === 'CHECK_STATUS') {
             this.verifyStatus();
           }
@@ -51,14 +55,14 @@ export class Coach implements OnInit {
         this.isLoading = false;
         console.error('Payment Error:', err); // بص هنا لو الـ payload لسه فيه مشكلة
         this.toastr.error('تعذر جلب بيانات الدفع');
-      }
+      },
     });
   }
 
   verifyStatus() {
     this.isLoading = true;
     this.toastr.info('جاري التحقق من عملية الدفع...');
-    
+
     setTimeout(() => {
       this.authService.refreshUserProfile().subscribe({
         next: (user) => {
@@ -68,7 +72,7 @@ export class Coach implements OnInit {
           } else {
             this.toastr.warning('الدفع مازال قيد المعالجة، يرجى المحاولة بعد لحظات.');
           }
-        }
+        },
       });
     }, 4000);
   }
