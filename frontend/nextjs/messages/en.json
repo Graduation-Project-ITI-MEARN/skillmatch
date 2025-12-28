@@ -3,5 +3,36 @@
       "login": "Login",
       "register": "Register",
       "Create your account": "Create your account"
-   }
+   },
+   "nav": {
+    "about": "About",
+    "challenges": "Challenges",
+    "leaderboard": "Leaderboard"
+  },
+  "auth": {
+    "signIn": "Sign In"
+  },
+  "challenges": {
+    "startChallenge": "Start Challenge"
+  },
+  
+  "leaderboard": {
+    "title": "Leaderboard",
+    "viewPortfolio": "View Portfolio",
+    "score": "Score",
+    "loading": "Loading...",
+    "noParticipants": "No participants in this category yet",
+    "noParticipantsDesc": "Once someone joins or earns points in this category, they will appear here automatically.",
+    "categories": {
+      "all": "All"
+    }
+  },
+  "footer": {
+   "description": "Connecting skills with opportunities.",
+    "explore": "Explore",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "allRightsReserved": "All rights reserved"
+  }
 }

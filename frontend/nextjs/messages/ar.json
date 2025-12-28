@@ -3,6 +3,36 @@
       "login": "تسجيل الدخول",
       "register": "إنشاء حساب",
       "Create your account": "انشاء حساب"
-   }
+   },
+   "nav": {
+    "about": "عن المنصة",
+    "challenges": "التحديات",
+    "leaderboard": "لوحة المتصدرين"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول"
+  },
+  "challenges": {
+    "startChallenge": "ابدأ التحدي"
+  },
+  "leaderboard": {
+    "title": "لوحة المتصدرين",
+    "viewPortfolio": "عرض الملف الشخصي",
+    "score": "النقاط",
+    "loading": "جاري التحميل...",
+    "noParticipants": "لا يوجد مشاركون في هذه الفئة بعد",
+    "noParticipantsDesc": "بمجرد انضمام شخص ما أو حصوله على نقاط في هذه الفئة، سيظهر هنا تلقائيًا.",
+    "categories": {
+      "all": "الكل"
+    }
+  },
+  
+  "footer": {
+   "description": "نصل المهارات بالفرص.",
+    "explore": "استكشف",
+    "legal": "قانوني",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsOfUse": "شروط الاستخدام",
+    "allRightsReserved": "جميع الحقوق محفوظة"
+  }
 }
-ء
