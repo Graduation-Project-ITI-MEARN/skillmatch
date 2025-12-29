@@ -90,3 +90,7 @@ body {
 body {
   padding-right: var(--scrollbar-gutter, 0px);
 }
+
+button {
+  cursor: pointer;
+}

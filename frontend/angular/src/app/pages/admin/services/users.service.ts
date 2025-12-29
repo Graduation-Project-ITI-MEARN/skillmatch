@@ -17,6 +17,10 @@ export interface User {
   type?: 'candidate' | 'company' | 'challenger';
   isVerified: boolean;
   createdAt: string;
+  verificationStatus?: 'none' | 'pending' | 'verified' | 'rejected';
+  nationalId?: string;
+  taxIdCard?: string;
+  verificationDocument?: string;
 }
 
 export interface UserResponse {
@@ -78,5 +82,12 @@ export class UsersService {
         return res.data;
       })
     );
+  }
+
+  updateUserVerificationStatus(
+    userId: string,
+    statusData: { status: 'verified' | 'rejected'; reason?: string } // Added optional reason
+  ): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/users/${userId}/verify-status`, statusData);
   }
 }
