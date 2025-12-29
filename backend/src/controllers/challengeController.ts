@@ -46,8 +46,6 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       }
    }
 
-
-
    const challenge = await Challenge.create({
       ...req.body,
       creatorId: user._id,
@@ -109,14 +107,20 @@ const getPublishedChallenges = catchError(
 const getMyChallenges = catchError(async (req: Request, res: Response) => {
    const user = req.user;
 
+   console.log(user);
+
    if (!user) {
       return res.status(401).json({ message: "Not authorized" });
    }
+
+   console.log(user._id);
 
    const challenges = await Challenge.find({ creatorId: user._id }).populate(
       "creatorId",
       "name type"
    );
+
+   console.log(challenges);
 
    res.status(200).json({
       success: true,
@@ -315,17 +319,17 @@ const deleteChallenge = catchError(async (req: Request, res: Response) => {
    });
 });
 
-
-   const getChallengeById = catchError(async (req: Request, res: Response) => {
+const getChallengeById = catchError(async (req: Request, res: Response) => {
    const { id } = req.params;
 
    const challenge = await Challenge.findById(id);
-   if (!challenge) return res.status(404).json({ status: "fail", message: "Challenge not found" });
+   if (!challenge)
+      return res
+         .status(404)
+         .json({ status: "fail", message: "Challenge not found" });
 
    res.status(200).json({ status: "success", data: challenge });
 });
-
-
 
 export {
    createChallenge,
@@ -334,6 +338,5 @@ export {
    getAllChallenges,
    updateChallenge,
    deleteChallenge,
-   getChallengeById
-   
+   getChallengeById,
 };
