@@ -25,7 +25,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       const decoded: any = await jwtVerify(token, process.env.JWT_SECRET);
 
       const user = await User.findById(decoded.id).select(
-         "name email role type"
+         "name email role type isVerified"
       );
 
       if (!user) {

@@ -61,6 +61,7 @@ const register = catchError(async (req: Request, res: Response) => {
          email: user.email,
          role: "user",
          type: user.type,
+         isVerified: user.isVerified,
       },
    });
 });
@@ -104,6 +105,7 @@ const login = catchError(async (req: Request, res: Response) => {
          email: user.email,
          role: user.role,
          type: user.type,
+         isVerified: user.isVerified,
       },
    });
 });
@@ -114,6 +116,7 @@ const login = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const getMe = catchError(async (req: Request, res: Response) => {
+   console.log(req.user);
    res.status(200).json({
       success: true,
       data: req.user,

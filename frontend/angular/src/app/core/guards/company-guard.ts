@@ -18,8 +18,6 @@ export const companyGuard: CanActivateFn = (route, state) => {
         return false;
       }
 
-      console.log(authService.type);
-
       // 3. Check Role (using the safe getter we made in Step 2)
       if (authService.type === 'company') {
         return true;

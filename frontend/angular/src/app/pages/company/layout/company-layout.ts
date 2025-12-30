@@ -80,6 +80,7 @@ export class CompanyShellComponent implements OnInit {
   private async loadUserData() {
     try {
       const user = this.authService.currentUser();
+      console.log(user);
       this.name = user?.companyName || user?.name || 'Company';
       this.initials = this.generateInitials(this.name);
     } catch {
