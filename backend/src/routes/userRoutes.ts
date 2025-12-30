@@ -4,9 +4,11 @@ import {
    getAllChallengers,
    getAllCompanies,
    getAllUsers,
+   getProfile,
    getUserById,
+   updateProfile,
    updateVerificationStatus,
-   verifyUser,
+   verifyUser, // Imported the new controller
 } from "../controllers/userController";
 
 import User from "../models/User";
@@ -33,13 +35,17 @@ router.get("/profile/ai-skills", auth, getAISkills);
 // New Verification Route
 router.post("/verify", auth, verifyUser);
 
+router.get("/profile", auth, getProfile);
+
+router.patch("/profile", auth, updateProfile);
+
 router.put(
-   "/:id/verify-status",
+   "/:id/verify",
    auth,
    restrictTo(["admin"]),
    updateVerificationStatus
 );
 
-router.get("/:id", auth, restrictTo(["admin"]), getUserById);
+router.get("/:id", auth, getUserById);
 
 export default router;

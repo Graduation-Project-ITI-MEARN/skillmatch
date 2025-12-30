@@ -1,5 +1,7 @@
+// models/User.ts
 import mongoose, { Document, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
+import { CATEGORIES } from "../controllers/metadataController";
 
 // User Interface Definition
 export interface IUser extends Document {
@@ -8,14 +10,26 @@ export interface IUser extends Document {
    name?: string;
    role: "user" | "admin";
    type?: "candidate" | "company" | "challenger";
-   skills?: string[];
+   skills?: string[]; // Assuming skills are related to categories
    totalScore?: number;
    badges?: string[];
-   isVerified: boolean;
-   verificationStatus: "none" | "pending" | "verified" | "rejected";
-   nationalId?: string; // For candidates/challengers
-   taxIdCard?: string; // For companies
-   verificationDocuments: string[]; // Changed to array of strings
+   isVerified?: boolean;
+   verificationStatus?: "none" | "pending" | "verified" | "rejected";
+   nationalId?: string;
+   verificationDocument?: string;
+
+   // --- NEW FIELDS FOR CANDIDATE PROFILE ---
+   city?: string; // For both candidate and company
+   bio?: string; // For both candidate and company
+   github?: string;
+   linkedin?: string;
+   // Add an array for other social links, allowing flexibility
+   otherLinks?: { name: string; url: string }[];
+   categoriesOfInterest?: (typeof CATEGORIES)[number][]; // Array of categories
+
+   // --- NEW FIELDS FOR COMPANY PROFILE ---
+   website?: string;
+   // bio and city are already covered above
 }
 
 // Mongoose Schema
@@ -36,8 +50,22 @@ const UserSchema: Schema = new Schema(
          default: "none",
       },
       nationalId: { type: String },
-      taxIdCard: { type: String },
-      verificationDocuments: [{ type: String }],
+      verificationDocument: { type: String },
+
+      // --- NEW SCHEMA FIELDS ---
+      city: { type: String },
+      bio: { type: String },
+      github: { type: String },
+      linkedin: { type: String },
+      otherLinks: [
+         {
+            name: { type: String, required: true },
+            url: { type: String, required: true },
+         },
+      ],
+      categoriesOfInterest: [{ type: String, enum: CATEGORIES }], // Array of categories
+
+      website: { type: String }, // For companies
    },
    {
       timestamps: true,

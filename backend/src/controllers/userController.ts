@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-
 import Submission from "../models/Submission";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import { calculateSkillLevel } from "../utils/skillLevel";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
 import APIError from "../utils/APIError";
+import { CATEGORIES } from "./metadataController";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -65,18 +65,146 @@ const getAllChallengers = catchError(async (req: Request, res: Response) => {
 /**
  * @desc    Get single user by ID
  * @route   GET /api/users/:id
- * @access  Private
+ * @access  Private (Admin or Self)
  */
-const getUserById = catchError(async (req: Request, res: Response) => {
-   const user = await User.findById(req.params.id);
+const getUserById = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const requestedId = req.params.id;
+      // req.user is populated by the auth middleware
+      const authenticatedUser = req.user; // Contains id and role
 
-   if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      if (
+         authenticatedUser &&
+         authenticatedUser._id.toString() === requestedId
+      ) {
+         // User is requesting their own profile
+         const user = await User.findById(requestedId).select("-password"); // Exclude sensitive info
+         if (!user) {
+            return next(new APIError(404, "User not found"));
+         }
+
+         res.status(200).json({
+            success: true,
+            data: user,
+         });
+      }
+
+      const user = await User.findById(requestedId).select("-password"); // Exclude sensitive info
+      if (!user) {
+         return next(new APIError(404, "User not found"));
+      }
+
+      res.status(200).json({
+         success: true,
+         data: user,
+      });
    }
+);
+
+/**
+ * @desc    get user profile information
+ * @route   GET /api/users/profile
+ * @access  Private (Auth required)
+ */
+
+const getProfile = catchError(async (req: Request, res: Response) => {
+   // Ensure req.user is populated by your auth middleware
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
+      });
+   }
+
+   const user = await User.findById(req.user._id).select("-password");
 
    res.status(200).json({
       success: true,
       data: user,
+   });
+});
+
+/**
+ * @desc    Update user profile information
+ * @route   PATCH /api/users/profile
+ * @access  Private (Auth required)
+ */
+const updateProfile = catchError(async (req: Request, res: Response) => {
+   // Ensure req.user is populated by your auth middleware
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
+      });
+   }
+
+   const userId = req.user._id;
+   const {
+      name,
+      city,
+      bio,
+      github,
+      linkedin,
+      otherLinks, // Array of { name, url }
+      categoriesOfInterest, // Array of strings
+      website, // For companies
+   } = req.body;
+
+   const updateFields: Partial<IUser> = { name, city, bio };
+
+   if (req.user.type === "candidate" || req.user.type === "challenger") {
+      if (github !== undefined) updateFields.github = github;
+      if (linkedin !== undefined) updateFields.linkedin = linkedin;
+      if (otherLinks !== undefined) updateFields.otherLinks = otherLinks;
+      // Validate categoriesOfInterest
+      if (categoriesOfInterest !== undefined) {
+         if (
+            !Array.isArray(categoriesOfInterest) ||
+            !categoriesOfInterest.every((cat) => CATEGORIES.includes(cat))
+         ) {
+            return res.status(400).json({
+               success: false,
+               message: "Invalid categories of interest",
+            });
+         }
+         updateFields.categoriesOfInterest = categoriesOfInterest;
+      }
+   } else if (req.user.type === "company") {
+      if (website !== undefined) updateFields.website = website;
+   }
+
+   // Filter out undefined values to prevent overwriting with null/undefined
+   const filteredUpdateFields = Object.fromEntries(
+      Object.entries(updateFields).filter(([, value]) => value !== undefined)
+   );
+
+   const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      filteredUpdateFields,
+      {
+         new: true, // Return the updated document
+         runValidators: true, // Run schema validators on update
+      }
+   ).select("-password"); // Exclude password from the response
+
+   if (!updatedUser) {
+      return res
+         .status(404)
+         .json({ success: false, message: "User not found" });
+   }
+
+   // Log Activity
+   await logActivity(
+      userId,
+      "user_profile_update",
+      `User ${updatedUser.name} updated their profile information.`,
+      "success",
+      userId
+   );
+
+   res.status(200).json({
+      success: true,
+      data: updatedUser,
    });
 });
 
@@ -120,108 +248,66 @@ const updateUser = catchError(async (req: Request, res: Response) => {
 });
 
 /**
- * @desc    Submit verification documents
+ * @desc    Submit verification request
  * @route   POST /api/users/verify
- * @access  Private (Authenticated User)
+ * @access  Private
  */
-const verifyUser = catchError(
-   async (req: Request, res: Response, next: NextFunction) => {
-      // req.user is already typed as IUser due to your global.d.ts
-      // However, it might only contain _id, role, type from the JWT payload.
-      // To access other fields like nationalId or taxIdCard, we need to fetch the full user.
-      if (!req.user || !req.user._id) {
-         return next(new APIError(401, "Not authorized"));
-      }
+const verifyUser = catchError(async (req: Request, res: Response) => {
+   console.log("--- Inside verifyUser handler ---");
+   console.log("req.body:", req.body); // Log the entire req.body
+   console.log("req.headers:", req.headers); // Log headers to check Content-Type
 
-      const { idNumber, documentUrls } = req.body;
-
-      if (
-         !idNumber ||
-         !documentUrls ||
-         !Array.isArray(documentUrls) ||
-         documentUrls.length === 0
-      ) {
-         return next(
-            new APIError(
-               400,
-               "ID Number and at least one document URL are required"
-            )
-         );
-      }
-
-      // --- FETCH THE FULL USER OBJECT FROM THE DATABASE ---
-      const authenticatedUser = await User.findById(req.user._id);
-
-      if (!authenticatedUser) {
-         return next(new APIError(404, "Authenticated user not found."));
-      }
-
-      const updateFields: any = {
-         verificationDocuments: documentUrls,
-         verificationStatus: "pending",
-      };
-
-      // Conditional logic for nationalId vs. taxIdCard based on the FULL user object
-      if (authenticatedUser.type === "company") {
-         updateFields.taxIdCard = idNumber;
-         // If the user was previously a candidate/challenger and now is a company, clear nationalId
-         if (authenticatedUser.nationalId) {
-            updateFields.nationalId = undefined; // Set to undefined to clear from DB
-         }
-      } else if (
-         authenticatedUser.type === "candidate" ||
-         authenticatedUser.type === "challenger"
-      ) {
-         updateFields.nationalId = idNumber;
-         // If the user was previously a company and now is candidate/challenger, clear taxIdCard
-         if (authenticatedUser.taxIdCard) {
-            updateFields.taxIdCard = undefined; // Set to undefined to clear from DB
-         }
-      } else {
-         // If user.type is not defined or is unexpected, we cannot proceed with specific ID
-         return next(
-            new APIError(
-               400,
-               "User type is required and must be 'candidate', 'challenger', or 'company' for verification submission."
-            )
-         );
-      }
-
-      const updatedUser = await User.findByIdAndUpdate(
-         authenticatedUser._id, // Use the ID from the fetched user
-         updateFields,
-         { new: true, runValidators: true }
-      );
-
-      if (!updatedUser) {
-         // This case should ideally not be hit if authenticatedUser was found
-         return next(new APIError(404, "User not found during update."));
-      }
-
-      // Log Activity
-      await logActivity(
-         authenticatedUser._id, // Use ID from fetched user
-         "user_verification_submit",
-         `User submitted identity verification documents`,
-         "success",
-         authenticatedUser._id
-      );
-
-      res.status(200).json({
-         success: true,
-         data: updatedUser,
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
       });
    }
-);
 
-// Add this to src/controllers/userController.ts
+   const { nationalId, documentUrl } = req.body;
+
+   if (!nationalId || !documentUrl) {
+      console.error(
+         "Validation failed: nationalId or documentUrl missing in req.body"
+      );
+      return res.status(400).json({
+         success: false,
+         message: "National ID and document URL are required",
+      });
+   }
+
+   const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+         nationalId,
+         verificationDocument: documentUrl,
+         verificationStatus: "pending",
+      },
+      { new: true, runValidators: true }
+   );
+
+   // Log Activity
+   await logActivity(
+      req.user._id,
+      "user_verification_submit",
+      `User submitted identity verification documents`,
+      "success",
+      req.user._id
+   );
+
+   res.status(200).json({
+      success: true,
+      data: updatedUser,
+   });
+});
 
 /**
- * @desc    Admin action to update a user's verification status
- * @route   PATCH /api/users/:id/verify-status
- * @access  Private (Admin only)
+ * @desc    Update verification status
+ * @route   POST /api/users/:id/verify
+ * @access  Private
  */
-export const updateVerificationStatus = catchError(
+
+const updateVerificationStatus = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       if (!req.user || req.user.role !== "admin") {
          return next(
@@ -332,4 +418,7 @@ export {
    updateUser,
    getAISkills,
    verifyUser,
+   updateVerificationStatus,
+   updateProfile,
+   getProfile,
 };
