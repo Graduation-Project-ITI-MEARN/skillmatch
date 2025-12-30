@@ -1,17 +1,19 @@
-import express from "express";
 import {
-   createChallenge,
-   getPublishedChallenges,
-   getMyChallenges,
-   getAllChallenges,
-   updateChallenge,
-   deleteChallenge,
-   getChallengeById,
+  createChallenge,
+  deleteChallenge,
+  getAllChallenges,
+  getChallengeById,
+  getMyChallenges,
+  getPublishedChallenges,
+  updateChallenge,
 } from "../controllers/challengeController";
+import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
+
 import auth from "../middlewares/authMiddleware";
+import express from "express";
+import { requireSubscription } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
-import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
 
 const router = express.Router();
 
@@ -34,28 +36,29 @@ router.get("/:id", getChallengeById);
 
 // Create a new challenge (Company & Challenger only)
 router.post(
-   "/",
-   auth,
-   validate(createChallengeDTO),
-   restrictTo(["company", "challenger"]),
-   createChallenge
+  "/",
+  auth,
+  restrictTo(["company", "challenger"]),
+  requireSubscription,
+  validate(createChallengeDTO),
+  createChallenge
 );
 
 // Update an existing challenge (Creator only)
 router.put(
-   "/:id",
-   auth,
-   validate(updateChallengeDTO),
-   restrictTo(["company", "challenger"]),
-   updateChallenge
+  "/:id",
+  auth,
+  restrictTo(["company", "challenger"]),
+  validate(updateChallengeDTO),
+  updateChallenge
 );
 
 // Delete a challenge (Creator only)
 router.delete(
-   "/:id",
-   auth,
-   restrictTo(["company", "challenger"]),
-   deleteChallenge
+  "/:id",
+  auth,
+  restrictTo(["company", "challenger"]),
+  deleteChallenge
 );
 
 // ==========================

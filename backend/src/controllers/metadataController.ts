@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-const CATEGORIES = [
+export const CATEGORIES = [
   "Development",
   "Design",
   "Marketing",
