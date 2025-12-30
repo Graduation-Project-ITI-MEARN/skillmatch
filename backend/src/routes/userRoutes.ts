@@ -5,6 +5,7 @@ import {
    getAllCompanies,
    getAllUsers,
    getUserById,
+   updateVerificationStatus,
    verifyUser, // Imported the new controller
 } from "../controllers/userController";
 
@@ -32,7 +33,12 @@ router.get("/profile/ai-skills", auth, getAISkills);
 // New Verification Route
 router.post("/verify", auth, verifyUser);
 
-router.put("/:id/verify", auth, restrictTo(["admin"]), verifyUser);
+router.put(
+   "/:id/verify",
+   auth,
+   restrictTo(["admin"]),
+   updateVerificationStatus
+);
 
 router.get("/:id", auth, restrictTo(["admin"]), getUserById);
 

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import Submission from "../models/Submission";
 import User from "../models/User";
@@ -6,6 +6,7 @@ import { calculateSkillLevel } from "../utils/skillLevel";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
+import APIError from "../utils/APIError";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -178,6 +179,53 @@ const verifyUser = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 
+const updateVerificationStatus = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      if (!req.user || req.user.role !== "admin") {
+         return next(
+            new APIError(403, "Not authorized to perform this action")
+         );
+      }
+
+      const { id } = req.params;
+      const { status } = req.body; // status: 'verified' | 'rejected'
+
+      if (!status || !["verified", "rejected"].includes(status)) {
+         return next(
+            new APIError(400, "Invalid verification status provided.")
+         );
+      }
+
+      const userToUpdate = await User.findById(id);
+
+      if (!userToUpdate) {
+         return next(new APIError(404, "User not found."));
+      }
+
+      userToUpdate.verificationStatus = status;
+      userToUpdate.isVerified = status === "verified"; // Set isVerified based on status
+
+      await userToUpdate.save();
+
+      // TODO: Send notification to the user (e.g., via email, in-app notification, socket.io)
+      await logActivity(
+         req.user._id, // Admin's ID
+         "user_verification_status_update",
+         `User ${userToUpdate._id}'s verification status changed to '${status}' by admin.`,
+         "success",
+         userToUpdate._id // Target user's ID
+      );
+
+      res.status(200).json({
+         success: true,
+         message: `User ${
+            userToUpdate.name || userToUpdate.email
+         } verification status updated to ${status}.`,
+         data: userToUpdate,
+      });
+   }
+);
+
 /**
  * @desc    Get AI-calculated skills for the current user
  * @route   GET /api/users/profile/ai-skills
@@ -242,4 +290,5 @@ export {
    updateUser,
    getAISkills,
    verifyUser,
+   updateVerificationStatus,
 };

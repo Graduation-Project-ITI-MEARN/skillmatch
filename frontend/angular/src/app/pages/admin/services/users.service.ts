@@ -88,6 +88,6 @@ export class UsersService {
     userId: string,
     statusData: { status: 'verified' | 'rejected'; reason?: string } // Added optional reason
   ): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/users/${userId}/verify-status`, statusData);
+    return this.http.put<any>(`${this.apiUrl}/users/${userId}/verify`, statusData);
   }
 }
