@@ -1,12 +1,12 @@
 import express from "express";
 import {
-  createChallenge,
-  getPublishedChallenges,
-  getMyChallenges,
-  getAllChallenges,
-  updateChallenge,
-  deleteChallenge,
-  getChallengeById,
+   createChallenge,
+   getPublishedChallenges,
+   getMyChallenges,
+   getAllChallenges,
+   updateChallenge,
+   deleteChallenge,
+   getChallengeById,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
@@ -22,15 +22,15 @@ const router = express.Router();
 // Get all published challenges (Feed)
 router.get("/", getPublishedChallenges);
 
-// Get challenge details by ID
-router.get("/:id", getChallengeById);
-
 // ==========================
 // PROTECTED ROUTES (Authenticated Users)
 // ==========================
 
 // Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
+
+// Get challenge details by ID
+router.get("/:id", getChallengeById);
 
 // Create a new challenge (Company & Challenger only)
 router.post(
@@ -51,7 +51,12 @@ router.put(
 );
 
 // Delete a challenge (Creator only)
-router.delete("/:id", auth, restrictTo(["company", "challenger"]), deleteChallenge);
+router.delete(
+   "/:id",
+   auth,
+   restrictTo(["company", "challenger"]),
+   deleteChallenge
+);
 
 // ==========================
 // ADMIN ROUTES

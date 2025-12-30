@@ -1,4 +1,6 @@
+// src/models/Challenge.ts (Updated)
 import mongoose, { Document, Schema } from "mongoose";
+import { AIModel, PricingTier } from "../types/AIModels";
 
 export interface IChallenge extends Document {
    title: string;
@@ -14,6 +16,15 @@ export interface IChallenge extends Document {
    salary?: number;
    additionalInfo?: string;
    tags?: string[];
+
+   // NEW: AI Evaluation Configuration
+   aiConfig: {
+      pricingTier: PricingTier;
+      selectedModel?: AIModel; // If custom tier
+      autoEvaluate: boolean; // Auto-evaluate on submission
+      requireVideoTranscript: boolean;
+   };
+
    createdAt: Date;
    updatedAt: Date;
 }
@@ -54,6 +65,28 @@ const ChallengeSchema: Schema = new Schema(
       additionalInfo: { type: String },
       tags: [{ type: String }],
       deadline: { type: Date, required: true },
+
+      // AI Configuration
+      aiConfig: {
+         pricingTier: {
+            type: String,
+            enum: Object.values(PricingTier),
+            default: PricingTier.BALANCED,
+            required: true,
+         },
+         selectedModel: {
+            type: String,
+            enum: Object.values(AIModel),
+         },
+         autoEvaluate: {
+            type: Boolean,
+            default: true,
+         },
+         requireVideoTranscript: {
+            type: Boolean,
+            default: true,
+         },
+      },
    },
    {
       timestamps: true,

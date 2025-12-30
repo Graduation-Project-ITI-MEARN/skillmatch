@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-
 import Submission from "../models/Submission";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import { calculateSkillLevel } from "../utils/skillLevel";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
 import APIError from "../utils/APIError";
+import { CATEGORIES } from "./metadataController";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -65,18 +65,146 @@ const getAllChallengers = catchError(async (req: Request, res: Response) => {
 /**
  * @desc    Get single user by ID
  * @route   GET /api/users/:id
- * @access  Private
+ * @access  Private (Admin or Self)
  */
-const getUserById = catchError(async (req: Request, res: Response) => {
-   const user = await User.findById(req.params.id);
+const getUserById = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const requestedId = req.params.id;
+      // req.user is populated by the auth middleware
+      const authenticatedUser = req.user; // Contains id and role
 
-   if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      if (
+         authenticatedUser &&
+         authenticatedUser._id.toString() === requestedId
+      ) {
+         // User is requesting their own profile
+         const user = await User.findById(requestedId).select("-password"); // Exclude sensitive info
+         if (!user) {
+            return next(new APIError(404, "User not found"));
+         }
+
+         res.status(200).json({
+            success: true,
+            data: user,
+         });
+      }
+
+      const user = await User.findById(requestedId).select("-password"); // Exclude sensitive info
+      if (!user) {
+         return next(new APIError(404, "User not found"));
+      }
+
+      res.status(200).json({
+         success: true,
+         data: user,
+      });
    }
+);
+
+/**
+ * @desc    get user profile information
+ * @route   GET /api/users/profile
+ * @access  Private (Auth required)
+ */
+
+const getProfile = catchError(async (req: Request, res: Response) => {
+   // Ensure req.user is populated by your auth middleware
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
+      });
+   }
+
+   const user = await User.findById(req.user._id).select("-password");
 
    res.status(200).json({
       success: true,
       data: user,
+   });
+});
+
+/**
+ * @desc    Update user profile information
+ * @route   PATCH /api/users/profile
+ * @access  Private (Auth required)
+ */
+const updateProfile = catchError(async (req: Request, res: Response) => {
+   // Ensure req.user is populated by your auth middleware
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
+      });
+   }
+
+   const userId = req.user._id;
+   const {
+      name,
+      city,
+      bio,
+      github,
+      linkedin,
+      otherLinks, // Array of { name, url }
+      categoriesOfInterest, // Array of strings
+      website, // For companies
+   } = req.body;
+
+   const updateFields: Partial<IUser> = { name, city, bio };
+
+   if (req.user.type === "candidate" || req.user.type === "challenger") {
+      if (github !== undefined) updateFields.github = github;
+      if (linkedin !== undefined) updateFields.linkedin = linkedin;
+      if (otherLinks !== undefined) updateFields.otherLinks = otherLinks;
+      // Validate categoriesOfInterest
+      if (categoriesOfInterest !== undefined) {
+         if (
+            !Array.isArray(categoriesOfInterest) ||
+            !categoriesOfInterest.every((cat) => CATEGORIES.includes(cat))
+         ) {
+            return res.status(400).json({
+               success: false,
+               message: "Invalid categories of interest",
+            });
+         }
+         updateFields.categoriesOfInterest = categoriesOfInterest;
+      }
+   } else if (req.user.type === "company") {
+      if (website !== undefined) updateFields.website = website;
+   }
+
+   // Filter out undefined values to prevent overwriting with null/undefined
+   const filteredUpdateFields = Object.fromEntries(
+      Object.entries(updateFields).filter(([, value]) => value !== undefined)
+   );
+
+   const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      filteredUpdateFields,
+      {
+         new: true, // Return the updated document
+         runValidators: true, // Run schema validators on update
+      }
+   ).select("-password"); // Exclude password from the response
+
+   if (!updatedUser) {
+      return res
+         .status(404)
+         .json({ success: false, message: "User not found" });
+   }
+
+   // Log Activity
+   await logActivity(
+      userId,
+      "user_profile_update",
+      `User ${updatedUser.name} updated their profile information.`,
+      "success",
+      userId
+   );
+
+   res.status(200).json({
+      success: true,
+      data: updatedUser,
    });
 });
 
@@ -291,4 +419,6 @@ export {
    getAISkills,
    verifyUser,
    updateVerificationStatus,
+   updateProfile,
+   getProfile,
 };
