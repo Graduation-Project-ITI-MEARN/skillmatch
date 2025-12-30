@@ -12,6 +12,7 @@ import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
 import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
+import { requireVerification } from "../middlewares/requireVerification";
 
 const router = express.Router();
 
@@ -38,6 +39,7 @@ router.post(
    auth,
    validate(createChallengeDTO),
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
    createChallenge
 );
 
@@ -47,6 +49,7 @@ router.put(
    auth,
    validate(updateChallengeDTO),
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
    updateChallenge
 );
 
@@ -55,6 +58,7 @@ router.delete(
    "/:id",
    auth,
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
    deleteChallenge
 );
 

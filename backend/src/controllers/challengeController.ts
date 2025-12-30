@@ -4,6 +4,7 @@ import Submission from "../models/Submission";
 import { isValidCategory, areValidSkills } from "./metadataController";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
+import APIError from "../utils/APIError";
 
 /**
  * @desc    Create a new challenge
@@ -45,8 +46,6 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
          });
       }
    }
-
-
 
    const challenge = await Challenge.create({
       ...req.body,
@@ -90,7 +89,7 @@ const getPublishedChallenges = catchError(
 
       const challenges = await Challenge.find(filter).populate(
          "creatorId",
-         "name type"
+         "name type city"
       );
 
       res.status(200).json({
@@ -315,17 +314,14 @@ const deleteChallenge = catchError(async (req: Request, res: Response) => {
    });
 });
 
-
-   const getChallengeById = catchError(async (req: Request, res: Response) => {
+const getChallengeById = catchError(async (req: Request, res: Response) => {
    const { id } = req.params;
 
    const challenge = await Challenge.findById(id);
-   if (!challenge) return res.status(404).json({ status: "fail", message: "Challenge not found" });
+   if (!challenge) throw new APIError(404, `Challenge with id ${id} not found`);
 
    res.status(200).json({ status: "success", data: challenge });
 });
-
-
 
 export {
    createChallenge,
@@ -334,6 +330,5 @@ export {
    getAllChallenges,
    updateChallenge,
    deleteChallenge,
-   getChallengeById
-   
+   getChallengeById,
 };

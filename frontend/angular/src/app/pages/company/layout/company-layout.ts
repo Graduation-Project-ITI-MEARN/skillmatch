@@ -4,7 +4,15 @@ import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { LucideAngularModule, Briefcase, Users, FileText, BarChart3, Eye } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Briefcase,
+  Users,
+  FileText,
+  BarChart3,
+  Eye,
+  CircleUserRound,
+} from 'lucide-angular';
 
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
@@ -58,6 +66,11 @@ export class CompanyShellComponent implements OnInit {
     },
     { labelKey: 'DASHBOARD.TABS.TALENT', route: '/dashboard/company/talent', icon: Users },
     { labelKey: 'DASHBOARD.TABS.ANALYTICS', route: '/dashboard/company/analytics', icon: Eye },
+    {
+      labelKey: 'DASHBOARD.TABS.PROFILE',
+      route: '/dashboard/company/profile',
+      icon: CircleUserRound,
+    },
   ];
 
   stats: any[] = [];
@@ -81,7 +94,7 @@ export class CompanyShellComponent implements OnInit {
     try {
       const user = this.authService.currentUser();
       console.log(user);
-      this.name = user?.companyName || user?.name || 'Company';
+      this.name = user?.name || 'Company';
       this.initials = this.generateInitials(this.name);
     } catch {
       this.name = 'Company';

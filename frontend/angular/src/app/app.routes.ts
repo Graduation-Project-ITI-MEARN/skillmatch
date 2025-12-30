@@ -86,10 +86,12 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/candidate/portfolio/portfolio').then((m) => m.PortfolioComponent),
           },
-             {
+          {
             path: 'mysubmissions',
             loadComponent: () =>
-              import('./pages/candidate/my-submissions/my-submissions').then((m) => m.MySubmissions),
+              import('./pages/candidate/my-submissions/my-submissions').then(
+                (m) => m.MySubmissions
+              ),
           },
           {
             path: 'coach',
@@ -99,6 +101,11 @@ export const routes: Routes = [
             path: 'leaderboard',
             loadComponent: () =>
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('./pages/candidate/profile/profile').then((m) => m.CandidateProfile),
           },
           {
             path: 'challenge/:id',
@@ -146,6 +153,11 @@ export const routes: Routes = [
             path: 'analytics',
             loadComponent: () =>
               import('./pages/company/analytics/analytics').then((m) => m.Analytics),
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('./pages/company/profile/profile').then((m) => m.CompanyProfile),
           },
         ],
       },

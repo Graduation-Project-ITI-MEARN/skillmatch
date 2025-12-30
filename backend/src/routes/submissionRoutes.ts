@@ -15,6 +15,7 @@ import { createSubmissionDTO } from "../DTO/submission";
 import express from "express";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
+import { requireVerification } from "../middlewares/requireVerification";
 
 const router = express.Router();
 
@@ -37,7 +38,13 @@ router.get(
 );
 
 // --- USER start challenge ---
-router.post("/start", auth, restrictTo(["candidate"]), startChallenge);
+router.post(
+   "/start",
+   auth,
+   restrictTo(["candidate"]),
+   requireVerification(["candidate"]),
+   startChallenge
+);
 
 // --- USER create submission ---
 router.post(
@@ -45,6 +52,7 @@ router.post(
    auth,
    validate(createSubmissionDTO),
    restrictTo(["candidate"]),
+   requireVerification(["candidate"]),
    createSubmission
 );
 
@@ -65,6 +73,12 @@ router.get(
 // --- Get single submission ---
 router.get("/:id", auth, getSubmissionById);
 
-router.put("/:id/status", auth, restrictTo(["admin"]), updateSubmissionStatus);
+router.put(
+   "/:id/status",
+   auth,
+   restrictTo(["admin"]),
+   requireVerification(["candidate"]),
+   updateSubmissionStatus
+);
 
 export default router;

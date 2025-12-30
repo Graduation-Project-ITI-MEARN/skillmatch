@@ -1,4 +1,4 @@
-<div class="talent-pool-container p-4 md:p-8 bg-[#fcfcfd] min-h-screen">
+<div class="talent-pool-container bg-[#fcfcfd] min-h-screen">
   <div class="mb-8">
     <h2 class="text-2xl font-semibold text-[#101828] mb-2">
       {{ 'DASHBOARD.TALENT.TITLE' | translate }}
@@ -110,7 +110,7 @@
         <div class="flex items-center gap-4">
           <div
             *ngIf="!person.profilePicture"
-            class="w-14 h-14 bg-linear-to-br from-[#a6c0fe] to-[#f68084d6] rounded-full flex items-center justify-center text-white text-lg font-semibold shrink-0"
+            class="w-14 h-14 bg-primary-gradient rounded-full flex items-center justify-center text-white text-lg font-semibold shrink-0"
           >
             {{ getCandidateInitials(person.name) }}
           </div>
@@ -118,11 +118,11 @@
             *ngIf="person.profilePicture"
             [src]="person.profilePicture"
             [alt]="person.name"
-            class="w-14 h-14 rounded-full object-cover flex-shrink-0"
+            class="w-14 h-14 rounded-full object-cover shrink-0"
           />
 
           <div>
-            <h3 class="text-lg font-semibold text-[#101828] break-words">{{ person.name }}</h3>
+            <h3 class="text-lg font-semibold text-[#101828] wrap-break-word">{{ person.name }}</h3>
             <p class="text-gray-600 text-sm break-all">{{ person.role || person.email }}</p>
             <p class="text-gray-500 text-xs mt-1">
               {{ person.challengesCompleted || 0 }}
@@ -131,7 +131,7 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 flex-shrink-0">
+        <div class="flex items-center gap-2 shrink-0">
           <lucide-icon
             [img]="icons.Star"
             class="w-5 h-5 text-yellow-500 fill-yellow-500"

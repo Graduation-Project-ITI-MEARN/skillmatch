@@ -1,4 +1,4 @@
-<div class="overview-container p-4 md:p-8 bg-[#fcfcfd] min-h-screen">
+<div class="overview-container bg-[#fcfcfd] min-h-screen">
   <!-- Header -->
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
     <h1 class="text-2xl font-semibold text-[#101828]">
@@ -132,7 +132,7 @@
 
       <!-- Create New Button -->
       <button
-       routerLink="/dashboard/company/create"
+        routerLink="/dashboard/company/create"
         class="w-full py-5 border-2 border-dashed border-gray-200 rounded-3xl text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-all font-medium flex items-center justify-center gap-2"
       >
         <lucide-icon [img]="icons.Plus" class="w-5 h-5"></lucide-icon>
@@ -250,7 +250,9 @@
         </div>
 
         <div class="filter-section">
-          <h4 class="filter-section-title">{{ 'DASHBOARD.CO-OVERVIEW.STATUS_FILTER' | translate }}</h4>
+          <h4 class="filter-section-title">
+            {{ 'DASHBOARD.CO-OVERVIEW.STATUS_FILTER' | translate }}
+          </h4>
           <div class="filter-options">
             @for (status of filterOptions.statuses; track status.value) {
             <label class="filter-option">
@@ -268,7 +270,9 @@
         </div>
 
         <div class="filter-section">
-          <h4 class="filter-section-title">{{ 'DASHBOARD.CO-OVERVIEW.BUDGET_FILTER' | translate }}</h4>
+          <h4 class="filter-section-title">
+            {{ 'DASHBOARD.CO-OVERVIEW.BUDGET_FILTER' | translate }}
+          </h4>
           <div class="filter-options">
             @for (budget of filterOptions.budgets; track budget.value) {
             <label class="filter-option">

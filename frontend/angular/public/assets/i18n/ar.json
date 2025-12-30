@@ -36,7 +36,8 @@
       "SETTINGS": "الإعدادات",
       "NEW_BOUNTY": "إنشاء مكافأة",
       "COMPLETED": "مكتمل",
-      "CHALLENGES": "التحديات"
+      "CHALLENGES": "التحديات",
+      "PROFILE": "الملف الشخصي"
     },
     "STATS": {
       "COMPLETED": "التحديات المكتملة",
@@ -731,5 +732,53 @@
   "AI": {
     "ANALYZING": "جاري تحليل ملفك الشخصي..."
   },
-  "NO_DATA": "لا توجد بيانات متاحة حالياً."
+  "NO_DATA": "لا توجد بيانات متاحة حالياً.",
+  "COMMON": {
+    "ERROR_TITLE": "خطأ!"
+  },
+  "PROFILE": {
+    "UPDATE": {
+      "SUCCESS_TITLE": "تم تحديث الملف الشخصي!",
+      "SUCCESS_MESSAGE": "تم تحديث ملفك الشخصي بنجاح.",
+      "ERROR_MESSAGE": "حدث خطأ أثناء تحديث ملفك الشخصي. يرجى المحاولة مرة أخرى.",
+      "LOAD_ERROR": "فشل تحميل بيانات الملف الشخصي.",
+      "LOAD_ERROR_NOT_AUTHENTICATED": "أنت غير مصادق. يرجى تسجيل الدخول.",
+      "LOAD_ERROR_API": "حدث خطأ في واجهة برمجة التطبيقات أثناء تحميل ملفك الشخصي."
+    },
+    "FORM": {
+      "NAME": "الاسم الكامل",
+      "NAME_PLACEHOLDER": "أدخل اسمك الكامل",
+      "NAME_ERROR": "الاسم مطلوب.",
+      "EMAIL": "عنوان البريد الإلكتروني",
+      "BIO": "السيرة الذاتية",
+      "BIO_PLACEHOLDER": "أخبرنا قليلاً عن نفسك...",
+      "CITY": "المدينة",
+      "CITY_PLACEHOLDER": "أدخل مدينتك",
+      "GITHUB": "ملف GitHub الشخصي",
+      "GITHUB_PLACEHOLDER": "مثال: https://github.com/اسم_المستخدم_الخاص_بك",
+      "LINKEDIN": "ملف LinkedIn الشخصي",
+      "LINKEDIN_PLACEHOLDER": "مثال: https://linkedin.com/in/اسم_المستخدم_الخاص_بك",
+      "OTHER_LINKS": "روابط أخرى",
+      "NO_OTHER_LINKS": "لم تتم إضافة روابط أخرى بعد.",
+      "LINK_NAME": "اسم الرابط",
+      "LINK_NAME_PLACEHOLDER": "مثال: موقع شخصي",
+      "LINK_URL": "الرابط",
+      "LINK_URL_PLACEHOLDER": "مثال: https://موقعك.com",
+      "ADD_OTHER_LINK": "أضف رابطًا آخر",
+      "SKILLS": "المهارات",
+      "SKILLS_SELECTED": "مهارات مختارة",
+      "SELECT_SKILLS": "اختر المهارات",
+      "SEARCH_SKILLS": "ابحث عن المهارات...",
+      "NO_SKILLS_FOUND": "لم يتم العثور على مهارات.",
+      "CATEGORIES_OF_INTEREST": "الفئات ذات الاهتمام",
+      "CATEGORIES_SELECTED": "فئات مختارة",
+      "SELECT_CATEGORIES": "اختر الفئات",
+      "WEBSITE": "موقع الشركة",
+      "WEBSITE_PLACEHOLDER": "مثال: https://شركتك.com",
+      "WEBSITE_ERROR": "الرجاء إدخال عنوان URL صالح لموقع الويب الخاص بك.",
+      "UPDATE_PROFILE": "تحديث الملف الشخصي",
+      "UPDATING": "جاري التحديث...",
+      "FORM_INVALID_ERROR": "الرجاء تصحيح الأخطاء في النموذج."
+    }
+  }
 }

@@ -36,7 +36,8 @@
       "SETTINGS": "Settings",
       "NEW_BOUNTY": "Create Bounty",
       "COMPLETED": "Completed",
-      "CHALLENGES": "Challenges"
+      "CHALLENGES": "Challenges",
+      "PROFILE": "Profile"
     },
     "STATS": {
       "COMPLETED": "Challenges Completed",
@@ -727,7 +728,8 @@
     "ANALYZING": "Analyzing your profile..."
   },
   "COMMON": {
-    "LOADING": "Loading..."
+    "LOADING": "Loading...",
+    "ERROR_TITLE": "Error!"
   },
   "CHALLENGER": {
     "DASHBOARD": {
@@ -911,5 +913,50 @@
       "RESET_ALL": "Reset All Filters"
     }
   },
-  "NO_DATA": "No data available currently."
+  "NO_DATA": "No data available currently.",
+  "PROFILE": {
+    "UPDATE": {
+      "SUCCESS_TITLE": "Profile Updated!",
+      "SUCCESS_MESSAGE": "Your profile has been successfully updated.",
+      "ERROR_MESSAGE": "There was an error updating your profile. Please try again.",
+      "LOAD_ERROR": "Failed to load profile data.",
+      "LOAD_ERROR_NOT_AUTHENTICATED": "You are not authenticated. Please log in.",
+      "LOAD_ERROR_API": "An API error occurred while loading your profile."
+    },
+    "FORM": {
+      "NAME": "Full Name",
+      "NAME_PLACEHOLDER": "Enter your full name",
+      "NAME_ERROR": "Name is required.",
+      "EMAIL": "Email Address",
+      "BIO": "Bio",
+      "BIO_PLACEHOLDER": "Tell us a bit about yourself...",
+      "CITY": "City",
+      "CITY_PLACEHOLDER": "Enter your city",
+      "GITHUB": "GitHub Profile",
+      "GITHUB_PLACEHOLDER": "e.g., https://github.com/yourusername",
+      "LINKEDIN": "LinkedIn Profile",
+      "LINKEDIN_PLACEHOLDER": "e.g., https://linkedin.com/in/yourusername",
+      "OTHER_LINKS": "Other Links",
+      "NO_OTHER_LINKS": "No other links added yet.",
+      "LINK_NAME": "Link Name",
+      "LINK_NAME_PLACEHOLDER": "e.g., Personal Website",
+      "LINK_URL": "URL",
+      "LINK_URL_PLACEHOLDER": "e.g., https://yourwebsite.com",
+      "ADD_OTHER_LINK": "Add Another Link",
+      "SKILLS": "Skills",
+      "SKILLS_SELECTED": "skills selected",
+      "SELECT_SKILLS": "Select Skills",
+      "SEARCH_SKILLS": "Search skills...",
+      "NO_SKILLS_FOUND": "No skills found.",
+      "CATEGORIES_OF_INTEREST": "Categories of Interest",
+      "CATEGORIES_SELECTED": "categories selected",
+      "SELECT_CATEGORIES": "Select Categories",
+      "WEBSITE": "Company Website",
+      "WEBSITE_PLACEHOLDER": "e.g., https://yourcompany.com",
+      "WEBSITE_ERROR": "Please enter a valid URL for your website.",
+      "UPDATE_PROFILE": "Update Profile",
+      "UPDATING": "Updating...",
+      "FORM_INVALID_ERROR": "Please correct the errors in the form."
+    }
+  }
 }

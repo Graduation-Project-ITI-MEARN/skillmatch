@@ -111,16 +111,29 @@ const login = catchError(async (req: Request, res: Response) => {
 });
 
 /**
+ * @desc    Log out
+ * @route   GET /api/auth/logout
+ * @access  Private
+ */
+
+const logout = (req: Request, res: Response) => {
+   res.cookie("token", "none", {
+      expires: new Date(Date.now() + 10 * 1000), // 10 seconds
+      httpOnly: true,
+   });
+   res.status(200).json({ success: true, data: {} });
+};
+
+/**
  * @desc    Get current logged in user
  * @route   GET /api/auth/me
  * @access  Private
  */
 const getMe = catchError(async (req: Request, res: Response) => {
-   console.log(req.user);
    res.status(200).json({
       success: true,
       data: req.user,
    });
 });
 
-export { register, login, getMe };
+export { register, login, getMe, logout };
