@@ -93,6 +93,7 @@
         </div>
 
         <!-- Action Buttons -->
+        @if (user.verificationDocument) {
         <div class="flex gap-2 mt-4 lg:mt-0">
           <button
             (click)="onView(user)"
@@ -124,6 +125,7 @@
           </button>
           }
         </div>
+        }
       </div>
     </ui-card>
     } } }
