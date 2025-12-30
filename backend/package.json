@@ -27,6 +27,8 @@
       "typescript": "^5.9.3"
    },
    "dependencies": {
+      "@google/generative-ai": "^0.24.1",
+      "assemblyai": "^4.22.1",
       "axios": "^1.13.2",
       "bcryptjs": "^3.0.3",
       "cloudinary": "^2.8.0",
@@ -35,11 +37,13 @@
       "dotenv": "^17.2.3",
       "express": "^5.2.1",
       "express-rate-limit": "^8.2.1",
+      "groq-sdk": "^0.37.0",
       "helmet": "^8.1.0",
       "jsonwebtoken": "^9.0.2",
       "mongoose": "^9.0.0",
       "multer": "^2.0.2",
       "multer-storage-cloudinary": "^4.0.0",
+      "openai": "^6.15.0",
       "socket.io": "^4.8.1",
       "zod": "^4.1.13"
    }
