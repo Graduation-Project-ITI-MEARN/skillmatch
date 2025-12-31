@@ -17,8 +17,7 @@ export default function ChallengesPage() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`);
         const data = await res.json();
         
-        // --- التعديل الجوهري هنا ---
-        // نتحقق إذا كان الـ API يرجع المصفوفة داخل حقل معين (مثل data أو challenges)
+        
         if (Array.isArray(data)) {
           setChallenges(data);
         } else if (data && Array.isArray(data.challenges)) {
@@ -26,7 +25,7 @@ export default function ChallengesPage() {
         } else if (data && Array.isArray(data.data)) {
           setChallenges(data.data);
         } else {
-          setChallenges([]); // لو مفيش مصفوفة خالص، نرجع مصفوفة فارغة بدل ما يضرب
+          setChallenges([]); 
         }
       } catch (error) {
         console.error("Fetch error:", error);

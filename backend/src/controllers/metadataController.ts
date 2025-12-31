@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
-<<<<<<< HEAD
+
 export const CATEGORIES = [
-=======
-const CATEGORIES = [
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+
   "Development",
   "Design",
   "Marketing",

@@ -107,7 +107,7 @@ export default function ChallengeDetailPage() {
   );
 }
 
-// تعديل الـ Props لقبول string أو number
+
 function SidebarInfo({ label, value }: { label: string; value: string | number | undefined }) {
   return (
     <div>
