@@ -2,8 +2,6 @@ import auth from "../middlewares/authMiddleware";
 import express from "express";
 import { uploadDocument } from "../middlewares/upload";
 import { uploadFile } from "../controllers/uploadController";
-import validate from "../middlewares/validate";
-import { videoLinkSchema } from "../DTO/VideoLinkDTO";
 
 const router = express.Router();
 

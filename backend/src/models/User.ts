@@ -1,4 +1,8 @@
+// models/User.ts
+
 import mongoose, { Document, Schema } from "mongoose";
+
+import { CATEGORIES } from "../controllers/metadataController";
 import bcrypt from "bcryptjs";
 
 // User Interface Definition
@@ -8,13 +12,29 @@ export interface IUser extends Document {
   name?: string;
   role: "user" | "admin";
   type?: "candidate" | "company" | "challenger";
-  skills?: string[];
+  skills?: string[]; // Assuming skills are related to categories
   totalScore?: number;
   badges?: string[];
   isVerified?: boolean;
   verificationStatus?: "none" | "pending" | "verified" | "rejected";
   nationalId?: string;
   verificationDocument?: string;
+  subscriptionStatus: "free" | "active" | "expired";
+  subscriptionExpiry: Date | null;
+  walletBalance: number;
+
+  // --- NEW FIELDS FOR CANDIDATE PROFILE ---
+  city?: string; // For both candidate and company
+  bio?: string; // For both candidate and company
+  github?: string;
+  linkedin?: string;
+  // Add an array for other social links, allowing flexibility
+  otherLinks?: { name: string; url: string }[];
+  categoriesOfInterest?: (typeof CATEGORIES)[number][]; // Array of categories
+
+  // --- NEW FIELDS FOR COMPANY PROFILE ---
+  website?: string;
+  // bio and city are already covered above
 }
 
 // Mongoose Schema
@@ -29,7 +49,6 @@ const UserSchema: Schema = new Schema(
     totalScore: { type: Number, default: 0 },
     badges: [{ type: String }],
     isVerified: { type: Boolean, default: false },
-    // Added for Verification Task
     verificationStatus: {
       type: String,
       enum: ["none", "pending", "verified", "rejected"],
@@ -37,9 +56,39 @@ const UserSchema: Schema = new Schema(
     },
     nationalId: { type: String },
     verificationDocument: { type: String },
+
+    // --- NEW SCHEMA FIELDS ---
+    city: { type: String },
+    bio: { type: String },
+    github: { type: String },
+    linkedin: { type: String },
+    otherLinks: [
+      {
+        name: { type: String, required: true },
+        url: { type: String, required: true },
+      },
+    ],
+    categoriesOfInterest: [{ type: String, enum: CATEGORIES }], // Array of categories
+
+    website: { type: String }, // For companies
+    subscriptionStatus: {
+      type: String,
+      enum: ["free", "active", "expired"],
+      default: "free",
+    },
+
+    subscriptionExpiry: {
+      type: Date,
+      default: null,
+    },
+
+    walletBalance: {
+      type: Number,
+      default: 0,
+    },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields automatically
+    timestamps: true,
   }
 );
 

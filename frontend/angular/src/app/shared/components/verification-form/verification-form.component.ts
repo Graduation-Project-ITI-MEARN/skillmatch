@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UploadService } from 'src/core/services/upload.service';
-import { UserService } from 'src/core/services/user.service';
-import { AuthService } from 'src/core/services/auth';
 import { ToastrService } from 'ngx-toastr';
+import { UploadService } from '@/core/services/upload.service';
+import { UserService } from '@/core/services/user.service';
+import { AuthService } from '@/core/services/auth';
 
 @Component({
   selector: 'app-verification-form',

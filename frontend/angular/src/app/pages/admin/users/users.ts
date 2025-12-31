@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LucideAngularModule,
@@ -9,43 +9,68 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
 } from 'lucide-angular';
 import { UsersService, User } from '../services/users.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiCard } from '@shared/components/ui/ui-card/ui-card.component';
+import { ZardDialogService } from 'src/app/shared/components/zard-ui/dialog/dialog.service'; // Adjust path, import ZardDialogRef
+import {
+  ZardDialogModule,
+  ZardDialogOptions,
+} from 'src/app/shared/components/zard-ui/dialog/dialog.component'; // Adjust path
+import { ZardIcon } from 'src/app/shared/components/zard-ui/icon/icons'; // Adjust path to ZardIcon type
+import { ToastrService } from 'ngx-toastr';
+import {
+  UserVerificationDetails,
+  ViewVerificationDetailsComponent,
+} from './modals/view-verification.component';
+import { VerifyConfirmationComponent } from './modals/verify-confirmation.component';
+import { ZardDialogRef } from '@shared/components/zard-ui/dialog/dialog-ref';
+import { RejectConfirmationComponent } from './modals/reject-verification.component';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, TranslateModule, UiCard],
+  imports: [CommonModule, LucideAngularModule, TranslateModule, UiCard, ZardDialogModule],
   templateUrl: './users.html',
 })
 export class Users implements OnInit {
   private userService = inject(UsersService);
+  private dialogService = inject(ZardDialogService);
+  private vcr = inject(ViewContainerRef);
+  private toastService = inject(ToastrService);
 
   // Data
-  allUsers = signal<User[]>([]); // Stores ALL fetched users
+  allUsers = signal<User[]>([]);
   loading = signal(false);
 
   // Pagination State
   currentPage = signal(1);
-  itemsPerPage = 6; // Number of cards per page
+  itemsPerPage = 6;
 
-  // Computed: Get only the users for the current page
   paginatedUsers = computed(() => {
     const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.allUsers().slice(startIndex, endIndex);
   });
 
-  // Computed: Total pages
   totalPages = computed(() => Math.ceil(this.allUsers().length / this.itemsPerPage));
 
   // Tabs
   currentTab = signal<string>('All Users');
   tabs = ['All Users', 'Candidates', 'Companies', 'Challengers'];
 
-  icons = { Eye, CheckCircle, XCircle, CreditCard, FileText, ChevronLeft, ChevronRight };
+  icons = {
+    Eye,
+    CheckCircle,
+    XCircle,
+    CreditCard,
+    FileText,
+    ChevronLeft,
+    ChevronRight,
+    ExternalLink,
+  };
 
   ngOnInit() {
     this.loadUsers();
@@ -53,15 +78,10 @@ export class Users implements OnInit {
 
   loadUsers() {
     this.loading.set(true);
-
-    // 1. Fetch a large number to handle pagination on the frontend
     const params: any = { sort: '-createdAt', limit: 1000 };
-
-    // 2. Filter Logic
     const tab = this.currentTab();
 
     if (tab === 'All Users') {
-      // EXCLUDE ADMINS: Only fetch role='user'
       params.role = 'user';
     } else if (tab === 'Candidates') {
       params.role = 'user';
@@ -76,21 +96,23 @@ export class Users implements OnInit {
 
     this.userService.getAllUsers(params).subscribe({
       next: (response) => {
-        // Store all data in the signal
         this.allUsers.set(response.data || []);
-        this.currentPage.set(1); // Reset to page 1 on new fetch
+        this.currentPage.set(1);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: (err) => {
+        this.loading.set(false);
+        this.toastService.error('Error', err.message || 'Failed to load users.');
+      },
     });
+
+    console.log(this.allUsers());
   }
 
   setTab(tab: string) {
     this.currentTab.set(tab);
     this.loadUsers();
   }
-
-  // --- Pagination Actions ---
 
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
@@ -101,29 +123,105 @@ export class Users implements OnInit {
 
   prevPage() {
     if (this.currentPage() > 1) {
-      this.currentPage.update((p) => p - 1);
+      this.currentPage.update((p) => p + -1); // Corrected from p-1 to p + -1 for type consistency
       this.scrollToTop();
     }
   }
 
   scrollToTop() {
-    // Optional: smooth scroll to top of list when changing pages
     const list = document.getElementById('user-list-top');
     if (list) list.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // --- User Actions ---
+  onView(user: User) {
+    const dialogData: UserVerificationDetails = {
+      userName: user.name || user.email,
+      userType: user.type,
+      nationalId: user.nationalId,
+      taxIdCard: user.taxIdCard,
+      verificationDocument: user.verificationDocument || '',
+    };
+
+    console.log(dialogData);
+
+    this.dialogService.create<ViewVerificationDetailsComponent, UserVerificationDetails>({
+      zContent: ViewVerificationDetailsComponent,
+      zTitle:
+        user.type === 'company'
+          ? 'DASHBOARD.ADMIN.USERS.VIEW_TAX_DETAILS'
+          : 'DASHBOARD.ADMIN.USERS.VIEW_ID_DETAILS', // Pass translated key
+      zData: dialogData,
+      zHideFooter: true,
+      zViewContainerRef: this.vcr,
+    });
+  }
 
   onVerify(user: User) {
-    console.log('Verifying:', user._id);
+    const dialogRef: ZardDialogRef<VerifyConfirmationComponent, any, { userName: string }> =
+      this.dialogService.create<VerifyConfirmationComponent, { userName: string }>({
+        zContent: VerifyConfirmationComponent,
+        zTitle: 'DASHBOARD.ADMIN.USERS.VERIFY_USER_TITLE', // Pass translated key
+        zData: { userName: user.name || user.email },
+        zOkText: 'DASHBOARD.ADMIN.USERS.VERIFY_BUTTON',
+        zOkIcon: 'checkCircle' as ZardIcon, // Cast as ZardIcon
+        zOkDestructive: false,
+        zViewContainerRef: this.vcr,
+        zOnOk: () => {
+          this.userService
+            .updateUserVerificationStatus(user._id, { status: 'verified' })
+            .subscribe({
+              next: () => {
+                this.toastService.success('Success', `${user.name} has been verified.`);
+                this.loadUsers();
+                dialogRef.close();
+              },
+              error: (err) => {
+                this.toastService.error('Error', err.message || 'Failed to verify user.');
+                dialogRef.close();
+              },
+            });
+          return false;
+        },
+        zOnCancel: (): void => {
+          dialogRef.close();
+        },
+      });
   }
 
   onReject(user: User) {
-    console.log('Rejecting:', user._id);
-  }
-
-  onView(user: User) {
-    console.log('View User:', user._id);
+    const dialogRef: ZardDialogRef<RejectConfirmationComponent, string, { userName: string }> =
+      this.dialogService.create<RejectConfirmationComponent, { userName: string }>({
+        zContent: RejectConfirmationComponent,
+        zTitle: 'DASHBOARD.ADMIN.USERS.REJECT_USER_TITLE', // Pass translated key
+        zData: { userName: user.name || user.email },
+        zOkText: 'DASHBOARD.ADMIN.USERS.REJECT_BUTTON',
+        zOkIcon: 'xCircle' as ZardIcon, // Cast as ZardIcon
+        zOkDestructive: true,
+        zViewContainerRef: this.vcr,
+        zOnOk: (componentInstance) => {
+          const rejectionReason = componentInstance.rejectionResult;
+          this.userService
+            .updateUserVerificationStatus(user._id, { status: 'rejected', reason: rejectionReason })
+            .subscribe({
+              next: () => {
+                this.toastService.success('Success', `${user.name}'s verification was rejected.`);
+                this.loadUsers();
+                dialogRef.close();
+              },
+              error: (err) => {
+                this.toastService.error(
+                  'Error',
+                  err.message || 'Failed to reject user verification.'
+                );
+                dialogRef.close();
+              },
+            });
+          return false;
+        },
+        zOnCancel: (): void => {
+          dialogRef.close();
+        },
+      });
   }
 
   getInitials(name: string): string {

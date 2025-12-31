@@ -58,28 +58,79 @@ export class EditChallenge implements OnInit {
 
   allSkills: Record<string, string[]> = {
     Development: [
-      'JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'C++', 'React', 'Angular',
-      'Vue.js', 'Next.js', 'Node.js', 'Express', 'NestJS', 'HTML', 'CSS', 'Tailwind CSS',
-      'MongoDB', 'PostgreSQL', 'MySQL', 'REST API', 'GraphQL', 'Docker', 'Git',
+      'JavaScript',
+      'TypeScript',
+      'Python',
+      'Java',
+      'C#',
+      'C++',
+      'React',
+      'Angular',
+      'Vue.js',
+      'Next.js',
+      'Node.js',
+      'Express',
+      'NestJS',
+      'HTML',
+      'CSS',
+      'Tailwind CSS',
+      'MongoDB',
+      'PostgreSQL',
+      'MySQL',
+      'REST API',
+      'GraphQL',
+      'Docker',
+      'Git',
     ],
     Design: [
-      'Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'UI Design', 'UX Design',
-      'Wireframing', 'Prototyping', 'Design Systems', 'Typography', 'Responsive Design',
+      'Figma',
+      'Adobe XD',
+      'Photoshop',
+      'Illustrator',
+      'UI Design',
+      'UX Design',
+      'Wireframing',
+      'Prototyping',
+      'Design Systems',
+      'Typography',
+      'Responsive Design',
     ],
     Marketing: [
-      'SEO', 'SEM', 'Google Ads', 'Facebook Ads', 'Content Marketing', 'Copywriting',
-      'Social Media Marketing', 'Email Marketing', 'Analytics', 'Google Analytics', 'Brand Strategy',
+      'SEO',
+      'SEM',
+      'Google Ads',
+      'Facebook Ads',
+      'Content Marketing',
+      'Copywriting',
+      'Social Media Marketing',
+      'Email Marketing',
+      'Analytics',
+      'Google Analytics',
+      'Brand Strategy',
     ],
     Writing: [
-      'Content Writing', 'Technical Writing', 'Copywriting', 'Blog Writing',
-      'SEO Writing', 'Creative Writing',
+      'Content Writing',
+      'Technical Writing',
+      'Copywriting',
+      'Blog Writing',
+      'SEO Writing',
+      'Creative Writing',
     ],
     Translation: [
-      'English Translation', 'Arabic Translation', 'Localization', 'Proofreading', 'Subtitling',
+      'English Translation',
+      'Arabic Translation',
+      'Localization',
+      'Proofreading',
+      'Subtitling',
     ],
     'Data Entry': [
-      'Data Entry', 'Excel', 'Google Sheets', 'Data Cleaning', 'Data Validation',
-      'Typing', 'CRM Data Entry',
+      'Data Entry',
+      'Excel',
+      'Google Sheets',
+      'Data Cleaning',
+      'Data Validation',
+      'Typing',
+      'CRM Data Entry',
     ],
   };
 
@@ -126,11 +177,15 @@ export class EditChallenge implements OnInit {
     // Dynamic validators based on type
     this.challengeForm.get('type')?.valueChanges.subscribe((type) => {
       if (type === 'job') {
-        this.challengeForm.get('salary')?.setValidators([Validators.required, Validators.min(1000)]);
+        this.challengeForm
+          .get('salary')
+          ?.setValidators([Validators.required, Validators.min(1000)]);
         this.challengeForm.get('prizeAmount')?.clearValidators();
         this.challengeForm.get('prizeAmount')?.setValue(null);
       } else if (type === 'prize') {
-        this.challengeForm.get('prizeAmount')?.setValidators([Validators.required, Validators.min(100)]);
+        this.challengeForm
+          .get('prizeAmount')
+          ?.setValidators([Validators.required, Validators.min(100)]);
         this.challengeForm.get('salary')?.clearValidators();
         this.challengeForm.get('salary')?.setValue(null);
       }
@@ -143,7 +198,7 @@ export class EditChallenge implements OnInit {
     try {
       this.isLoading = true;
       const response: any = await firstValueFrom(
-        this.http.get(`${environment.apiUrl}/challenge/${this.challengeId}`)
+        this.http.get(`${environment.apiUrl}/challenges/${this.challengeId}`)
       );
 
       this.challengeData = response;
@@ -159,7 +214,9 @@ export class EditChallenge implements OnInit {
       this.selectedTags = response.tags || [];
 
       // Format deadline date
-      const deadline = response.deadline ? new Date(response.deadline).toISOString().split('T')[0] : '';
+      const deadline = response.deadline
+        ? new Date(response.deadline).toISOString().split('T')[0]
+        : '';
 
       this.challengeForm.patchValue({
         title: response.title,
@@ -183,7 +240,6 @@ export class EditChallenge implements OnInit {
       if (this.isRestrictedMode) {
         this.applyRestrictions();
       }
-
     } catch (error: any) {
       console.error('Error loading challenge:', error);
       this.submitError = error?.error?.message || 'Failed to load challenge data';
@@ -198,7 +254,9 @@ export class EditChallenge implements OnInit {
 
     if (status === 'published' && submissionsCount > 0) {
       this.isRestrictedMode = true;
-      this.restrictedReason = `⚠️ Restricted Mode: ${submissionsCount} active submission${submissionsCount > 1 ? 's' : ''} detected. Core fields are locked to protect applicants.`;
+      this.restrictedReason = `⚠️ Restricted Mode: ${submissionsCount} active submission${
+        submissionsCount > 1 ? 's' : ''
+      } detected. Core fields are locked to protect applicants.`;
     }
   }
 
@@ -283,8 +341,14 @@ export class EditChallenge implements OnInit {
     // Get raw values (including disabled fields)
     const formValue = this.challengeForm.getRawValue();
 
-    if (!formValue.title || !formValue.category || !formValue.difficulty ||
-        !formValue.type || !formValue.deadline || this.selectedTags.length === 0) {
+    if (
+      !formValue.title ||
+      !formValue.category ||
+      !formValue.difficulty ||
+      !formValue.type ||
+      !formValue.deadline ||
+      this.selectedTags.length === 0
+    ) {
       this.submitError = 'Please fill all required fields';
       return;
     }
