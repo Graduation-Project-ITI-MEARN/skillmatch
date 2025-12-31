@@ -485,7 +485,8 @@ export class ZardSelectComponent implements ControlValueAccessor, AfterContentIn
           hasBackdrop: false,
           scrollStrategy: this.overlay.scrollStrategies.reposition(),
           width: elementWidth,
-          maxHeight: 384, // max-h-96 equivalent
+          maxHeight: 384,
+          panelClass: ['z-select-overlay-pane'], // ← ADD THIS LINE
         });
         this.overlayRef
           .outsidePointerEvents()

@@ -62,7 +62,8 @@
       "REVIEWS": "Reviews",
       "THIS_WEEK": "This Week",
       "GROWTH": "Growth",
-      "REQUIRES_ATTENTION": "Requires Attention"
+      "REQUIRES_ATTENTION": "Requires Attention",
+      "AVG_SCORE": "Average Score"
     },
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
@@ -604,99 +605,126 @@
       }
     }
   },
+
   "CHALLENGE": {
-    "BACK": "Back to Dashboard",
-    "CREATE": {
-      "TITLE": "Create New Challenge",
-      "DESCRIPTION": "Post real-world tasks and let AI evaluate candidates through their solutions and video explanations.",
-      "BENEFIT_1_TITLE": "AI-Powered Evaluation",
-      "BENEFIT_1_DESC": "Automated assessment of both technical quality and communication skills",
-      "BENEFIT_2_TITLE": "Real-World Tasks",
-      "BENEFIT_2_DESC": "Test candidates with actual work scenarios, not theoretical questions",
-      "BENEFIT_3_TITLE": "Video Explanations",
-      "BENEFIT_3_DESC": "Understand candidate thought process through their video walkthroughs"
+    "BACK": "Back to Challenges",
+    "CATEGORIES": {
+      "DEVELOPMENT": "Development",
+      "DESIGN": "Design",
+      "MARKETING": "Marketing",
+      "WRITING": "Writing",
+      "TRANSLATION": "Translation",
+      "DATA ENTRY": "Data Entry"
     },
-    "EDIT": {
-      "TITLE": "Edit Challenge",
-      "DESCRIPTION": "Update your challenge details with care",
-      "RESTRICTED_MODE": "Restricted Mode Active",
-      "LOCKED_FIELDS": "Locked Fields",
-      "EDITABLE_FIELDS": "Still Editable",
-      "EDITABLE": "Editable",
-      "FULL_ACCESS": "Full Edit Access",
-      "FULL_ACCESS_DESC": "No submissions yet. All fields are editable."
+    "CREATE": {
+      "TITLE": "Create a New Challenge",
+      "DESCRIPTION": "Design a new challenge to find the best talent. Fill in the details below to get started.",
+      "BENEFIT_1_TITLE": "Reach Top Talent",
+      "BENEFIT_1_DESC": "Attract highly skilled professionals looking for new opportunities.",
+      "BENEFIT_2_TITLE": "Streamlined Evaluation",
+      "BENEFIT_2_DESC": "Our AI-powered tools help you quickly assess submissions and identify top performers.",
+      "BENEFIT_3_TITLE": "Customizable Criteria",
+      "BENEFIT_3_DESC": "Tailor challenge requirements and evaluation criteria to your specific needs."
+    },
+    "SUCCESS": {
+      "TITLE": "Challenge Created Successfully!",
+      "MESSAGE": "Your challenge has been saved and will be reviewed shortly. Redirecting to dashboard..."
+    },
+    "ERROR": {
+      "TITLE": "Error Creating Challenge"
     },
     "FORM": {
       "TITLE": "Challenge Title",
-      "TITLE_PLACEHOLDER": "e.g., Build a Real-Time Chat Application",
-      "TITLE_ERROR": "Title is required (minimum 5 characters)",
+      "TITLE_PLACEHOLDER": "e.g., Build a full-stack e-commerce application",
+      "TITLE_ERROR": "Title is required and must be at least 5 characters.",
       "CATEGORY": "Category",
-      "SELECT_CATEGORY": "Select category",
+      "SELECT_CATEGORY": "Select a category",
+      "CATEGORY_ERROR": "Category is required.",
       "DIFFICULTY": "Difficulty Level",
-      "SELECT_DIFFICULTY": "Select difficulty",
-      "TYPE": "Challenge Type",
-      "SELECT_TYPE": "Select type",
-      "STATUS": "Status",
-      "DEADLINE": "Deadline",
-      "DESCRIPTION": "Challenge Description",
-      "DESCRIPTION_PLACEHOLDER": "Describe the challenge, what the candidate needs to build, and any specific requirements...",
-      "SKILLS": "Required Skills",
-      "SELECT_SKILLS": "Click to select skills",
+      "SELECT_DIFFICULTY": "Select a difficulty",
+      "DIFFICULTY_ERROR": "Difficulty level is required.",
+      "SUBMISSION_TYPE": "Submission Type",
+      "SELECT_SUBMISSION_TYPE": "Select submission type",
+      "SUBMISSION_TYPE_ERROR": "Submission type is required.",
+      "SALARY": "Salary / Compensation",
+      "SALARY_PLACEHOLDER": "e.g., 5000 (monthly in EGP)",
+      "SALARY_ERROR": "Salary is required and must be at least 1000.",
+      "SKILLS": "Skills / Tags",
+      "SKILLS_SELECTED": "skills selected",
+      "SELECT_SKILLS": "Select skills",
       "SEARCH_SKILLS": "Search skills...",
-      "NO_SKILLS_FOUND": "No skills found matching your search",
-      "SKILLS_SELECTED": "selected",
-      "SKILLS_AVAILABLE": "available",
-      "SELECT_CATEGORY_FIRST": "Select a category first to see relevant skills",
-      "SALARY": "Salary (USD/month)",
-      "SALARY_PLACEHOLDER": "e.g., 5000",
-      "PRIZE": "Prize Amount (USD)",
-      "PRIZE_PLACEHOLDER": "e.g., 1000",
-      "OPTIONAL": "Optional",
-      "SUBMIT": "Create Challenge",
-      "SUBMITTING": "Creating...",
-      "UPDATE": "Update Challenge",
-      "UPDATING": "Updating...",
+      "NO_SKILLS_FOUND": "No skills found matching your search.",
+      "SELECT_AT_LEAST_ONE_SKILL": "Please select at least one skill.",
+      "SKILLS_AVAILABLE": "skills available",
+      "DEADLINE": "Application Deadline",
+      "DEADLINE_PLACEHOLDER": "Pick a date",
+      "DEADLINE_ERROR": "Deadline is required.",
+      "DEADLINE_PAST_ERROR": "Deadline cannot be in the past.",
+      "DESCRIPTION": "Challenge Description",
+      "DESCRIPTION_PLACEHOLDER": "Provide a detailed description of the challenge, what needs to be built or achieved...",
+      "DESCRIPTION_ERROR": "Description is required and must be at least 1 character.",
+      "REQUIREMENTS": "Requirements",
+      "REQUIREMENTS_PLACEHOLDER": "List all essential requirements and technologies.",
+      "REQUIREMENTS_ERROR": "Requirements are required.",
+      "EVALUATION_CRITERIA": "Evaluation Criteria",
+      "EVALUATION_CRITERIA_PLACEHOLDER": "Clearly define how submissions will be judged.",
+      "EVALUATION_CRITERIA_ERROR": "Evaluation criteria are required.",
+      "DELIVERABLES": "Deliverables",
+      "DELIVERABLES_PLACEHOLDER": "Specify the final outputs expected from participants.",
+      "DELIVERABLES_ERROR": "Deliverables are required.",
+      "IDEAL_SOLUTION_TITLE": "Ideal Solution (Optional)",
+      "IDEAL_SOLUTION_TYPE": "Ideal Solution Type",
+      "SELECT_IDEAL_SOLUTION_TYPE": "Select ideal solution type",
+      "IDEAL_SOLUTION_LINK": "Ideal Solution Link",
+      "IDEAL_SOLUTION_LINK_PLACEHOLDER": "Provide a link to an example or reference solution.",
+      "IDEAL_SOLUTION_LINK_ERROR": "Please enter a valid URL for the ideal solution.",
+      "IDEAL_SOLUTION_TEXT": "Ideal Solution Text",
+      "IDEAL_SOLUTION_TEXT_PLACEHOLDER": "Describe the ideal solution in detail.",
+      "IDEAL_SOLUTION_TEXT_ERROR": "Ideal solution text is required and must be at least 10 characters.",
+      "IDEAL_SOLUTION_FILE": "Ideal Solution File",
+      "IDEAL_SOLUTION_FILE_ERROR": "An ideal solution file is required.",
+      "ADDITIONAL_INFO": "Additional Information (Optional)",
+      "ADDITIONAL_INFO_PLACEHOLDER": "Any extra notes or resources for participants.",
+      "AI_CONFIG_TITLE": "AI Evaluation Configuration",
+      "PRICING_TIER": "AI Pricing Tier",
+      "SELECT_PRICING_TIER": "Select AI pricing tier",
+      "PRICING_TIER_ERROR": "AI pricing tier is required.",
+      "DEFAULT_AI_MODEL": "Default AI Model",
+      "SELECTED_MODEL": "Selected AI Model",
+      "SELECT_AI_MODEL": "Select an AI model",
+      "SELECTED_MODEL_ERROR": "An AI model is required for custom tiers.",
+      "AI_MODEL_DETAILS": "AI Model Details",
+      "AI_MODEL_ACCURACY": "Accuracy",
+      "AI_MODEL_SPEED": "Speed",
+      "AI_MODEL_FREE": "Free",
+      "AUTO_EVALUATE": "Auto-evaluate submissions",
+      "REQUIRE_VIDEO_TRANSCRIPT": "Require video transcript for submissions",
       "SAVE_DRAFT": "Save as Draft",
+      "SAVING_DRAFT": "Saving Draft...",
       "PUBLISH": "Publish Challenge",
-      "PUBLISHING": "Publishing...",
-      "SAVING_DRAFT": "Saving..."
-    },
-    "CATEGORIES": {
-      "DEVELOPMENT": "Coding & Development",
-      "DESIGN": "Design & Creative",
-      "MARKETING": "Marketing & Growth",
-      "WRITING": "Writing & Content",
-      "TRANSLATION": "Translation & Localization",
-      "DATA ENTRY": "Data Entry & Processing"
+      "PUBLISHING": "Publishing Challenge...",
+      "PICK_A_DATE": "Pick a date"
     },
     "DIFFICULTY": {
       "EASY": "Easy",
       "MEDIUM": "Medium",
       "HARD": "Hard"
     },
-    "TYPES": {
-      "JOB": "Job Opportunity",
-      "PRIZE": "Prize Competition"
+    "SUBMISSION_TYPE": {
+      "LINK": "Link (e.g., GitHub, live demo)",
+      "FILE": "File Upload (e.g., code archive, design files)",
+      "TEXT": "Text (e.g., essay, report)"
     },
-    "STATUS": {
-      "DRAFT": "Draft",
-      "PUBLISHED": "Published",
-      "CLOSED": "Closed"
+    "IDEAL_SOLUTION_TYPE": {
+      "LINK": "Link",
+      "FILE": "File",
+      "TEXT": "Text"
     },
-    "SUCCESS": {
-      "TITLE": "Challenge Created Successfully!",
-      "MESSAGE": "Redirecting to dashboard...",
-      "UPDATE_TITLE": "Challenge Updated!",
-      "UPDATE_MESSAGE": "Your changes have been saved successfully."
-    },
-    "ERROR": {
-      "TITLE": "Error",
-      "MESSAGE": "Something went wrong. Please try again."
-    },
-    "RESTRICTED": {
-      "TITLE": "Restricted Editing Mode",
-      "MESSAGE": "active submissions detected. Core fields are locked to protect candidate experience.",
-      "ALLOWED": "You can only edit: Description, Deadline, and Status."
+    "PRICING_TIER": {
+      "FREE": "Free",
+      "BUDGET": "Budget",
+      "BALANCED": "Premium",
+      "PREMIUM": "Premium"
     }
   },
   "ANALYTICS": {

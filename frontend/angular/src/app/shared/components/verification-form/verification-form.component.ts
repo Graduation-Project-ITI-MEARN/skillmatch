@@ -1,3 +1,4 @@
+// src/app/shared/components/verification-form/verification-form.component.ts
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,28 @@ import { AuthService } from '@/core/services/auth';
         <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
         Verification Pending
       </div>
+      } @else if (user()?.verificationStatus === 'rejected') {
+      <div
+        class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+        Verification Rejected. Please resubmit or contact support.
+      </div>
+      } @else if (user()?.isVerified) {
+      <div
+        class="mb-4 p-3 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+        Verified
+      </div>
+      } @else {
+      <!-- Initial state if no status or 'none' -->
+      <div
+        class="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+        Submit your documents for verification.
+      </div>
       }
 
       <div class="space-y-4">
@@ -32,6 +55,7 @@ import { AuthService } from '@/core/services/auth';
             [(ngModel)]="nationalId"
             class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-primary"
             placeholder="Enter ID number"
+            [disabled]="user()?.verificationStatus === 'pending' || user()?.isVerified || ''"
           />
         </div>
 
@@ -41,12 +65,19 @@ import { AuthService } from '@/core/services/auth';
             type="file"
             (change)="onFileSelected($event)"
             class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+            [disabled]="loading() || user()?.verificationStatus === 'pending' || user()?.isVerified"
           />
         </div>
 
         <button
           (click)="submit()"
-          [disabled]="loading() || !nationalId || !documentUrl"
+          [disabled]="
+            loading() ||
+            !nationalId ||
+            !documentUrl ||
+            user()?.verificationStatus === 'pending' ||
+            user()?.isVerified
+          "
           class="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
         >
           {{ loading() ? 'Uploading...' : 'Submit for Verification' }}
@@ -61,7 +92,7 @@ export class VerificationFormComponent {
   private authService = inject(AuthService);
   private toast = inject(ToastrService);
 
-  user = this.authService.currentUser;
+  user = this.authService.currentUser; // Directly uses the signal
   nationalId = '';
   documentUrl = '';
   loading = signal(false);
@@ -85,6 +116,7 @@ export class VerificationFormComponent {
   }
 
   submit() {
+    this.loading.set(true); // Disable button to prevent double submission
     this.userService
       .requestVerification({
         nationalId: this.nationalId,
@@ -93,9 +125,25 @@ export class VerificationFormComponent {
       .subscribe({
         next: (res) => {
           this.toast.success('Verification submitted!');
-          this.authService.verifyUser().subscribe(); // Refresh user state
+          // --- IMPORTANT CHANGE HERE ---
+          // Call refreshUserProfile after successful submission to update the signal
+          // with the new `verificationStatus: 'pending'`.
+          this.authService.refreshUserProfile().subscribe({
+            next: () => {
+              console.log('User profile refreshed after verification submission');
+              this.loading.set(false); // Re-enable button
+              // Potentially close the dialog here if desired
+            },
+            error: (err) => {
+              console.error('Failed to refresh user profile after submission:', err);
+              this.loading.set(false); // Re-enable button
+            },
+          });
         },
-        error: (err) => this.toast.error(err.error?.message || 'Submission failed'),
+        error: (err) => {
+          this.loading.set(false); // Re-enable button on error
+          this.toast.error(err.error?.message || 'Submission failed');
+        },
       });
   }
 }

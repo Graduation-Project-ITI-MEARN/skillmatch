@@ -1,11 +1,7 @@
-<app-dashboard-layout
-  titleKey="DASHBOARD.TITLES.COMPANY"
-  subtitleKey="DASHBOARD.SUBTITLES.COMPANY"
-  [tabs]="tabs"
->
+<app-dashboard-layout titleKey="{{ name }}" subtitleKey="DASHBOARD.SUBTITLES.COMPANY" [tabs]="tabs">
   <span
     avatar
-    class="shrink-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary-gradient text-white font-bold text-xs md:text-sm shadow-lg"
+    class="shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-primary-gradient text-white font-bold"
   >
     {{ initials }}
   </span>
@@ -13,12 +9,12 @@
   <div actions class="flex items-center gap-2 sm:gap-3">
     <app-notifications-dropdown />
     <!-- Modified: routerLink removed in favor of handleCreateChallenge() click event -->
-    <button
-      (click)="handleCreateChallenge()"
+    <a
+      [routerLink]="['/dashboard/company/create']"
       class="whitespace-nowrap px-3 py-2 md:px-6 md:py-2 bg-gray-900 text-white rounded-lg hover:opacity-90 transition-all font-medium text-[11px] sm:text-sm md:text-base shadow-xl"
     >
       {{ 'DASHBOARD.ACTIONS.CREATE_CHALLENGE' | translate }}
-    </button>
+    </a>
   </div>
 
   <ng-container stats>

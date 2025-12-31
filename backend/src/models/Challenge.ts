@@ -19,6 +19,7 @@ export interface IChallenge extends Document {
    requirements: string;
    evaluationCriteria: string;
    deliverables: string;
+   idealSolution?: string;
 
    // NEW: AI Evaluation Configuration
    aiConfig: {
@@ -71,6 +72,7 @@ const ChallengeSchema: Schema = new Schema(
       evaluationCriteria: { type: String, required: true },
       deliverables: { type: String, required: true },
       deadline: { type: Date, required: true },
+      idealSolution: { type: String },
 
       // AI Configuration
       aiConfig: {

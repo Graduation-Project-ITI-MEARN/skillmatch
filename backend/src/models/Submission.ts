@@ -1,6 +1,6 @@
+// src/models/Submission.ts (Enhanced)
 import mongoose, { Document, Schema } from "mongoose";
 
-// Enum for submission types
 export enum SubmissionType {
    LINK = "link",
    FILE = "file",
@@ -10,14 +10,29 @@ export enum SubmissionType {
 export interface ISubmission extends Document {
    challengeId: mongoose.Types.ObjectId;
    candidateId: mongoose.Types.ObjectId;
-   videoExplanationUrl: string;
-   submissionType?: SubmissionType; // Make optional if 'started' submissions don't have it yet
+   challengeCreator: mongoose.Types.ObjectId;
+   videoExplanationUrl?: string; // Optional
+   submissionType?: SubmissionType;
    linkUrl?: string;
    fileUrls?: string[];
    textContent?: string;
+
+   // AI Evaluation Results
    aiScore: number;
+   aiEvaluation?: {
+      technicalScore: number;
+      clarityScore: number;
+      communicationScore: number;
+      feedback: string;
+      strengths: string[];
+      improvements: string[];
+      modelUsed: string;
+      evaluatedAt: Date;
+      videoTranscribed: boolean; // Whether video was actually transcribed
+   };
+
    isWinner: boolean;
-   status: "started" | "pending" | "accepted" | "rejected"; // <-- Add "started"
+   status: "started" | "pending" | "accepted" | "rejected";
    createdAt: Date;
    updatedAt: Date;
 }
@@ -36,15 +51,19 @@ const SubmissionSchema: Schema = new Schema(
          required: true,
          index: true,
       },
+      challengeCreator: {
+         type: Schema.Types.ObjectId,
+         ref: "User",
+         required: true,
+         index: true,
+      },
       videoExplanationUrl: {
          type: String,
-         // required: true, // <-- Make this not required for 'started' status
          trim: true,
       },
       submissionType: {
          type: String,
          enum: Object.values(SubmissionType),
-         // required: true, // <-- Make this not required for 'started' status
       },
       linkUrl: {
          type: String,
@@ -64,14 +83,25 @@ const SubmissionSchema: Schema = new Schema(
          min: 0,
          max: 100,
       },
+      aiEvaluation: {
+         technicalScore: { type: Number, min: 0, max: 100 },
+         clarityScore: { type: Number, min: 0, max: 100 },
+         communicationScore: { type: Number, min: 0, max: 100 },
+         feedback: { type: String },
+         strengths: [{ type: String }],
+         improvements: [{ type: String }],
+         modelUsed: { type: String },
+         evaluatedAt: { type: Date },
+         videoTranscribed: { type: Boolean, default: false },
+      },
       isWinner: {
          type: Boolean,
          default: false,
       },
       status: {
          type: String,
-         enum: ["started", "pending", "accepted", "rejected"], // <-- Update enum
-         default: "started", // <-- Default to started when created
+         enum: ["started", "pending", "accepted", "rejected"],
+         default: "started",
       },
    },
    {

@@ -148,6 +148,17 @@ export const evaluateSubmission = catchError(
       // Update submission
       submission.aiScore = evaluationResult.overallScore;
       submission.status = "pending";
+      submission.aiEvaluation = {
+         technicalScore: evaluationResult.technicalScore,
+         clarityScore: evaluationResult.clarityScore,
+         communicationScore: evaluationResult.communicationScore,
+         feedback: evaluationResult.feedback,
+         strengths: evaluationResult.strengths,
+         improvements: evaluationResult.improvements,
+         modelUsed: evaluationResult.modelUsed,
+         evaluatedAt: new Date(),
+         videoTranscribed: videoTranscript !== "",
+      };
       await submission.save();
 
       res.status(200).json({

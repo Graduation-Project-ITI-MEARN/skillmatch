@@ -59,23 +59,18 @@ export class CandidateService {
     });
   }
 
-    // ================== Challenge Details ==================
-  getChallengeById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges/${id}`, {
-      withCredentials: true,
-    });
+  // ================== Challenge Details ==================
+  getChallengeById(challengeId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/challenges/${challengeId}`);
   }
 
-    // ================== Submissions ==================
+  // ================== Submissions ==================
 
-
-  startChallenge(challengeId: string, submissionType: string): Observable<any> {
-  return this.http.post(`${this.apiUrl}/submissions/start`, {
-    challengeId,
-  }, {
-    withCredentials: true,
-  });
-}
+  startChallenge(challengeId: string): Observable<any> {
+    // This assumes your backend has an endpoint like POST /api/challenges/:id/start
+    // and that this endpoint is protected by your `requireVerification(['candidate'])` middleware.
+    return this.http.post(`${this.apiUrl}/challenges/${challengeId}/start`, {});
+  }
 
   submitFinalSolution(submissionData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/submissions`, submissionData, {

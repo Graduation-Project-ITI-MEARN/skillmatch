@@ -608,100 +608,127 @@
       }
     }
   },
-
   "CHALLENGE": {
-    "BACK": "العودة إلى لوحة التحكم",
+    "BACK": "العودة إلى التحديات",
     "CREATE": {
       "TITLE": "إنشاء تحدي جديد",
-      "DESCRIPTION": "انشر مهام من العالم الحقيقي ودع الذكاء الاصطناعي يقيّم المرشحين من خلال حلولهم وشروحاتهم بالفيديو.",
-      "BENEFIT_1_TITLE": "تقييم مدعوم بالذكاء الاصطناعي",
-      "BENEFIT_1_DESC": "تقييم تلقائي للجودة التقنية ومهارات التواصل",
-      "BENEFIT_2_TITLE": "مهام من الواقع",
-      "BENEFIT_2_DESC": "اختبر المرشحين بسيناريوهات عمل فعلية، وليس أسئلة نظرية",
-      "BENEFIT_3_TITLE": "شروحات بالفيديو",
-      "BENEFIT_3_DESC": "افهم عملية تفكير المرشح من خلال شروحاته بالفيديو"
+      "DESCRIPTION": "صمم تحديًا جديدًا للعثور على أفضل المواهب. املأ التفاصيل أدناه للبدء.",
+      "BENEFIT_1_TITLE": "الوصول إلى أفضل المواهب",
+      "BENEFIT_1_DESC": "اجذب المحترفين ذوي المهارات العالية الذين يبحثون عن فرص جديدة.",
+      "BENEFIT_2_TITLE": "تقييم مبسط",
+      "BENEFIT_2_DESC": "تساعدك أدواتنا المدعومة بالذكاء الاصطناعي على تقييم المهام بسرعة وتحديد الأفضل أداءً.",
+      "BENEFIT_3_TITLE": "معايير قابلة للتخصيص",
+      "BENEFIT_3_DESC": "خصص متطلبات التحدي ومعايير التقييم لاحتياجاتك الخاصة."
     },
-    "EDIT": {
-      "TITLE": "تعديل التحدي",
-      "DESCRIPTION": "حدّث تفاصيل التحدي بعناية",
-      "RESTRICTED_MODE": "وضع التعديل المقيد نشط",
-      "LOCKED_FIELDS": "الحقول المقفلة",
-      "EDITABLE_FIELDS": "لا يزال قابلاً للتعديل",
-      "EDITABLE": "قابل للتعديل",
-      "FULL_ACCESS": "وصول كامل للتعديل",
-      "FULL_ACCESS_DESC": "لا توجد تقديمات بعد. جميع الحقول قابلة للتعديل."
+    "SUCCESS": {
+      "TITLE": "تم إنشاء التحدي بنجاح!",
+      "MESSAGE": "تم حفظ التحدي الخاص بك وسيتم مراجعته قريبًا. جارٍ إعادة التوجيه إلى لوحة التحكم..."
+    },
+    "ERROR": {
+      "TITLE": "خطأ في إنشاء التحدي"
     },
     "FORM": {
       "TITLE": "عنوان التحدي",
-      "TITLE_PLACEHOLDER": "مثال: بناء تطبيق دردشة فوري",
-      "TITLE_ERROR": "العنوان مطلوب (5 أحرف على الأقل)",
+      "TITLE_PLACEHOLDER": "مثال: بناء تطبيق تجارة إلكترونية كامل",
+      "TITLE_ERROR": "العنوان مطلوب ويجب أن يكون 5 أحرف على الأقل.",
       "CATEGORY": "الفئة",
-      "SELECT_CATEGORY": "اختر الفئة",
+      "SELECT_CATEGORY": "اختر فئة",
+      "CATEGORY_ERROR": "الفئة مطلوبة.",
       "DIFFICULTY": "مستوى الصعوبة",
-      "SELECT_DIFFICULTY": "اختر الصعوبة",
-      "TYPE": "نوع التحدي",
-      "SELECT_TYPE": "اختر النوع",
-      "STATUS": "الحالة",
-      "DEADLINE": "الموعد النهائي",
+      "SELECT_DIFFICULTY": "اختر مستوى الصعوبة",
+      "DIFFICULTY_ERROR": "مستوى الصعوبة مطلوب.",
+      "SUBMISSION_TYPE": "نوع التقديم",
+      "SELECT_SUBMISSION_TYPE": "اختر نوع التقديم",
+      "SUBMISSION_TYPE_ERROR": "نوع التقديم مطلوب.",
+      "SALARY": "الراتب / التعويض",
+      "SALARY_PLACEHOLDER": "مثال: 5000 (شهريًا)",
+      "SALARY_ERROR": "الراتب مطلوب ويجب أن يكون 1000 دولار على الأقل.",
+      "SKILLS": "المهارات / العلامات",
+      "SKILLS_SELECTED": "مهارات مختارة",
+      "SELECT_SKILLS": "اختر المهارات",
+      "SEARCH_SKILLS": "ابحث عن المهارات...",
+      "NO_SKILLS_FOUND": "لم يتم العثور على مهارات مطابقة لبحثك.",
+      "SELECT_AT_LEAST_ONE_SKILL": "يرجى اختيار مهارة واحدة على الأقل.",
+      "SKILLS_AVAILABLE": "مهارات متوفرة",
+      "DEADLINE": "الموعد النهائي للتقديم",
+      "DEADLINE_PLACEHOLDER": "اختر تاريخًا",
+      "DEADLINE_ERROR": "الموعد النهائي مطلوب.",
       "DESCRIPTION": "وصف التحدي",
-      "DESCRIPTION_PLACEHOLDER": "صف التحدي، ما الذي يحتاج المرشح لبنائه، وأي متطلبات خاصة...",
-      "SKILLS": "المهارات المطلوبة",
-      "SELECT_SKILLS": "انقر لاختيار المهارات",
-      "SEARCH_SKILLS": "بحث المهارات...",
-      "NO_SKILLS_FOUND": "لم يتم العثور على مهارات تطابق بحثك",
-      "SKILLS_SELECTED": "محددة",
-      "SKILLS_AVAILABLE": "متاحة",
-      "SELECT_CATEGORY_FIRST": "اختر فئة أولاً لرؤية المهارات ذات الصلة",
-      "SALARY": "الراتب (دولار/شهر)",
-      "SALARY_PLACEHOLDER": "مثال: 5000",
-      "PRIZE": "قيمة الجائزة (دولار)",
-      "PRIZE_PLACEHOLDER": "مثال: 1000",
-      "OPTIONAL": "اختياري",
-      "SUBMIT": "إنشاء التحدي",
-      "SUBMITTING": "جاري الإنشاء...",
-      "UPDATE": "تحديث التحدي",
-      "UPDATING": "جاري التحديث...",
+      "DESCRIPTION_PLACEHOLDER": "قدم وصفًا تفصيليًا للتحدي، وما الذي يجب بناؤه أو تحقيقه...",
+      "DESCRIPTION_ERROR": "الوصف مطلوب ويجب أن يكون حرفًا واحدًا على الأقل.",
+      "REQUIREMENTS": "المتطلبات",
+      "REQUIREMENTS_PLACEHOLDER": "اذكر جميع المتطلبات والتقنيات الأساسية.",
+      "REQUIREMENTS_ERROR": "المتطلبات مطلوبة.",
+      "EVALUATION_CRITERIA": "معايير التقييم",
+      "EVALUATION_CRITERIA_PLACEHOLDER": "حدد بوضوح كيفية تقييم المهام.",
+      "EVALUATION_CRITERIA_ERROR": "معايير التقييم مطلوبة.",
+      "DELIVERABLES": "التسليمات",
+      "DELIVERABLES_PLACEHOLDER": "حدد المخرجات النهائية المتوقعة من المشاركين.",
+      "DELIVERABLES_ERROR": "التسليمات مطلوبة.",
+      "IDEAL_SOLUTION_TITLE": "الحل المثالي (اختياري)",
+      "IDEAL_SOLUTION_TYPE": "نوع الحل المثالي",
+      "SELECT_IDEAL_SOLUTION_TYPE": "اختر نوع الحل المثالي",
+      "IDEAL_SOLUTION_LINK": "رابط الحل المثالي",
+      "IDEAL_SOLUTION_LINK_PLACEHOLDER": "قدم رابطًا لمثال أو حل مرجعي.",
+      "IDEAL_SOLUTION_LINK_ERROR": "الرجاء إدخال رابط صالح للحل المثالي.",
+      "IDEAL_SOLUTION_TEXT": "نص الحل المثالي",
+      "IDEAL_SOLUTION_TEXT_PLACEHOLDER": "صف الحل المثالي بالتفصيل.",
+      "IDEAL_SOLUTION_TEXT_ERROR": "نص الحل المثالي مطلوب ويجب أن يكون 10 أحرف على الأقل.",
+      "IDEAL_SOLUTION_FILE": "ملف الحل المثالي",
+      "IDEAL_SOLUTION_FILE_ERROR": "ملف الحل المثالي مطلوب.",
+      "ADDITIONAL_INFO": "معلومات إضافية (اختياري)",
+      "ADDITIONAL_INFO_PLACEHOLDER": "أي ملاحظات أو موارد إضافية للمشاركين.",
+      "AI_CONFIG_TITLE": "إعدادات تقييم الذكاء الاصطناعي",
+      "PRICING_TIER": "طبقة تسعير الذكاء الاصطناعي",
+      "SELECT_PRICING_TIER": "اختر طبقة تسعير الذكاء الاصطناعي",
+      "PRICING_TIER_ERROR": "طبقة تسعير الذكاء الاصطناعي مطلوبة.",
+      "DEFAULT_AI_MODEL": "نموذج الذكاء الاصطناعي الافتراضي",
+      "SELECTED_MODEL": "نموذج الذكاء الاصطناعي المحدد",
+      "SELECT_AI_MODEL": "اختر نموذج ذكاء اصطناعي",
+      "SELECTED_MODEL_ERROR": "نموذج الذكاء الاصطناعي مطلوب للطبقات المخصصة.",
+      "AI_MODEL_DETAILS": "تفاصيل نموذج الذكاء الاصطناعي",
+      "AI_MODEL_ACCURACY": "الدقة",
+      "AI_MODEL_SPEED": "السرعة",
+      "AI_MODEL_FREE": "مجاني",
+      "AUTO_EVALUATE": "تقييم المهام تلقائيًا",
+      "REQUIRE_VIDEO_TRANSCRIPT": "طلب نص الفيديو للمهام",
       "SAVE_DRAFT": "حفظ كمسودة",
+      "SAVING_DRAFT": "جارٍ حفظ المسودة...",
       "PUBLISH": "نشر التحدي",
-      "PUBLISHING": "جاري النشر...",
-      "SAVING_DRAFT": "جاري الحفظ..."
+      "PUBLISHING": "جارٍ نشر التحدي..."
     },
     "CATEGORIES": {
-      "DEVELOPMENT": "البرمجة والتطوير",
-      "DESIGN": "التصميم والإبداع",
-      "MARKETING": "التسويق والنمو",
-      "WRITING": "الكتابة والمحتوى",
-      "TRANSLATION": "الترجمة والتوطين",
-      "DATA ENTRY": "إدخال البيانات ومعالجتها"
+      "WEB_DEVELOPMENT": "تطوير الويب",
+      "MOBILE_DEVELOPMENT": "تطوير الجوال",
+      "DATA_SCIENCE": "علم البيانات",
+      "UI_UX_DESIGN": "تصميم واجهة المستخدم/تجربة المستخدم",
+      "DEVOPS": "ديف أوبس",
+      "GAME_DEVELOPMENT": "تطوير الألعاب",
+      "CYBERSECURITY": "الأمن السيبراني",
+      "ARTIFICIAL_INTELLIGENCE": "الذكاء الاصطناعي",
+      "BLOCKCHAIN": "بلوكتشين",
+      "CLOUD_COMPUTING": "الحوسبة السحابية"
     },
     "DIFFICULTY": {
       "EASY": "سهل",
       "MEDIUM": "متوسط",
       "HARD": "صعب"
     },
-    "TYPES": {
-      "JOB": "فرصة عمل",
-      "PRIZE": "مسابقة بجوائز"
+    "SUBMISSION_TYPE": {
+      "LINK": "رابط (مثل GitHub، عرض حي)",
+      "FILE": "تحميل ملف (مثل أرشيف الكود، ملفات التصميم)",
+      "TEXT": "نص (مثل مقال، تقرير)"
     },
-    "STATUS": {
-      "DRAFT": "مسودة",
-      "PUBLISHED": "منشور",
-      "CLOSED": "مغلق"
+    "IDEAL_SOLUTION_TYPE": {
+      "LINK": "رابط",
+      "FILE": "ملف",
+      "TEXT": "نص"
     },
-    "SUCCESS": {
-      "TITLE": "تم إنشاء التحدي بنجاح!",
-      "MESSAGE": "جاري التوجيه إلى لوحة التحكم...",
-      "UPDATE_TITLE": "تم تحديث التحدي!",
-      "UPDATE_MESSAGE": "تم حفظ التغييرات بنجاح."
-    },
-    "ERROR": {
-      "TITLE": "خطأ",
-      "MESSAGE": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-    },
-    "RESTRICTED": {
-      "TITLE": "وضع التعديل المقيد",
-      "MESSAGE": "تم اكتشاف تقديمات نشطة. الحقول الأساسية مقفلة لحماية تجربة المرشح.",
-      "ALLOWED": "يمكنك فقط تعديل: الوصف، الموعد النهائي، والحالة."
+    "PRICING_TIER": {
+      "FREE": "مجاني",
+      "BASIC": "أساسي",
+      "PREMIUM": "مميز",
+      "CUSTOM": "مخصص"
     }
   },
   "ANALYTICS": {

@@ -6,7 +6,7 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 // Define the expected structure from your /auth/me endpoint
-interface AuthUserResponse {
+export interface AuthUserResponse {
   id: string; // The user's ID string
   name: string;
   email: string;
@@ -14,6 +14,7 @@ interface AuthUserResponse {
   type?: 'candidate' | 'company' | 'challenger';
   isVerified?: boolean;
   subscriptionStatus?: string; // If this comes from /auth/me
+  verificationStatus?: string;
 }
 
 @Injectable({

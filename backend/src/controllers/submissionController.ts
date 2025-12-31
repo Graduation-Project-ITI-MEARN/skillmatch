@@ -14,7 +14,7 @@ import Challenge from "../models/Challenge";
  * @access  Private
  */
 const getAllSubmissions = catchError(async (req: Request, res: Response) => {
-  const submissions = await Submission.find()
+   const submissions = await Submission.find();
 
    res.status(200).json({
       success: true,
@@ -94,6 +94,16 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
    if (!candidateId) throw new APIError(401, "User not authenticated");
    if (!challengeId) throw new APIError(400, "Challenge ID is required");
 
+   const challengeCreator = await Challenge.findById(challengeId).select(
+      "creatorId"
+   );
+
+   if (!challengeCreator) {
+      throw new APIError(404, "Challenge not found");
+   }
+
+   console.log("Challenge creator ID:", challengeCreator?.creatorId);
+
    // --- VALIDATION FOR ACTUAL SUBMISSION ---
    if (!videoExplanationUrl?.trim()) {
       throw new APIError(400, "Video explanation is required");
@@ -150,6 +160,7 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
    submission.textContent = textContent?.trim() || undefined; // Use undefined to remove if not provided
    submission.status = "pending"; // Change status to pending
    submission.aiScore = 0; // Reset score if it was previously set or for initial pending state
+   submission.challengeCreator = challengeCreator.creatorId;
 
    await submission.save(); // Save the updated submission
 
@@ -281,6 +292,14 @@ const startChallenge = catchError(async (req: Request, res: Response) => {
    if (!candidateId) throw new APIError(401, "User not authenticated");
    if (!challengeId) throw new APIError(400, "Challenge ID is required");
 
+   const challengeCreator = await Challenge.findById(challengeId).select(
+      "creatorId"
+   );
+
+   if (!challengeCreator) {
+      throw new APIError(400, "Challenge not found");
+   }
+
    // Check if the challenge exists and is published
    const challenge = await Challenge.findById(challengeId);
    if (!challenge) {
@@ -310,6 +329,7 @@ const startChallenge = catchError(async (req: Request, res: Response) => {
    const startedSubmission = await Submission.create({
       challengeId,
       candidateId,
+      challengeCreator: challengeCreator.creatorId,
       status: "started", // Explicitly set status to 'started'
       // Other fields like videoExplanationUrl, submissionType, etc. are omitted for 'started' state
    });
