@@ -1,8 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
+<<<<<<< HEAD
 
 export const CATEGORIES = [
 
+=======
+export const CATEGORIES = [
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
   "Development",
   "Design",
   "Marketing",

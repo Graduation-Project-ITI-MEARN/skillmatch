@@ -15,6 +15,9 @@ import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
 const createPaymentIntent = catchError(
   async (req: Request, res: Response, next: NextFunction) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     const { amount, currency, billing_data, payment_type } = req.body;
     const user = (req as any).user;
 
@@ -49,6 +52,7 @@ const createPaymentIntent = catchError(
     // This allows the webhook to split this string and know exactly what to update.
     const customOrderId = `${user._id}---${payment_type}---${Date.now()}`;
 
+<<<<<<< HEAD
 =======
     const { amount, currency, billing_data } = req.body;
     const user = (req as any).user; // Get authenticated user
@@ -67,6 +71,8 @@ const createPaymentIntent = catchError(
     const amountInCents = Math.round(amount * 100);
 
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     const orderResponse = await axios.post(
       "https://accept.paymob.com/api/ecommerce/orders",
       {
@@ -75,31 +81,43 @@ const createPaymentIntent = catchError(
         amount_cents: amountInCents,
         currency: currency || "EGP",
 <<<<<<< HEAD
+<<<<<<< HEAD
         merchant_order_id: customOrderId, // <--- Sent to Paymob here
 =======
         // We can pass the User ID here to track it in the webhook later
         merchant_order_id: `TX-${Date.now()}-${user._id}`,
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+        merchant_order_id: customOrderId, // <--- Sent to Paymob here
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
       }
     );
     const orderId = orderResponse.data.id;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // 4. PAYMENT KEY GENERATION
 =======
     // 3. PAYMENT KEY GENERATION
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+    // 4. PAYMENT KEY GENERATION
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     const keyResponse = await axios.post(
       "https://accept.paymob.com/api/acceptance/payment_keys",
       {
         auth_token: authToken,
         amount_cents: amountInCents,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
         expiration: 3600,
         order_id: orderId,
         billing_data: billing_data || {
           apartment: "NA",
           email: user.email,
+<<<<<<< HEAD
 =======
         expiration: 3600, // 1 hour
         order_id: orderId,
@@ -108,15 +126,21 @@ const createPaymentIntent = catchError(
           apartment: "NA",
           email: user.email, // Important for tracking
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
           floor: "NA",
           first_name: user.name.split(" ")[0] || "User",
           street: "NA",
           building: "NA",
 <<<<<<< HEAD
+<<<<<<< HEAD
           phone_number: "+201234567890",
 =======
           phone_number: "+201234567890", // Paymob requires a valid phone format
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+          phone_number: "+201234567890",
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
           shipping_method: "NA",
           postal_code: "NA",
           city: "Cairo",
@@ -132,6 +156,9 @@ const createPaymentIntent = catchError(
     const paymentKey = keyResponse.data.token;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     // ✅ Log Activity including the type
     await logActivity(
       user._id,
@@ -142,6 +169,7 @@ const createPaymentIntent = catchError(
       "success"
     );
 
+<<<<<<< HEAD
 =======
     // ✅ Log Activity: User initiated payment
     await logActivity(
@@ -153,16 +181,22 @@ const createPaymentIntent = catchError(
 
     // Send Key and Order ID to Frontend
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     res.status(200).json({
       status: "success",
       data: {
         paymentKey,
         orderId,
 <<<<<<< HEAD
+<<<<<<< HEAD
         iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_IFRAME_ID}?payment_token=${paymentKey}`,
 =======
         iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_FRAME_ID}?payment_token=${paymentKey}`,
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+        iframeUrl: `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_IFRAME_ID}?payment_token=${paymentKey}`,
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
       },
     });
   }
@@ -249,6 +283,9 @@ const handleWebhook = catchError(
     // 5. PROCESS TRANSACTION
     if (success === true) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
       const customId = order?.merchant_order_id;
       if (!customId) return res.status(200).send();
 
@@ -273,6 +310,7 @@ const handleWebhook = catchError(
         await user.save();
       }
     }
+<<<<<<< HEAD
 =======
       console.log(
         `✅ [Paymob] Payment Succeeded. Order: ${order.id}, Tx: ${id}`
@@ -287,6 +325,8 @@ const handleWebhook = catchError(
 
     // Acknowledge receipt to Paymob
 >>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
+=======
+>>>>>>> 8d31baa65cb88e9c7c0f1362b586f280ba3815d9
     res.status(200).send();
   }
 );
