@@ -8,11 +8,10 @@ export interface Challenge {
   type: "job" | "prize";
   prizeAmount?: number;
   salary?: number;
-  // بما إن الموديل فيه creatorId، هنفترض إن الـ API بيعمل Populate لبيانات الشركة
+  
   company?: string; 
   location?: string;
 }
-// إذا كان لديك أنواع بيانات أخرى للميتا داتا
 export interface Category {
   id: string;
   name: string;
