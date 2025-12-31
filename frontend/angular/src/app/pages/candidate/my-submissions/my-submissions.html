@@ -1,13 +1,17 @@
 <div class="space-y-10 p-6">
   <section>
-    <h2 class="text-2xl font-bold mb-6 text-gray-800">{{ 'DASHBOARD.MY_SUBMISSIONS.IN_PROGRESS' | translate }}</h2>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+      {{ 'DASHBOARD.MY_SUBMISSIONS.IN_PROGRESS' | translate }}
+    </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       @for (sub of inProgressChallenges; track sub._id) {
       <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
         <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
         <div class="mt-4 flex items-center justify-between">
           <div class="text-sm text-gray-500">
-            <span class="block font-semibold text-dark-900">{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span>
+            <span class="block font-semibold text-dark-900"
+              >{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span
+            >
             {{ sub.createdAt | date }}
           </div>
           <button
@@ -28,7 +32,9 @@
 
   <!-- Completed Challenges Section -->
   <section>
-    <h2 class="text-2xl font-bold mb-6 text-gray-800">{{ 'DASHBOARD.MY_SUBMISSIONS.COMPLETED' | translate }}</h2>
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+      {{ 'DASHBOARD.MY_SUBMISSIONS.COMPLETED' | translate }}
+    </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       @for (sub of completedChallenges; track sub._id) {
       <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
@@ -38,7 +44,7 @@
             {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}: {{ sub.aiScore }}
           </div>
         </div>
-        <button class="mt-4 font-semibold text-dark-900  text-sm hover:underline cursor-pointer">
+        <button class="mt-4 font-semibold text-dark-900 text-sm hover:underline cursor-pointer">
           {{ 'DASHBOARD.MY_SUBMISSIONS.VIEW_RESULT' | translate }}
         </button>
       </div>
@@ -52,10 +58,21 @@
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
   >
     <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transition-all">
-      <h2 class="text-2xl font-bold mb-2">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.TITLE' | translate }}</h2>
-      <p class="text-gray-500 text-sm mb-6">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.SUBTITLE' | translate }}</p>
+      <h2 class="text-2xl font-bold mb-2">
+        {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.TITLE' | translate }}
+      </h2>
+      <p class="text-gray-500 text-sm mb-6">
+        {{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.SUBTITLE' | translate }}
+      </p>
 
-      <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
+      <!-- Submission Type Tabs (only show if multiple options are available) -->
+      <div
+        class="flex bg-gray-100 p-1 rounded-xl mb-6"
+        *ngIf="
+          selectedChallenge?.submissionType !== 'file' &&
+          selectedChallenge?.submissionType !== 'link'
+        "
+      >
         <button
           (click)="activeTab = 'file'"
           [class.bg-white]="activeTab === 'file'"
@@ -75,26 +92,39 @@
       </div>
 
       <form [formGroup]="submitForm" (ngSubmit)="onFinalSubmit()" class="space-y-4">
-        <!-- File Upload Tab -->
-        <div *ngIf="activeTab === 'file'">
-          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.PROJECT_FILE' | translate }}</label>
+        <!-- File Upload Tab (shown if activeTab is file OR if challenge submissionType is file) -->
+        <div *ngIf="activeTab === 'file' || selectedChallenge?.submissionType === 'file'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{
+            'DASHBOARD.MY_SUBMISSIONS.MODAL.PROJECT_FILE' | translate
+          }}</label>
           <div class="relative group">
-            <input type="file" (change)="onFileSelected($event)" class="hidden" #fileInput />
+            <input
+              type="file"
+              (change)="onFileSelected($event, 'project')"
+              class="hidden"
+              #projectFileInput
+            />
             <div
-              (click)="fileInput.click()"
+              (click)="projectFileInput.click()"
               class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer"
             >
               <lucide-icon [img]="icons.FileUp" class="text-gray-400"></lucide-icon>
               <span class="text-xs font-bold text-gray-500">
-                {{ selectedFile ? selectedFile.name : ('DASHBOARD.MY_SUBMISSIONS.MODAL.CLICK_SELECT' | translate) }}
+                {{
+                  selectedProjectFile
+                    ? selectedProjectFile.name
+                    : ('DASHBOARD.MY_SUBMISSIONS.MODAL.CLICK_SELECT' | translate)
+                }}
               </span>
             </div>
           </div>
         </div>
 
-        <!-- Link Tab -->
-        <div *ngIf="activeTab === 'link'">
-          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.GITHUB_LINK' | translate }}</label>
+        <!-- Link Tab (shown if activeTab is link OR if challenge submissionType is link) -->
+        <div *ngIf="activeTab === 'link' || selectedChallenge?.submissionType === 'link'">
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{
+            'DASHBOARD.MY_SUBMISSIONS.MODAL.GITHUB_LINK' | translate
+          }}</label>
           <input
             formControlName="solutionUrl"
             type="url"
@@ -103,15 +133,37 @@
           />
         </div>
 
-        <!-- Video URL -->
+        <!-- Video Explanation File Upload -->
         <div>
-          <label class="block text-sm font-bold text-gray-700 mb-1">{{ 'DASHBOARD.MY_SUBMISSIONS.MODAL.VIDEO_DEMO' | translate }}</label>
-          <input
-            formControlName="videoUrl"
-            type="url"
-            placeholder="https://loom.com/..."
-            class="w-full border-gray-200 rounded-xl p-3 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+          <label class="block text-sm font-bold text-gray-700 mb-1">{{
+            'DASHBOARD.MY_SUBMISSIONS.MODAL.VIDEO_DEMO' | translate
+          }}</label>
+          <div class="relative group">
+            <input
+              type="file"
+              (change)="onFileSelected($event, 'video')"
+              class="hidden"
+              #videoFileInput
+              accept="
+                video/mp4,
+                video/webm,
+                video/ogg
+              "
+            />
+            <div
+              (click)="videoFileInput.click()"
+              class="border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer"
+            >
+              <lucide-icon [img]="icons.FileUp" class="text-gray-400"></lucide-icon>
+              <span class="text-xs font-bold text-gray-500">
+                {{
+                  selectedVideoFile
+                    ? selectedVideoFile.name
+                    : ('DASHBOARD.MY_SUBMISSIONS.MODAL.CLICK_SELECT_VIDEO' | translate)
+                }}
+              </span>
+            </div>
+          </div>
         </div>
 
         <!-- Action Buttons -->
@@ -126,9 +178,9 @@
           <button
             type="submit"
             [disabled]="
-              submitForm.get('videoUrl')?.invalid ||
-              (activeTab === 'file' && !selectedFile) ||
-              (activeTab === 'link' && !submitForm.get('solutionUrl')?.value)
+              (activeTab === 'file' && !selectedProjectFile) ||
+              (activeTab === 'link' && submitForm.get('solutionUrl')?.invalid) ||
+              !selectedVideoFile
             "
             class="flex-1 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer"
           >

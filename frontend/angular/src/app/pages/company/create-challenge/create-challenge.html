@@ -106,8 +106,8 @@
               <z-select
                 class="w-full"
                 zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_CATEGORY' | translate }}"
-                formControlName="category"
-                [zValue]="selectedCategory"
+                [(zValue)]="selectedCategory"
+                (zValueChange)="onCategorySelected($event)"
               >
                 <z-select-item *ngFor="let cat of categories" [zValue]="cat">{{
                   cat | translate
@@ -131,8 +131,8 @@
               <z-select
                 class="w-full"
                 zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_DIFFICULTY' | translate }}"
-                formControlName="difficulty"
-                [zValue]="selectedDifficulty"
+                [(zValue)]="selectedDifficulty"
+                (zValueChange)="onDifficultySelected($event)"
               >
                 <z-select-item *ngFor="let level of difficultyLevels" [zValue]="level">{{
                   'CHALLENGE.DIFFICULTY.' + level.toUpperCase() | translate
@@ -159,8 +159,8 @@
             <z-select
               class="w-full"
               zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_SUBMISSION_TYPE' | translate }}"
-              formControlName="submissionType"
-              [zValue]="selectedSubmissionType"
+              [(zValue)]="selectedSubmissionType"
+              (zValueChange)="onSubmissionTypeSelected($event)"
             >
               <z-select-item *ngFor="let type of submissionTypes" [zValue]="type">{{
                 'CHALLENGE.SUBMISSION_TYPE.' + type.toUpperCase() | translate
@@ -503,8 +503,8 @@
               <z-select
                 class="w-full"
                 zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_IDEAL_SOLUTION_TYPE' | translate }}"
-                formControlName="type"
-                [zValue]="selectedIdealSolutionType"
+                [(zValue)]="selectedIdealSolutionType"
+                (zValueChange)="onIdealSolutionTypeSelected($event)"
               >
                 <z-select-item *ngFor="let type of idealSolutionTypes" [zValue]="type">{{
                   'CHALLENGE.IDEAL_SOLUTION_TYPE.' + type.toUpperCase() | translate
@@ -616,8 +616,8 @@
               <z-select
                 class="w-full capitalize"
                 zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_PRICING_TIER' | translate }}"
-                formControlName="pricingTier"
-                [zValue]="selectedPricingTier"
+                [(zValue)]="selectedPricingTier"
+                (zValueChange)="onPricingTierSelected($event)"
               >
                 <z-select-item
                   *ngFor="let tierDetail of aiPricingTiers"
@@ -654,8 +654,8 @@
               <z-select
                 class="w-full"
                 zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_AI_MODEL' | translate }}"
-                formControlName="selectedModel"
-                [zValue]="selectedAiModelId"
+                [(zValue)]="selectedAiModelId"
+                (zValueChange)="onAiModelSelected($event)"
               >
                 <z-select-item *ngFor="let model of aiModels" [zValue]="model.id"
                   >{{ model.name }} ({{ model.provider }})</z-select-item

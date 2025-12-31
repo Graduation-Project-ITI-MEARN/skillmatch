@@ -69,7 +69,9 @@ export class CandidateService {
   startChallenge(challengeId: string): Observable<any> {
     // This assumes your backend has an endpoint like POST /api/challenges/:id/start
     // and that this endpoint is protected by your `requireVerification(['candidate'])` middleware.
-    return this.http.post(`${this.apiUrl}/challenges/${challengeId}/start`, {});
+    return this.http.post(`${this.apiUrl}/submissions/start`, {
+      challengeId,
+    });
   }
 
   submitFinalSolution(submissionData: any): Observable<any> {

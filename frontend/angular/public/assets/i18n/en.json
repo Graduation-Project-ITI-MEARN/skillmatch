@@ -408,9 +408,10 @@
         "PROJECT_FILE": "Project File (ZIP/PDF)",
         "CLICK_SELECT": "Click to select file",
         "GITHUB_LINK": "GitHub / Design Link",
-        "VIDEO_DEMO": "Video Demo Link (Loom/YouTube)",
+        "VIDEO_DEMO": "Video Explanation",
         "CANCEL": "Cancel",
-        "SUBMIT_NOW": "Submit Now"
+        "SUBMIT_NOW": "Submit Now",
+        "CLICK_SELECT_VIDEO": "Click to select video"
       }
     }
   },

@@ -34,36 +34,40 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
    // Fetch all submissions (including 'started' ones) for the candidate
    const candidateSubmissions = await Submission.find({
       candidateId: new mongoose.Types.ObjectId(user._id),
-   }).populate("challengeId", "title category difficulty deadline"); // <-- Populate deadline here
+   }).populate(
+      "challengeId",
+      "title category difficulty deadline submissionType"
+   );
 
    // Now, structure the data for the dashboard
    const startedChallenges = candidateSubmissions
       .filter((sub) => sub.status === "started")
       .map((sub) => ({
          _id: sub._id,
-         challengeId: sub.challengeId,
+         challengeId: sub.challengeId, // This now correctly contains submissionType
          status: sub.status,
          createdAt: sub.createdAt,
-         deadline: (sub.challengeId as any).deadline, // Access populated deadline
+         deadline: (sub.challengeId as any).deadline,
          title: (sub.challengeId as any).title,
          category: (sub.challengeId as any).category,
          difficulty: (sub.challengeId as any).difficulty,
+         aiScore: sub.aiScore,
+         aiEvaluation: sub.aiEvaluation,
       }));
 
    const activeSubmissions = candidateSubmissions
       .filter((sub) => sub.status !== "started")
       .map((sub) => ({
          _id: sub._id,
-         challengeId: sub.challengeId,
+         challengeId: sub.challengeId, // This now correctly contains submissionType
          status: sub.status,
          createdAt: sub.createdAt,
-         deadline: (sub.challengeId as any).deadline, // Access populated deadline
+         deadline: (sub.challengeId as any).deadline,
          title: (sub.challengeId as any).title,
          category: (sub.challengeId as any).category,
          difficulty: (sub.challengeId as any).difficulty,
          aiScore: sub.aiScore,
          isWinner: sub.isWinner,
-         submissionType: sub.submissionType,
       }));
 
    res.status(200).json({

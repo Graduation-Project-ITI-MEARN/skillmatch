@@ -38,30 +38,30 @@ export interface IAiModelsResponse {
 }
 
 // Your existing IChallenge interface (if needed for reference, not directly used here)
-// export interface IChallenge extends Document {
-//   title: string;
-//   description: string;
-//   difficulty: 'easy' | 'medium' | 'hard';
-//   category: string;
-//   deadline: Date;
-//   creatorId: mongoose.Types.ObjectId;
-//   status: 'draft' | 'published' | 'closed';
-//   type: 'job' | 'prize';
-//   submissionType: 'link' | 'file' | 'text';
-//   prizeAmount?: number;
-//   salary?: number;
-//   additionalInfo?: string;
-//   tags?: string[];
-//   requirements: string;
-//   evaluationCriteria: string;
-//   deliverables: string;
-//   idealSolution?: string; // This needs to be a sub-object for type/value
-//   aiConfig: {
-//     pricingTier: PricingTier;
-//     selectedModel?: AIModel; // If custom tier
-//     autoEvaluate: boolean; // Auto-evaluate on submission
-//     requireVideoTranscript: boolean;
-//   };
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
+export interface IChallenge {
+  title: string;
+  description: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  category: string;
+  deadline: Date;
+  creatorId: string;
+  status: 'draft' | 'published' | 'closed';
+  type: 'job' | 'prize';
+  submissionType: 'link' | 'file' | 'text';
+  prizeAmount?: number;
+  salary?: number;
+  additionalInfo?: string;
+  tags?: string[];
+  requirements: string;
+  evaluationCriteria: string;
+  deliverables: string;
+  idealSolution?: string; // This needs to be a sub-object for type/value
+  aiConfig: {
+    pricingTier: PricingTier;
+    selectedModel?: IAiModel; // If custom tier
+    autoEvaluate: boolean; // Auto-evaluate on submission
+    requireVideoTranscript: boolean;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
