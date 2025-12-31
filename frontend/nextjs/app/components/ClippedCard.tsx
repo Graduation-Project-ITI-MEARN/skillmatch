@@ -43,7 +43,7 @@ export default function ClippedCard({ challenge }: { challenge: Challenge }) {
       <div className="absolute bottom-4 right-6 w-[30%] h-[15%] flex items-center justify-end pointer-events-none">
         <div className="flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 text-black">
           <span className="text-3xl font-light">—</span>
-          {/* هنا استخدمنا الأيقونة البرمجية بدل الصورة */}
+          {/* .. */}
           <ArrowRight size={32} strokeWidth={1.5} />
         </div>
       </div>
