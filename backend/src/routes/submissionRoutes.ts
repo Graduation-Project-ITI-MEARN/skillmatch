@@ -13,6 +13,7 @@ import { advancedResults } from "../middlewares/advancedResults";
 import auth from "../middlewares/authMiddleware";
 import { createSubmissionDTO } from "../DTO/submission";
 import express from "express";
+import { requireBalance } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
 import { requireVerification } from "../middlewares/requireVerification";

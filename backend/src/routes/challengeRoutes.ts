@@ -1,14 +1,15 @@
-import express from "express";
 import {
    createChallenge,
-   getPublishedChallenges,
-   getMyChallenges,
-   getAllChallenges,
-   updateChallenge,
    deleteChallenge,
+   getAllChallenges,
    getChallengeById,
+   getMyChallenges,
+   getPublishedChallenges,
+   updateChallenge,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
+import express from "express";
+import { requireSubscription } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
 import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
