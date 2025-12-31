@@ -1,10 +1,10 @@
 {
-   "Common": {
-      "login": "Login",
-      "register": "Register",
-      "Create your account": "Create your account"
-   },
-   "nav": {
+  "Common": {
+    "login": "Login",
+    "register": "Register",
+    "Create your account": "Create your account"
+  },
+  "nav": {
     "about": "About",
     "challenges": "Challenges",
     "leaderboard": "Leaderboard"
@@ -15,7 +15,6 @@
   "challenges": {
     "startChallenge": "Start Challenge"
   },
-  
   "leaderboard": {
     "title": "Leaderboard",
     "viewPortfolio": "View Portfolio",
@@ -27,8 +26,104 @@
       "all": "All"
     }
   },
+  "Landing": {
+    "Hero": {
+      "headline": "Hire based on skills,",
+      "headlineSuffix": "not resumes",
+      "ctaPrimary": "Find Top Talent",
+      "ctaSecondary": "Get Hired",
+      "companies": {
+        "title": "Real Skills, Real Evaluation, Real Talent",
+        "desc": "Replace CVs and interviews with real challenges and AI video analysis. Verify skills authentically, hire confidently.",
+        "link": "Learn More"
+      },
+      "candidates": {
+        "title": "Prove Your Skills, Land The Job",
+        "desc": "Don't get filtered by an algorithm. Show what you can actually do through real-world challenges and get hired by top tech companies.",
+        "link": "Start Challenge"
+      }
+    },
+    "HowItWorks": {
+      "title": "How it works",
+      "step1Title": "Post Challenges",
+      "step1Desc": "Create real-world problems that reflect actual job requirements.",
+      "step2Title": "Submit Solutions",
+      "step2Desc": "Candidates solve challenges and record video explanations of their approach.",
+      "step3Title": "AI Evaluates",
+      "step3Desc": "AI analyzes code quality, video explanations, and problem-solving approach."
+    },
+    "Future": {
+      "title": "The future of hiring",
+      "desc": "Whether you're looking for talent, showcasing skills, or creating challenges. This is the future of hiring.",
+      "ctaPrimary": "Get Started",
+      "ctaSecondary": "Get Hired"
+    },
+    "WhySkillMatch": {
+      "title": "Why SkillMatch",
+      "companies": {
+        "title": "For Companies",
+        "points": [
+          "Post real job challenges",
+          "AI-scored submissions",
+          "Video authenticity verification",
+          "Leaderboards & analytics",
+          "Find proven talent faster"
+        ]
+      },
+      "challengers": {
+        "title": "For Challengers",
+        "points": [
+          "Compete in global hackathons",
+          "Earn cash prizes",
+          "Build a verified portfolio",
+          "Get scouted by top tech firms"
+        ]
+      },
+      "candidates": {
+        "title": "For Candidates",
+        "points": [
+          "Showcase your real skills",
+          "Skip the resume screening",
+          "Get feedback on your code",
+          "Land your dream job"
+        ]
+      }
+    },
+    "FooterCTA": {
+      "title": "Let AI help you with your career",
+      "button": "AI Career Coach"
+    }
+  },
+  "About": {
+    "headerSubtitle": "ABOUT",
+    "headerTitle": "Where enterprise AI meets real-world purpose",
+    "headerDesc": "SkillMatch builds the new way to hire with AI solutions that help teams turn hiring effort into extraordinary impact",
+    "Mission": {
+      "title": "OUR MISSION",
+      "p1": "Our mission is to transform hiring into a continuous learning journey where real skills matter more than résumés. We empower individuals to prove their abilities through practical challenges, meaningful feedback, and AI-verified understanding—so every effort becomes portfolio-worthy.",
+      "p2": "Whether or not a hire happens. By combining real-world tasks, video-based explanation analysis, and personalized AI coaching, we create a fairer, more transparent system that rewards genuine capability."
+    },
+    "Team": {
+      "subtitle": "OUR STORY",
+      "title": "Meet Our Team",
+      "year": "2025",
+      "members": {
+        "aya": { "name": "Aya Zayed", "role": "Team Leader" },
+        "ahmedm": { "name": "Ahmed Mancy", "role": "Full Stack / QA" },
+        "esraa": { "name": "Esraa Fayek", "role": "Next.js Lead" },
+        "ahmedh": { "name": "Ahmed Hassan", "role": "Angular Lead" },
+        "menna": { "name": "Menna Seif", "role": "Backend Lead" }
+      }
+    },
+    "Goal": {
+      "title": "OUR GOAL",
+      "heading": "Change the hiring process",
+      "p1": "Our mission is to transform hiring into a continuous learning journey where real skills matter more than résumés. We empower individuals to prove their abilities through practical challenges, meaningful feedback, and AI-verified understanding—so every effort becomes portfolio-worthy.",
+      "p2": "Whether or not a hire happens. By combining real-world tasks, video-based explanation analysis, and personalized AI coaching, we create a fairer, more transparent system that rewards genuine capability."
+    }
+  },
   "footer": {
-   "description": "Connecting skills with opportunities.",
+    "description": "Connecting skills with opportunities.",
     "explore": "Explore",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
