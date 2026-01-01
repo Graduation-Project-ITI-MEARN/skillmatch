@@ -17,6 +17,8 @@ export interface ClippedCardProps {
     status?: string;
   };
 }
+import { Code, Calculator, Palette, ArrowRight } from "lucide-react"; // أضفنا ArrowRight هنا
+import { Challenge } from "@/app/types/challenge";
 
 const categoryStyles: Record<string, string> = {
   Coding: "bg-red-50 text-red-600 border-red-200",
