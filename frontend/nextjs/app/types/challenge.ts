@@ -1,17 +1,17 @@
 export interface Challenge {
-  id: string;
+  _id: string; // MongoDB يستخدم _id
   title: string;
-  company: string;
-  location: string;
+  description: string;
+  difficulty: "easy" | "medium" | "hard";
+  category: string;
   deadline: string;
-  category: "Coding" | "Accounting" | "Design" | string;
-  type: "Jobs" | "Prizes" | "All";
-  prize: number;
+  type: "job" | "prize";
+  prizeAmount?: number;
   salary?: number;
-  difficulty: "Easy" | "Medium" | "Hard" | string;
+  
+  company?: string; 
+  location?: string;
 }
-
-// إذا كان لديك أنواع بيانات أخرى للميتا داتا
 export interface Category {
   id: string;
   name: string;
