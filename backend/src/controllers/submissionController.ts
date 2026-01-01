@@ -1,26 +1,24 @@
+// src/controllers/submissionController.ts
 import { Request, Response } from "express";
 import Submission, { ISubmission, SubmissionType } from "../models/Submission";
-
+import Challenge from "../models/Challenge";
 import APIError from "../utils/APIError";
 import { catchError } from "../utils/catchAsync";
 import { emitToUser } from "../socket/socketService";
-import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
+import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
-import Challenge from "../models/Challenge";
-
-/**
- * @desc    Get all submissions (Admin/General use)
- * @route   GET /api/submissions
- * @access  Private
- */
-const getAllSubmissions = catchError(async (req: Request, res: Response) => {
-   const submissions = await Submission.find();
-
-   res.status(200).json({
-      success: true,
-      data: submissions,
-   });
-});
+import { evaluateWithModel } from "../services/AIService";
+import {
+   transcribeVideo,
+   isDirectVideoUrl,
+} from "../services/videoTranscription";
+import { getModelForChallenge } from "../services/AIService";
+import {
+   validateSubmission,
+   validateGitHubLink,
+   isFakeGitHubUrl,
+} from "../services/validationService";
+import { sendNotification } from "../utils/notification";
 
 /**
  * @desc    Get submissions and started challenges for the logged-in candidate
@@ -31,7 +29,6 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
    const user = req.user;
    if (!user) throw new APIError(401, "User not authenticated");
 
-   // Fetch all submissions (including 'started' ones) for the candidate
    const candidateSubmissions = await Submission.find({
       candidateId: new mongoose.Types.ObjectId(user._id),
    }).populate(
@@ -39,36 +36,42 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
       "title category difficulty deadline submissionType"
    );
 
-   // Now, structure the data for the dashboard
    const startedChallenges = candidateSubmissions
       .filter((sub) => sub.status === "started")
       .map((sub) => ({
          _id: sub._id,
-         challengeId: sub.challengeId, // This now correctly contains submissionType
+         challengeId: sub.challengeId,
          status: sub.status,
          createdAt: sub.createdAt,
          deadline: (sub.challengeId as any).deadline,
          title: (sub.challengeId as any).title,
          category: (sub.challengeId as any).category,
          difficulty: (sub.challengeId as any).difficulty,
-         aiScore: sub.aiScore,
-         aiEvaluation: sub.aiEvaluation,
       }));
 
    const activeSubmissions = candidateSubmissions
       .filter((sub) => sub.status !== "started")
-      .map((sub) => ({
-         _id: sub._id,
-         challengeId: sub.challengeId, // This now correctly contains submissionType
-         status: sub.status,
-         createdAt: sub.createdAt,
-         deadline: (sub.challengeId as any).deadline,
-         title: (sub.challengeId as any).title,
-         category: (sub.challengeId as any).category,
-         difficulty: (sub.challengeId as any).difficulty,
-         aiScore: sub.aiScore,
-         isWinner: sub.isWinner,
-      }));
+      .map((sub) => {
+         // Check if evaluation is still processing
+         const isEvaluating = sub.status === "pending" && !sub.aiEvaluation;
+
+         return {
+            _id: sub._id,
+            challengeId: sub.challengeId,
+            status: sub.status,
+            createdAt: sub.createdAt,
+            deadline: (sub.challengeId as any).deadline,
+            title: (sub.challengeId as any).title,
+            category: (sub.challengeId as any).category,
+            difficulty: (sub.challengeId as any).difficulty,
+            aiScore: sub.aiScore,
+            isWinner: sub.isWinner,
+
+            // Evaluation status
+            evaluationStatus: isEvaluating ? "evaluating" : "completed",
+            aiEvaluation: isEvaluating ? null : sub.aiEvaluation,
+         };
+      });
 
    res.status(200).json({
       success: true,
@@ -80,8 +83,8 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
 });
 
 /**
- * @desc    Candidate submits a solution for a challenge (updates a "started" submission)
- * @route   POST /api/submissions   (This endpoint now handles final submission)
+ * @desc    Candidate submits a solution (with automatic AI evaluation)
+ * @route   POST /api/submissions
  * @access  Private (Candidate)
  */
 const createSubmission = catchError(async (req: Request, res: Response) => {
@@ -98,106 +101,365 @@ const createSubmission = catchError(async (req: Request, res: Response) => {
    if (!candidateId) throw new APIError(401, "User not authenticated");
    if (!challengeId) throw new APIError(400, "Challenge ID is required");
 
-   const challengeCreator = await Challenge.findById(challengeId).select(
-      "creatorId"
-   );
+   // Fetch challenge with AI config
+   const challenge = await Challenge.findById(challengeId);
+   if (!challenge) throw new APIError(404, "Challenge not found");
 
-   if (!challengeCreator) {
-      throw new APIError(404, "Challenge not found");
-   }
-
-   console.log("Challenge creator ID:", challengeCreator?.creatorId);
-
-   // --- VALIDATION FOR ACTUAL SUBMISSION ---
+   // --- VALIDATION ---
    if (!videoExplanationUrl?.trim()) {
       throw new APIError(400, "Video explanation is required");
    }
    if (!submissionType) throw new APIError(400, "Submission type is required");
-   if (!Object.values(SubmissionType).includes(submissionType)) {
-      throw new APIError(
-         400,
-         `Invalid submission type: ${Object.values(SubmissionType).join(", ")}`
-      );
-   }
 
    // Type-specific validation
    switch (submissionType) {
       case SubmissionType.LINK:
-         if (!linkUrl?.trim()) {
-            throw new APIError(400, "Link URL required");
+         if (!linkUrl?.trim()) throw new APIError(400, "Link URL required");
+
+         // Check for fake GitHub URLs
+         if (linkUrl.includes("github.com") && isFakeGitHubUrl(linkUrl)) {
+            throw new APIError(
+               400,
+               "Please provide a real GitHub repository, not a placeholder or example URL."
+            );
+         }
+
+         // Validate GitHub repo if it's a GitHub link
+         if (linkUrl.includes("github.com")) {
+            const githubValidation = await validateGitHubLink(linkUrl);
+            if (!githubValidation.isValid) {
+               throw new APIError(400, githubValidation.message);
+            }
+
+            // If there are warnings, we'll include them in the response but still allow submission
+            if (githubValidation.repoData?.warnings?.length > 0) {
+               console.log(
+                  "⚠️  GitHub warnings:",
+                  githubValidation.repoData.warnings
+               );
+            }
          }
          break;
       case SubmissionType.FILE:
-         if (!fileUrls?.length) {
-            throw new APIError(400, "File URLs required");
-         }
+         if (!fileUrls?.length) throw new APIError(400, "File URLs required");
          break;
       case SubmissionType.TEXT:
-         if (!textContent?.trim()) {
-            throw new APIError(400, "Text content is required");
-         }
+         if (!textContent?.trim())
+            throw new APIError(400, "Text content required");
          break;
    }
 
-   // Find an existing submission (either 'started' or already submitted)
+   // Find existing submission
    let submission: ISubmission | null = await Submission.findOne({
       challengeId: new mongoose.Types.ObjectId(challengeId),
       candidateId: new mongoose.Types.ObjectId(candidateId),
    });
 
    if (!submission) {
-      throw new APIError(
-         400,
-         "You must start the challenge before submitting a solution."
-      );
+      throw new APIError(400, "You must start the challenge first.");
    }
 
    if (submission.status !== "started") {
       throw new APIError(409, "You have already submitted for this challenge.");
    }
 
-   // Update the existing 'started' submission with the actual solution details
+   // Update submission details
    submission.videoExplanationUrl = videoExplanationUrl.trim();
    submission.submissionType = submissionType;
-   submission.linkUrl = linkUrl?.trim() || undefined; // Use undefined to remove if not provided
+   submission.linkUrl = linkUrl?.trim();
    submission.fileUrls = fileUrls || [];
-   submission.textContent = textContent?.trim() || undefined; // Use undefined to remove if not provided
-   submission.status = "pending"; // Change status to pending
-   submission.aiScore = 0; // Reset score if it was previously set or for initial pending state
-   submission.challengeCreator = challengeCreator.creatorId;
+   submission.textContent = textContent?.trim();
+   submission.status = "pending";
+   submission.aiScore = 0;
 
-   await submission.save(); // Save the updated submission
+   await submission.save();
 
-   // Populate relationships to get Challenge Title and Candidate Name
+   // Log activity
+   await logActivity(
+      candidateId,
+      "submission_created",
+      `User submitted solution for challenge: ${challenge.title}`,
+      "success",
+      submission._id
+   );
+
+   // Populate for response
    await submission.populate([
       { path: "challengeId", select: "title category difficulty" },
       { path: "candidateId", select: "name email" },
    ]);
 
-   // Log Activity
-   const challengeTitle =
-      (submission.challengeId as any)?.title || "Unknown Challenge";
-
-   await logActivity(
-      candidateId,
-      "submission_created", // Or "submission_updated" if you want to differentiate
-      `User submitted solution for challenge: ${challengeTitle}`,
-      "success",
-      submission._id
-   );
+   // Start AI evaluation asynchronously (don't wait)
+   if (challenge.aiConfig?.autoEvaluate) {
+      evaluateSubmissionAsync(submission._id.toString(), challenge);
+   }
 
    res.status(200).json({
-      // Changed to 200 OK as it's an update
       success: true,
       data: submission,
-      message: "Solution submitted successfully!",
+      message: "Solution submitted successfully! AI evaluation in progress...",
+   });
+});
+
+/**
+ * Async function to evaluate submission in background
+ */
+async function evaluateSubmissionAsync(submissionId: string, challenge: any) {
+   try {
+      console.log(`🤖 Starting AI evaluation for submission: ${submissionId}`);
+
+      const submission = await Submission.findById(submissionId);
+      if (!submission) return;
+
+      // 1. Transcribe video if available and required
+      let videoTranscript = "";
+      let videoTranscribed = false;
+
+      if (
+         challenge.aiConfig?.requireVideoTranscript &&
+         submission.videoExplanationUrl &&
+         isDirectVideoUrl(submission.videoExplanationUrl)
+      ) {
+         try {
+            console.log("📹 Transcribing video...");
+            const transcription = await transcribeVideo(
+               submission.videoExplanationUrl
+            );
+            videoTranscript = transcription.text;
+            videoTranscribed = true;
+            console.log("✅ Video transcribed successfully");
+         } catch (error) {
+            console.error("⚠️  Video transcription failed:", error);
+         }
+      }
+
+      // 2. Run comprehensive validation
+      console.log("🔍 Running validation checks...");
+      const validation = await validateSubmission(
+         {
+            linkUrl: submission.linkUrl,
+            textContent: submission.textContent,
+            videoTranscript,
+         },
+         {
+            title: challenge.title,
+            description: challenge.description,
+            category: challenge.category,
+         }
+      );
+
+      // 3. Handle validation results
+      if (!validation.isValid) {
+         console.log("❌ Validation failed:", validation.issues);
+
+         submission.aiEvaluation = {
+            technicalScore: 0,
+            clarityScore: 0,
+            communicationScore: 0,
+            feedback: `Submission validation failed: ${validation.issues.join(
+               ". "
+            )}`,
+            strengths: [],
+            improvements: ["Address validation issues and resubmit"],
+            modelUsed: "validation",
+            evaluatedAt: new Date(),
+            videoTranscribed: false,
+         };
+
+         submission.status = "rejected";
+         await submission.save();
+
+         // Notify candidate
+         sendNotification(
+            submission.candidateId.toString(),
+            "Submission Validation Failed",
+            `Your submission for "${
+               challenge.title
+            }" failed validation. Please address the following issues: ${validation.issues.join(
+               ". "
+            )}`
+         );
+
+         return;
+      }
+
+      // Show warnings if any
+      if (validation.warnings.length > 0) {
+         console.log("⚠️  Validation warnings:", validation.warnings);
+      }
+
+      // 4. Prepare submission content
+      let submissionContent = "";
+      if (submission.linkUrl) {
+         submissionContent = `GitHub/Project Link: ${submission.linkUrl}`;
+      }
+      if (submission.textContent) {
+         submissionContent += `\n\nCandidate's Explanation:\n${submission.textContent}`;
+      }
+      if (submission.fileUrls && submission.fileUrls.length > 0) {
+         submissionContent += `\n\nFile URLs: ${submission.fileUrls.join(
+            ", "
+         )}`;
+      }
+
+      // Add validation context
+      if (validation.plagiarismScore > 0) {
+         submissionContent += `\n\n**Note:** Plagiarism check score: ${validation.plagiarismScore}% (for context)`;
+      }
+
+      // 5. Add ideal solution for comparison (if provided)
+      let idealSolutionContext = "";
+      if (challenge.idealSolution) {
+         idealSolutionContext = `
+
+**Ideal Solution (For Comparison):**
+Type: ${challenge.idealSolution.type}
+Solution: ${challenge.idealSolution.value}
+
+Please compare the candidate's submission against this ideal solution. Consider:
+- How close is their approach to the ideal?
+- What aspects did they implement well?
+- What could be improved to match the ideal solution?
+`;
+      }
+
+      // 6. Determine AI model to use
+      const selectedModel = getModelForChallenge(
+         challenge.aiConfig?.pricingTier || "free",
+         challenge.aiConfig?.selectedModel
+      );
+
+      console.log(`🎯 Using AI Model: ${selectedModel}`);
+
+      // 7. Evaluate with AI
+      const evaluationResult = await evaluateWithModel({
+         challengeTitle: challenge.title,
+         challengeDescription: challenge.description,
+         difficulty: challenge.difficulty,
+         category: challenge.category,
+         tags: challenge.tags || [],
+         submissionContent: submissionContent + idealSolutionContext,
+         videoTranscript,
+         selectedModel,
+      });
+
+      // 8. Adjust scores based on plagiarism
+      let finalTechnicalScore = evaluationResult.technicalScore;
+      if (validation.plagiarismScore > 60) {
+         finalTechnicalScore = Math.max(
+            0,
+            finalTechnicalScore - (validation.plagiarismScore - 60)
+         );
+         evaluationResult.improvements.push(
+            "Submission shows signs of plagiarism. Ensure all work is original."
+         );
+      }
+
+      // 9. Update submission with results
+      submission.aiScore = Math.round(
+         (finalTechnicalScore +
+            evaluationResult.clarityScore +
+            evaluationResult.communicationScore) /
+            3
+      );
+
+      submission.aiEvaluation = {
+         technicalScore: finalTechnicalScore,
+         clarityScore: evaluationResult.clarityScore,
+         communicationScore: evaluationResult.communicationScore,
+         feedback: evaluationResult.feedback,
+         strengths: evaluationResult.strengths,
+         improvements: evaluationResult.improvements,
+         modelUsed: evaluationResult.modelUsed,
+         evaluatedAt: new Date(),
+         videoTranscribed,
+      };
+
+      await submission.save();
+
+      console.log(`✅ Evaluation complete! Score: ${submission.aiScore}`);
+
+      // 10. Notify candidate via socket
+      sendNotification(
+         submission.candidateId.toString(),
+         "Submission Evaluated",
+         `Your submission for "${challenge.title}" has been evaluated. Score: ${submission.aiScore}`
+      );
+   } catch (error) {
+      console.error("❌ Evaluation failed:", error);
+
+      // Update submission to show evaluation failed
+      const submission = await Submission.findById(submissionId);
+      if (submission) {
+         submission.aiEvaluation = {
+            technicalScore: 0,
+            clarityScore: 0,
+            communicationScore: 0,
+            feedback: "Evaluation failed. Please contact support.",
+            strengths: [],
+            improvements: [],
+            modelUsed: "error",
+            evaluatedAt: new Date(),
+            videoTranscribed: false,
+         };
+         await submission.save();
+      }
+   }
+}
+
+/**
+ * @desc    Get a single submission by ID
+ * @route   GET /api/submissions/:id
+ * @access  Private
+ */
+const getSubmissionById = catchError(async (req: Request, res: Response) => {
+   const { id } = req.params;
+
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new APIError(400, "Invalid submission ID");
+   }
+
+   const submission = await Submission.findById(id)
+      .populate("candidateId", "name email profilePicture")
+      .populate("challengeId", "title category difficulty");
+
+   if (!submission) {
+      throw new APIError(404, "Submission not found");
+   }
+
+   // Check if still evaluating
+   const isEvaluating =
+      submission.status === "pending" && !submission.aiEvaluation;
+
+   res.status(200).json({
+      success: true,
+      data: {
+         ...submission.toObject(),
+         evaluationStatus: isEvaluating ? "evaluating" : "completed",
+      },
+   });
+});
+
+/**
+ * @desc    Get all submissions (Admin/General use)
+ * @route   GET /api/submissions
+ * @access  Private (Admin)
+ */
+const getAllSubmissions = catchError(async (req: Request, res: Response) => {
+   const submissions = await Submission.find()
+      .populate("candidateId", "name email")
+      .populate("challengeId", "title category difficulty");
+
+   res.status(200).json({
+      success: true,
+      data: submissions,
    });
 });
 
 /**
  * @desc    Get submissions for a specific challenge
- * @route   GET /api/challenges/:id/submissions
- * @access  Private
+ * @route   GET /api/submissions/challenge/:id
+ * @access  Private (Company/Admin)
  */
 const getSubmissionsByChallenge = catchError(
    async (req: Request, res: Response) => {
@@ -221,31 +483,10 @@ const getSubmissionsByChallenge = catchError(
 );
 
 /**
- * @desc    Get a single submission by ID
- * @route   GET /api/submissions/:id
- * @access  Private
+ * @desc    Update submission status
+ * @route   PATCH /api/submissions/:id/status
+ * @access  Private (Company/Admin)
  */
-const getSubmissionById = catchError(async (req: Request, res: Response) => {
-   const { id } = req.params;
-
-   if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new APIError(400, "Invalid submission ID");
-   }
-
-   const submission = await Submission.findById(id)
-      .populate("candidateId", "name email profilePicture")
-      .populate("challengeId", "title category difficulty");
-
-   if (!submission) {
-      throw new APIError(404, "Submission not found");
-   }
-
-   res.status(200).json({
-      success: true,
-      data: submission,
-   });
-});
-
 const updateSubmissionStatus = catchError(
    async (req: Request, res: Response) => {
       const { id } = req.params;
@@ -269,7 +510,7 @@ const updateSubmissionStatus = catchError(
 
       await submission.save();
 
-      // REAL-TIME NOTIFICATION
+      // Real-time notification
       emitToUser(submission.candidateId.toString(), {
          title: "Submission Update",
          message: `Your submission for "${
@@ -296,15 +537,7 @@ const startChallenge = catchError(async (req: Request, res: Response) => {
    if (!candidateId) throw new APIError(401, "User not authenticated");
    if (!challengeId) throw new APIError(400, "Challenge ID is required");
 
-   const challengeCreator = await Challenge.findById(challengeId).select(
-      "creatorId"
-   );
-
-   if (!challengeCreator) {
-      throw new APIError(400, "Challenge not found");
-   }
-
-   // Check if the challenge exists and is published
+   // Check if challenge exists and is published
    const challenge = await Challenge.findById(challengeId);
    if (!challenge) {
       throw new APIError(404, "Challenge not found");
@@ -333,15 +566,14 @@ const startChallenge = catchError(async (req: Request, res: Response) => {
    const startedSubmission = await Submission.create({
       challengeId,
       candidateId,
-      challengeCreator: challengeCreator.creatorId,
-      status: "started", // Explicitly set status to 'started'
-      // Other fields like videoExplanationUrl, submissionType, etc. are omitted for 'started' state
+      challengeCreator: challenge.creatorId,
+      status: "started",
    });
 
    await logActivity(
       candidateId,
       "challenge_started",
-      `User started challenge: ${(challenge as any).title}`,
+      `User started challenge: ${challenge.title}`,
       "success",
       startedSubmission._id
    );
@@ -354,6 +586,7 @@ const startChallenge = catchError(async (req: Request, res: Response) => {
    });
 });
 
+// Export all functions
 export {
    getAllSubmissions,
    getMySubmissions,

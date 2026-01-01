@@ -4,10 +4,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/app/lib/validation";
 import InputField from "./InputField";
-import Link from "next/link";
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import SplitButton from "../ui/SplitButton";
+import { Link } from "@/i18n/routing";
 
 const LoginForm = () => {
    const [errorMessage, setErrorMessage] = useState<string>("");

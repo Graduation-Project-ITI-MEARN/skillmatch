@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "../globals.css"; 
+import "../globals.css";
 import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
@@ -36,12 +36,11 @@ export default async function RootLayout({
             suppressHydrationWarning
             className={`${
                direction === "rtl" ? "font-arabic-sans" : "font-sans"
-            } min-h-screen flex flex-col`}
-         >
+            } min-h-screen flex flex-col`}>
             <NextIntlClientProvider locale={locale} messages={messages}>
                <RTLProvider isRTL={isRTL}>
                   <Header />
-                  <main className="flex-grow">{children}</main>
+                  <main className="grow">{children}</main>
                   <Footer />
                </RTLProvider>
             </NextIntlClientProvider>

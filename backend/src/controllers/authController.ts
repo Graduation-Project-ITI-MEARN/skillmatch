@@ -3,6 +3,7 @@ import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
+import { sendNotification } from "../utils/notification";
 
 const jwt = require("jsonwebtoken");
 
@@ -50,6 +51,13 @@ const register = catchError(async (req: Request, res: Response) => {
       `User ${user.name} joined the platform.`,
       "success",
       user._id
+   );
+
+   await sendNotification(
+      user._id,
+      "Welcome to skillmatch!",
+      `Hi ${user.name}, welcome to skillmatch!`,
+      "success"
    );
 
    res.status(201).json({

@@ -1,7 +1,7 @@
 "use client";
-import Link from "next/link";
 import { Code, Calculator, Palette, ArrowRight } from "lucide-react"; // أضفنا ArrowRight هنا
 import { Challenge } from "@/app/types/challenge";
+import { Link } from "@/i18n/routing";
 
 const categoryStyles: Record<string, string> = {
    Coding: "bg-light-red/10 text-red border-red/20",

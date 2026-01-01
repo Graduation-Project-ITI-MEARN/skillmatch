@@ -9,6 +9,7 @@ import {
    aiCoachChat,
    getRecommendations,
    getSkillAnalysis,
+   getHiringInsights,
 } from "../controllers/aiController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
@@ -68,6 +69,18 @@ aiRouter.post(
 // Evaluate a single submission
 // Can be triggered by candidate or company
 aiRouter.post("/evaluate-submission", auth, evaluateSubmission);
+
+// ==========================================
+// Company Routes
+// ==========================================
+
+// Get hiring insights from submissions
+aiRouter.get(
+   "/hiring-insights",
+   auth,
+   restrictTo(["company", "admin"]),
+   getHiringInsights
+);
 
 // ==========================================
 // Admin/Testing Routes

@@ -82,11 +82,13 @@
               {{ 'CHALLENGE.FORM.TITLE' | translate }} <span class="text-red-500">*</span>
             </label>
             <input
-              z-input
               type="text"
               formControlName="title"
               placeholder="{{ 'CHALLENGE.FORM.TITLE_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('title')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('title')?.invalid && challengeForm.get('title')?.touched
+              "
             />
             <p
               *ngIf="challengeForm.get('title')?.invalid && challengeForm.get('title')?.touched"
@@ -103,16 +105,41 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 {{ 'CHALLENGE.FORM.CATEGORY' | translate }} <span class="text-red-500">*</span>
               </label>
-              <z-select
-                class="w-full"
-                zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_CATEGORY' | translate }}"
-                [(zValue)]="selectedCategory"
-                (zValueChange)="onCategorySelected($event)"
-              >
-                <z-select-item *ngFor="let cat of categories" [zValue]="cat">{{
-                  cat | translate
-                }}</z-select-item>
-              </z-select>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openCategory = !openCategory"
+                  [class.border-red-500]="
+                    challengeForm.get('category')?.invalid && challengeForm.get('category')?.touched
+                  "
+                >
+                  <span [class.text-gray-400]="!selectedCategory">
+                    {{
+                      selectedCategory
+                        ? (selectedCategory | translate)
+                        : ('CHALLENGE.FORM.SELECT_CATEGORY' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openCategory"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openCategory"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let cat of categories"
+                    (click)="selectCategory(cat)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ cat | translate }}
+                  </li>
+                </ul>
+              </div>
               <p
                 *ngIf="
                   challengeForm.get('category')?.invalid && challengeForm.get('category')?.touched
@@ -128,16 +155,42 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 {{ 'CHALLENGE.FORM.DIFFICULTY' | translate }} <span class="text-red-500">*</span>
               </label>
-              <z-select
-                class="w-full"
-                zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_DIFFICULTY' | translate }}"
-                [(zValue)]="selectedDifficulty"
-                (zValueChange)="onDifficultySelected($event)"
-              >
-                <z-select-item *ngFor="let level of difficultyLevels" [zValue]="level">{{
-                  'CHALLENGE.DIFFICULTY.' + level.toUpperCase() | translate
-                }}</z-select-item>
-              </z-select>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openDifficulty = !openDifficulty"
+                  [class.border-red-500]="
+                    challengeForm.get('difficulty')?.invalid &&
+                    challengeForm.get('difficulty')?.touched
+                  "
+                >
+                  <span [class.text-gray-400]="!selectedDifficulty">
+                    {{
+                      selectedDifficulty
+                        ? ('CHALLENGE.DIFFICULTY.' + selectedDifficulty.toUpperCase() | translate)
+                        : ('CHALLENGE.FORM.SELECT_DIFFICULTY' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openDifficulty"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openDifficulty"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let level of difficultyLevels"
+                    (click)="selectDifficulty(level)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ 'CHALLENGE.DIFFICULTY.' + level.toUpperCase() | translate }}
+                  </li>
+                </ul>
+              </div>
               <p
                 *ngIf="
                   challengeForm.get('difficulty')?.invalid &&
@@ -156,16 +209,43 @@
               {{ 'CHALLENGE.FORM.SUBMISSION_TYPE' | translate }}
               <span class="text-red-500">*</span>
             </label>
-            <z-select
-              class="w-full"
-              zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_SUBMISSION_TYPE' | translate }}"
-              [(zValue)]="selectedSubmissionType"
-              (zValueChange)="onSubmissionTypeSelected($event)"
-            >
-              <z-select-item *ngFor="let type of submissionTypes" [zValue]="type">{{
-                'CHALLENGE.SUBMISSION_TYPE.' + type.toUpperCase() | translate
-              }}</z-select-item>
-            </z-select>
+            <div class="relative">
+              <button
+                type="button"
+                class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                (click)="openSubmissionType = !openSubmissionType"
+                [class.border-red-500]="
+                  challengeForm.get('submissionType')?.invalid &&
+                  challengeForm.get('submissionType')?.touched
+                "
+              >
+                <span [class.text-gray-400]="!selectedSubmissionType">
+                  {{
+                    selectedSubmissionType
+                      ? ('CHALLENGE.SUBMISSION_TYPE.' + selectedSubmissionType.toUpperCase()
+                        | translate)
+                      : ('CHALLENGE.FORM.SELECT_SUBMISSION_TYPE' | translate)
+                  }}
+                </span>
+                <lucide-icon
+                  [img]="icons.ChevronDown"
+                  class="w-5 h-5 text-gray-500 transition-transform"
+                  [class.rotate-180]="openSubmissionType"
+                ></lucide-icon>
+              </button>
+              <ul
+                *ngIf="openSubmissionType"
+                class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+              >
+                <li
+                  *ngFor="let type of submissionTypes"
+                  (click)="selectSubmissionType(type)"
+                  class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                >
+                  {{ 'CHALLENGE.SUBMISSION_TYPE.' + type.toUpperCase() | translate }}
+                </li>
+              </ul>
+            </div>
             <p
               *ngIf="
                 challengeForm.get('submissionType')?.invalid &&
@@ -183,12 +263,14 @@
               {{ 'CHALLENGE.FORM.SALARY' | translate }} <span class="text-red-500">*</span>
             </label>
             <input
-              z-input
               type="number"
               formControlName="salary"
               min="1000"
               placeholder="{{ 'CHALLENGE.FORM.SALARY_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('salary')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('salary')?.invalid && challengeForm.get('salary')?.touched
+              "
             />
             <p
               *ngIf="challengeForm.get('salary')?.invalid && challengeForm.get('salary')?.touched"
@@ -198,7 +280,7 @@
             </p>
           </div>
 
-          <!-- Skills Dropdown with Search (Retaining custom for multi-select) -->
+          <!-- Skills Dropdown with Search -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ 'CHALLENGE.FORM.SKILLS' | translate }} <span class="text-red-500">*</span>
@@ -224,11 +306,11 @@
               </span>
             </div>
 
-            <!-- Skills Dropdown (Custom to allow multi-select & search) -->
+            <!-- Skills Dropdown -->
             <div class="relative">
               <button
                 type="button"
-                class="custom-dropdown"
+                class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
                 (click)="openSkillsDropdown = !openSkillsDropdown"
                 [class.border-red-500]="
                   challengeForm.get('tags')?.invalid && challengeForm.get('tags')?.touched
@@ -261,12 +343,11 @@
                       class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
                     ></lucide-icon>
                     <input
-                      z-input
                       type="text"
                       [(ngModel)]="skillSearchQuery"
                       [ngModelOptions]="{ standalone: true }"
                       placeholder="{{ 'CHALLENGE.FORM.SEARCH_SKILLS' | translate }}"
-                      class="w-full pl-10 pr-10 py-2 text-sm"
+                      class="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
                     />
                     <button
                       *ngIf="skillSearchQuery"
@@ -322,56 +403,15 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               {{ 'CHALLENGE.FORM.DEADLINE' | translate }} <span class="text-red-500">*</span>
             </label>
-            <div class="relative">
-              <button
-                type="button"
-                class="flex w-full items-center gap-2 min-h-10 py-2 px-4 rounded-md border border-gray-300 bg-white text-sm outline-none hover:bg-gray-50 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
-                [class.border-red-500]="
-                  challengeForm.get('deadline')?.invalid && challengeForm.get('deadline')?.touched
-                "
-                (click)="showDatePicker = !showDatePicker"
-              >
-                <svg
-                  class="w-4 h-4 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span class="flex-1 text-left" [class.text-gray-400]="!selectedDeadlineDate">
-                  {{
-                    selectedDeadlineDate
-                      ? (selectedDeadlineDate | date : 'MMMM d, yyyy')
-                      : ('CHALLENGE.FORM.PICK_A_DATE' | translate)
-                  }}
-                </span>
-              </button>
-
-              <div
-                *ngIf="showDatePicker"
-                class="absolute mt-2 bg-white border border-gray-200 rounded-lg shadow-xl"
-                style="z-index: 1060"
-              >
-                <z-calendar
-                  class="p-4"
-                  [value]="selectedDeadlineDate"
-                  (dateChange)="onDeadlineDateChange($event)"
-                />
-              </div>
-            </div>
-
-            <div
-              *ngIf="showDatePicker"
-              class="fixed inset-0"
-              style="z-index: 1059"
-              (click)="showDatePicker = false"
-            ></div>
+            <input
+              type="date"
+              formControlName="deadline"
+              [min]="minDate"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('deadline')?.invalid && challengeForm.get('deadline')?.touched
+              "
+            />
             <p
               *ngIf="
                 challengeForm.get('deadline')?.hasError('minDate') &&
@@ -399,11 +439,14 @@
               {{ 'CHALLENGE.FORM.DESCRIPTION' | translate }} <span class="text-red-500">*</span>
             </label>
             <textarea
-              z-input
               formControlName="description"
               rows="5"
               placeholder="{{ 'CHALLENGE.FORM.DESCRIPTION_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('description')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('description')?.invalid &&
+                challengeForm.get('description')?.touched
+              "
             ></textarea>
             <p
               *ngIf="
@@ -422,11 +465,14 @@
               {{ 'CHALLENGE.FORM.REQUIREMENTS' | translate }} <span class="text-red-500">*</span>
             </label>
             <textarea
-              z-input
               formControlName="requirements"
               rows="5"
               placeholder="{{ 'CHALLENGE.FORM.REQUIREMENTS_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('requirements')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('requirements')?.invalid &&
+                challengeForm.get('requirements')?.touched
+              "
             ></textarea>
             <p
               *ngIf="
@@ -446,11 +492,14 @@
               <span class="text-red-500">*</span>
             </label>
             <textarea
-              z-input
               formControlName="evaluationCriteria"
               rows="5"
               placeholder="{{ 'CHALLENGE.FORM.EVALUATION_CRITERIA_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('evaluationCriteria')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('evaluationCriteria')?.invalid &&
+                challengeForm.get('evaluationCriteria')?.touched
+              "
             ></textarea>
             <p
               *ngIf="
@@ -469,11 +518,14 @@
               {{ 'CHALLENGE.FORM.DELIVERABLES' | translate }} <span class="text-red-500">*</span>
             </label>
             <textarea
-              z-input
               formControlName="deliverables"
               rows="5"
               placeholder="{{ 'CHALLENGE.FORM.DELIVERABLES_PLACEHOLDER' | translate }}"
-              [zStatus]="getControlStatus('deliverables')"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('deliverables')?.invalid &&
+                challengeForm.get('deliverables')?.touched
+              "
             ></textarea>
             <p
               *ngIf="
@@ -500,16 +552,39 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TYPE' | translate }}
               </label>
-              <z-select
-                class="w-full"
-                zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_IDEAL_SOLUTION_TYPE' | translate }}"
-                [(zValue)]="selectedIdealSolutionType"
-                (zValueChange)="onIdealSolutionTypeSelected($event)"
-              >
-                <z-select-item *ngFor="let type of idealSolutionTypes" [zValue]="type">{{
-                  'CHALLENGE.IDEAL_SOLUTION_TYPE.' + type.toUpperCase() | translate
-                }}</z-select-item>
-              </z-select>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openIdealSolutionType = !openIdealSolutionType"
+                >
+                  <span [class.text-gray-400]="!selectedIdealSolutionType">
+                    {{
+                      selectedIdealSolutionType
+                        ? ('CHALLENGE.IDEAL_SOLUTION_TYPE.' +
+                            selectedIdealSolutionType.toUpperCase() | translate)
+                        : ('CHALLENGE.FORM.SELECT_IDEAL_SOLUTION_TYPE' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openIdealSolutionType"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openIdealSolutionType"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let type of idealSolutionTypes"
+                    (click)="selectIdealSolutionType(type)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ 'CHALLENGE.IDEAL_SOLUTION_TYPE.' + type.toUpperCase() | translate }}
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <!-- Ideal Solution Value Input (Conditional) -->
@@ -519,11 +594,14 @@
                 <span class="text-red-500">*</span>
               </label>
               <input
-                z-input
                 type="url"
                 formControlName="value"
                 placeholder="{{ 'CHALLENGE.FORM.IDEAL_SOLUTION_LINK_PLACEHOLDER' | translate }}"
-                [zStatus]="getNestedControlStatus('idealSolution.value')"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                [class.border-red-500]="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
               />
               <p
                 *ngIf="
@@ -542,11 +620,14 @@
                 <span class="text-red-500">*</span>
               </label>
               <textarea
-                z-input
                 formControlName="value"
                 rows="5"
                 placeholder="{{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TEXT_PLACEHOLDER' | translate }}"
-                [zStatus]="getNestedControlStatus('idealSolution.value')"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+                [class.border-red-500]="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
               ></textarea>
               <p
                 *ngIf="
@@ -567,7 +648,7 @@
               <input
                 type="file"
                 (change)="handleIdealSolutionFile($event)"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-all"
                 [class.border-red-500]="
                   challengeForm.get('idealSolution.value')?.invalid &&
                   challengeForm.get('idealSolution.value')?.touched
@@ -591,10 +672,10 @@
               {{ 'CHALLENGE.FORM.ADDITIONAL_INFO' | translate }}
             </label>
             <textarea
-              z-input
               formControlName="additionalInfo"
               rows="3"
               placeholder="{{ 'CHALLENGE.FORM.ADDITIONAL_INFO_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
             ></textarea>
           </div>
 
@@ -613,19 +694,42 @@
                 {{ 'CHALLENGE.FORM.PRICING_TIER' | translate }}
                 <span class="text-red-500">*</span>
               </label>
-              <z-select
-                class="w-full capitalize"
-                zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_PRICING_TIER' | translate }}"
-                [(zValue)]="selectedPricingTier"
-                (zValueChange)="onPricingTierSelected($event)"
-              >
-                <z-select-item
-                  *ngFor="let tierDetail of aiPricingTiers"
-                  [zValue]="tierDetail.tier"
-                  class="capitalize"
-                  >{{ tierDetail.tier | translate }}</z-select-item
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors capitalize"
+                  (click)="openPricingTier = !openPricingTier"
+                  [class.border-red-500]="
+                    challengeForm.get('aiConfig.pricingTier')?.invalid &&
+                    challengeForm.get('aiConfig.pricingTier')?.touched
+                  "
                 >
-              </z-select>
+                  <span [class.text-gray-400]="!selectedPricingTier">
+                    {{
+                      selectedPricingTier
+                        ? (selectedPricingTier | translate)
+                        : ('CHALLENGE.FORM.SELECT_PRICING_TIER' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openPricingTier"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openPricingTier"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let tierDetail of aiPricingTiers"
+                    (click)="selectPricingTier(tierDetail.tier)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900 capitalize"
+                  >
+                    {{ tierDetail.tier | translate }}
+                  </li>
+                </ul>
+              </div>
               <p
                 *ngIf="
                   challengeForm.get('aiConfig.pricingTier')?.invalid &&
@@ -651,16 +755,42 @@
                 {{ 'CHALLENGE.FORM.SELECTED_MODEL' | translate }}
                 <span class="text-red-500">*</span>
               </label>
-              <z-select
-                class="w-full"
-                zPlaceholder="{{ 'CHALLENGE.FORM.SELECT_AI_MODEL' | translate }}"
-                [(zValue)]="selectedAiModelId"
-                (zValueChange)="onAiModelSelected($event)"
-              >
-                <z-select-item *ngFor="let model of aiModels" [zValue]="model.id"
-                  >{{ model.name }} ({{ model.provider }})</z-select-item
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openAiModel = !openAiModel"
+                  [class.border-red-500]="
+                    challengeForm.get('aiConfig.selectedModel')?.invalid &&
+                    challengeForm.get('aiConfig.selectedModel')?.touched
+                  "
                 >
-              </z-select>
+                  <span [class.text-gray-400]="!selectedAiModelId">
+                    {{
+                      selectedAiModel
+                        ? selectedAiModel.name + ' (' + selectedAiModel.provider + ')'
+                        : ('CHALLENGE.FORM.SELECT_AI_MODEL' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openAiModel"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openAiModel"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let model of aiModels"
+                    (click)="selectAiModel(model.id)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ model.name }} ({{ model.provider }})
+                  </li>
+                </ul>
+              </div>
               <p
                 *ngIf="
                   challengeForm.get('aiConfig.selectedModel')?.invalid &&

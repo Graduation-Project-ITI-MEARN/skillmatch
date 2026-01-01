@@ -7,6 +7,7 @@ import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
 import APIError from "../utils/APIError";
 import { CATEGORIES } from "./metadataController";
+import { sendNotification } from "../utils/notification";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -253,10 +254,6 @@ const updateUser = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const verifyUser = catchError(async (req: Request, res: Response) => {
-   console.log("--- Inside verifyUser handler ---");
-   console.log("req.body:", req.body); // Log the entire req.body
-   console.log("req.headers:", req.headers); // Log headers to check Content-Type
-
    if (!req.user) {
       return res.status(401).json({
          success: false,
@@ -342,6 +339,13 @@ const updateVerificationStatus = catchError(
          `User ${userToUpdate._id}'s verification status changed to '${status}' by admin.`,
          "success",
          userToUpdate._id // Target user's ID
+      );
+
+      await sendNotification(
+         userToUpdate._id,
+         "You've been verified!",
+         `Your verification status has been updated to ${status}.`,
+         "success"
       );
 
       res.status(200).json({

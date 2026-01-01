@@ -94,11 +94,13 @@ export const getGlobalLeaderboard = catchError(
          // Project only the necessary fields for the leaderboard display
          {
             $project: {
-               _id: 0,
+               // Include the actual user ID, rename it from _id to avoid conflicts or be clearer
+               _id: "$userDetails._id", // <--- ADDED: Include the user's actual ID
                name: "$userDetails.name",
+               email: "$userDetails.email", // <--- ADDED: Include the user's email
                score: "$totalScore",
                challengesCompleted: "$count",
-               type: "$userDetails.type", // Include type for potential future display/filtering on frontend
+               type: "$userDetails.type",
                // Add other profile fields if you want them visible on the leaderboard
                // city: "$userDetails.city",
                // bio: "$userDetails.bio",
@@ -140,6 +142,7 @@ export const getGlobalLeaderboard = catchError(
       } else {
          // --- Leaderboard for a SPECIFIC category ---
          // Ensure the requested category is valid
+         // Assuming CATEGORIES is an array of valid category strings, e.g., ["Development", "Design"]
          if (!CATEGORIES.includes(category.toString())) {
             return res
                .status(400)
@@ -175,17 +178,20 @@ export const getGlobalLeaderboard = catchError(
             },
             { $sort: { totalScore: -1 } }, // Sort by total score descending
             ...commonStages, // Apply common stages for user details and profile completion
-            {
-               // Finally, project the category for the specific leaderboard response
-               $project: {
-                  _id: 0,
-                  name: "$name", // From previous projection
-                  score: "$score", // From previous projection
-                  challengesCompleted: "$challengesCompleted", // From previous projection
-                  type: "$type",
-                  category: { $literal: category }, // Add the specific category back
-               },
-            },
+            // No need for an additional $project stage here, commonStages already handles it.
+            // If you needed to explicitly add the `category` to the specific leaderboard's response,
+            // you'd add it back in a separate project stage at the end.
+            // {
+            //    $project: {
+            //       // You might want to remove _id: 0 from commonStages if you use this,
+            //       // or explicitly include _id here too if it was reset.
+            //       name: "$name", // From previous projection
+            //       score: "$score", // From previous projection
+            //       challengesCompleted: "$challengesCompleted", // From previous projection
+            //       type: "$type",
+            //       category: { $literal: category }, // Add the specific category back
+            //    },
+            // },
          ]);
 
          const finalLeaderboard = specificCategoryLeaderboard.map(

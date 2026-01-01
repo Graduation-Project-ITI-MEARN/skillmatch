@@ -18,7 +18,7 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
    }
 
-   const { category, skills } = req.body;
+   const { category, tags } = req.body;
 
    // Validate category
    if (!category) {
@@ -37,8 +37,8 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
    }
 
    // Validate skills if provided
-   if (skills && Array.isArray(skills) && skills.length > 0) {
-      if (!areValidSkills(skills)) {
+   if (tags && Array.isArray(tags) && tags.length > 0) {
+      if (!areValidSkills(tags)) {
          return res.status(400).json({
             success: false,
             message:
@@ -108,20 +108,14 @@ const getPublishedChallenges = catchError(
 const getMyChallenges = catchError(async (req: Request, res: Response) => {
    const user = req.user;
 
-   console.log(user);
-
    if (!user) {
       return res.status(401).json({ message: "Not authorized" });
    }
-
-   console.log(user._id);
 
    const challenges = await Challenge.find({ creatorId: user._id }).populate(
       "creatorId",
       "name type"
    );
-
-   console.log(challenges);
 
    res.status(200).json({
       success: true,
@@ -136,8 +130,6 @@ const getMyChallenges = catchError(async (req: Request, res: Response) => {
  * @access  Private (Admin)
  */
 const getAllChallenges = catchError(async (req: Request, res: Response) => {
-   console.log("⚡ EXECUTING NEW AGGREGATION PIPELINE ⚡"); // <--- Watch for this in your terminal
-
    const challenges = await Challenge.aggregate([
       // 1. Join with Submissions
       {

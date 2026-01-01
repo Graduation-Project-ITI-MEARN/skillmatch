@@ -55,7 +55,6 @@ import { AuthService } from '@/core/services/auth';
             [(ngModel)]="nationalId"
             class="w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-primary"
             placeholder="Enter ID number"
-            [disabled]="user()?.verificationStatus === 'pending' || user()?.isVerified || ''"
           />
         </div>
 

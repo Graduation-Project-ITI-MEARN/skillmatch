@@ -76,6 +76,8 @@ export class CompanyShellComponent implements OnInit {
   ];
 
   stats: any[] = [];
+  // New property to control visibility of stats cards
+  hasStatsData = false;
 
   async ngOnInit() {
     this.theme.setTheme('company');
@@ -103,22 +105,29 @@ export class CompanyShellComponent implements OnInit {
         this.http.get<CompanyStats>(`${environment.apiUrl}/stats/company`)
       );
 
+      const totalChallenges = statsData.totalChallenges ?? 0;
+      const totalSubmissions = statsData.totalSubmissions ?? 0;
+      const avgScore = statsData.avgScore ?? 0;
+
+      // Determine if there's any non-zero stat
+      this.hasStatsData = totalChallenges > 0 || totalSubmissions > 0 || avgScore > 0;
+
       this.stats = [
         {
           labelKey: 'DASHBOARD.STATS.ACTIVE_JOBS',
-          value: String(statsData.totalChallenges ?? 0),
+          value: String(totalChallenges),
           // trend: '',
           icon: Briefcase,
         },
         {
           labelKey: 'DASHBOARD.STATS.APPLICANTS',
-          value: String(statsData.totalSubmissions ?? 0),
+          value: String(totalSubmissions),
           // trend: 'Submitted applications',
           icon: Users,
         },
         {
           labelKey: 'DASHBOARD.STATS.AVG_SCORE',
-          value: String(statsData.avgScore ?? 0),
+          value: String(avgScore),
           // trend: 'Scored by AI',
           icon: Brain,
         },
@@ -130,6 +139,7 @@ export class CompanyShellComponent implements OnInit {
   }
 
   private setFallbackStats() {
+    this.hasStatsData = false; // If there's an error, assume no stats data
     this.stats = [
       { labelKey: 'DASHBOARD.STATS.ACTIVE_JOBS', value: '0', trend: '', icon: Briefcase },
       { labelKey: 'DASHBOARD.STATS.APPLICANTS', value: '0', trend: '', icon: FileText },

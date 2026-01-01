@@ -270,8 +270,11 @@ export class ZardSelectComponent implements ControlValueAccessor, AfterContentIn
     }
   }
 
+  // In select.component.ts, replace the selectItem method with this fixed version:
+
   selectItem(value: string, label: string) {
-    if (value === undefined || value === null || value === '') {
+    // Only check for null/undefined, allow empty strings
+    if (value === undefined || value === null) {
       console.warn('Attempted to select item with invalid value:', { value, label });
       return;
     }
@@ -285,6 +288,7 @@ export class ZardSelectComponent implements ControlValueAccessor, AfterContentIn
 
       return value;
     });
+
     this.onChange(value);
     this.zSelectionChange.emit(this.zValue());
 
