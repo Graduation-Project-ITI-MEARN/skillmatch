@@ -1,10 +1,10 @@
 {
-   "Common": {
-      "login": "Login",
-      "register": "Register",
-      "Create your account": "Create your account"
-   },
-   "nav": {
+  "Common": {
+    "login": "Login",
+    "register": "Register",
+    "Create your account": "Create your account"
+  },
+  "nav": {
     "about": "About",
     "challenges": "Challenges",
     "leaderboard": "Leaderboard"
@@ -15,20 +15,34 @@
   "challenges": {
     "startChallenge": "Start Challenge"
   },
-  
+
   "leaderboard": {
     "title": "Leaderboard",
-    "viewPortfolio": "View Portfolio",
+    "loading": "Loading data...",
+
     "score": "Score",
-    "loading": "Loading...",
-    "noParticipants": "No participants in this category yet",
-    "noParticipantsDesc": "Once someone joins or earns points in this category, they will appear here automatically.",
+    "viewPortfolio": "View Portfolio",
+    "noParticipants": "No participants found",
+    "noParticipantsDesc": "There are no users to display in this category yet.",
+
     "categories": {
       "all": "All"
     }
   },
+
+  "portfolio": {
+  "loading": "Loading...",
+  "userNotFound": "User not found.",
+  "backButton": "Leaderboard",
+  "defaultBio": "Front-end developer with experience in building modern web applications.",
+  "linkedinLabel": "LinkedIn Profile",
+  "skillsTitle": "Skills",
+  "noSkills": "This user hasn't listed any skills yet.",
+  "projectsTitle": "Projects",
+  "noProjects": "No verified projects yet."
+},
   "footer": {
-   "description": "Connecting skills with opportunities.",
+    "description": "Connecting skills with opportunities.",
     "explore": "Explore",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
