@@ -7,6 +7,7 @@ import {
    updateChallenge,
    deleteChallenge,
    getChallengeById,
+   getUserAcceptedChallenges,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
@@ -22,15 +23,25 @@ const router = express.Router();
 // Get all published challenges (Feed)
 router.get("/", getPublishedChallenges);
 
+
+router.get("/user-accepted/:userId", getUserAcceptedChallenges);
+
+// ==========================
+// ADMIN ROUTES
+// ==========================
+router.get("/all", getAllChallenges);
+
 // ==========================
 // PROTECTED ROUTES (Authenticated Users)
 // ==========================
 
+// Get challenge details by ID
+router.get("/:id", getChallengeById);
+
 // Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
 
-// Get challenge details by ID
-router.get("/:id", getChallengeById);
+
 
 // Create a new challenge (Company & Challenger only)
 router.post(
@@ -58,11 +69,8 @@ router.delete(
    deleteChallenge
 );
 
-// ==========================
-// ADMIN ROUTES
-// ==========================
 
-// Get all challenges including drafts and archived (Admin only)
-router.get("/all", auth, restrictTo(["admin"]), getAllChallenges);
+
+
 
 export default router;
