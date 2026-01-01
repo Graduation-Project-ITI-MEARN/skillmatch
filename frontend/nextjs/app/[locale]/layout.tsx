@@ -32,11 +32,13 @@ export default async function RootLayout({
    const direction = isRTL ? "rtl" : "ltr";
 
    return (
-      <html lang={locale} dir={direction}>
+      <html lang={locale} dir={direction} suppressHydrationWarning>
          <body
+            suppressHydrationWarning
             className={`${
                direction === "rtl" ? "font-arabic-sans" : "font-sans"
-            } min-h-screen flex flex-col`}>
+            } min-h-screen flex flex-col`}
+         >
             <NextIntlClientProvider locale={locale} messages={messages}>
                <RTLProvider isRTL={isRTL}>
                   <Header />
