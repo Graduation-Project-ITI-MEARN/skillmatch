@@ -42,7 +42,7 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       }
    }
 
-   const { category, tags, aiConfig } = req.body;
+   const { category, skills, aiConfig } = req.body;
 
    // Validate category
    if (!category) {
@@ -61,8 +61,24 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
    }
 
    // Validate skills if provided
-   if (tags && Array.isArray(tags) && tags.length > 0) {
-      if (!areValidSkills(tags)) {
+   if (skills && Array.isArray(skills) && skills.length > 0) {
+      if (!areValidSkills(skills)) {
+         return res.status(400).json({
+            success: false,
+            message:
+               "One or more skills are invalid. Please select valid skills from the list.",
+         });
+      }
+   }
+
+   const challenge = await Challenge.create({
+      ...req.body,
+      creatorId: user._id,
+   });
+
+   // Validate skills if provided
+   if (skills && Array.isArray(skills) && skills.length > 0) {
+      if (!areValidSkills(skills)) {
          return res.status(400).json({
             success: false,
             message:
@@ -78,11 +94,6 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
          message: "Selected model is required for custom pricing tier",
       });
    }
-
-   const challenge = await Challenge.create({
-      ...req.body,
-      creatorId: user._id,
-   });
 
    await logActivity(
       user._id,
@@ -246,6 +257,8 @@ const getMyChallenges = catchError(async (req: Request, res: Response) => {
  * @access  Private (Admin)
  */
 const getAllChallenges = catchError(async (req: Request, res: Response) => {
+   console.log("⚡ EXECUTING NEW AGGREGATION PIPELINE ⚡"); // <--- Watch for this in your terminal
+
    const challenges = await Challenge.aggregate([
       // 1. Join with Submissions
       {
@@ -437,6 +450,37 @@ const getChallengeById = catchError(async (req: Request, res: Response) => {
    res.status(200).json({ status: "success", data: challenge });
 });
 
+/**
+ * @desc    Get challenges where the user's submission was accepted (Portfolio Achievements)
+ * @route   GET /api/challenges/user-accepted/:userId
+ * @access  Public
+ */
+const getUserAcceptedChallenges = catchError(
+   async (req: Request, res: Response) => {
+      const { userId } = req.params;
+
+      // 1. البحث عن التقديمات المقبولة للمستخدم
+      const submissions = await Submission.find({
+         candidateId: userId,
+         status: "accepted",
+      }).populate({
+         path: "challengeId",
+         populate: { path: "creatorId", select: "name type" }, // لجلب اسم الشركة المنشئة
+      });
+
+      // 2. استخراج التحديات فقط من التقديمات (مع تجنب التكرار)
+      const challenges = submissions
+         .map((sub) => sub.challengeId)
+         .filter((ch) => ch !== null);
+
+      res.status(200).json({
+         success: true,
+         count: challenges.length,
+         data: challenges,
+      });
+   }
+);
+
 export {
    createChallenge,
    getPublishedChallenges,
@@ -445,4 +489,5 @@ export {
    updateChallenge,
    deleteChallenge,
    getChallengeById,
+   getUserAcceptedChallenges,
 };
