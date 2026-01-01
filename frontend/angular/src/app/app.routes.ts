@@ -93,6 +93,15 @@ export const routes: Routes = [
                 (m) => m.MySubmissions
               ),
           },
+          // NEW ROUTE: View Submission Details for Candidate
+          {
+            path: 'submission-details/:id', // Dynamic route parameter :id
+            loadComponent: () =>
+              import('./pages/candidate/submission-details/submission-details').then(
+                (m) => m.CandidateSubmissionDetailsComponent
+              ),
+          },
+          // END NEW ROUTE
           {
             path: 'coach',
             loadComponent: () => import('./pages/candidate/coach/coach').then((m) => m.Coach),
@@ -143,7 +152,7 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/company/submissions/submissions').then((m) => m.Submissions),
           },
-          // NEW ROUTE FOR SUBMISSION DETAILS
+          // NEW ROUTE FOR SUBMISSION DETAILS (Company view)
           {
             path: 'submission-details/:id', // Dynamic route parameter :id
             loadComponent: () =>

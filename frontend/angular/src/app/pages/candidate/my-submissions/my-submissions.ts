@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LucideAngularModule, Clock, CheckCircle, FileUp, X } from 'lucide-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IChallenge } from '@shared/models/challenge.model';
-// Assuming the path to your IChallenge interface is correct
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-my-submissions',
@@ -17,6 +17,7 @@ import { IChallenge } from '@shared/models/challenge.model';
 export class MySubmissions implements OnInit {
   private candidateService = inject(CandidateService);
   private toast = inject(ToastrService);
+  private router = inject(Router); // Inject Router
 
   readonly icons = { Clock, CheckCircle, FileUp, X };
 
@@ -133,5 +134,10 @@ export class MySubmissions implements OnInit {
       },
       error: (err) => this.toast.error(err.error?.message || 'Submission failed'),
     });
+  }
+
+  // NEW METHOD: Navigate to submission details page
+  viewSubmissionDetails(submissionId: string) {
+    this.router.navigate(['/dashboard/candidate/submission-details', submissionId]);
   }
 }

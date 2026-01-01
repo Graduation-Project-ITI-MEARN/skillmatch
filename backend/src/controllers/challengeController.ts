@@ -481,6 +481,45 @@ const getUserAcceptedChallenges = catchError(
    }
 );
 
+/**
+ * @desc    Get all published challenges a candidate hasn't started yet
+ * @route   GET /api/challenges/available
+ * @access  Private (Candidate)
+ */
+const getAvailableChallenges = catchError(
+   async (req: Request, res: Response) => {
+      const user = req.user;
+
+      // Ensure the user is logged in and is a candidate
+      if (!user || user.type !== "candidate") {
+         return res.status(403).json({
+            success: false,
+            message:
+               "Access denied. Only candidates can view available challenges.",
+         });
+      }
+
+      // 1. Find all challenge IDs that the current candidate has already submitted to
+      // We use .distinct() to get an array of unique challenge IDs.
+      const startedChallengeIds = await Submission.find({
+         candidateId: user._id,
+      }).distinct("challengeId");
+
+      // 2. Find all published challenges that are NOT in the `startedChallengeIds` list.
+      // The `$nin` operator selects documents where the field value is not in the specified array.
+      const availableChallenges = await Challenge.find({
+         status: "published", // Only consider challenges that are published
+         _id: { $nin: startedChallengeIds }, // Exclude challenges the candidate has already started
+      }).populate("creatorId", "name type city"); // Optionally populate creator details
+
+      res.status(200).json({
+         success: true,
+         count: availableChallenges.length,
+         data: availableChallenges,
+      });
+   }
+);
+
 export {
    createChallenge,
    getPublishedChallenges,
@@ -490,4 +529,5 @@ export {
    deleteChallenge,
    getChallengeById,
    getUserAcceptedChallenges,
+   getAvailableChallenges, // <--- Don't forget to export the new function
 };

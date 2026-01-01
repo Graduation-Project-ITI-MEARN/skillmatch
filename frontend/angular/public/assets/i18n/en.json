@@ -4,14 +4,14 @@
   },
   "DASHBOARD": {
     "WELCOME": "Welcome, {{name}}",
-    "SUBTITLE": "Let's prove your skills today",
+    "SUBTITLE": "Your comprehensive candidate dashboard",
     "TITLES": {
       "COMPANY": "Company Dashboard",
       "ADMIN": "Admin Control Center",
       "CHALLENGER": "Challenge Creator Hub"
     },
     "SUBTITLES": {
-      "CANDIDATE": "Let's prove your skills today",
+      "CANDIDATE": "Your comprehensive candidate dashboard",
       "COMPANY": "Manage your hiring pipeline and challenges",
       "ADMIN": "Platform oversight and moderation",
       "CHALLENGER": "Create competitions and build community"
@@ -63,7 +63,12 @@
       "THIS_WEEK": "This Week",
       "GROWTH": "Growth",
       "REQUIRES_ATTENTION": "Requires Attention",
-      "AVG_SCORE": "Average Score"
+      "AVG_SCORE": "Average Score",
+      "CHALLENGES_COMPLETED": "Challenges Completed",
+      "CHALLENGES_WON": "Challenges Won",
+      "HIGHEST_AI_SCORE": "Highest AI Score",
+      "AVERAGE_AI_SCORE": "Average AI Score",
+      "GLOBAL_RANK": "Global Rank"
     },
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
@@ -201,11 +206,13 @@
         "UNDER_REVIEW": "Under Review",
         "SCORE": "Score"
       },
-      "WEEKLY_STATS": {
-        "TITLE": "This Week",
-        "CHALLENGES_STARTED": "Challenges Started",
-        "VIDEOS_RECORDED": "Videos Recorded",
-        "AVG_SCORE": "Avg. Score"
+      "YOUR_STATS": {
+        "TITLE": "Your Stats",
+        "CHALLENGES_COMPLETED": "Challenges Completed",
+        "CHALLENGES_WON": "Challenges Won",
+        "HIGHEST_AI_SCORE": "Highest AI Score",
+        "AVERAGE_AI_SCORE": "Average AI Score",
+        "GLOBAL_RANK": "Global Rank"
       },
       "FILTER_MODAL": {
         "TITLE": "Filter Challenges",
@@ -349,11 +356,24 @@
     },
     "SUBMISSION_DETAILS": {
       "TITLE": "Submission Details",
+      "SUBMITTED_ON": "Submitted On",
+      "WINNER_STATUS": "Challenge Winner!",
       "AI_EVALUATION": "AI Evaluation",
+      "TECHNICAL_SCORE": "Technical Score",
       "CLARITY_SCORE": "Clarity Score",
-      "FEEDBACK": "Feedback",
+      "COMMUNICATION_SCORE": "Communication Score",
+      "GENERAL_FEEDBACK": "General Feedback",
+      "NO_FEEDBACK": "No general feedback available.",
       "STRENGTHS": "Strengths",
-      "IMPROVEMENTS": "Improvements",
+      "NO_STRENGTHS": "No specific strengths identified.",
+      "AREAS_FOR_IMPROVEMENT": "Areas for Improvement",
+      "NO_IMPROVEMENTS": "No specific areas for improvement identified.",
+      "EVALUATED_BY": "Evaluated by",
+      "ON": "on",
+      "NO_AI_EVALUATION_YET": "No AI evaluation available yet.",
+      "PLEASE_CHECK_BACK": "Please check back later, evaluation might be in progress.",
+      "EVALUATION_FAILED": "Evaluation failed.",
+      "CONTACT_SUPPORT": "Please contact support for assistance.",
       "SUBMISSION_CONTENT": "Submission Content",
       "TEXT_CONTENT": "Text Content",
       "SUBMISSION_LINK": "Submission Link",
@@ -773,7 +793,8 @@
     "ERROR_TITLE": "Error!",
     "LOADING_DETAILS": "Loading submission details.",
     "CHALLENGE": "Challenge",
-    "REJECT": "Reject"
+    "REJECT": "Reject",
+    "ERROR_LOADING_DATA": "Failed to load data."
   },
   "NO_DATA": "No data available currently.",
   "PROFILE": {

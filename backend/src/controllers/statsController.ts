@@ -4,6 +4,7 @@ import Challenge from "../models/Challenge";
 import Submission from "../models/Submission";
 import User from "../models/User";
 import { catchError } from "../utils/catchAsync";
+import mongoose from "mongoose";
 
 // ==================== Admin Stats ====================
 const getAdminStats = async (req: Request, res: Response) => {
@@ -46,25 +47,139 @@ const getCompanyStats = async (req: any, res: Response) => {
    });
 };
 
-// ==================== Candidate Stats ====================
-const getCandidateStats = async (req: any, res: Response) => {
-   const candidateId = req.user._id;
+/**
+ * Helper function to calculate a candidate's total score for ranking purposes.
+ * This logic should ideally match how the global leaderboard calculates a candidate's score.
+ * We're assuming the total score is the sum of all AI scores from submitted challenges.
+ */
+async function calculateCandidateRankingScore(
+   candidateId: mongoose.Types.ObjectId
+): Promise<number> {
+   const result = await Submission.aggregate([
+      {
+         $match: {
+            candidateId: candidateId,
+            aiScore: { $exists: true, $ne: null }, // Only submissions with an AI score
+            status: { $ne: "started" }, // Only consider submitted challenges
+         },
+      },
+      {
+         $group: {
+            _id: "$candidateId",
+            totalScore: { $sum: "$aiScore" }, // Sum of all AI scores
+         },
+      },
+   ]);
 
-   const [mySubmissions, challengesWon, globalRank, totalRevenue] =
-      await Promise.all([
-         Submission.countDocuments({ userId: candidateId }) || 0,
-         0,
-         0,
-         0,
+   return result.length > 0 ? result[0].totalScore : 0;
+}
+
+const getCandidateStats = catchError(async (req: Request, res: Response) => {
+   const candidateId = req.user?._id;
+
+   if (!candidateId) {
+      throw new Error("User not authenticated");
+   }
+
+   const [
+      uniqueChallenges,
+      highestAiScoreDoc,
+      averageAiScoreResult,
+      challengesWonCount,
+      currentCandidateScoreForRank,
+   ] = await Promise.all([
+      // 1. Amount of challenges with unique submissions from this candidate
+      Submission.distinct("challengeId", { candidateId: candidateId }),
+
+      // 2. Highest AI score from submitted challenges
+      Submission.findOne({
+         candidateId: candidateId,
+         aiScore: { $exists: true, $ne: null }, // Ensure aiScore exists
+         status: { $ne: "started" }, // Only submitted challenges
+      })
+         .sort({ aiScore: -1 })
+         .select("aiScore")
+         .lean(), // Use .lean() for performance when not modifying the document
+
+      // 3. Average AI score from submitted challenges
+      Submission.aggregate([
+         {
+            $match: {
+               candidateId: candidateId,
+               aiScore: { $exists: true, $ne: null },
+               status: { $ne: "started" },
+            },
+         },
+         {
+            $group: {
+               _id: null,
+               avgScore: { $avg: "$aiScore" },
+            },
+         },
+      ]),
+
+      // 4. Number of challenges won (isWinner: true)
+      Submission.countDocuments({
+         candidateId: candidateId,
+         isWinner: true,
+      }),
+
+      // 5. Calculate the current candidate's score for global ranking
+      calculateCandidateRankingScore(candidateId),
+   ]);
+
+   const amountOfChallenges = uniqueChallenges.length;
+   const highestAiScore = highestAiScoreDoc ? highestAiScoreDoc.aiScore : 0;
+   const averageAiScore =
+      averageAiScoreResult.length > 0 ? averageAiScoreResult[0].avgScore : 0;
+   const challengesWon = challengesWonCount;
+
+   // --- Calculate Global Rank ---
+   let globalRank = 0;
+   if (currentCandidateScoreForRank > 0) {
+      // Count how many distinct candidates have a strictly higher ranking score
+      const candidatesWithHigherScore = await Submission.aggregate([
+         {
+            $match: {
+               aiScore: { $exists: true, $ne: null },
+               status: { $ne: "started" },
+            },
+         },
+         {
+            $group: {
+               _id: "$candidateId",
+               totalScore: { $sum: "$aiScore" },
+            },
+         },
+         {
+            $match: {
+               totalScore: { $gt: currentCandidateScoreForRank }, // Scores strictly greater than current candidate's
+            },
+         },
+         {
+            $group: {
+               _id: null,
+               count: { $sum: 1 }, // Count the number of such candidates
+            },
+         },
       ]);
 
+      globalRank =
+         (candidatesWithHigherScore.length > 0
+            ? candidatesWithHigherScore[0].count
+            : 0) + 1;
+   }
+
    res.status(200).json({
-      mySubmissions,
-      challengesWon,
-      globalRank,
-      totalRevenue,
+      success: true,
+      data: {
+         amountOfChallenges,
+         highestAiScore,
+         averageAiScore,
+         globalRank,
+      },
    });
-};
+});
 
 // ==================== Challenger Stats ====================
 const getChallengerStats = async (req: any, res: Response) => {

@@ -7,6 +7,7 @@ import {
    deleteChallenge,
    getChallengeById,
    getUserAcceptedChallenges,
+   getAvailableChallenges,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
 import express from "express";
@@ -36,11 +37,18 @@ router.get("/all", getAllChallenges);
 // PROTECTED ROUTES (Authenticated Users)
 // ==========================
 
-// Get challenge details by ID
-router.get("/:id", getChallengeById);
+router.get(
+   "/available",
+   auth,
+   restrictTo(["candidate"]),
+   getAvailableChallenges
+);
 
 // Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
+
+// Get challenge details by ID
+router.get("/:id", getChallengeById);
 
 // Create a new challenge (Company & Challenger only)
 router.post(

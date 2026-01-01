@@ -37,20 +37,21 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
    );
 
    const startedChallenges = candidateSubmissions
-      .filter((sub) => sub.status === "started")
+      .filter((sub) => sub.status === "started" && sub.challengeId) // Add check for challengeId
       .map((sub) => ({
          _id: sub._id,
          challengeId: sub.challengeId,
          status: sub.status,
          createdAt: sub.createdAt,
-         deadline: (sub.challengeId as any).deadline,
-         title: (sub.challengeId as any).title,
-         category: (sub.challengeId as any).category,
-         difficulty: (sub.challengeId as any).difficulty,
+         // Safely access deadline, provide a default or handle null if challengeId is missing
+         deadline: (sub.challengeId as any)?.deadline || null,
+         title: (sub.challengeId as any)?.title || "N/A",
+         category: (sub.challengeId as any)?.category || "N/A",
+         difficulty: (sub.challengeId as any)?.difficulty || "N/A",
       }));
 
    const activeSubmissions = candidateSubmissions
-      .filter((sub) => sub.status !== "started")
+      .filter((sub) => sub.status !== "started" && sub.challengeId) // Add check for challengeId
       .map((sub) => {
          // Check if evaluation is still processing
          const isEvaluating = sub.status === "pending" && !sub.aiEvaluation;
@@ -60,10 +61,11 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
             challengeId: sub.challengeId,
             status: sub.status,
             createdAt: sub.createdAt,
-            deadline: (sub.challengeId as any).deadline,
-            title: (sub.challengeId as any).title,
-            category: (sub.challengeId as any).category,
-            difficulty: (sub.challengeId as any).difficulty,
+            // Safely access deadline, provide a default or handle null if challengeId is missing
+            deadline: (sub.challengeId as any)?.deadline || null,
+            title: (sub.challengeId as any)?.title || "N/A",
+            category: (sub.challengeId as any)?.category || "N/A",
+            difficulty: (sub.challengeId as any)?.difficulty || "N/A",
             aiScore: sub.aiScore,
             isWinner: sub.isWinner,
 
@@ -81,7 +83,6 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
       },
    });
 });
-
 /**
  * @desc    Candidate submits a solution (with automatic AI evaluation)
  * @route   POST /api/submissions

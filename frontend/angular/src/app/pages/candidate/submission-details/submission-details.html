@@ -1,0 +1,160 @@
+<div class="animate-fade-in p-6">
+  @if (isLoading) {
+  <div class="flex justify-center items-center h-64">
+    <div
+      class="animate-spin w-8 h-8 border-4 border-gray-900 border-t-transparent rounded-full"
+    ></div>
+  </div>
+  } @else if (hasError) {
+  <div class="p-10 text-center bg-red-50 rounded-2xl border border-dashed border-red-300">
+    <lucide-icon [img]="icons.XCircle" class="w-8 h-8 mx-auto mb-4 text-red-500"></lucide-icon>
+    <p class="text-red-600 mb-2">{{ 'COMMON.ERROR_LOADING_DATA' | translate }}</p>
+  </div>
+  } @else if (submissionDetails) {
+  <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+    <!-- Top section: Title, Date, Overall Score -->
+    <div class="flex items-start justify-between mb-4 border-b pb-4">
+      <div class="space-y-4">
+        <h1 class="text-xl font-bold text-gray-900 mb-4">
+          {{ submissionDetails.challengeId?.title }}
+        </h1>
+        <p class="text-sm text-gray-600 font-medium">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.SUBMITTED_ON' | translate }}:
+          {{ submissionDetails.createdAt | date : 'mediumDate' }}
+        </p>
+        <!-- @if (submissionDetails.isWinner) {
+        <div class="flex items-center mt-2 text-green-600 text-sm font-semibold">
+          <lucide-icon [img]="icons.Trophy" class="w-4 h-4 mr-1"></lucide-icon>
+          <span>{{ 'DASHBOARD.SUBMISSION_DETAILS.WINNER_STATUS' | translate }}</span>
+        </div>
+        } -->
+      </div>
+      <div class="text-right pl-4">
+        <div class="text-2xl font-bold text-gray-900 mb-1">
+          {{ submissionDetails.aiScore || 0 }}%
+        </div>
+        <div class="text-xs text-gray-500 uppercase font-semibold">
+          {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Evaluation Section (condensed) -->
+    @if (submissionDetails.aiEvaluation) {
+    <div class="space-y-4 pt-4">
+      <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-2">
+        <lucide-icon [img]="icons.MessageSquareText" class="w-5 h-5 text-indigo-600"></lucide-icon>
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.AI_FEEDBACK' | translate }}
+      </h2>
+
+      <!-- General Feedback -->
+      <div class="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-sm font-semibold text-gray-800 mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.GENERAL_FEEDBACK' | translate }}
+        </h3>
+        <p class="text-sm text-gray-700 leading-relaxed">
+          {{
+            submissionDetails.aiEvaluation.feedback ||
+              ('DASHBOARD.SUBMISSION_DETAILS.NO_FEEDBACK' | translate)
+          }}
+        </p>
+      </div>
+
+      <!-- Strengths and Improvements -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-emerald-50 p-4 rounded-xl shadow-sm border border-emerald-100">
+          <h3 class="text-sm font-semibold text-emerald-800 mb-2 flex items-center gap-1">
+            <lucide-icon [img]="icons.Lightbulb" class="w-4 h-4"></lucide-icon>
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.STRENGTHS' | translate }}
+          </h3>
+          @if (submissionDetails.aiEvaluation.strengths?.length > 0) {
+          <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700">
+            @for (strength of submissionDetails.aiEvaluation.strengths; track $index) {
+            <li>{{ strength }}</li>
+            }
+          </ul>
+          } @else {
+          <p class="text-sm text-gray-600 italic">
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.NO_STRENGTHS' | translate }}
+          </p>
+          }
+        </div>
+
+        <div class="bg-amber-50 p-4 rounded-xl shadow-sm border border-amber-100">
+          <h3 class="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-1">
+            <lucide-icon [img]="icons.Zap" class="w-4 h-4"></lucide-icon>
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.AREAS_FOR_IMPROVEMENT' | translate }}
+          </h3>
+          @if (submissionDetails.aiEvaluation.improvements?.length > 0) {
+          <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700">
+            @for (improvement of submissionDetails.aiEvaluation.improvements; track $index) {
+            <li>{{ improvement }}</li>
+            }
+          </ul>
+          } @else {
+          <p class="text-sm text-gray-600 italic">
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.NO_IMPROVEMENTS' | translate }}
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Individual Scores -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mt-4 text-sm">
+        <div class="p-3 bg-blue-50 rounded-lg space-x-2">
+          <span class="font-semibold text-blue-700"
+            >{{ 'DASHBOARD.SUBMISSION_DETAILS.TECHNICAL_SCORE' | translate }}:</span
+          >
+          <span class="font-bold text-blue-900"
+            >{{ submissionDetails.aiEvaluation.technicalScore || 0 }}%</span
+          >
+        </div>
+        <div class="p-3 bg-green-50 rounded-lg space-x-2">
+          <span class="font-semibold text-green-700"
+            >{{ 'DASHBOARD.SUBMISSION_DETAILS.CLARITY_SCORE' | translate }}:</span
+          >
+          <span class="font-bold text-green-900"
+            >{{ submissionDetails.aiEvaluation.clarityScore || 0 }}%</span
+          >
+        </div>
+        <div class="p-3 bg-yellow-50 rounded-lg space-x-2">
+          <span class="font-semibold text-yellow-700"
+            >{{ 'DASHBOARD.SUBMISSION_DETAILS.COMMUNICATION_SCORE' | translate }}:</span
+          >
+          <span class="font-bold text-yellow-900"
+            >{{ submissionDetails.aiEvaluation.communicationScore || 0 }}%</span
+          >
+        </div>
+      </div>
+
+      <div class="text-xs text-gray-500 pt-4 border-t mt-4">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.EVALUATED_BY' | translate }}:
+        {{ submissionDetails.aiEvaluation.modelUsed }}
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.ON' | translate }}:
+        {{ submissionDetails.aiEvaluation.evaluatedAt | date : 'short' }}
+      </div>
+    </div>
+    } @else if (submissionDetails.evaluationStatus === 'completed') {
+    <div
+      class="bg-blue-50 p-6 rounded-2xl shadow-sm text-center text-blue-700 border border-blue-100"
+    >
+      <p class="font-semibold">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.NO_AI_EVALUATION_YET' | translate }}
+      </p>
+      <p class="text-sm mt-2">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.PLEASE_CHECK_BACK' | translate }}
+      </p>
+    </div>
+    } @else if (submissionDetails.evaluationStatus === 'failed') {
+    <div class="bg-red-50 p-6 rounded-2xl shadow-sm text-center text-red-700 border border-red-100">
+      <p class="font-semibold">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.EVALUATION_FAILED' | translate }}
+      </p>
+      <p class="text-sm mt-2">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.CONTACT_SUPPORT' | translate }}
+      </p>
+    </div>
+    }
+  </div>
+  }
+</div>

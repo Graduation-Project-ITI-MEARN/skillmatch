@@ -21,8 +21,6 @@ interface SubscriptionPlan {
   selector: 'app-subscription',
   standalone: true,
   imports: [CommonModule, TranslateModule],
-  templateUrl: './subscription.html',
-  styleUrls: ['./subscription.css'],
 })
 export class SubscriptionComponent implements OnInit {
   private dialog = inject(MatDialog);

@@ -12,7 +12,7 @@
             <span class="block font-semibold text-dark-900"
               >{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span
             >
-            {{ sub.createdAt | date }}
+            {{ sub.deadline | date }}
           </div>
           <button
             (click)="openSubmitModal(sub)"
@@ -44,7 +44,11 @@
             {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}: {{ sub.aiScore }}
           </div>
         </div>
-        <button class="mt-4 font-semibold text-dark-900 text-sm hover:underline cursor-pointer">
+        <!-- Updated: Add click handler to view details -->
+        <button
+          (click)="viewSubmissionDetails(sub._id)"
+          class="mt-4 font-semibold text-dark-900 text-sm hover:underline cursor-pointer"
+        >
           {{ 'DASHBOARD.MY_SUBMISSIONS.VIEW_RESULT' | translate }}
         </button>
       </div>

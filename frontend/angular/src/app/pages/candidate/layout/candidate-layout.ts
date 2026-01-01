@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common'; // Import DecimalPipe
 import {
   LucideAngularModule,
   Trophy,
@@ -10,6 +10,10 @@ import {
   Brain,
   Medal,
   CircleUserRound,
+  Gauge, // New icon for highest AI score
+  BarChart, // New icon for global rank
+  ListChecks, // New icon for amount of challenges
+  Activity, // Re-use Activity for average score
 } from 'lucide-angular';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
@@ -32,18 +36,35 @@ import { NotificationsDropdownComponent } from '@shared/components/notifications
     TranslateModule,
     RouterModule,
     NotificationsDropdownComponent,
+    DecimalPipe, // Add DecimalPipe to imports
   ],
   templateUrl: './candidate-layout.html',
+  providers: [DecimalPipe], // Provide DecimalPipe for local component usage
 })
 export class CandidateShellComponent implements OnInit, OnDestroy {
   private theme = inject(ThemeService);
   private candidateService = inject(CandidateService);
   private translate = inject(TranslateService);
+  private decimalPipe = inject(DecimalPipe); // Inject DecimalPipe
 
   user: any = { name: 'Candidate' };
   initials = '';
 
-  icons = { Trophy, Target, TrendingUp, Award };
+  // Updated icons to include new ones for stats
+  icons = {
+    Trophy,
+    Target,
+    TrendingUp,
+    Award,
+    Brain,
+    Medal,
+    CircleUserRound,
+    Gauge,
+    BarChart,
+    ListChecks,
+    Star,
+    Activity,
+  };
 
   private langSub: Subscription | undefined;
   private readonly API_URL = environment.apiUrl;
@@ -60,7 +81,7 @@ export class CandidateShellComponent implements OnInit, OnDestroy {
     {
       labelKey: 'DASHBOARD.TABS.SUBMISSIONS',
       route: '/dashboard/candidate/mysubmissions',
-      icon: Trophy,
+      icon: ListChecks, // Changed icon for submissions
     },
     {
       labelKey: 'DASHBOARD.TABS.PROFILE',
@@ -69,34 +90,42 @@ export class CandidateShellComponent implements OnInit, OnDestroy {
     },
   ];
 
+  // Updated stats array for new data
   stats = [
     {
-      id: 'completed',
-      labelKey: 'DASHBOARD.STATS.COMPLETED',
+      id: 'amountOfChallenges',
+      labelKey: 'DASHBOARD.STATS.CHALLENGES_COMPLETED', // New label key
       value: '...',
-      trend: '+3 this week',
-      icon: Trophy,
+      trend: '', // Can remove or set dynamically if you have this data
+      icon: ListChecks, // New icon
     },
     {
-      id: 'score',
-      labelKey: 'DASHBOARD.STATS.SCORE',
+      id: 'challengesWon',
+      labelKey: 'DASHBOARD.STATS.CHALLENGES_WON', // New label key
       value: '...',
-      trend: '+12 points',
-      icon: Target,
+      trend: '',
+      icon: Award, // Reusing Award icon
     },
     {
-      id: 'rank',
-      labelKey: 'DASHBOARD.STATS.RANK',
+      id: 'highestAiScore',
+      labelKey: 'DASHBOARD.STATS.HIGHEST_AI_SCORE', // New label key
       value: '...',
-      trend: 'Top 5%',
-      icon: TrendingUp,
+      trend: '',
+      icon: Gauge, // New icon
     },
     {
-      id: 'earnings',
-      labelKey: 'DASHBOARD.STATS.EARNINGS',
+      id: 'averageAiScore',
+      labelKey: 'DASHBOARD.STATS.AVERAGE_AI_SCORE', // New label key
       value: '...',
-      trend: '+$500',
-      icon: Award,
+      trend: '',
+      icon: Activity, // Reusing Activity icon
+    },
+    {
+      id: 'globalRank',
+      labelKey: 'DASHBOARD.STATS.GLOBAL_RANK', // New label key
+      value: '...',
+      trend: '',
+      icon: BarChart, // New icon
     },
   ];
 
@@ -109,22 +138,39 @@ export class CandidateShellComponent implements OnInit, OnDestroy {
   loadDashboardData() {
     forkJoin({
       user: this.candidateService.getMe(),
-      stats: this.candidateService.getCandidateStats(),
+      stats: this.candidateService.getCandidateStats(), // This fetches the new stats
     }).subscribe({
       next: (response) => {
-        this.user = response.user?.data || response.user?.data || {};
+        // Adjust user data access based on your actual API response structure
+        this.user = response.user?.data?.user || response.user?.data || {};
         console.log('User Data:', this.user);
         console.log('Stats Data:', response.stats);
 
         this.calculateInitials(this.user.name);
 
-        // Mapping stats
-        this.updateStatValue('completed', response.stats?.mySubmissions ?? 0);
-        this.updateStatValue('score', response.stats?.challengesWon ?? 0);
-        this.updateStatValue('rank', `#${response.stats?.globalRank ?? 0}`);
-        this.updateStatValue('earnings', `$${response.stats?.totalRevenue ?? 0}`);
+        const candidateStats = response.stats?.data || {}; // Access the 'data' property of the stats response
+
+        // Update the stats array with real data, applying formatting and handling null/undefined
+        this.updateStatValue(
+          'amountOfChallenges',
+          candidateStats.amountOfChallenges?.toString() ?? '0'
+        );
+        this.updateStatValue('challengesWon', candidateStats.challengesWon?.toString() ?? '0');
+        this.updateStatValue(
+          'highestAiScore',
+          `${this.decimalPipe.transform(candidateStats.highestAiScore, '1.0-0') ?? '0'}%`
+        ); // Formatted as X%
+        this.updateStatValue(
+          'averageAiScore',
+          `${this.decimalPipe.transform(candidateStats.averageAiScore, '1.1-1') ?? '0.0'}%`
+        ); // Formatted as X.Y%
+        this.updateStatValue('globalRank', `#${candidateStats.globalRank?.toString() ?? '0'}`);
       },
-      error: (err) => console.error('Failed to load dashboard data', err),
+      error: (err) => {
+        console.error('Failed to load dashboard data', err);
+        // Optionally, reset stats to '0' or default loading state on error
+        this.stats.forEach((stat) => (stat.value = '0'));
+      },
     });
   }
 
