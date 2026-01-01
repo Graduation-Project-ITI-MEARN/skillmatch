@@ -79,9 +79,8 @@ const ChallengeSchema: Schema = new Schema(
          type: {
             type: String,
             enum: ["link", "file", "text"],
-            required: true,
          },
-         value: { type: String, required: true },
+         value: { type: String },
       },
       // AI Configuration
       aiConfig: {

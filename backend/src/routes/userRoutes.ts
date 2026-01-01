@@ -30,14 +30,31 @@ router.get(
 router.get("/candidates", auth, restrictTo(["admin"]), getAllCandidates);
 router.get("/companies", auth, restrictTo(["admin"]), getAllCompanies);
 router.get("/challengers", auth, restrictTo(["admin"]), getAllChallengers);
-router.get("/profile/ai-skills", auth, getAISkills);
 
 // New Verification Route
 router.post("/verify", auth, verifyUser);
 
 router.get("/profile", auth, getProfile);
+router.get("/profile/ai-skills", getAISkills);
 
 router.patch("/profile", auth, updateProfile);
+
+router.patch("/:userId/subscription", auth, async (req, res) => {
+   const { subscriptionStatus, subscriptionExpiry, subscriptionPlan } =
+      req.body;
+
+   const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+         subscriptionStatus,
+         subscriptionExpiry: new Date(subscriptionExpiry),
+         subscriptionPlan,
+      },
+      { new: true }
+   );
+
+   res.json({ success: true, data: user });
+});
 
 router.put(
    "/:id/verify",
@@ -46,6 +63,6 @@ router.put(
    updateVerificationStatus
 );
 
-router.get("/:id", auth, getUserById);
+router.get("/:id", getUserById);
 
 export default router;

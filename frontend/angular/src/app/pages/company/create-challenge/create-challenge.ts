@@ -271,11 +271,48 @@ export class CreateChallenge implements OnInit {
     this.openIdealSolutionType = false;
   }
 
+  showUpgradeModal = false;
+  upgradeMessage = '';
+  requiredPlan: 'professional' | 'enterprise' = 'professional';
+
   selectPricingTier(tier: PricingTier) {
     this.selectedPricingTier = tier;
     this.challengeForm.get('aiConfig.pricingTier')?.setValue(tier);
     this.challengeForm.get('aiConfig.pricingTier')?.markAsTouched();
     this.openPricingTier = false;
+
+    // Check if user can use this tier
+    if (tier === 'custom') {
+      if (!this.canUseCustomAIModels()) {
+        this.showUpgradeModal = true;
+        this.upgradeMessage =
+          'Premium AI models require a Professional or Enterprise subscription. Upgrade now to unlock advanced AI capabilities including GPT-4, Claude Sonnet, and custom model selection.';
+        this.requiredPlan = 'professional';
+
+        // Revert to free tier
+        setTimeout(() => {
+          if (this.showUpgradeModal) {
+            this.selectPricingTier('free');
+          }
+        }, 100);
+      }
+    }
+  }
+
+  canUseCustomAIModels(): boolean {
+    return this.challengeService.canUseCustomAIModels();
+  }
+
+  navigateToUpgrade() {
+    this.showUpgradeModal = false;
+    this.router.navigate(['/dashboard/company/subscription'], {
+      queryParams: { upgrade: this.requiredPlan },
+    });
+  }
+
+  closeUpgradeModal() {
+    this.showUpgradeModal = false;
+    this.selectPricingTier('free'); // Reset to free tier
   }
 
   selectAiModel(modelId: string) {
@@ -422,12 +459,33 @@ export class CreateChallenge implements OnInit {
     try {
       this.isSubmitting = true;
       this.submitError = '';
+
       await firstValueFrom(this.http.post(`${environment.apiUrl}/challenges`, payload));
+
       this.submitSuccess = true;
       setTimeout(() => this.router.navigate(['/dashboard/company/overview']), 4000);
     } catch (error: any) {
-      console.error('Error creating challenge (from backend):', error);
-      this.submitError = error?.error?.message || 'Failed to create challenge';
+      console.error('Error creating challenge:', error);
+
+      // Handle subscription-specific errors
+      if (error?.error?.code === 'SUBSCRIPTION_REQUIRED') {
+        this.submitError = 'Active subscription required. Redirecting to subscription page...';
+        setTimeout(() => {
+          this.router.navigate(['/dashboard/company/subscription']);
+        }, 2000);
+      } else if (error?.error?.code === 'SUBSCRIPTION_EXPIRED') {
+        this.submitError = 'Your subscription has expired. Redirecting to renewal...';
+        setTimeout(() => {
+          this.router.navigate(['/dashboard/company/subscription'], {
+            queryParams: { renew: 'true' },
+          });
+        }, 2000);
+      } else if (error?.error?.code === 'PREMIUM_AI_REQUIRES_SUBSCRIPTION') {
+        this.submitError = 'Premium AI models require subscription upgrade.';
+        this.showUpgradeModal = true;
+      } else {
+        this.submitError = error?.error?.message || 'Failed to create challenge';
+      }
     } finally {
       this.isSubmitting = false;
     }

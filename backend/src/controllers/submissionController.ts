@@ -385,6 +385,15 @@ Please compare the candidate's submission against this ideal solution. Consider:
          "Submission Evaluated",
          `Your submission for "${challenge.title}" has been evaluated. Score: ${submission.aiScore}`
       );
+
+      if (submission.aiScore >= Number(process.env.MIN_AI_SCORE)) {
+         // 11. Notify challenge creator via socket
+         sendNotification(
+            challenge.creatorId.toString(),
+            "Submission Evaluated",
+            `A submission for "${challenge.title}" has been evaluated. Score: ${submission.aiScore}`
+         );
+      }
    } catch (error) {
       console.error("❌ Evaluation failed:", error);
 
@@ -469,10 +478,23 @@ const getSubmissionsByChallenge = catchError(
          throw new APIError(400, "Invalid challenge ID");
       }
 
-      const submissions = await Submission.find({ challengeId: id })
+      // Get the minimum AI score threshold from environment variables
+      // Ensure it's parsed as an integer. Default to 0 if not set or invalid.
+      const minAiScore = parseInt(process.env.MIN_AI_SCORE || "0", 10);
+
+      // Construct the query object
+      const query = {
+         challengeId: id,
+         // Filter for submissions where aiScore is greater than the defined minimum
+         // This implicitly handles "evaluated submissions" as non-evaluated ones
+         // typically have an aiScore of 0 or are missing the field.
+         aiScore: { $gt: minAiScore },
+      };
+
+      const submissions = await Submission.find(query)
          .populate("candidateId", "name email profilePicture")
          .populate("challengeId", "title category difficulty")
-         .sort({ createdAt: -1 });
+         .sort({ aiScore: -1 });
 
       res.status(200).json({
          success: true,

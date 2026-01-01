@@ -114,6 +114,9 @@ const login = catchError(async (req: Request, res: Response) => {
          role: user.role,
          type: user.type,
          isVerified: user.isVerified,
+         subscriptionStatus: user.subscriptionStatus,
+         subscriptionPlan: user.subscriptionPlan,
+         subscriptionExpiry: user.subscriptionExpiry,
       },
    });
 });

@@ -143,6 +143,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/company/submissions/submissions').then((m) => m.Submissions),
           },
+          // NEW ROUTE FOR SUBMISSION DETAILS
+          {
+            path: 'submission-details/:id', // Dynamic route parameter :id
+            loadComponent: () =>
+              import('./pages/company/submission-details/submission-details').then(
+                (m) => m.SubmissionDetailsComponent
+              ),
+          },
+          // END NEW ROUTE
 
           {
             path: 'talent',

@@ -169,7 +169,9 @@
       </div>
 
       <div class="flex flex-wrap gap-3">
+        <!-- Watch Video Button - Renders only if videoExplanationUrl exists -->
         <button
+          *ngIf="submission.videoExplanationUrl"
           (click)="watchVideo(submission.videoExplanationUrl)"
           class="flex items-center gap-2 px-4 py-2.5 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
           style="background: black"
@@ -178,6 +180,7 @@
           {{ 'DASHBOARD.SUBMISSIONS.WATCH_VIDEO' | translate }}
         </button>
 
+        <!-- View Application Button - Links to submission details page -->
         <button
           (click)="viewApplication(submission._id)"
           class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
@@ -186,13 +189,14 @@
           {{ 'DASHBOARD.SUBMISSIONS.VIEW_APPLICATION' | translate }}
         </button>
 
-        <button
-          (click)="contactCandidate(submission.candidateId._id)"
+        <!-- Contact Button - Links to candidate's email -->
+        <a
+          [href]="'mailto:' + submission.candidateId.email"
           class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
         >
           <lucide-icon [img]="icons.MessageSquare" class="w-4 h-4"></lucide-icon>
           {{ 'DASHBOARD.SUBMISSIONS.CONTACT' | translate }}
-        </button>
+        </a>
 
         <button
           (click)="shortlistCandidate(submission._id)"

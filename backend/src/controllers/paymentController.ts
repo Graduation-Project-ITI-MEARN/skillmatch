@@ -14,7 +14,8 @@ import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
  */
 const createPaymentIntent = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
-      const { amount, currency, billing_data, payment_type } = req.body;
+      const { amount, currency, billing_data, payment_type, plan_id } =
+         req.body;
       const user = (req as any).user;
 
       console.log("Payment payload:", {
@@ -46,7 +47,9 @@ const createPaymentIntent = catchError(
       // Format: "USER_ID---PAYMENT_TYPE---TIMESTAMP"
       // Example: "654321...---SUBSCRIPTION---17000000"
       // This allows the webhook to split this string and know exactly what to update.
-      const customOrderId = `${user._id}---${payment_type}---${Date.now()}`;
+      const customOrderId = plan_id
+         ? `${user._id}---${payment_type}---${plan_id}---${Date.now()}`
+         : `${user._id}---${payment_type}---${Date.now()}`;
 
       const orderResponse = await axios.post(
          "https://accept.paymob.com/api/ecommerce/orders",
@@ -119,7 +122,6 @@ const handleWebhook = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const { obj, type, hmac } = req.body;
 
-      // We only care about TRANSACTION updates, ignore others
       if (type !== "TRANSACTION") {
          res.status(200).send();
          return;
@@ -194,7 +196,7 @@ const handleWebhook = catchError(
          const customId = order?.merchant_order_id;
          if (!customId) return res.status(200).send();
 
-         const [userId, paymentType] = customId.split("---");
+         const [userId, paymentType, planId] = customId.split("---");
 
          const user = await User.findById(userId);
          if (!user) return res.status(200).send();
@@ -206,15 +208,40 @@ const handleWebhook = catchError(
             expiry.setDate(expiry.getDate() + 30);
             user.subscriptionExpiry = expiry;
 
+            // Store the plan type if provided
+            if (
+               planId &&
+               ["basic", "professional", "enterprise"].includes(planId)
+            ) {
+               user.subscriptionPlan = planId;
+            }
+
             await user.save();
+
+            await logActivity(
+               userId,
+               "subscription_activated",
+               `Subscription activated (${
+                  planId || "unknown"
+               } plan) until ${expiry.toISOString()}`,
+               "success"
+            );
          }
+
          if (paymentType === "TOPUP") {
             const amount = amount_cents / 100;
             user.walletBalance += amount;
-
             await user.save();
+
+            await logActivity(
+               userId,
+               "wallet_topup",
+               `Wallet topped up with ${amount} EGP`,
+               "success"
+            );
          }
       }
+
       res.status(200).send();
    }
 );

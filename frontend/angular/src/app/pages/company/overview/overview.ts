@@ -15,13 +15,60 @@ import {
   X,
   Plus,
   Edit,
+  Trash2,
 } from 'lucide-angular';
 import { environment } from 'src/environments/environment';
+
+// --- NEW INTERFACES FOR HIRING INSIGHTS DATA (Optional but good practice) ---
+interface InsightsData {
+  mostPopularSkill: string;
+  highQualityCandidates: number;
+  recommendedAction: string;
+}
+
+interface HiringInsights {
+  totalChallenges: number;
+  totalSubmissions?: number;
+  averageScore?: number;
+  insights: InsightsData | null; // Can be null if no challenges
+  // You can add other fields like topCandidates, skillDistribution, challengePerformance if you need them elsewhere
+}
+
+// Optional: Interface for the Challenge data received from the backend
+interface ChallengeBackendData {
+  _id: string;
+  title: string;
+  category: string;
+  status: string;
+  deadline: string;
+  prizeAmount?: number;
+  salary?: number;
+  submissionsCount?: number; // Added from backend
+  avgAiScore?: number; // Added from backend
+  topScore?: number; // Added from backend (replaces highestScore)
+  participants?: any[]; // Added from backend
+  // ... other properties from IChallenge interface
+}
+
+// Optional: Interface for the Challenge data used in the frontend
+interface ChallengeFrontendData {
+  _id: string;
+  title: string;
+  category: string;
+  status: string;
+  applications: number;
+  topScore: number;
+  avgAiScore: number; // Added for frontend
+  qualified: number;
+  daysRemaining: number;
+  budget: number;
+  // ... other properties you might want to map
+}
 
 @Component({
   selector: 'app-company-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule,RouterModule],
+  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule, RouterModule],
   templateUrl: './overview.html',
   styleUrls: ['./overview.css'],
 })
@@ -29,21 +76,22 @@ export class Overview implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-
-  icons = { Eye, Users, TrendingUp, Search, Filter, X, Plus, Edit };
+  icons = { Eye, Users, TrendingUp, Search, Filter, X, Plus, Edit, Trash2 };
 
   isLoadingChallenges = true;
   isLoadingActivity = true;
-  allChallenges: any[] = [];
-  challenges: any[] = [];
+  isLoadingHiringInsights = true;
+
+  // Use the new interface for better type safety
+  allChallenges: ChallengeFrontendData[] = [];
+  challenges: ChallengeFrontendData[] = [];
   activities: any[] = [];
+  hiringInsights: HiringInsights | null = null;
 
   searchQuery: string = '';
   isFilterOpen: boolean = false;
   selectedStatuses: string[] = [];
   selectedBudgets: string[] = [];
-
-  // Add missing methods for job types
   selectedJobTypes: string[] = [];
 
   filterOptions = {
@@ -65,7 +113,47 @@ export class Overview implements OnInit {
   };
 
   async ngOnInit() {
-    await Promise.all([this.loadChallenges(), this.loadActivity()]);
+    await Promise.all([this.loadChallenges(), this.loadActivity(), this.loadHiringInsights()]);
+  }
+
+  canModifyChallenge(challenge: ChallengeFrontendData): boolean {
+    // Allowed if status is 'evaluating' (which maps to 'draft' on backend)
+    // OR if there are 0 applications
+    return challenge.status === 'evaluating' || challenge.applications === 0;
+  }
+
+  // NEW: Method to handle challenge deletion
+  async deleteChallenge(challengeId: string) {
+    if (!confirm('Are you sure you want to delete this challenge? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.http.delete(`${environment.apiUrl}/challenges/${challengeId}`));
+      // Remove the deleted challenge from the arrays
+      this.allChallenges = this.allChallenges.filter((c) => c._id !== challengeId);
+      this.challenges = this.challenges.filter((c) => c._id !== challengeId); // Update filtered list
+      this.updateFilterCounts(); // Re-calculate filter counts
+      console.log(`Challenge ${challengeId} deleted successfully.`);
+      // Optionally, show a success toast/notification
+    } catch (error) {
+      console.error('Error deleting challenge:', error);
+      alert('Failed to delete challenge. Please try again.');
+    }
+  }
+
+  private async loadHiringInsights() {
+    try {
+      const response: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/ai/hiring-insights`)
+      );
+      this.hiringInsights = response.data;
+      console.log('Hiring Insights:', this.hiringInsights);
+    } catch (error) {
+      console.error('Error loading hiring insights:', error);
+    } finally {
+      this.isLoadingHiringInsights = false;
+    }
   }
 
   private async loadChallenges() {
@@ -75,22 +163,37 @@ export class Overview implements OnInit {
       );
       const data = response.data || response;
 
-      this.allChallenges = (Array.isArray(data) ? data : Object.values(data)).map((c: any) => ({
-        id: c._id,
+      // Ensure data is an array before mapping
+      const challengesData: ChallengeBackendData[] = Array.isArray(data)
+        ? data
+        : Object.values(data);
+
+      this.allChallenges = challengesData.map((c: ChallengeBackendData) => ({
+        _id: c._id,
         title: c.title,
         category: this.translateCategory(c.category),
         status: this.mapStatus(c.status),
-        applications: c.submissionsCount || 0,
-        topScore: c.highestScore || 0,
-        qualified: Math.floor((c.submissionsCount || 0) * 0.8),
+        applications: c.submissionsCount || 0, // Use submissionsCount from backend
+        topScore: c.topScore || 0, // Use topScore from backend
+        avgAiScore: c.avgAiScore || 0, // NEW: Add avgAiScore from backend
+        // If you need participants, you could add it here: participants: c.participants || [],
+        qualified: Math.floor((c.submissionsCount || 0) * 0.8), // 'qualified' calculation updated to use submissionsCount
         daysRemaining: this.calculateDaysRemaining(c.deadline),
-        budget: c.prizeAmount || 0,
+        budget: c.prizeAmount || c.salary || 0, // Use prizeAmount or salary for budget
       }));
 
       this.challenges = [...this.allChallenges];
       this.updateFilterCounts();
       this.isLoadingChallenges = false;
-      console.log('Challenge IDs:', this.allChallenges.map(c => c.id));
+      console.log(
+        'Challenges loaded:',
+        this.allChallenges.map((c) => ({
+          id: c._id,
+          applications: c.applications,
+          topScore: c.topScore,
+          avgAiScore: c.avgAiScore,
+        }))
+      );
     } catch (error) {
       console.error('Error loading challenges:', error);
       this.isLoadingChallenges = false;
@@ -116,18 +219,17 @@ export class Overview implements OnInit {
 
   // Filter Logic
   toggleFilter() {
-  console.log('الزر ضُغط!'); // سيظهر في الـ Console عند الضغط
-  this.isFilterOpen = !this.isFilterOpen;
-  console.log('حالة الفلتر الآن:', this.isFilterOpen);
-}
+    console.log('الزر ضُغط!');
+    this.isFilterOpen = !this.isFilterOpen;
+    console.log('حالة الفلتر الآن:', this.isFilterOpen);
+  }
 
-clearAllFilters() {
+  clearAllFilters() {
     this.selectedStatuses = [];
     this.selectedBudgets = [];
     this.searchQuery = '';
     this.applyFilters();
   }
-
 
   closeFilter() {
     this.isFilterOpen = false;
@@ -149,7 +251,6 @@ clearAllFilters() {
     const i = arr.indexOf(v);
     i > -1 ? arr.splice(i, 1) : arr.push(v);
   }
-
 
   applyFiltersAndClose() {
     this.applyFilters();
@@ -222,18 +323,20 @@ clearAllFilters() {
   // Helpers
   private translateCategory(cat: string): string {
     const map: any = {
-      coding: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING',
+      development: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING', // Assuming 'Development' maps to 'Coding'
       design: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DESIGN',
       marketing: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.MARKETING',
-      data_science: 'CO-OVERVIEW.CATEGORIES.DATA_SCIENCE',
-      product_management: 'CO-OVERVIEW.CATEGORIES.PRODUCT_MANAGEMENT',
+      writing: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.WRITING', // Example for other categories
+      translation: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.TRANSLATION',
+      data_entry: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DATA_ENTRY',
+      // ... add other categories from your backend as needed
     };
     return map[cat?.toLowerCase()] || cat || 'General';
   }
 
   private mapStatus(s: string): string {
     s = (s || '').toLowerCase();
-    if (s === 'published' || s === 'active') return 'active';
+    if (s === 'published' || s === 'active') return 'active'; // Your backend returns 'published'
     if (s === 'draft') return 'evaluating';
     return 'closed';
   }
@@ -275,13 +378,6 @@ clearAllFilters() {
       queryParams: { challenge: challengeId },
     });
   }
-
-//  editJob(id: string) {
-//   if (!id) return;
-//   // الـ / في البداية هي أهم جزء هنا
-//   this.router.navigateByUrl(`/company/challenge/${id}/edit`);
-// }
-
 
   createNewJob() {
     this.router.navigate(['/dashboard/company/challenge/create']);

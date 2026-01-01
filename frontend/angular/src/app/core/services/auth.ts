@@ -15,6 +15,8 @@ export interface AuthUserResponse {
   isVerified?: boolean;
   subscriptionStatus?: string; // If this comes from /auth/me
   verificationStatus?: string;
+  subscriptionExpiry?: string;
+  subscriptionPlan?: 'basic' | 'professional' | 'enterprise';
 }
 
 @Injectable({
@@ -136,6 +138,23 @@ export class AuthService {
   }
 
   get isSubscribed(): boolean {
-    return this.currentUser()?.subscriptionStatus === 'active';
+    const user = this.currentUser();
+    return user?.subscriptionStatus === 'active' && user?.subscriptionExpiry
+      ? new Date(user.subscriptionExpiry) > new Date()
+      : false;
+  }
+
+  get subscriptionPlan(): 'basic' | 'professional' | 'enterprise' | null {
+    return this.currentUser()?.subscriptionPlan || null;
+  }
+
+  canUseCustomAIModels(): boolean {
+    const plan = this.subscriptionPlan;
+    return plan === 'professional' || plan === 'enterprise';
+  }
+
+  // Force refresh user data (call after payment success)
+  async refreshUser(): Promise<void> {
+    await this.refreshUserProfile().toPromise();
   }
 }

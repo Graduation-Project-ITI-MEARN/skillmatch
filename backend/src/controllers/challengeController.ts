@@ -5,11 +5,19 @@ import { isValidCategory, areValidSkills } from "./metadataController";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import APIError from "../utils/APIError";
+import User from "../models/User";
 
 /**
  * @desc    Create a new challenge
  * @route   POST /api/challenges
  * @access  Private (Company, Challenger)
+ */
+// controllers/challengeController.ts
+
+/**
+ * @desc    Create a new challenge
+ * @route   POST /api/challenges
+ * @access  Private (Company with active subscription)
  */
 const createChallenge = catchError(async (req: Request, res: Response) => {
    const user = req.user;
@@ -18,7 +26,23 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
    }
 
-   const { category, tags } = req.body;
+   // Companies must have active subscription
+   if (user.type === "company") {
+      const hasActiveSubscription =
+         user.subscriptionStatus === "active" &&
+         user.subscriptionExpiry &&
+         user.subscriptionExpiry > new Date();
+
+      if (!hasActiveSubscription) {
+         return res.status(403).json({
+            success: false,
+            message: "Active subscription required to create challenges",
+            code: "SUBSCRIPTION_REQUIRED",
+         });
+      }
+   }
+
+   const { category, tags, aiConfig } = req.body;
 
    // Validate category
    if (!category) {
@@ -47,6 +71,14 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
       }
    }
 
+   // Validate AI configuration
+   if (aiConfig?.pricingTier === "custom" && !aiConfig.selectedModel) {
+      return res.status(400).json({
+         success: false,
+         message: "Selected model is required for custom pricing tier",
+      });
+   }
+
    const challenge = await Challenge.create({
       ...req.body,
       creatorId: user._id,
@@ -55,14 +87,15 @@ const createChallenge = catchError(async (req: Request, res: Response) => {
    await logActivity(
       user._id,
       "challenge_created",
-      `Created challenge: ${(challenge as any).title}`,
+      `Created challenge: ${(challenge as any).title} with AI tier: ${
+         aiConfig?.pricingTier || "free"
+      }`,
       "success",
       (challenge as any)._id
    );
 
    res.status(201).json({ success: true, data: challenge });
 });
-
 /**
  * @desc    Get all published challenges (Public Feed)
  * @route   GET /api/challenges
@@ -105,6 +138,7 @@ const getPublishedChallenges = catchError(
  * @route   GET /api/challenges/mine
  * @access  Private
  */
+
 const getMyChallenges = catchError(async (req: Request, res: Response) => {
    const user = req.user;
 
@@ -112,15 +146,97 @@ const getMyChallenges = catchError(async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Not authorized" });
    }
 
+   // 1. Find all challenges created by the logged-in user
    const challenges = await Challenge.find({ creatorId: user._id }).populate(
       "creatorId",
       "name type"
    );
 
+   if (challenges.length === 0) {
+      // If no challenges are found, return an empty array immediately
+      return res.status(200).json({
+         success: true,
+         count: 0,
+         data: [],
+      });
+   }
+
+   // Extract IDs of all challenges found
+   const challengeIds = challenges.map((c) => c._id);
+
+   // 2. Aggregate submission data for these challenges
+   const submissionsAggregations = await Submission.aggregate([
+      {
+         $match: {
+            challengeId: { $in: challengeIds }, // Match submissions belonging to the user's challenges
+            aiScore: { $exists: true, $ne: null }, // Only consider submissions with an AI score
+         },
+      },
+      {
+         $group: {
+            _id: "$challengeId", // Group results by challengeId
+            submissionsCount: { $sum: 1 }, // Count total submissions for each challenge
+            avgAiScore: { $avg: "$aiScore" }, // Calculate average AI score
+            topScore: { $max: "$aiScore" }, // Find the maximum AI score
+            // Collect unique candidate IDs for participants
+            participants: { $addToSet: "$candidateId" },
+         },
+      },
+      {
+         // Lookup participant details (name, email) from the User model
+         $lookup: {
+            from: User.collection.name, // Gets the actual collection name for the User model (e.g., 'users')
+            localField: "participants",
+            foreignField: "_id",
+            as: "participantDetails",
+         },
+      },
+      {
+         // Project the final structure for each challenge's aggregated data
+         $project: {
+            submissionsCount: 1,
+            avgAiScore: { $round: ["$avgAiScore", 2] }, // Round average score to 2 decimal places
+            topScore: 1,
+            // Map participant details to a more concise format
+            participants: {
+               $map: {
+                  input: "$participantDetails",
+                  as: "p",
+                  in: {
+                     _id: "$$p._id",
+                     name: "$$p.name",
+                     email: "$$p.email",
+                     // You can add other candidate fields here if needed
+                  },
+               },
+            },
+         },
+      },
+   ]);
+
+   // Convert the aggregation results into a map for efficient lookup by challengeId
+   const challengeStatsMap = new Map();
+   submissionsAggregations.forEach((stat) => {
+      challengeStatsMap.set(stat._id.toString(), stat);
+   });
+
+   // 3. Merge the aggregated submission data into the challenge documents
+   const challengesWithStats = challenges.map((challenge) => {
+      const stats = challengeStatsMap.get(challenge._id.toString());
+
+      return {
+         ...challenge.toObject(), // Convert Mongoose document to a plain JavaScript object
+         submissionsCount: stats?.submissionsCount || 0,
+         avgAiScore: stats?.avgAiScore || 0,
+         topScore: stats?.topScore || 0,
+         participants: stats?.participants || [], // Will be an array of { _id, name, email }
+      };
+   });
+
    res.status(200).json({
       success: true,
-      count: challenges.length,
-      data: challenges,
+      count: challengesWithStats.length,
+      data: challengesWithStats,
    });
 });
 

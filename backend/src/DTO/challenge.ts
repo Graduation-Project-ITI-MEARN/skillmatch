@@ -1,34 +1,5 @@
 import { z } from "zod";
 
-// title: string;
-//    description: string;
-//    difficulty: "easy" | "medium" | "hard";
-//    category: string;
-//    deadline: Date;
-//    creatorId: mongoose.Types.ObjectId;
-//    status: "draft" | "published" | "closed";
-//    type: "job" | "prize";
-//    submissionType: "link" | "file" | "text";
-//    prizeAmount?: number;
-//    salary?: number;
-//    additionalInfo?: string;
-//    tags?: string[];
-//    requirements: string;
-//    evaluationCriteria: string;
-//    deliverables: string;
-//    idealSolution?: string;
-
-//    // NEW: AI Evaluation Configuration
-//    aiConfig: {
-//       pricingTier: PricingTier;
-//       selectedModel?: AIModel; // If custom tier
-//       autoEvaluate: boolean; // Auto-evaluate on submission
-//       requireVideoTranscript: boolean;
-//    };
-
-//    createdAt: Date;
-//    updatedAt: Date;
-
 const createChallengeDTO = z.object({
    title: z.string().min(1, "Title is required"),
    description: z.string().min(1, "Description is required"),
@@ -49,10 +20,12 @@ const createChallengeDTO = z.object({
    requirements: z.string().min(1, "Requirements are required"),
    evaluationCriteria: z.string().min(1, "Evaluation criteria is required"),
    deliverables: z.string().min(1, "Deliverables are required"),
-   idealSolution: z.object({
-      type: z.enum(["link", "file", "text"]),
-      value: z.string().min(1, "Ideal solution is required"),
-   }),
+   idealSolution: z
+      .object({
+         type: z.enum(["link", "file", "text"]),
+         value: z.string().min(1, "Value is required"),
+      })
+      .optional(),
    // NEW: AI Evaluation Configuration
    aiConfig: z.object({
       pricingTier: z.enum(["free", "budget", "balanced", "premium"]),

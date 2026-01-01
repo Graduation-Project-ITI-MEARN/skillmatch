@@ -868,4 +868,57 @@
       </div>
     </div>
   </div>
+
+  <!-- Add this after your form, before closing div -->
+
+  <!-- Upgrade Modal -->
+  <div
+    *ngIf="showUpgradeModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    (click)="closeUpgradeModal()"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="text-center">
+        <!-- Icon -->
+        <div
+          class="w-16 h-16 bg-primary-gradient rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Upgrade Required</h3>
+
+        <p class="text-gray-600 mb-6">
+          {{ upgradeMessage }}
+        </p>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            (click)="closeUpgradeModal()"
+            class="flex-1 px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            (click)="navigateToUpgrade()"
+            class="flex-1 px-6 py-3 bg-primary-gradient text-white rounded-xl font-semibold hover:bg-primary transition-all shadow-lg"
+          >
+            Upgrade Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -8,6 +8,7 @@ import { RTLProvider } from "../components/RTLContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
+
 export const metadata: Metadata = {
    title: "SkillMatch - Challenge Yourself",
    description: "Platform for skill-based challenges and competitions",

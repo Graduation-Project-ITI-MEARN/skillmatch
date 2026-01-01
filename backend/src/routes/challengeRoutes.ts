@@ -41,6 +41,7 @@ router.post(
    validate(createChallengeDTO),
    restrictTo(["company", "challenger"]),
    requireVerification(["company", "challenger"]),
+   requireSubscription,
    createChallenge
 );
 
