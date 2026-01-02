@@ -1,33 +1,57 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth';
-import { map, take } from 'rxjs';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
+import { AuthService, AuthUserResponse } from '../services/auth'; // Import AuthUserResponse
 import { environment } from '../../../environments/environment';
+import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
+import { checkVerification } from './verification.guard';
 
-export const companyGuard: CanActivateFn = (route, state) => {
+export const companyGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const dialogService = inject(ZardDialogService);
 
-  // 1. Wait for Auth Check
-  return authService.checkAuth().pipe(
-    take(1),
-    map((isAuthenticated) => {
-      // 2. Check Authentication
-      if (!isAuthenticated) {
-        window.location.href = `${environment.nextJsUrl}/login`;
-        return false;
-      }
+  const user = authService.currentUser(); // Get the current user signal's value
 
-      console.log(authService.type);
+  // 1. Check Authentication
+  if (!user) {
+    window.location.href = `${environment.nextJsUrl}/login`;
+    return false;
+  }
 
-      // 3. Check Role (using the safe getter we made in Step 2)
-      if (authService.type === 'company') {
-        return true;
-      }
+  // 2. Check Role/Type
+  // --- IMPORTANT CHANGE HERE ---
+  // Direct access to user.type as per AuthUserResponse interface
+  if (user.type !== 'company') {
+    console.warn('Unauthorized access attempt: Not a company');
+    return router.createUrlTree(['/unauthorized']);
+  }
 
-      // 4. Unauthorized Role
-      console.warn('Unauthorized access attempt');
-      return router.createUrlTree(['/unauthorized']); // Or wherever you want
-    })
-  );
+  // 3. Define routes that require verification for companies
+  const routesRequiringVerification = [
+    '/dashboard/company/create',
+    // Add other company-specific routes that require verification here
+  ];
+
+  // Check if the current route matches any route requiring verification
+  const requiresVerification = routesRequiringVerification.includes(state.url);
+
+  if (requiresVerification) {
+    // 4. Check Verification
+    // --- IMPORTANT CHANGE HERE ---
+    // Pass user directly, which now has the correct isVerified property
+    if (!checkVerification(user, dialogService)) {
+      console.warn('Company not verified to access this feature.');
+      return false; // Prevent navigation, dialog is shown by checkVerification
+    }
+  }
+
+  return true; // Allow navigation if verified or not a protected route
 };

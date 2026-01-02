@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, Renderer2 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe, TitleCasePipe } from '@angular/common'; // Import DecimalPipe, TitleCasePipe
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
@@ -17,6 +17,11 @@ import {
   Calendar,
   Play,
   X,
+  Gauge, // Added for AI Score
+  Award, // Added for Challenges Won
+  BarChart, // Added for Global Rank (or other suitable icon)
+  ListChecks,
+  ArrowUpWideNarrow, // Added for Amount of Challenges
 } from 'lucide-angular';
 
 import { CandidateService } from 'src/app/core/services/candidateService';
@@ -24,26 +29,55 @@ import { CandidateService } from 'src/app/core/services/candidateService';
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    LucideAngularModule,
+    FormsModule,
+    RouterLink,
+    DecimalPipe,
+    TitleCasePipe,
+  ], // Add TitleCasePipe here
   templateUrl: './overview.html',
+  providers: [DecimalPipe, TitleCasePipe], // Provide DecimalPipe and TitleCasePipe
 })
 export class Overview implements OnInit {
   private candidateService = inject(CandidateService);
   private renderer = inject(Renderer2);
+  private decimalPipe = inject(DecimalPipe); // Inject DecimalPipe
+  private titleCasePipe = inject(TitleCasePipe); // Inject TitleCasePipe
 
-  // Icons
-  icons = { Clock, Trophy, ChevronRight, Brain, Filter, Activity, Calendar, Play, X };
+  // Icons - Updated to include new ones for stats
+  icons = {
+    Clock,
+    Trophy,
+    ChevronRight,
+    Brain,
+    Filter,
+    Activity,
+    Calendar,
+    Play,
+    X,
+    Gauge, // For AI Score
+    Award, // For Challenges Won
+    BarChart, // For Global Rank
+    ListChecks, // For Amount of Challenges
+    ArrowUpWideNarrow,
+  };
 
   // Data
   activeChallenges: any[] = [];
-  allChallenges: any[] = [];
+  allChallenges: any[] = []; // This will now hold only the *available* challenges
   aiRecommendations: any[] = [];
   recentSubmissions: any[] = [];
 
-  weeklyStats = {
-    started: 0,
-    videos: 0,
-    avgScore: 0,
+  // New property for candidate statistics
+  candidateOverviewStats = {
+    amountOfChallenges: 0,
+    highestAiScore: 0,
+    averageAiScore: 0,
+    challengesWon: 0,
+    globalRank: 0,
   };
 
   // UI State
@@ -64,7 +98,7 @@ export class Overview implements OnInit {
     prizeMin: 0,
     prizeMax: 10000,
     daysLeft: 'all',
-    searchTerm: ''
+    searchTerm: '',
   };
 
   ngOnInit(): void {
@@ -75,24 +109,31 @@ export class Overview implements OnInit {
     this.isLoading = true;
 
     forkJoin({
-      challenges: this.candidateService.getAllChallenges(),
+      // IMPORTANT CHANGE HERE: Use getAvailableChallengesForCandidate()
+      challenges: this.candidateService.getAvailableChallengesForCandidate(),
       ai: this.candidateService.getAiRecommendations(),
       submissions: this.candidateService.getMySubmissions(),
+      candidateStats: this.candidateService.getCandidateStats(), // Fetch candidate stats
     }).subscribe({
       next: (res: any) => {
-        const challengesData = Array.isArray(res.challenges)
-          ? res.challenges
-          : res.challenges?.data || [];
+        // CORRECTED: Access challenges from res.challenges.data
+        const challengesData = Array.isArray(res.challenges?.data) ? res.challenges.data : [];
 
         this.allChallenges = challengesData.map((c: any) => ({
           ...c,
+          // Ensure deadline is a valid Date object for calculateDaysLeft
+          deadline: c.deadline ? new Date(c.deadline) : new Date(Date.now() + 86400000 * 5),
           daysLeft: this.calculateDaysLeft(
-            c.deadline || new Date(Date.now() + 86400000 * 5)
+            c.deadline ? new Date(c.deadline) : new Date(Date.now() + 86400000 * 5)
           ),
-          category: c.category || 'Development',
+          // Use creatorId.name for company, default if not available
+          company: c.creatorId?.name || 'Unknown Company',
+          // Use salary or prizeAmount for prize, default if not available
+          prize: c.salary ?? c.prizeAmount ?? 0,
+          category: c.category || 'Development', // Ensure category exists
           levelColor: this.getLevelColor(c.difficulty || c.level),
+          // Keep competitors for now, or fetch if available in challenge details
           competitors: c.competitorsCount || Math.floor(Math.random() * 100) + 20,
-          prize: c.prize || 500,
         }));
 
         this.activeChallenges = [...this.allChallenges];
@@ -103,13 +144,46 @@ export class Overview implements OnInit {
           : res.submissions?.data?.activeSubmissions || [];
 
         this.recentSubmissions = subsData.slice(0, 3);
+
+        // Assign candidate statistics
+        if (res.candidateStats && res.candidateStats.data) {
+          this.candidateOverviewStats = {
+            amountOfChallenges: res.candidateStats.data.amountOfChallenges || 0,
+            highestAiScore: res.candidateStats.data.highestAiScore || 0,
+            averageAiScore: res.candidateStats.data.averageAiScore || 0,
+            challengesWon: res.candidateStats.data.challengesWon || 0,
+            globalRank: res.candidateStats.data.globalRank || 0,
+          };
+        }
+
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading overview data:', err);
         this.isLoading = false;
+        // Optionally, reset stats to 0 or a default state on error
+        this.candidateOverviewStats = {
+          amountOfChallenges: 0,
+          highestAiScore: 0,
+          averageAiScore: 0,
+          challengesWon: 0,
+          globalRank: 0,
+        };
       },
     });
+  }
+
+  // ... (rest of your component code remains the same)
+
+  // Helper to check if any stat is non-zero for conditional rendering
+  hasAnyStats(): boolean {
+    return (
+      this.candidateOverviewStats.amountOfChallenges > 0 ||
+      this.candidateOverviewStats.highestAiScore > 0 ||
+      this.candidateOverviewStats.averageAiScore > 0 ||
+      this.candidateOverviewStats.challengesWon > 0 ||
+      this.candidateOverviewStats.globalRank > 0
+    );
   }
 
   // ---------------- وظائف الفلترة ----------------
@@ -119,7 +193,6 @@ export class Overview implements OnInit {
     this.activeDropdown = null;
   }
 
-  
   onFieldChange(field: string): void {
     this.selectedField = field;
     this.filters.category = field;
@@ -131,29 +204,29 @@ export class Overview implements OnInit {
     let filtered = [...this.allChallenges];
 
     if (this.filters.category !== 'all') {
-      filtered = filtered.filter(c => c.category === this.filters.category);
+      filtered = filtered.filter((c) => c.category === this.filters.category);
     }
 
     if (this.filters.difficulty !== 'all') {
-      filtered = filtered.filter(c =>
-        (c.difficulty || '').toLowerCase() === this.filters.difficulty.toLowerCase()
+      filtered = filtered.filter(
+        (c) => (c.difficulty || '').toLowerCase() === this.filters.difficulty.toLowerCase()
       );
     }
 
-    filtered = filtered.filter(c =>
-      c.prize >= this.filters.prizeMin && c.prize <= this.filters.prizeMax
+    filtered = filtered.filter(
+      (c) => c.prize >= this.filters.prizeMin && c.prize <= this.filters.prizeMax
     );
 
     if (this.filters.daysLeft !== 'all') {
-      const days = parseInt(this.filters.daysLeft);
-      filtered = filtered.filter(c => c.daysLeft <= days);
+      const days = parseInt(this.filters.daysLeft, 10); // Use radix 10
+      filtered = filtered.filter((c) => c.daysLeft <= days);
     }
 
     if (this.filters.searchTerm.trim()) {
       const term = this.filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(c =>
-        c.title.toLowerCase().includes(term) ||
-        (c.company || '').toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (c) =>
+          c.title.toLowerCase().includes(term) || (c.company || '').toLowerCase().includes(term)
       );
     }
 
@@ -168,7 +241,7 @@ export class Overview implements OnInit {
       prizeMin: 0,
       prizeMax: 10000,
       daysLeft: 'all',
-      searchTerm: ''
+      searchTerm: '',
     };
     this.selectedField = 'all';
     this.activeDropdown = null;

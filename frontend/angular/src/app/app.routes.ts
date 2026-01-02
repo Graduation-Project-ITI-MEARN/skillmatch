@@ -86,11 +86,22 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/candidate/portfolio/portfolio').then((m) => m.PortfolioComponent),
           },
-             {
+          {
             path: 'mysubmissions',
             loadComponent: () =>
-              import('./pages/candidate/my-submissions/my-submissions').then((m) => m.MySubmissions),
+              import('./pages/candidate/my-submissions/my-submissions').then(
+                (m) => m.MySubmissions
+              ),
           },
+          // NEW ROUTE: View Submission Details for Candidate
+          {
+            path: 'submission-details/:id', // Dynamic route parameter :id
+            loadComponent: () =>
+              import('./pages/candidate/submission-details/submission-details').then(
+                (m) => m.CandidateSubmissionDetailsComponent
+              ),
+          },
+          // END NEW ROUTE
           {
             path: 'coach',
             loadComponent: () => import('./pages/candidate/coach/coach').then((m) => m.Coach),
@@ -99,6 +110,11 @@ export const routes: Routes = [
             path: 'leaderboard',
             loadComponent: () =>
               import('./pages/candidate/leaderboard/leaderboard').then((m) => m.Leaderboard),
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('./pages/candidate/profile/profile').then((m) => m.CandidateProfile),
           },
           {
             path: 'challenge/:id',
@@ -136,6 +152,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./pages/company/submissions/submissions').then((m) => m.Submissions),
           },
+          // NEW ROUTE FOR SUBMISSION DETAILS (Company view)
+          {
+            path: 'submission-details/:id', // Dynamic route parameter :id
+            loadComponent: () =>
+              import('./pages/company/submission-details/submission-details').then(
+                (m) => m.SubmissionDetailsComponent
+              ),
+          },
+          // END NEW ROUTE
 
           {
             path: 'talent',
@@ -146,6 +171,11 @@ export const routes: Routes = [
             path: 'analytics',
             loadComponent: () =>
               import('./pages/company/analytics/analytics').then((m) => m.Analytics),
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('./pages/company/profile/profile').then((m) => m.CompanyProfile),
           },
         ],
       },

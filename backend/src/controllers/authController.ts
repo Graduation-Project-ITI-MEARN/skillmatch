@@ -3,6 +3,7 @@ import User from "../models/User";
 import bcrypt from "bcryptjs";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
+import { sendNotification } from "../utils/notification";
 
 const jwt = require("jsonwebtoken");
 
@@ -52,6 +53,13 @@ const register = catchError(async (req: Request, res: Response) => {
       user._id
    );
 
+   await sendNotification(
+      user._id,
+      "Welcome to skillmatch!",
+      `Hi ${user.name}, welcome to skillmatch!`,
+      "success"
+   );
+
    res.status(201).json({
       success: true,
       token: generateToken(user._id.toString(), user.role),
@@ -61,6 +69,7 @@ const register = catchError(async (req: Request, res: Response) => {
          email: user.email,
          role: "user",
          type: user.type,
+         isVerified: user.isVerified,
       },
    });
 });
@@ -104,9 +113,27 @@ const login = catchError(async (req: Request, res: Response) => {
          email: user.email,
          role: user.role,
          type: user.type,
+         isVerified: user.isVerified,
+         subscriptionStatus: user.subscriptionStatus,
+         subscriptionPlan: user.subscriptionPlan,
+         subscriptionExpiry: user.subscriptionExpiry,
       },
    });
 });
+
+/**
+ * @desc    Log out
+ * @route   GET /api/auth/logout
+ * @access  Private
+ */
+
+const logout = (req: Request, res: Response) => {
+   res.cookie("token", "none", {
+      expires: new Date(Date.now() + 10 * 1000), // 10 seconds
+      httpOnly: true,
+   });
+   res.status(200).json({ success: true, data: {} });
+};
 
 /**
  * @desc    Get current logged in user
@@ -120,4 +147,4 @@ const getMe = catchError(async (req: Request, res: Response) => {
    });
 });
 
-export { register, login, getMe };
+export { register, login, getMe, logout };

@@ -23,6 +23,10 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
       "application/zip",
       "application/x-zip-compressed",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+      // videos
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
    ];
 
    if (allowedMimeTypes.includes(file.mimetype)) {

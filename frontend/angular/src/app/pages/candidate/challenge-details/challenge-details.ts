@@ -1,3 +1,4 @@
+// src/app/pages/candidate/challenge-details/challenge-details.ts
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -16,7 +17,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CandidateService } from 'src/app/core/services/candidateService';
 import { AuthService } from 'src/app/core/services/auth';
 import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
-import { checkVerification } from 'src/app/core/guards/verification.guard';
+import { checkVerification } from '@/core/guards/verification.guard';
+// Removed: import { forkJoin } from 'rxjs'; as it's no longer needed
 
 @Component({
   selector: 'app-challenge-details',
@@ -35,7 +37,7 @@ export class ChallengeDetails implements OnInit {
   challengeId: string = '';
   challenge: any = null;
   loading = true;
-  isSubmitted = false;
+  isSubmitted = false; // Initialize to false, as we assume the user hasn't started it yet
 
   readonly icons = {
     BarChart,
@@ -50,7 +52,7 @@ export class ChallengeDetails implements OnInit {
   ngOnInit() {
     this.challengeId = this.route.snapshot.paramMap.get('id') || '';
     if (this.challengeId) {
-      this.loadChallenge();
+      this.loadChallenge(); // Only load challenge details
     }
   }
 
@@ -60,20 +62,21 @@ export class ChallengeDetails implements OnInit {
       next: (res) => {
         this.challenge = res.data;
         this.loading = false;
+        // isSubmitted remains false as per the assumption that this challenge hasn't been started
       },
       error: (err) => {
-        this.toast.error('Failed to load challenge details');
+        console.error('Error loading challenge details:', err);
+        this.toast.error(err.error?.message || 'Failed to load challenge details.');
         this.loading = false;
+        // Optionally navigate away if challenge doesn't exist or is inaccessible
+        this.router.navigate(['/dashboard/candidate/challenges']);
       },
     });
   }
 
   handleAction() {
-    if (!checkVerification(this.authService.currentUser(), this.dialog)) {
-      return;
-    }
-
     if (this.isSubmitted) {
+      // This path should only be taken *after* a successful startChallenge call
       this.router.navigate(['/dashboard/candidate/mysubmissions']);
     } else {
       this.onStartChallenge();
@@ -81,9 +84,17 @@ export class ChallengeDetails implements OnInit {
   }
 
   private onStartChallenge() {
-    this.candidateservice.getChallengeById(this.challengeId).subscribe({
+    const currentUser = this.authService.currentUser();
+
+    if (!checkVerification(currentUser, this.dialog)) {
+      console.log('Candidate not verified. Preventing challenge start.');
+      return;
+    }
+
+    this.candidateservice.startChallenge(this.challengeId).subscribe({
       next: () => {
         this.toast.success('Challenge Started! Good luck.');
+        this.isSubmitted = true; // Set to true upon successful start
         this.router.navigate(['/dashboard/candidate/mysubmissions']);
       },
       error: (err) => {

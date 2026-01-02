@@ -85,7 +85,10 @@
               type="text"
               formControlName="title"
               placeholder="{{ 'CHALLENGE.FORM.TITLE_PLACEHOLDER' | translate }}"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('title')?.invalid && challengeForm.get('title')?.touched
+              "
             />
             <p
               *ngIf="challengeForm.get('title')?.invalid && challengeForm.get('title')?.touched"
@@ -105,13 +108,16 @@
               <div class="relative">
                 <button
                   type="button"
-                  class="custom-dropdown"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
                   (click)="openCategory = !openCategory"
+                  [class.border-red-500]="
+                    challengeForm.get('category')?.invalid && challengeForm.get('category')?.touched
+                  "
                 >
                   <span [class.text-gray-400]="!selectedCategory">
                     {{
                       selectedCategory
-                        ? ('CHALLENGE.CATEGORIES.' + selectedCategory.toUpperCase() | translate)
+                        ? (selectedCategory | translate)
                         : ('CHALLENGE.FORM.SELECT_CATEGORY' | translate)
                     }}
                   </span>
@@ -121,16 +127,27 @@
                     [class.rotate-180]="openCategory"
                   ></lucide-icon>
                 </button>
-                <ul *ngIf="openCategory" class="dropdown-menu">
+                <ul
+                  *ngIf="openCategory"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
                   <li
                     *ngFor="let cat of categories"
                     (click)="selectCategory(cat)"
-                    class="dropdown-item"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
                   >
-                    {{ 'CHALLENGE.CATEGORIES.' + cat.toUpperCase() | translate }}
+                    {{ cat | translate }}
                   </li>
                 </ul>
               </div>
+              <p
+                *ngIf="
+                  challengeForm.get('category')?.invalid && challengeForm.get('category')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.CATEGORY_ERROR' | translate }}
+              </p>
             </div>
 
             <!-- Difficulty Dropdown -->
@@ -141,8 +158,12 @@
               <div class="relative">
                 <button
                   type="button"
-                  class="custom-dropdown"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
                   (click)="openDifficulty = !openDifficulty"
+                  [class.border-red-500]="
+                    challengeForm.get('difficulty')?.invalid &&
+                    challengeForm.get('difficulty')?.touched
+                  "
                 >
                   <span [class.text-gray-400]="!selectedDifficulty">
                     {{
@@ -157,45 +178,106 @@
                     [class.rotate-180]="openDifficulty"
                   ></lucide-icon>
                 </button>
-                <ul *ngIf="openDifficulty" class="dropdown-menu">
+                <ul
+                  *ngIf="openDifficulty"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
                   <li
                     *ngFor="let level of difficultyLevels"
                     (click)="selectDifficulty(level)"
-                    class="dropdown-item"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
                   >
                     {{ 'CHALLENGE.DIFFICULTY.' + level.toUpperCase() | translate }}
                   </li>
                 </ul>
               </div>
+              <p
+                *ngIf="
+                  challengeForm.get('difficulty')?.invalid &&
+                  challengeForm.get('difficulty')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.DIFFICULTY_ERROR' | translate }}
+              </p>
             </div>
+          </div>
 
-            <!-- Removed Status Dropdown -->
-            <!-- <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                {{ 'CHALLENGE.FORM.STATUS' | translate }}
-              </label>
-              <div class="relative">
-                <button type="button" class="custom-dropdown" (click)="openStatus = !openStatus">
-                  <span>
-                    {{ 'CHALLENGE.STATUS.' + selectedStatus.toUpperCase() | translate }}
-                  </span>
-                  <lucide-icon
-                    [img]="icons.ChevronDown"
-                    class="w-5 h-5 text-gray-500 transition-transform"
-                    [class.rotate-180]="openStatus"
-                  ></lucide-icon>
-                </button>
-                <ul *ngIf="openStatus" class="dropdown-menu">
-                  <li
-                    *ngFor="let status of statusOptions"
-                    (click)="selectStatus(status)"
-                    class="dropdown-item"
-                  >
-                    {{ 'CHALLENGE.STATUS.' + status.toUpperCase() | translate }}
-                  </li>
-                </ul>
-              </div>
-            </div> -->
+          <!-- Submission Type Dropdown -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.SUBMISSION_TYPE' | translate }}
+              <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <button
+                type="button"
+                class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                (click)="openSubmissionType = !openSubmissionType"
+                [class.border-red-500]="
+                  challengeForm.get('submissionType')?.invalid &&
+                  challengeForm.get('submissionType')?.touched
+                "
+              >
+                <span [class.text-gray-400]="!selectedSubmissionType">
+                  {{
+                    selectedSubmissionType
+                      ? ('CHALLENGE.SUBMISSION_TYPE.' + selectedSubmissionType.toUpperCase()
+                        | translate)
+                      : ('CHALLENGE.FORM.SELECT_SUBMISSION_TYPE' | translate)
+                  }}
+                </span>
+                <lucide-icon
+                  [img]="icons.ChevronDown"
+                  class="w-5 h-5 text-gray-500 transition-transform"
+                  [class.rotate-180]="openSubmissionType"
+                ></lucide-icon>
+              </button>
+              <ul
+                *ngIf="openSubmissionType"
+                class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+              >
+                <li
+                  *ngFor="let type of submissionTypes"
+                  (click)="selectSubmissionType(type)"
+                  class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                >
+                  {{ 'CHALLENGE.SUBMISSION_TYPE.' + type.toUpperCase() | translate }}
+                </li>
+              </ul>
+            </div>
+            <p
+              *ngIf="
+                challengeForm.get('submissionType')?.invalid &&
+                challengeForm.get('submissionType')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.SUBMISSION_TYPE_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Salary (Always visible since type is fixed to 'job') -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.SALARY' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="salary"
+              min="1000"
+              placeholder="{{ 'CHALLENGE.FORM.SALARY_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('salary')?.invalid && challengeForm.get('salary')?.touched
+              "
+            />
+            <p
+              *ngIf="challengeForm.get('salary')?.invalid && challengeForm.get('salary')?.touched"
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.SALARY_ERROR' | translate }}
+            </p>
           </div>
 
           <!-- Skills Dropdown with Search -->
@@ -228,10 +310,13 @@
             <div class="relative">
               <button
                 type="button"
-                class="custom-dropdown"
+                class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
                 (click)="openSkillsDropdown = !openSkillsDropdown"
+                [class.border-red-500]="
+                  challengeForm.get('tags')?.invalid && challengeForm.get('tags')?.touched
+                "
               >
-                <span class="text-gray-400">
+                <span [class.text-gray-400]="selectedTags.length === 0">
                   {{
                     selectedTags.length > 0
                       ? selectedTags.length + ' ' + ('CHALLENGE.FORM.SKILLS_SELECTED' | translate)
@@ -262,7 +347,7 @@
                       [(ngModel)]="skillSearchQuery"
                       [ngModelOptions]="{ standalone: true }"
                       placeholder="{{ 'CHALLENGE.FORM.SEARCH_SKILLS' | translate }}"
-                      class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg outline-none focus:border-black text-sm"
+                      class="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
                     />
                     <button
                       *ngIf="skillSearchQuery"
@@ -300,11 +385,14 @@
             </div>
 
             <p class="mt-2 text-sm text-gray-500">
-              <span *ngIf="!selectedCategory" class="text-yellow-600"
-                >💡 {{ 'CHALLENGE.FORM.SELECT_CATEGORY_FIRST' | translate }}</span
+              <span
+                *ngIf="challengeForm.get('tags')?.invalid && challengeForm.get('tags')?.touched"
+                class="text-red-600"
+                >💡 {{ 'CHALLENGE.FORM.SELECT_AT_LEAST_ONE_SKILL' | translate }}</span
               >
-              <span *ngIf="selectedCategory"
-                >{{ selectedTags.length }} / {{ availableSkills.length }}
+              <span
+                *ngIf="!(challengeForm.get('tags')?.invalid && challengeForm.get('tags')?.touched)"
+                >{{ selectedTags.length }} / {{ allSkills.length }}
                 {{ 'CHALLENGE.FORM.SKILLS_AVAILABLE' | translate }}</span
               >
             </p>
@@ -319,8 +407,30 @@
               type="date"
               formControlName="deadline"
               [min]="minDate"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+              [class.border-red-500]="
+                challengeForm.get('deadline')?.invalid && challengeForm.get('deadline')?.touched
+              "
             />
+            <p
+              *ngIf="
+                challengeForm.get('deadline')?.hasError('minDate') &&
+                challengeForm.get('deadline')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.DEADLINE_PAST_ERROR' | translate }}
+            </p>
+            <p
+              *ngIf="
+                challengeForm.get('deadline')?.hasError('required') &&
+                !challengeForm.get('deadline')?.hasError('minDate') &&
+                challengeForm.get('deadline')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.DEADLINE_ERROR' | translate }}
+            </p>
           </div>
 
           <!-- Description -->
@@ -332,23 +442,405 @@
               formControlName="description"
               rows="5"
               placeholder="{{ 'CHALLENGE.FORM.DESCRIPTION_PLACEHOLDER' | translate }}"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all resize-none"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('description')?.invalid &&
+                challengeForm.get('description')?.touched
+              "
+            ></textarea>
+            <p
+              *ngIf="
+                challengeForm.get('description')?.invalid &&
+                challengeForm.get('description')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.DESCRIPTION_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Requirements -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.REQUIREMENTS' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              formControlName="requirements"
+              rows="5"
+              placeholder="{{ 'CHALLENGE.FORM.REQUIREMENTS_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('requirements')?.invalid &&
+                challengeForm.get('requirements')?.touched
+              "
+            ></textarea>
+            <p
+              *ngIf="
+                challengeForm.get('requirements')?.invalid &&
+                challengeForm.get('requirements')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.REQUIREMENTS_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Evaluation Criteria -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.EVALUATION_CRITERIA' | translate }}
+              <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              formControlName="evaluationCriteria"
+              rows="5"
+              placeholder="{{ 'CHALLENGE.FORM.EVALUATION_CRITERIA_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('evaluationCriteria')?.invalid &&
+                challengeForm.get('evaluationCriteria')?.touched
+              "
+            ></textarea>
+            <p
+              *ngIf="
+                challengeForm.get('evaluationCriteria')?.invalid &&
+                challengeForm.get('evaluationCriteria')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.EVALUATION_CRITERIA_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Deliverables -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.DELIVERABLES' | translate }} <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              formControlName="deliverables"
+              rows="5"
+              placeholder="{{ 'CHALLENGE.FORM.DELIVERABLES_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+              [class.border-red-500]="
+                challengeForm.get('deliverables')?.invalid &&
+                challengeForm.get('deliverables')?.touched
+              "
+            ></textarea>
+            <p
+              *ngIf="
+                challengeForm.get('deliverables')?.invalid &&
+                challengeForm.get('deliverables')?.touched
+              "
+              class="mt-1 text-red-600 text-sm"
+            >
+              {{ 'CHALLENGE.FORM.DELIVERABLES_ERROR' | translate }}
+            </p>
+          </div>
+
+          <!-- Ideal Solution (Optional, with dynamic input type) -->
+          <fieldset
+            formGroupName="idealSolution"
+            class="border border-gray-200 p-6 rounded-xl space-y-4"
+          >
+            <legend class="text-lg font-semibold text-gray-900 mb-4 px-2">
+              {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TITLE' | translate }}
+            </legend>
+
+            <!-- Ideal Solution Type Dropdown -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TYPE' | translate }}
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openIdealSolutionType = !openIdealSolutionType"
+                >
+                  <span [class.text-gray-400]="!selectedIdealSolutionType">
+                    {{
+                      selectedIdealSolutionType
+                        ? ('CHALLENGE.IDEAL_SOLUTION_TYPE.' +
+                            selectedIdealSolutionType.toUpperCase() | translate)
+                        : ('CHALLENGE.FORM.SELECT_IDEAL_SOLUTION_TYPE' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openIdealSolutionType"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openIdealSolutionType"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let type of idealSolutionTypes"
+                    (click)="selectIdealSolutionType(type)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ 'CHALLENGE.IDEAL_SOLUTION_TYPE.' + type.toUpperCase() | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Ideal Solution Value Input (Conditional) -->
+            <div *ngIf="selectedIdealSolutionType === 'link'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_LINK' | translate }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                formControlName="value"
+                placeholder="{{ 'CHALLENGE.FORM.IDEAL_SOLUTION_LINK_PLACEHOLDER' | translate }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                [class.border-red-500]="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+              />
+              <p
+                *ngIf="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_LINK_ERROR' | translate }}
+              </p>
+            </div>
+
+            <div *ngIf="selectedIdealSolutionType === 'text'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TEXT' | translate }}
+                <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                formControlName="value"
+                rows="5"
+                placeholder="{{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TEXT_PLACEHOLDER' | translate }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
+                [class.border-red-500]="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+              ></textarea>
+              <p
+                *ngIf="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_TEXT_ERROR' | translate }}
+              </p>
+            </div>
+
+            <div *ngIf="selectedIdealSolutionType === 'file'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_FILE' | translate }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="file"
+                (change)="handleIdealSolutionFile($event)"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-all"
+                [class.border-red-500]="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+              />
+              <p
+                *ngIf="
+                  challengeForm.get('idealSolution.value')?.invalid &&
+                  challengeForm.get('idealSolution.value')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.IDEAL_SOLUTION_FILE_ERROR' | translate }}
+              </p>
+            </div>
+          </fieldset>
+
+          <!-- Additional Info (Optional) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {{ 'CHALLENGE.FORM.ADDITIONAL_INFO' | translate }}
+            </label>
+            <textarea
+              formControlName="additionalInfo"
+              rows="3"
+              placeholder="{{ 'CHALLENGE.FORM.ADDITIONAL_INFO_PLACEHOLDER' | translate }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors resize-y"
             ></textarea>
           </div>
 
-          <!-- Salary (Always visible) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ 'CHALLENGE.FORM.SALARY' | translate }} <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              formControlName="salary"
-              min="1000"
-              placeholder="{{ 'CHALLENGE.FORM.SALARY_PLACEHOLDER' | translate }}"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
-            />
-          </div>
+          <!-- AI Evaluation Configuration -->
+          <fieldset
+            formGroupName="aiConfig"
+            class="border border-gray-200 p-6 rounded-xl space-y-4"
+          >
+            <legend class="text-lg font-semibold text-gray-900 mb-4 px-2">
+              {{ 'CHALLENGE.FORM.AI_CONFIG_TITLE' | translate }}
+            </legend>
+
+            <!-- Pricing Tier -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.PRICING_TIER' | translate }}
+                <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors capitalize"
+                  (click)="openPricingTier = !openPricingTier"
+                  [class.border-red-500]="
+                    challengeForm.get('aiConfig.pricingTier')?.invalid &&
+                    challengeForm.get('aiConfig.pricingTier')?.touched
+                  "
+                >
+                  <span [class.text-gray-400]="!selectedPricingTier">
+                    {{
+                      selectedPricingTier
+                        ? (selectedPricingTier | translate)
+                        : ('CHALLENGE.FORM.SELECT_PRICING_TIER' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openPricingTier"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openPricingTier"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let tierDetail of aiPricingTiers"
+                    (click)="selectPricingTier(tierDetail.tier)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900 capitalize"
+                  >
+                    {{ tierDetail.tier | translate }}
+                  </li>
+                </ul>
+              </div>
+              <p
+                *ngIf="
+                  challengeForm.get('aiConfig.pricingTier')?.invalid &&
+                  challengeForm.get('aiConfig.pricingTier')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.PRICING_TIER_ERROR' | translate }}
+              </p>
+              <p
+                *ngIf="selectedAiModel && selectedPricingTier !== 'custom'"
+                class="mt-2 text-sm text-gray-500"
+              >
+                {{ 'CHALLENGE.FORM.DEFAULT_AI_MODEL' | translate }}:
+                <span class="font-medium text-gray-700">{{ selectedAiModel.name }}</span>
+                <span class="text-xs text-gray-600">({{ selectedAiModel.description }})</span>
+              </p>
+            </div>
+
+            <!-- Selected Model (Conditional on Custom Tier) -->
+            <div *ngIf="selectedPricingTier === 'custom'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'CHALLENGE.FORM.SELECTED_MODEL' | translate }}
+                <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white text-gray-900 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10 transition-colors"
+                  (click)="openAiModel = !openAiModel"
+                  [class.border-red-500]="
+                    challengeForm.get('aiConfig.selectedModel')?.invalid &&
+                    challengeForm.get('aiConfig.selectedModel')?.touched
+                  "
+                >
+                  <span [class.text-gray-400]="!selectedAiModelId">
+                    {{
+                      selectedAiModel
+                        ? selectedAiModel.name + ' (' + selectedAiModel.provider + ')'
+                        : ('CHALLENGE.FORM.SELECT_AI_MODEL' | translate)
+                    }}
+                  </span>
+                  <lucide-icon
+                    [img]="icons.ChevronDown"
+                    class="w-5 h-5 text-gray-500 transition-transform"
+                    [class.rotate-180]="openAiModel"
+                  ></lucide-icon>
+                </button>
+                <ul
+                  *ngIf="openAiModel"
+                  class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl py-1 max-h-60 overflow-y-auto"
+                >
+                  <li
+                    *ngFor="let model of aiModels"
+                    (click)="selectAiModel(model.id)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-900"
+                  >
+                    {{ model.name }} ({{ model.provider }})
+                  </li>
+                </ul>
+              </div>
+              <p
+                *ngIf="
+                  challengeForm.get('aiConfig.selectedModel')?.invalid &&
+                  challengeForm.get('aiConfig.selectedModel')?.touched
+                "
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'CHALLENGE.FORM.SELECTED_MODEL_ERROR' | translate }}
+              </p>
+              <p
+                *ngIf="selectedAiModel && selectedPricingTier === 'custom'"
+                class="mt-2 text-sm text-gray-500"
+              >
+                {{ 'CHALLENGE.FORM.AI_MODEL_DETAILS' | translate }}:
+                <span class="font-medium text-gray-700">{{ selectedAiModel.name }}</span>
+                - {{ 'CHALLENGE.FORM.AI_MODEL_ACCURACY' | translate }}:
+                {{ selectedAiModel.accuracyRating }}/10,
+                {{ 'CHALLENGE.FORM.AI_MODEL_SPEED' | translate }}: {{ selectedAiModel.speed }}
+                <span *ngIf="selectedAiModel.isFree"
+                  >({{ 'CHALLENGE.FORM.AI_MODEL_FREE' | translate }})</span
+                >
+              </p>
+            </div>
+
+            <!-- Auto Evaluate -->
+            <div class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                formControlName="autoEvaluate"
+                id="autoEvaluate"
+                class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-black focus:ring-offset-0"
+              />
+              <label for="autoEvaluate" class="text-sm font-medium text-gray-700">
+                {{ 'CHALLENGE.FORM.AUTO_EVALUATE' | translate }}
+              </label>
+            </div>
+
+            <!-- Require Video Transcript -->
+            <div class="flex items-center gap-3">
+              <input
+                type="checkbox"
+                formControlName="requireVideoTranscript"
+                id="requireVideoTranscript"
+                class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-black focus:ring-offset-0"
+              />
+              <label for="requireVideoTranscript" class="text-sm font-medium text-gray-700">
+                {{ 'CHALLENGE.FORM.REQUIRE_VIDEO_TRANSCRIPT' | translate }}
+              </label>
+            </div>
+          </fieldset>
 
           <!-- Action Buttons (Save as Draft / Publish) -->
           <div class="flex gap-4 pt-4">
@@ -373,6 +865,59 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add this after your form, before closing div -->
+
+  <!-- Upgrade Modal -->
+  <div
+    *ngIf="showUpgradeModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    (click)="closeUpgradeModal()"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="text-center">
+        <!-- Icon -->
+        <div
+          class="w-16 h-16 bg-primary-gradient rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Upgrade Required</h3>
+
+        <p class="text-gray-600 mb-6">
+          {{ upgradeMessage }}
+        </p>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            (click)="closeUpgradeModal()"
+            class="flex-1 px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            (click)="navigateToUpgrade()"
+            class="flex-1 px-6 py-3 bg-primary-gradient text-white rounded-xl font-semibold hover:bg-primary transition-all shadow-lg"
+          >
+            Upgrade Now
+          </button>
+        </div>
       </div>
     </div>
   </div>

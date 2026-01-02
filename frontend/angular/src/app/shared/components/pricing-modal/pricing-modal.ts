@@ -8,7 +8,7 @@ import { AuthService } from '@/core/services/auth';
   selector: 'app-pricing-modal',
   standalone: true,
   imports: [CommonModule, LucideAngularModule, translateModule],
-  templateUrl: './pricing-modal.html'
+  templateUrl: './pricing-modal.html',
 })
 export class PricingModal {
   @Output() close = new EventEmitter<void>();
@@ -24,11 +24,11 @@ export class PricingModal {
   }
 
   features = [
-   'DASHBOARD.PRICING.FEATURES.UNLIMITED_COACHING',
+    'DASHBOARD.PRICING.FEATURES.UNLIMITED_COACHING',
     'DASHBOARD.PRICING.FEATURES.PORTFOLIO_ANALYSIS',
     'DASHBOARD.PRICING.FEATURES.PRIORITY_APPS',
     'DASHBOARD.PRICING.FEATURES.SKILL_ANALYTICS',
-    'DASHBOARD.PRICING.FEATURES.MOCK_INTERVIEWS'
+    // 'DASHBOARD.PRICING.FEATURES.MOCK_INTERVIEWS'
   ];
 
   onUpgrade() {

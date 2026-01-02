@@ -22,7 +22,7 @@ interface EvaluationRequest {
    category: string;
    tags: string[];
    submissionContent: string;
-   // videoTranscript?: string; // Commented out to bypass video transcription
+   videoTranscript?: string; // ✅ Added this field
    selectedModel: AIModel;
 }
 
@@ -71,9 +71,7 @@ export const evaluateWithModel = async (
       return result;
    } catch (error) {
       console.error(`${modelConfig.name} failed, trying fallback...`, error);
-      // Fallback to free model if paid model fails or selected model fails
-      // Ensure the fallback model is indeed available and correctly named
-      // Using Gemini Flash as a reliable free fallback
+      // Fallback to free model if paid model fails
       return await evaluateWithGemini({
          ...request,
          selectedModel: AIModel.GEMINI_FLASH,
@@ -131,18 +129,17 @@ const evaluateWithGemini = async (
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   // FIXED: Use correct model names without '-latest' suffix for stability
+   // FIX: Use correct model names without -latest suffix
    const modelString =
       request.selectedModel === AIModel.GEMINI_PRO
          ? "gemini-1.5-pro"
-         : "gemini-2.0-flash"; // Corrected model names
+         : "gemini-1.5-flash";
 
    const model = gemini.getGenerativeModel({
       model: modelString,
       generationConfig: {
          temperature: 0.7,
          maxOutputTokens: 2000,
-         responseMimeType: "application/json", // Force JSON response
       },
    });
 
@@ -166,32 +163,19 @@ const evaluateWithGroq = async (
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   // FIXED: Correct Groq model names based on current Groq API documentation and your provided list
-   let modelString: string;
+   // FIXED: Correct Groq model names
+   let modelString = "llama-3.1-70b-versatile"; // Not llama-3.1-70b-chat
 
    switch (request.selectedModel) {
       case AIModel.LLAMA_8B:
-         modelString = "llama-3.1-8b-instant"; // Confirmed from your list
+         modelString = "llama-3.1-8b-instant"; // Correct
          break;
       case AIModel.MIXTRAL_8X7B:
-         modelString = "mixtral-8x7b-32768"; // Still assuming this is correct
+         modelString = "mixtral-8x7b-32768"; // Correct
          break;
       case AIModel.LLAMA_70B:
-         modelString = "llama-3.3-70b-versatile"; // Updated to your new suggestion
+         modelString = "llama-3.1-70b-versatile"; // Correct
          break;
-      // Add other Groq models if you map them in AIModel enum
-      // case AIModel.GROQ_COMPOUND:
-      //    modelString = "groq/compound";
-      //    break;
-      // case AIModel.GROQ_COMPOUND_MINI:
-      //    modelString = "groq/compound-mini";
-      //    break;
-      default:
-         // Fallback to a default if selectedModel somehow doesn't match
-         console.warn(
-            `Unknown Groq model selected: ${request.selectedModel}. Defaulting to llama-3.1-8b-instant.`
-         );
-         modelString = "llama-3.1-8b-instant"; // Fallback to a known smaller Groq model
    }
 
    const completion = await groq.chat.completions.create({
@@ -236,6 +220,12 @@ Skills: ${request.tags.join(", ")}
 
 **Submission:**
 ${request.submissionContent}
+
+${
+   request.videoTranscript
+      ? `**Video Explanation:**\n${request.videoTranscript}`
+      : ""
+}
 
 Evaluate on:
 1. Technical Quality (0-100): Correctness, efficiency, creativity

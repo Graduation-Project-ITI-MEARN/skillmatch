@@ -16,6 +16,13 @@ export interface IChallenge extends Document {
    salary?: number;
    additionalInfo?: string;
    tags?: string[];
+   requirements: string;
+   evaluationCriteria: string;
+   deliverables: string;
+   idealSolution?: {
+      type: "link" | "file" | "text";
+      value: string;
+   };
 
    // NEW: AI Evaluation Configuration
    aiConfig: {
@@ -64,8 +71,17 @@ const ChallengeSchema: Schema = new Schema(
       salary: { type: Number },
       additionalInfo: { type: String },
       tags: [{ type: String }],
+      requirements: { type: String, required: true },
+      evaluationCriteria: { type: String, required: true },
+      deliverables: { type: String, required: true },
       deadline: { type: Date, required: true },
-
+      idealSolution: {
+         type: {
+            type: String,
+            enum: ["link", "file", "text"],
+         },
+         value: { type: String },
+      },
       // AI Configuration
       aiConfig: {
          pricingTier: {
