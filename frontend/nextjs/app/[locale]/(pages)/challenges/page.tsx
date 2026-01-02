@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import ClippedCard from "@/app/components/ClippedCard";
+import ClippedCard from "@/app/components/ui/ClippedCard";
 import CustomDropdown from "@/app/components/CustomDropdown";
+import CategoryBadge from "@/app/components/ui/CategoryBadge"; // Import the new component
 import { Challenge } from "@/app/types/challenge";
 
 export default function ChallengesPage() {
-   const [challenges, setChallenges] = useState<Challenge[]>([]); // مبدئياً مصفوفة فارغة
+   const [challenges, setChallenges] = useState<Challenge[]>([]);
    const [loading, setLoading] = useState(true);
    const [page, setPage] = useState(1);
    const itemsPerPage = 6;
@@ -43,7 +44,6 @@ export default function ChallengesPage() {
       fetchChallenges();
    }, []);
 
-   // إضافة حماية إضافية Array.isArray(challenges)
    const filteredData = Array.isArray(challenges)
       ? challenges.filter(
            (item) =>
@@ -56,7 +56,6 @@ export default function ChallengesPage() {
         )
       : [];
 
-   // ترتيب البيانات
    filteredData.sort((a, b) => {
       if (filters.sortBy === "prize")
          return (b.prizeAmount || 0) - (a.prizeAmount || 0);
@@ -82,7 +81,9 @@ export default function ChallengesPage() {
          <div className="text-center py-24 px-6">
             <h1 className="text-7xl font-serif mb-6">Challenges</h1>
             <p className="max-w-2xl mx-auto text-gray-500 text-lg">
-               Join world-class challenges and showcase your skills.
+               Companies and Community Challengers post real-world tasks
+               relevant to specific roles or skills (coding, design, marketing,
+               data, etc.).
             </p>
          </div>
 
@@ -101,7 +102,16 @@ export default function ChallengesPage() {
                <CustomDropdown
                   label="Category"
                   value={filters.category}
-                  options={["All", "Coding", "Accounting", "Design"]}
+                  options={[
+                     "All",
+                     "Development",
+                     "Design",
+                     "Accounting",
+                     "Marketing",
+                     "Writing",
+                     "Translation",
+                     "Data Entry",
+                  ]}
                   onChange={(v) => {
                      setFilters({ ...filters, category: v });
                      setPage(1);
@@ -130,7 +140,34 @@ export default function ChallengesPage() {
                {filteredData.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                      {currentItems.map((item) => (
-                        <ClippedCard key={item._id} challenge={item} />
+                        <ClippedCard
+                           key={item._id}
+                           href={`/challenges/${item._id}`} // Dynamic link to challenge details
+                           // Card colors to match the light beige in the image
+                           cardBgColorVar="rgb(249, 247, 244)" // #F9F7F4
+                           textColorVar="rgb(0, 0, 0)" // Black text
+                           // On hover, make the background slightly darker beige, keep text black
+                           hoverBgColorVar="rgb(249, 247, 244)" // Example darker beige
+                           hoverTextColorVar="rgb(0, 0, 0)">
+                           <div className="py-4">
+                              <h3 className="text-2xl font-bold mb-10">
+                                 {item.title}
+                              </h3>
+                              <p className="text-lg text-gray-700 mb-2">
+                                 {item.creatorId.name} - {item.creatorId.city}
+                              </p>
+                              <p className="text-lg text-gray-500 mb-4">
+                                 {new Date(item.deadline)
+                                    .toLocaleDateString("en-US", {
+                                       year: "numeric",
+                                       month: "short",
+                                       day: "numeric",
+                                    })
+                                    .toUpperCase()}
+                              </p>
+                              <CategoryBadge category={item.category} />
+                           </div>
+                        </ClippedCard>
                      ))}
                   </div>
                ) : (

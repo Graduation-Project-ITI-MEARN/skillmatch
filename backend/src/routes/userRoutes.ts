@@ -30,7 +30,6 @@ router.get(
 router.get("/candidates", auth, restrictTo(["admin"]), getAllCandidates);
 router.get("/companies", auth, restrictTo(["admin"]), getAllCompanies);
 router.get("/challengers", auth, restrictTo(["admin"]), getAllChallengers);
-router.get("/profile/ai-skills", getAISkills);
 
 // New Verification Route
 router.post("/verify", auth, verifyUser);

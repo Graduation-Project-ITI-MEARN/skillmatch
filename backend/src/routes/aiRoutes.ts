@@ -29,12 +29,7 @@ aiRouter.get(
 );
 
 // Get skill gap analysis
-aiRouter.get(
-   "/skills-analysis",
-   auth,
-   restrictTo(["candidate"]),
-   getSkillAnalysis
-);
+aiRouter.get("/skills-analysis", restrictTo(["candidate"]), getSkillAnalysis);
 
 // AI Career Coach chat
 aiRouter.post("/coach/chat", auth, aiCoachChat);
