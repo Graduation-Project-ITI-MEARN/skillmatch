@@ -1,6 +1,6 @@
-<div class="relative min-h-[500px]">
+<div class="relative min-h-125">
   <!-- Overlay التحميل -->
-  <div *ngIf="isLoading" class="fixed inset-0 bg-white/60 z-[100] flex items-center justify-center">
+  <div *ngIf="isLoading" class="fixed inset-0 bg-white/60 z-100 flex items-center justify-center">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
   </div>
 
@@ -50,7 +50,9 @@
                   <div class="flex-1">
                     <div class="flex items-center justify-between mb-2">
                       <span class="text-sm font-medium">Master TypeScript Advanced Patterns</span>
-                      <span class="text-xs text-blue-600 font-bold uppercase">{{ 'DASHBOARD.COACH.IN_PROGRESS' | translate }}</span>
+                      <span class="text-xs text-blue-600 font-bold uppercase">{{
+                        'DASHBOARD.COACH.IN_PROGRESS' | translate
+                      }}</span>
                     </div>
                     <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                       <div
@@ -70,7 +72,9 @@
                   <div class="flex-1">
                     <div class="flex items-center justify-between">
                       <span class="text-sm font-medium">System Design Fundamentals</span>
-                      <span class="text-xs text-gray-500">{{ 'DASHBOARD.COACH.NEXT' | translate }}</span>
+                      <span class="text-xs text-gray-500">{{
+                        'DASHBOARD.COACH.NEXT' | translate
+                      }}</span>
                     </div>
                   </div>
                 </div>
@@ -81,7 +85,9 @@
 
         <!-- Recommended Challenges -->
         <div>
-          <h3 class="text-xl font-bold mb-4">{{ 'DASHBOARD.COACH.RECOMMENDED_CHALLENGES' | translate }}</h3>
+          <h3 class="text-xl font-bold mb-4">
+            {{ 'DASHBOARD.COACH.RECOMMENDED_CHALLENGES' | translate }}
+          </h3>
           <div class="space-y-4">
             <div
               *ngFor="let i of [1, 2, 3]"
@@ -123,7 +129,9 @@
 
         <!-- Resources -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <h3 class="text-lg font-bold mb-4">{{ 'DASHBOARD.COACH.LEARNING_RESOURCES' | translate }}</h3>
+          <h3 class="text-lg font-bold mb-4">
+            {{ 'DASHBOARD.COACH.LEARNING_RESOURCES' | translate }}
+          </h3>
           <div class="space-y-3">
             <div
               *ngFor="let res of ['TypeScript Deep Dive', 'System Design Primer']"
@@ -153,7 +161,9 @@
         [img]="icons.Brain"
         class="w-16 h-16 text-indigo-600 mx-auto mb-6 opacity-80"
       ></lucide-icon>
-      <h3 class="text-xl font-black text-gray-900 mb-2">{{ 'DASHBOARD.COACH.PREMIUM_FEATURE' | translate }}</h3>
+      <h3 class="text-xl font-black text-gray-900 mb-2">
+        {{ 'DASHBOARD.COACH.PREMIUM_FEATURE' | translate }}
+      </h3>
       <p class="text-gray-600 mb-6 max-width-[250px]">
         {{ 'DASHBOARD.COACH.PREMIUM_DESC' | translate }}
       </p>

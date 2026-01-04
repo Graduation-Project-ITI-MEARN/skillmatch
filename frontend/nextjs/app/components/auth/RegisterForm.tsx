@@ -5,9 +5,9 @@ import UserTypeTabs, { UserType } from "./UserTypeTabs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import SplitButton from "../ui/SplitButton";
+import { Link } from "@/i18n/routing";
 
 const RegisterForm = () => {
    const [userType, setUserType] = useState<UserType>("candidate");

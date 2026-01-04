@@ -28,47 +28,6 @@ const UserTypeTabs: React.FC<UserTypeTabsProps> = ({ selected, onChange }) => {
          </p>
 
          {/* TABS CONTAINER */}
-         <AngledContainer mode="compact" gap="gap-2">
-            {tabs.map((tab, index) => {
-               const isActive = selected === tab.value;
-
-               // Logic to choose shape based on position
-               // First & Middle tabs lean right (| /). Last tab leans right to match (/ |).
-               let variant: ShapeVariant = "right-narrow-top";
-               if (index === tabs.length - 1) variant = "left-wide-top";
-
-               return (
-                  <div
-                     key={tab.value}
-                     onClick={() => onChange(tab.value)}
-                     className="cursor-pointer h-8">
-                     <AngledCard
-                        variant={variant}
-                        mode="compact"
-                        steepness={10}
-                        className={`
-                   h-full transition-transform duration-200 
-                   ${isActive ? "z-30 scale-110" : "z-10 hover:scale-105"}
-                `}>
-                        <div
-                           className={`
-                    flex items-center justify-center px-4 h-full min-w-[120px]
-                    transition-colors duration-300 
-                  `}
-                           style={{
-                              backgroundColor: isActive
-                                 ? PRIMARY_COLOR
-                                 : "#fff",
-                              color: isActive ? "white" : "#6b7280",
-                              fontWeight: isActive ? 600 : 500,
-                           }}>
-                           {tab.label}
-                        </div>
-                     </AngledCard>
-                  </div>
-               );
-            })}
-         </AngledContainer>
       </div>
    );
 };

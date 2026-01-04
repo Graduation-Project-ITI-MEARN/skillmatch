@@ -9,7 +9,7 @@ export const CATEGORIES = [
    "Data Entry",
 ];
 
-const SKILLS = [
+export const SKILLS = [
    "React",
    "Node.js",
    "Angular",

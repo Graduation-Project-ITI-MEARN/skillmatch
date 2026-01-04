@@ -16,7 +16,7 @@ export default function AboutPage() {
    ];
 
    return (
-      <div className="min-h-screen bg-white font-sans text-black pb-20">
+      <div className="min-h-screen  font-sans text-black pb-20">
          {/* 1. Header Section */}
          <section className="pt-24 pb-20 px-6 text-center max-w-4xl mx-auto">
             <span className="block text-sm font-bold tracking-[0.2em] uppercase mb-6 text-gray-500">
@@ -51,12 +51,12 @@ export default function AboutPage() {
                      whileInView={{ opacity: 1, scale: 1 }}
                      viewport={{ once: true }}
                      transition={{ duration: 0.8 }}
-                     className="w-80 h-80 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-orange-400 via-red-500 to-indigo-900 shadow-2xl relative overflow-hidden">
+                     className="w-80 h-80 md:w-96 md:h-96 rounded-full bg-linear-to-br from-orange-400 via-red-500 to-indigo-900 shadow-2xl relative overflow-hidden">
                      {/* Grain overlay simulation */}
                      <div
                         className="absolute inset-0 bg-white opacity-20"
                         style={{ filter: "url(#noise)" }}></div>
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                     <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
                   </motion.div>
                </div>
             </div>
@@ -76,7 +76,7 @@ export default function AboutPage() {
             {/* Dark Container */}
             <div className="w-full rounded-[40px] overflow-hidden relative min-h-[600px] flex flex-col items-center justify-center py-16 px-6">
                {/* Background: Gradient + Noise */}
-               <div className="absolute inset-0 bg-gradient-to-br from-[#1e213a] via-[#15172b] to-[#0f111a] z-0"></div>
+               <div className="absolute inset-0 bg-linear-to-br from-[#1e213a] via-[#15172b] to-[#0f111a] z-0"></div>
 
                <div className="relative z-10 w-full max-w-6xl">
                   <h3 className="text-white/80 text-center text-2xl font-serif mb-12">

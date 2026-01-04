@@ -42,7 +42,7 @@ export default function Header() {
                      height={40}
                      className="w-10 h-10"
                   />
-                  <span className="text-xl font-bold text-gray-900">
+                  <span className="text-2xl font-serif font-bold text-gray-900">
                      SkillMatch
                   </span>
                </Link>

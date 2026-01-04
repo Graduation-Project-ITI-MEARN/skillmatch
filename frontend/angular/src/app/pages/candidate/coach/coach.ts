@@ -21,9 +21,6 @@ export class Coach implements OnInit {
   private dialog = inject(MatDialog);
   private toastr = inject(ToastrService);
 
-  // مراقبة الـ Signal تلقائياً
-  isPremium = computed(() => this.authService.currentUser()?.subscriptionStatus === 'active');
-
   showPricingModal = false;
   isLoading = false;
   readonly icons = { Brain, BookOpen, ChevronRight };
@@ -34,8 +31,13 @@ export class Coach implements OnInit {
     this.showPricingModal = false;
     this.isLoading = true;
 
-    // بنبعت 200 و 'SUBSCRIPTION' كـ parameters
-    this.paymentService.initiatePayment(200, 'SUBSCRIPTION').subscribe({
+    // Determine plan based on user role or selection
+    const role = this.authService.role;
+    const planId = role === 'COMPANY' ? 'enterprise' : 'basic'; // Or get from modal selection
+    const amount = role === 'COMPANY' ? 1000 : 200;
+
+    // NOW we pass the plan_id
+    this.paymentService.initiatePayment(amount, 'SUBSCRIPTION', planId).subscribe({
       next: (res) => {
         this.isLoading = false;
         const dialogRef = this.dialog.open(PaymentIframe, {
@@ -53,11 +55,20 @@ export class Coach implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        console.error('Payment Error:', err); // بص هنا لو الـ payload لسه فيه مشكلة
+        console.error('Payment Error:', err);
         this.toastr.error('تعذر جلب بيانات الدفع');
       },
     });
   }
+
+  isPremium = computed(() => {
+    const user = this.authService.currentUser();
+    return (
+      user?.subscriptionStatus === 'active' &&
+      user?.subscriptionExpiry &&
+      new Date(user.subscriptionExpiry) > new Date()
+    );
+  });
 
   verifyStatus() {
     this.isLoading = true;

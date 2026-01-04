@@ -1,4 +1,3 @@
-// frontend/nextjs/components/ui/AngledSplitCard.tsx
 "use client";
 
 import { cn } from "@/app/lib/utils";
@@ -11,8 +10,6 @@ interface CardProps {
    className?: string;
    mode?: "layout" | "compact";
    steepness?: number;
-   // Removed borderColor and borderWidth from here for simplicity.
-   // If you want a border that follows the angle, it requires more advanced CSS/SVG.
 }
 
 interface ContainerProps {
@@ -28,20 +25,34 @@ const getClipPath = (variant: ShapeVariant, s: number): string => {
    const cut = Math.max(0, Math.min(50, s)); // Ensure cut is within valid range (0-50)
 
    switch (variant) {
-      case "angle-top-right":
+      // LTR TEXT (RIGHT-NARROW-TOP) or RTL ARROW (LEFT-NARROW-TOP)
+      // Top-right angle, vertical left side, angled right side
+      case "angle-top-right": // LTR Text or RTL Arrow
          return `polygon(0 0, ${100 - cut}% 0, 100% 100%, 0% 100%)`;
-      case "angle-bottom-left":
+
+      // LTR ARROW (LEFT-WIDE-TOP) or RTL TEXT (RIGHT-WIDE-TOP)
+      // Bottom-left angle, vertical right side, angled left side
+      case "angle-bottom-left": // LTR Arrow or RTL Text
          return `polygon(0 0, 100% 0, 100% 100%, ${cut}% 100%)`;
+
+      // LTR TEXT (LEFT-NARROW-TOP) or RTL ARROW (RIGHT-NARROW-TOP)
+      // Top-left angle, vertical right side, angled left side
       case "angle-top-left":
          return `polygon(${cut}% 0, 100% 0, 100% 100%, 0% 100%)`;
+
+      // LTR ARROW (RIGHT-WIDE-TOP) or RTL TEXT (LEFT-WIDE-TOP)
+      // Bottom-right angle, vertical left side, angled right side
       case "angle-bottom-right":
          return `polygon(0 0, 100% 0, ${100 - cut}% 100%, 0% 100%)`;
+
+      // Middle parts (if used, might need adjustment if they also need to flip)
       case "middle-narrow-top":
          return `polygon(${cut}% 0, ${100 - cut}% 0, 100% 100%, 0% 100%)`;
       case "middle-wide-top":
          return `polygon(0 0, 100% 0, ${100 - cut}% 100%, ${cut}% 100%)`;
+
       default:
-         return "polygon(0 0, 100% 0, 100% 100%, 0% 100%)";
+         return "polygon(0 0, 100% 0, 100% 100%, 0% 100%)"; // Default rectangle
    }
 };
 
@@ -54,13 +65,16 @@ export type ShapeVariant =
    | "middle-narrow-top"
    | "middle-wide-top";
 
+// AngledCard remains the same, but it will now pass isRTL to getClipPath directly
 export const AngledCard = ({
    children,
-   variant,
+   variant, // This will be one of the new generic shape variants
    className = "",
    mode = "layout",
    steepness = 20,
 }: CardProps) => {
+   const zIndex = variant.includes("middle") ? "z-20" : "z-10"; // Keep if middle variants are used
+
    const sizeClasses =
       mode === "layout"
          ? "w-full lg:w-1/3 min-h-[300px] lg:min-h-full"
@@ -69,18 +83,19 @@ export const AngledCard = ({
    return (
       <div
          className={cn(
-            `relative z-10 transition-all duration-300 ${sizeClasses} overflow-hidden rounded-lg`,
-            className // Apply className here, including background and border
+            `relative ${zIndex} transition-all duration-300 ${sizeClasses}`,
+            className
          )}
-         style={{
-            clipPath: getClipPath(variant, steepness), // Apply clipPath here
-            filter: "url(#rounded-corners)", // Apply filter here
-         }}>
-         {children}
+         style={{ filter: "url(#rounded-corners)" }}>
+         <div
+            className="h-full w-full overflow-hidden"
+            // No longer pass isRTL here, the variant defines the shape
+            style={{ clipPath: getClipPath(variant, steepness) }}>
+            {children}
+         </div>
       </div>
    );
 };
-
 // --- ANGLED CONTAINER ---
 export const AngledContainer = ({
    children,
@@ -88,8 +103,9 @@ export const AngledContainer = ({
    overlap = false,
    gap,
    mode = "layout",
-}: ContainerProps) => {
-   const isRTL = useRTL();
+}: // REMOVED: isRTL from destructuring
+ContainerProps) => {
+   const isRTL = useRTL(); // CONSUMED: isRTL from context
    let spacingClass = "";
 
    if (gap) {
@@ -107,7 +123,7 @@ export const AngledContainer = ({
 
    return (
       <div className={cn("relative w-full", className)}>
-         {/* SVG FILTER DEFINITION - MUST BE PRESENT IN THE DOM FOR AngledCard's filter style to work */}
+         {/* SVG FILTER */}
          <svg
             className="absolute w-0 h-0 pointer-events-none"
             aria-hidden="true">

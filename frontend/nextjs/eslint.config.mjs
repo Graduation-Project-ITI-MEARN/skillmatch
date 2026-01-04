@@ -12,6 +12,19 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+
+    // Ignore node_modules for performance.
+    "node_modules/**",
+
+    // Ignore dist for performance.
+    "dist/**",
+
+    // Ignore .next/server for performance.
+    ".next/server/**",
+
+    // Ignore .next/static for performance.
+    ".next/static/**",
+
   ]),
 ]);
 

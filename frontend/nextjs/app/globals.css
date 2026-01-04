@@ -17,7 +17,7 @@
   --color-dark-red: #d86464;
   --color-yellow-green: #5c700c;
   --color-green: #8d9765;
-  --color-light-green: #e6ebd1;
+  --color-light-green: #e6ebd179;
   --color-blue: #4c74b1;
   --color-light-blue: #7495cb;
   --color-dark-blue: #2d314b;
@@ -57,7 +57,7 @@
   --color-dark-red: #d86464;
   --color-yellow-green: #5c700c;
   --color-green: #8d9765;
-  --color-light-green: #e6ebd1;
+  --color-light-green: #e6ebd179;
   --color-blue: #4c74b1;
   --color-light-blue: #7495cb;
   --color-dark-blue: #2d314b;
@@ -139,4 +139,45 @@
 :dir(rtl) h5,
 :dir(rtl) h6 {
   font-family: var(--font-arabic-serif);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* app/globals.css */
+
+/* ... existing styles ... */
+
+body.has-full-page-background {
+  background-image: url('/images/pattern.svg');
+  /* Path to your background image */
+  background-size: cover;
+  /* Cover the entire area */
+  background-position: center;
+  /* Center the image */
+  background-repeat: no-repeat;
+  /* Do not repeat the image */
+  background-attachment: fixed;
+  /* Keep the background fixed during scroll */
+}
+
+/* Optional: Adjust header, footer, and main content backgrounds */
+/* If your Header, Footer, or main elements have opaque backgrounds,
+   they will cover the body's background image.
+   You might need to make them transparent or semi-transparent. */
+body.has-full-page-background main,
+body.has-full-page-background header {
+  background-color: transparent;
+  /* Example: Make them transparent */
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
 }

@@ -75,7 +75,7 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
          {/* 2. Main Content Area */}
          <div
             className={cn(
-               "relative z-10 flex w-full flex-1 flex-col justify-between rounded-t-lg p-4 lg:rounded-t-xl transition-colors duration-300 ease-in-out",
+               "relative z-10 flex w-full flex-1 flex-col justify-between rounded-t-lg lg:rounded-t-xl transition-colors duration-300 ease-in-out pt-4 px-10",
                contentClassName
             )}
             style={{
@@ -107,7 +107,7 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
          {/* 4. Bottom Section Content */}
          <div
             className={cn(
-               "absolute bottom-3 flex w-full items-center px-4 md:bottom-4 z-20",
+               "absolute bottom-3 flex w-full items-center px-4 ps-10 md:bottom-4 z-20",
                bottomSectionClassName
             )}
             style={{ color: currentTextColor }}>
@@ -128,7 +128,6 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
                              alt="arrow left"
                              width={24}
                              height={24}
-                             className="translate-y-3 translate-x-3"
                           />
                        ) : (
                           <Image
@@ -136,7 +135,6 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
                              alt="arrow right"
                              width={24}
                              height={24}
-                             className="translate-y-3 translate-x-3"
                           />
                        )}
                     </div>

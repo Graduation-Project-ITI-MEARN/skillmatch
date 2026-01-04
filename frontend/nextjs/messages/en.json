@@ -15,17 +15,20 @@
    "challenges": {
       "startChallenge": "Start Challenge"
    },
+
    "leaderboard": {
       "title": "Leaderboard",
-      "loading": "Loading data...",
-
+      "categories": {
+         "all": "All Categories"
+      },
+      "loading": "Loading...",
+      "noParticipants": "No participants found.",
+      "noParticipantsDesc": "Try selecting a different category or check back later.",
       "score": "Score",
       "viewPortfolio": "View Portfolio",
-      "noParticipants": "No participants found",
-      "noParticipantsDesc": "There are no users to display in this category yet.",
-
-      "categories": {
-         "all": "All"
+      "pagination": {
+         "previousPage": "Previous Page",
+         "nextPage": "Next Page"
       }
    },
    "Landing": {
@@ -125,15 +128,29 @@
       }
    },
    "portfolio": {
-      "loading": "Loading...",
-      "userNotFound": "User not found.",
-      "backButton": "Leaderboard",
-      "defaultBio": "Front-end developer with experience in building modern web applications.",
-      "linkedinLabel": "LinkedIn Profile",
-      "skillsTitle": "Skills",
-      "noSkills": "This user hasn't listed any skills yet.",
+      "loading": "Loading portfolio...",
+      "userNotFound": "User portfolio not found.",
+      "backButton": "Back",
+      "defaultBio": "This user has not provided a bio yet.",
+      "linkedinLabel": "LinkedIn",
+      "githubLabel": "GitHub",
+      "skillsTitle": "Skills Analysis",
+      "noSkills": "No skill analysis available yet. Complete challenges to build your skill profile!",
       "projectsTitle": "Projects",
-      "noProjects": "No verified projects yet."
+      "noProjects": "No projects found yet.",
+      "skillLevel": {
+         "beginner": "Beginner",
+         "intermediate": "Intermediate",
+         "advanced": "Advanced",
+         "expert": "Expert"
+      },
+      "skillTrend": {
+         "stable": "Stable",
+         "improving": "Improving",
+         "declining": "Declining"
+      },
+      "strongestSkillsTitle": "Strongest Skills",
+      "skillsToImproveTitle": "Skills to Improve"
    },
    "footer": {
       "description": "Connecting skills with opportunities.",

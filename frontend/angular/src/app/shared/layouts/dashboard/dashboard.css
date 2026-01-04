@@ -3,12 +3,14 @@
   min-height: 100vh;
   background: var(--color-bg-soft);
   font-family: var(--font-sans);
+  background-image: url('/assets/images/pattern.svg');
 }
 
 /* ========== HEADER ========== */
 .dashboard-header {
   background: var(--color-bg);
   border-bottom: 1px solid rgba(57, 89, 77, 0.1);
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -177,6 +179,7 @@
 
 /* ========== CONTENT AREA ========== */
 .content-area {
+  -webkit-animation: fade-in 0.35s ease both;
   animation: fade-in 0.35s ease both;
 }
 
@@ -308,16 +311,30 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 45;
+    -webkit-animation: fade-in 0.2s ease;
     animation: fade-in 0.2s ease;
   }
 }
 
 /* ========== ANIMATIONS ========== */
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

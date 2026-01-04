@@ -370,6 +370,8 @@
       "NO_IMPROVEMENTS": "No specific areas for improvement identified.",
       "EVALUATED_BY": "Evaluated by",
       "ON": "on",
+      "FEEDBACK": "Feedback",
+      "IMPROVEMENTS": "Improvements",
       "NO_AI_EVALUATION_YET": "No AI evaluation available yet.",
       "PLEASE_CHECK_BACK": "Please check back later, evaluation might be in progress.",
       "EVALUATION_FAILED": "Evaluation failed.",

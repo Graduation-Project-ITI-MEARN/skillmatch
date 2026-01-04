@@ -10,7 +10,7 @@
   --color-text: var(--color-gray-900);
   --color-muted: #6c7a75;
   --color-bg: #ffffff;
-  --color-bg-soft: #f8faf9;
+  --color-bg-soft: #f0eee9;
   --color-grad-start: #a6c0fe;
   --color-grad-end: #f68084d6;
   --background-image-primary-gradient: linear-gradient(120deg, #a6c0fe 0%, #f68084d6 100%);

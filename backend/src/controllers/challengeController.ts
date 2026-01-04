@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import Challenge from "../models/Challenge";
+import Challenge, { IChallenge } from "../models/Challenge";
 import Submission from "../models/Submission";
 import { isValidCategory, areValidSkills } from "./metadataController";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import APIError from "../utils/APIError";
 import User from "../models/User";
+import mongoose from "mongoose";
 
 /**
  * @desc    Create a new challenge
@@ -450,36 +451,91 @@ const getChallengeById = catchError(async (req: Request, res: Response) => {
    res.status(200).json({ status: "success", data: challenge });
 });
 
-/**
- * @desc    Get challenges where the user's submission was accepted (Portfolio Achievements)
- * @route   GET /api/challenges/user-accepted/:userId
- * @access  Public
- */
+// Define an interface for the populated creator (User/Company)
+// This assumes your creator model has _id, name, type, and optionally city
+interface PopulatedCreator {
+   _id: mongoose.Types.ObjectId; // Make sure _id is present for populated documents
+   name: string;
+   type: string;
+   city?: string; // City can be optional
+}
+
+// Correct way to define PopulatedChallenge:
+// It takes all properties of IChallenge, but specifically overrides the type of 'creatorId'
+type PopulatedChallenge = Omit<IChallenge, "creatorId"> & {
+   creatorId: PopulatedCreator;
+};
+
 const getUserAcceptedChallenges = catchError(
    async (req: Request, res: Response) => {
       const { userId } = req.params;
 
-      // 1. البحث عن التقديمات المقبولة للمستخدم
       const submissions = await Submission.find({
          candidateId: userId,
-         status: "accepted",
-      }).populate({
+         aiScore: { $gte: Number(process.env.MIN_AI_SCORE) || 80 },
+      }).populate<{ challengeId: PopulatedChallenge }>({
+         // <--- Keep this explicit type for populate
          path: "challengeId",
-         populate: { path: "creatorId", select: "name type" }, // لجلب اسم الشركة المنشئة
+         populate: {
+            path: "creatorId",
+            select: "name type city", // Ensure 'city' is selected here if it exists on the creator model
+         },
       });
 
-      // 2. استخراج التحديات فقط من التقديمات (مع تجنب التكرار)
-      const challenges = submissions
-         .map((sub) => sub.challengeId)
-         .filter((ch) => ch !== null);
+      const formattedSubmissions = submissions
+         .map((sub) => {
+            // Type guard: Check if challengeId was successfully populated and is an object
+            // `sub.challengeId instanceof mongoose.Types.ObjectId` check is crucial for unpopulated cases
+            if (
+               !sub.challengeId ||
+               typeof sub.challengeId === "string" ||
+               sub.challengeId instanceof mongoose.Types.ObjectId
+            ) {
+               console.warn(
+                  `Skipping submission ${sub._id}: Challenge ID not populated or invalid.`
+               );
+               return null; // Return null, to be filtered out later
+            }
+
+            // The `populate` method's generic type parameter already ensures `sub.challengeId` is `PopulatedChallenge`
+            const challenge = sub.challengeId;
+
+            // Type guard: Check if creatorId within the challenge was successfully populated
+            if (
+               !challenge.creatorId ||
+               typeof challenge.creatorId === "string" ||
+               challenge.creatorId instanceof mongoose.Types.ObjectId
+            ) {
+               console.warn(
+                  `Skipping submission ${sub._id} (Challenge: ${challenge._id}): Creator ID not populated or invalid.`
+               );
+               return null; // Return null, to be filtered out later
+            }
+
+            const creator = challenge.creatorId; // TypeScript now knows creator is PopulatedCreator
+
+            return {
+               _id: sub._id, // Submission ID (good for React keys)
+               challengeId: challenge._id.toString(), // Actual Challenge ID (convert to string if it's ObjectId)
+               title: challenge.title, // Challenge Name
+               category: challenge.category,
+               creatorName: creator.name, // Creator Name
+               creatorCity: creator.city || null, // Creator City (handle cases where it might not exist)
+               aiScore: sub.aiScore, // AI Score from the submission
+               submissionDate: sub.createdAt, // Submission Date (from submission's createdAt)
+            };
+         })
+         .filter(Boolean); // Filter out any 'null' entries (submissions that failed to populate)
 
       res.status(200).json({
          success: true,
-         count: challenges.length,
-         data: challenges,
+         count: formattedSubmissions.length,
+         data: formattedSubmissions,
       });
    }
 );
+
+// export { getUserAcceptedChallenges };
 
 /**
  * @desc    Get all published challenges a candidate hasn't started yet
