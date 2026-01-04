@@ -9,11 +9,11 @@ export default function AboutPage() {
 
   // Team Data mapping
   const teamMembers = [
-    { key: "aya", img: "/images/team/aya.jpg" },
-    { key: "ahmedm", img: "/images/team/ahmedm.jpg" },
-    { key: "esraa", img: "/images/team/esraa.jpg" },
-    { key: "ahmedh", img: "/images/team/ahmedh.jpg" },
-    { key: "menna", img: "/images/team/menna.jpg" },
+    { key: "aya", img: "/images/aya.png" },
+    { key: "ahmedm", img: "/images/mancy.png" },
+    { key: "esraa", img: "/images/esraa.png" },
+    { key: "ahmedh", img: "/images/henksh.png" },
+    { key: "menna", img: "/images/menna.png" },
   ];
 
   return (
@@ -53,11 +53,20 @@ export default function AboutPage() {
                whileInView={{ opacity: 1, scale: 1 }}
                viewport={{ once: true }}
                transition={{ duration: 0.8 }}
-               className="w-80 h-80 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-orange-400 via-red-500 to-indigo-900 shadow-2xl relative overflow-hidden"
+               className="w-80 h-80 md:w-96 md:h-96 relative"
              >
-                {/* Grain overlay simulation */}
-                <div className="absolute inset-0 bg-white opacity-20" style={{ filter: 'url(#noise)' }}></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <motion.div
+                  animate={{ y: [0, -15, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-full h-full relative"
+                >
+                  <Image 
+                    src="/images/plate.svg" 
+                    alt="Mission Visual" 
+                    fill 
+                    className="object-contain"
+                  />
+                </motion.div>
              </motion.div>
           </div>
         </div>
@@ -94,11 +103,7 @@ export default function AboutPage() {
                 >
                   {/* Member Image */}
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-200 rounded-3xl mb-6 overflow-hidden border-4 border-white/10 shadow-lg relative">
-                     <div className="absolute inset-0 flex items-center justify-center bg-stone-300 text-stone-500 font-serif text-3xl">
-                       {/* Once you have images, uncomment the line below and remove this div */}
-                       {/* <Image src={member.img} fill alt="" className="object-cover" /> */}
-                       {member.key.charAt(0).toUpperCase()}
-                    </div>
+                       <Image src={member.img} fill alt="" className="object-cover" />
                   </div>
                   
                   {/* Member Text */}
