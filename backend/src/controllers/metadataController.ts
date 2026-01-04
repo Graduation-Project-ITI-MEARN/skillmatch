@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
 export const CATEGORIES = [
-   "Development",
-   "Design",
-   "Marketing",
-   "Writing",
-   "Translation",
-   "Data Entry",
+  "Development",
+  "Design",
+  "Marketing",
+  "Writing",
+  "Translation",
+  "Data Entry",
 ];
 
 const SKILLS = [

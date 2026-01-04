@@ -28,52 +28,55 @@ export interface IUser extends Document {
    };
    walletBalance: number;
 
-   // --- NEW FIELDS FOR CANDIDATE PROFILE ---
-   city?: string; // For both candidate and company
-   bio?: string; // For both candidate and company
-   github?: string;
-   linkedin?: string;
-   // Add an array for other social links, allowing flexibility
-   otherLinks?: { name: string; url: string }[];
-   categoriesOfInterest?: (typeof CATEGORIES)[number][]; // Array of categories
+  // --- NEW FIELDS FOR CANDIDATE PROFILE ---
+  city?: string; // For both candidate and company
+  bio?: string; // For both candidate and company
+  github?: string;
+  linkedin?: string;
+  // Add an array for other social links, allowing flexibility
+  otherLinks?: { name: string; url: string }[];
+  categoriesOfInterest?: (typeof CATEGORIES)[number][]; // Array of categories
 
-   // --- NEW FIELDS FOR COMPANY PROFILE ---
-   website?: string;
-   // bio and city are already covered above
+  // --- NEW FIELDS FOR COMPANY PROFILE ---
+  website?: string;
+  // bio and city are already covered above
 }
 
 // Mongoose Schema
 const UserSchema: Schema = new Schema(
-   {
-      email: { type: String, required: true, unique: true },
-      password: { type: String, required: true },
-      name: { type: String },
-      role: { type: String, default: "user" },
-      type: { type: String, enum: ["candidate", "company", "challenger"] },
-      skills: [{ type: String }],
-      totalScore: { type: Number, default: 0 },
-      badges: [{ type: String }],
-      isVerified: { type: Boolean, default: false },
-      verificationStatus: {
-         type: String,
-         enum: ["none", "pending", "verified", "rejected"],
-         default: "none",
-      },
-      nationalId: { type: String },
-      verificationDocument: { type: String },
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    name: { type: String },
+    role: { type: String, default: "user" },
+    type: { type: String, enum: ["candidate", "company", "challenger"] },
+    skills: [{ type: String }],
+    totalScore: { type: Number, default: 0 },
+    badges: [{ type: String }],
+    isVerified: { type: Boolean, default: false },
+    verificationStatus: {
+      type: String,
+      enum: ["none", "pending", "verified", "rejected"],
+      default: "none",
+    },
+    resetOTP: { type: String },
+    resetOTPExpires: { type: Date },
 
-      // --- NEW SCHEMA FIELDS ---
-      city: { type: String },
-      bio: { type: String },
-      github: { type: String },
-      linkedin: { type: String },
-      otherLinks: [
-         {
-            name: { type: String, required: true },
-            url: { type: String, required: true },
-         },
-      ],
-      categoriesOfInterest: [{ type: String, enum: CATEGORIES }], // Array of categories
+    nationalId: { type: String },
+    verificationDocument: { type: String },
+
+    // --- NEW SCHEMA FIELDS ---
+    city: { type: String },
+    bio: { type: String },
+    github: { type: String },
+    linkedin: { type: String },
+    otherLinks: [
+      {
+        name: { type: String, required: true },
+        url: { type: String, required: true },
+      },
+    ],
+    categoriesOfInterest: [{ type: String, enum: CATEGORIES }], // Array of categories
 
       website: { type: String }, // For companies
       subscriptionStatus: {
@@ -108,13 +111,13 @@ const UserSchema: Schema = new Schema(
  * Hashes the password before saving a new user or updating a password.
  */
 UserSchema.pre("save", async function () {
-   const user = this as unknown as IUser;
+  const user = this as unknown as IUser;
 
-   // Only hash the password if it has been modified
-   if (!user.isModified("password")) return;
+  // Only hash the password if it has been modified
+  if (!user.isModified("password")) return;
 
-   const salt = await bcrypt.genSalt(10);
-   user.password = await bcrypt.hash(user.password, salt);
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
 });
 
 export default mongoose.model<IUser>("User", UserSchema);

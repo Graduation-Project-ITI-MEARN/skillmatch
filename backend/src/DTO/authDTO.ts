@@ -17,4 +17,21 @@ const loginDTO = z.object({
 
 type LoginDTO = z.infer<typeof loginDTO>;
 
-export { registerDTO, RegisterDTO, loginDTO, LoginDTO };
+const forgotPasswordDTO = z.object({
+  email: z.email(),
+});
+
+const resetPasswordDTO = z.object({
+  email: z.email(),
+  otp: z.string().length(6),
+  newPassword: z.string().min(8),
+});
+
+export {
+  registerDTO,
+  RegisterDTO,
+  loginDTO,
+  LoginDTO,
+  forgotPasswordDTO,
+  resetPasswordDTO,
+};
