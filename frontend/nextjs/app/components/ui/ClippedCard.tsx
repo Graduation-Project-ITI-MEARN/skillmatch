@@ -2,9 +2,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/app/lib/utils";
+import Image from "next/image";
+import { Link } from "@/i18n/routing";
 
 export interface ClippedCardProps
    extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -34,7 +34,7 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
    className,
    children,
    contentClassName,
-   readMoreText = "Read More",
+   readMoreText = "View Details", // Changed default to match image
    customBottomSectionContent,
    bottomSectionClassName,
    ...props
@@ -58,7 +58,7 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
       <Link
          href={href}
          className={cn(
-            "group/clippedCard relative flex h-full w-full max-w-[617px] flex-col overflow-hidden rounded-lg lg:rounded-xl",
+            "group/clippedCard relative flex h-full w-full max-w-[617px] flex-col overflow-hidden rounded-lg lg:rounded-2xl",
             className
          )}
          onMouseEnter={() => setIsHovered(true)}
@@ -92,24 +92,15 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
             preserveAspectRatio="none"
             className={cn(
                "relative z-10 -mt-px block transition-opacity duration-300 ease-in-out",
-               // For LTR, no horizontal margin needed as the clip is on the right.
-               // For RTL, we need to shift the SVG to the left by its own width
-               // AND apply scaleX(-1) to flip it.
-               // A simple `transform: scaleX(-1)` in CSS will also do.
-               // Let's use Tailwind's `transform` utilities directly on the SVG element.
-               isRTL ? "origin-center -scale-x-[1] translate-x-0" : "" // Apply transform for RTL. Adjust translate-x if needed.
+               isRTL ? "origin-center -scale-x-[1] translate-x-0" : ""
             )}
             style={{
                opacity: isHovered ? 0 : 1,
-               // We need to shift the SVG's position for RTL if it's not perfectly centered
-               // If `translate-x` is causing issues, try `right: 0` for RTL.
-               // The `origin-center` is important for `scaleX` to flip around its center.
-               // If the clip is still not perfectly aligned, you might need to adjust a negative `left` or `right` property.
             }}>
             <path
                className="w-full transition-all duration-300 ease-in-out"
                fill={cardBgColorVar}
-               d={ltrClipPathData} // Use the LTR path for both directions
+               d={ltrClipPathData}
             />
          </svg>
 
@@ -132,14 +123,20 @@ const ClippedCard: React.FC<ClippedCardProps> = ({
                           {readMoreText}
                        </p>
                        {isRTL ? (
-                          <ArrowLeft
-                             size={20}
-                             className="transition-transform duration-200 group-hover/clippedCard:-translate-x-1"
+                          <Image
+                             src="/images/arrow-left.svg"
+                             alt="arrow left"
+                             width={24}
+                             height={24}
+                             className="translate-y-3 translate-x-3"
                           />
                        ) : (
-                          <ArrowRight
-                             size={20}
-                             className="transition-transform duration-200 group-hover/clippedCard:translate-x-1"
+                          <Image
+                             src="/images/arrow-right.svg"
+                             alt="arrow right"
+                             width={24}
+                             height={24}
+                             className="translate-y-3 translate-x-3"
                           />
                        )}
                     </div>

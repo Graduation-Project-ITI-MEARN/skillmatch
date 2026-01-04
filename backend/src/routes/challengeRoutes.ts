@@ -1,5 +1,4 @@
 import {
-
    createChallenge,
    getPublishedChallenges,
    getMyChallenges,
@@ -8,15 +7,15 @@ import {
    deleteChallenge,
    getChallengeById,
    getUserAcceptedChallenges,
-
+   getAvailableChallenges,
 } from "../controllers/challengeController";
-import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
-
 import auth from "../middlewares/authMiddleware";
 import express from "express";
 import { requireSubscription } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
+import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
+import { requireVerification } from "../middlewares/requireVerification";
 
 const router = express.Router();
 
@@ -26,7 +25,6 @@ const router = express.Router();
 
 // Get all published challenges (Feed)
 router.get("/", getPublishedChallenges);
-
 
 router.get("/user-accepted/:userId", getUserAcceptedChallenges);
 
@@ -39,43 +37,47 @@ router.get("/all", getAllChallenges);
 // PROTECTED ROUTES (Authenticated Users)
 // ==========================
 
-// Get challenge details by ID
-router.get("/:id", getChallengeById);
+router.get(
+   "/available",
+   auth,
+   restrictTo(["candidate"]),
+   getAvailableChallenges
+);
 
 // Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
 
-
+// Get challenge details by ID
+router.get("/:id", getChallengeById);
 
 // Create a new challenge (Company & Challenger only)
 router.post(
-  "/",
-  auth,
-  restrictTo(["company", "challenger"]),
-  requireSubscription,
-  validate(createChallengeDTO),
-  createChallenge
+   "/",
+   auth,
+   validate(createChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
+   requireSubscription,
+   createChallenge
 );
 
 // Update an existing challenge (Creator only)
 router.put(
-  "/:id",
-  auth,
-  restrictTo(["company", "challenger"]),
-  validate(updateChallengeDTO),
-  updateChallenge
+   "/:id",
+   auth,
+   validate(updateChallengeDTO),
+   restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
+   updateChallenge
 );
 
 // Delete a challenge (Creator only)
 router.delete(
-  "/:id",
-  auth,
-  restrictTo(["company", "challenger"]),
-  deleteChallenge
+   "/:id",
+   auth,
+   restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
+   deleteChallenge
 );
-
-
-
-
 
 export default router;

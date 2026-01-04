@@ -1,0 +1,268 @@
+<div class="submission-details-container bg-[#fcfcfd] min-h-screen p-8">
+  <div class="mb-8 flex items-center gap-4">
+    <a
+      routerLink="/dashboard/company/submissions"
+      class="text-gray-600 hover:text-gray-900 transition-colors"
+    >
+      <lucide-icon [img]="icons.ArrowLeft" class="w-6 h-6"></lucide-icon>
+    </a>
+    <h2 class="text-3xl font-bold text-[#101828]">
+      {{ 'DASHBOARD.SUBMISSION_DETAILS.TITLE' | translate }}
+    </h2>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+    <p class="mt-2 text-gray-600">{{ 'COMMON.LOADING_DETAILS' | translate }}</p>
+  </div>
+
+  <div
+    *ngIf="error"
+    class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+  >
+    <lucide-icon [img]="icons.X" class="w-5 h-5 text-red-600 shrink-0 mt-0.5"></lucide-icon>
+    <p class="text-sm text-red-700">{{ error }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !error && submission" class="space-y-8 max-w-4xl mx-auto">
+    <!-- Candidate & Challenge Info -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <div class="flex items-center gap-4 mb-4">
+        <div
+          *ngIf="!submission.candidateId.profilePicture"
+          class="w-16 h-16 rounded-full text-white flex items-center justify-center font-semibold text-xl shrink-0"
+          style="background: linear-gradient(120deg, #a6c0fe 0%, #f68084d6 100%)"
+        >
+          {{ getCandidateInitials(submission.candidateId.name) }}
+        </div>
+        <img
+          *ngIf="submission.candidateId.profilePicture"
+          [src]="submission.candidateId.profilePicture"
+          [alt]="submission.candidateId.name"
+          class="w-16 h-16 rounded-full object-cover shrink-0"
+        />
+        <div>
+          <h3 class="font-semibold text-xl text-[#101828]">{{ submission.candidateId.name }}</h3>
+          <p class="text-gray-600 text-sm">{{ submission.candidateId.email }}</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-100 pt-4 mt-4">
+        <p class="text-sm text-gray-500 mb-1">{{ 'COMMON.CHALLENGE' | translate }}</p>
+        <h4 class="font-medium text-lg text-[#101828]">{{ submission.challengeId.title }}</h4>
+        <div class="flex flex-wrap gap-2 text-sm text-gray-600 mt-2">
+          <span>{{ submission.challengeId.category }}</span> &middot;
+          <span>{{ submission.challengeId.difficulty | titlecase }}</span> &middot;
+          <span>{{ getFormattedDate(submission.createdAt) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Evaluation Summary -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-semibold text-xl text-[#101828]">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.AI_EVALUATION' | translate }}
+        </h3>
+        <div class="text-right">
+          <div class="text-3xl font-bold text-[#101828]">{{ submission.aiScore }}</div>
+          <div class="text-xs text-gray-500">{{ 'DASHBOARD.SUBMISSIONS.OVERALL' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <!-- Technical Quality -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600">{{
+              'DASHBOARD.SUBMISSIONS.TECHNICAL_QUALITY' | translate
+            }}</span>
+            <span class="text-sm font-semibold">{{ getTechnicalQuality(submission) }}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              class="h-full transition-all duration-500 bg-primary-gradient"
+              [style.width.%]="getTechnicalQuality(submission)"
+            ></div>
+          </div>
+        </div>
+        <!-- Clarity Score (from AI Evaluation) -->
+        <div *ngIf="submission.aiEvaluation?.clarityScore">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600">{{
+              'DASHBOARD.SUBMISSION_DETAILS.CLARITY_SCORE' | translate
+            }}</span>
+            <span class="text-sm font-semibold">{{ getClarityScore(submission) }}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              class="h-full transition-all duration-500 bg-primary-gradient"
+              [style.width.%]="getClarityScore(submission)"
+            ></div>
+          </div>
+        </div>
+        <!-- Communication Score -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-600">{{
+              'DASHBOARD.SUBMISSIONS.COMMUNICATION' | translate
+            }}</span>
+            <span class="text-sm font-semibold">{{ getCommunicationScore(submission) }}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              class="h-full transition-all duration-500 bg-primary-gradient"
+              [style.width.%]="getCommunicationScore(submission)"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="submission.aiEvaluation?.feedback" class="mt-6 border-t border-gray-100 pt-4">
+        <h4 class="font-medium text-lg text-[#101828] mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.FEEDBACK' | translate }}
+        </h4>
+        <p class="text-gray-700 text-sm">{{ submission.aiEvaluation?.feedback }}</p>
+      </div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"
+        *ngIf="
+          submission.aiEvaluation?.strengths?.length ||
+          submission.aiEvaluation?.improvements?.length
+        "
+      >
+        <div *ngIf="submission.aiEvaluation?.strengths?.length">
+          <h4 class="font-medium text-lg text-[#101828] mb-2">
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.STRENGTHS' | translate }}
+          </h4>
+          <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+            <li *ngFor="let strength of submission.aiEvaluation?.strengths">
+              {{ strength }}
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="submission.aiEvaluation?.improvements?.length">
+          <h4 class="font-medium text-lg text-[#101828] mb-2">
+            {{ 'DASHBOARD.SUBMISSION_DETAILS.IMPROVEMENTS' | translate }}
+          </h4>
+          <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+            <li *ngFor="let improvement of submission.aiEvaluation?.improvements">
+              {{ improvement }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submission Content -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <h3 class="font-semibold text-xl text-[#101828] mb-4">
+        {{ 'DASHBOARD.SUBMISSION_DETAILS.SUBMISSION_CONTENT' | translate }}
+      </h3>
+
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span
+          class="px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap"
+          [ngClass]="getStatusClass(submission.status)"
+        >
+          {{ getStatusLabel(submission.status) | translate }}
+        </span>
+        <span
+          class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200 whitespace-nowrap"
+        >
+          {{ submission.submissionType | uppercase }}
+        </span>
+        <span
+          *ngIf="submission.isWinner"
+          class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 whitespace-nowrap"
+        >
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.WINNER' | translate }}
+        </span>
+      </div>
+
+      <div *ngIf="submission.textContent" class="mb-4">
+        <h4 class="font-medium text-lg text-[#101828] mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.TEXT_CONTENT' | translate }}
+        </h4>
+        <p class="text-gray-700 text-sm leading-relaxed">{{ submission.textContent }}</p>
+      </div>
+
+      <div *ngIf="submission.linkUrl" class="mb-4">
+        <h4 class="font-medium text-lg text-[#101828] mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.SUBMISSION_LINK' | translate }}
+        </h4>
+        <a
+          [href]="submission.linkUrl"
+          target="_blank"
+          class="flex items-center gap-2 text-blue-600 hover:underline text-sm font-medium"
+        >
+          {{ submission.linkUrl }}
+          <lucide-icon [img]="icons.ExternalLink" class="w-4 h-4"></lucide-icon>
+        </a>
+      </div>
+
+      <div *ngIf="submission.fileUrls && submission.fileUrls.length > 0" class="mb-4">
+        <h4 class="font-medium text-lg text-[#101828] mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.FILES' | translate }}
+        </h4>
+        <ul class="space-y-1">
+          <li *ngFor="let fileUrl of submission.fileUrls">
+            <a
+              [href]="fileUrl"
+              target="_blank"
+              class="flex items-center gap-2 text-blue-600 hover:underline text-sm font-medium"
+            >
+              {{ fileUrl.split('/').pop() }}
+              <lucide-icon [img]="icons.ExternalLink" class="w-4 h-4"></lucide-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="submission.videoExplanationUrl" class="mb-4">
+        <h4 class="font-medium text-lg text-[#101828] mb-2">
+          {{ 'DASHBOARD.SUBMISSION_DETAILS.VIDEO_EXPLANATION' | translate }}
+        </h4>
+        <button
+          (click)="watchVideo(submission.videoExplanationUrl)"
+          class="flex items-center gap-2 px-4 py-2.5 text-white rounded-lg transition-colors text-sm font-medium shadow-sm bg-black hover:opacity-90"
+        >
+          <lucide-icon [img]="icons.Play" class="w-4 h-4"></lucide-icon>
+          {{ 'DASHBOARD.SUBMISSIONS.WATCH_VIDEO' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div
+      class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-wrap gap-3 items-center"
+    >
+      <button
+        (click)="shortlistSubmission(submission._id)"
+        [disabled]="submission.status === 'accepted'"
+        class="flex items-center gap-2 px-4 py-2.5 text-white rounded-lg hover:opacity-90 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        style="background: #a6c0fe"
+      >
+        <lucide-icon [img]="icons.Star" class="w-4 h-4"></lucide-icon>
+        {{ 'DASHBOARD.SUBMISSIONS.SHORTLIST' | translate }}
+      </button>
+
+      <a
+        [href]="'mailto:' + submission.candidateId.email"
+        class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+      >
+        <lucide-icon [img]="icons.Mail" class="w-4 h-4"></lucide-icon>
+        {{ 'DASHBOARD.SUBMISSIONS.CONTACT' | translate }}
+      </a>
+
+      <button
+        (click)="rejectSubmission(submission._id)"
+        [disabled]="submission.status === 'rejected'"
+        class="flex items-center gap-2 px-4 py-2.5 border border-red-300 text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <lucide-icon [img]="icons.X" class="w-4 h-4"></lucide-icon>
+        {{ 'COMMON.REJECT' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

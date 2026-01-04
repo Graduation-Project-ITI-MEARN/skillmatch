@@ -11,11 +11,14 @@
               challenge?.difficulty || ('DASHBOARD.CHALLENGE_DETAILS.INTERMEDIATE' | translate)
             }}</span>
           </div>
+          <!-- Prize: Dynamically display salary or prizeAmount -->
           <div
             class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 rounded-lg text-emerald-700"
           >
             <lucide-icon [img]="icons.Award" class="w-4 h-4"></lucide-icon>
-            <span class="font-bold">${{ challenge?.prize || '0' }}</span>
+            <span class="font-bold"
+              >${{ (challenge?.salary ?? challenge?.prizeAmount) || '0' }}</span
+            >
           </div>
           <div
             class="px-4 py-2 rounded-full text-xs font-bold bg-indigo-50 text-indigo-600 uppercase tracking-wider"
@@ -62,8 +65,30 @@
           <lucide-icon [img]="icons.Code" class="w-5 h-5 text-indigo-500"></lucide-icon>
           {{ 'DASHBOARD.CHALLENGE_DETAILS.REQUIREMENTS_TITLE' | translate }}
         </h3>
-        <div class="text-gray-600 leading-relaxed">
+        <div class="text-gray-600 leading-relaxed whitespace-pre-line">
           {{ challenge?.requirements }}
+        </div>
+      </section>
+
+      <!-- NEW: Deliverables Section -->
+      <section class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 class="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
+          <lucide-icon [img]="icons.FileDown" class="w-5 h-5 text-indigo-500"></lucide-icon>
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.DELIVERABLES_TITLE' | translate }}
+        </h3>
+        <div class="text-gray-600 leading-relaxed whitespace-pre-line">
+          {{ challenge?.deliverables }}
+        </div>
+      </section>
+
+      <!-- NEW: Evaluation Criteria Section -->
+      <section class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+        <h3 class="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
+          <lucide-icon [img]="icons.Award" class="w-5 h-5 text-indigo-500"></lucide-icon>
+          {{ 'DASHBOARD.CHALLENGE_DETAILS.EVALUATION_CRITERIA_TITLE' | translate }}
+        </h3>
+        <div class="text-gray-600 leading-relaxed whitespace-pre-line">
+          {{ challenge?.evaluationCriteria }}
         </div>
       </section>
     </div>
@@ -76,6 +101,7 @@
           {{ 'DASHBOARD.CHALLENGE_DETAILS.RESOURCES_TITLE' | translate }}
         </h3>
         <div class="space-y-3">
+          <!-- Iterate over fileUrls -->
           @for (file of challenge?.fileUrls; track $index) {
           <button
             (click)="downloadFile(file)"
@@ -91,6 +117,7 @@
           </button>
           }
 
+          <!-- Display linkUrl -->
           <a
             *ngIf="challenge?.linkUrl"
             [href]="challenge.linkUrl"

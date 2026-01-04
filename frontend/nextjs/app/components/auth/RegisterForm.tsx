@@ -89,7 +89,6 @@ const RegisterForm = () => {
                   <p className="text-sm text-red-600">{errorMessage}</p>
                </div>
             )}
-
             <InputField<RegisterFormData>
                id="email"
                type="email"
@@ -99,7 +98,6 @@ const RegisterForm = () => {
                isTop={true}
                error={errors.email?.message}
             />
-
             <InputField<RegisterFormData>
                id="password"
                type="password"
@@ -112,7 +110,6 @@ const RegisterForm = () => {
                showPassword={showPassword}
                onTogglePassword={togglePasswordVisibility}
             />
-
             <InputField<RegisterFormData>
                id="confirmPassword"
                type="password"
@@ -125,8 +122,13 @@ const RegisterForm = () => {
                showPassword={showPassword}
                onTogglePassword={togglePasswordVisibility}
             />
-
-            <SplitButton buttonText="Sign up" isSubmitting={isSubmitting} />
+            <SplitButton
+               buttonText="Sign Up"
+               isSubmitting={isSubmitting}
+               backgroundColor="#39594d"
+               hoverColor="#191f1de8"
+               textColor="#fff"
+            />{" "}
          </form>
 
          <p className="mt-6 text-center text-sm text-gray-600">

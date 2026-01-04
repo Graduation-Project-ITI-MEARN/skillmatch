@@ -94,3 +94,243 @@ body {
 button {
   cursor: pointer;
 }
+
+/* Add after your @theme block */
+
+/* Popover and Select Backgrounds - Critical for visibility */
+.bg-popover {
+  background-color: white;
+}
+
+.text-popover-foreground {
+  color: rgb(17, 24, 39);
+}
+
+.bg-accent {
+  background-color: rgb(243, 244, 246);
+}
+
+.text-accent-foreground {
+  color: rgb(17, 24, 39);
+}
+
+.text-muted-foreground {
+  color: rgb(107, 114, 128);
+}
+
+.border-input {
+  border-color: rgb(229, 231, 235);
+}
+
+.ring-ring {
+  --tw-ring-color: rgb(59, 130, 246);
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Animation classes that might be missing */
+.animate-in {
+  -webkit-animation-duration: 150ms;
+  animation-duration: 150ms;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.fade-in-0 {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+.zoom-in-95 {
+  -webkit-animation-name: zoomIn;
+  animation-name: zoomIn;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Slide animations */
+.slide-in-from-top-2 {
+  -webkit-animation-name: slideInFromTop;
+  animation-name: slideInFromTop;
+}
+
+.slide-in-from-bottom-2 {
+  -webkit-animation-name: slideInFromBottom;
+  animation-name: slideInFromBottom;
+}
+
+.slide-in-from-left-2 {
+  -webkit-animation-name: slideInFromLeft;
+  animation-name: slideInFromLeft;
+}
+
+.slide-in-from-right-2 {
+  -webkit-animation-name: slideInFromRight;
+  animation-name: slideInFromRight;
+}
+
+@-webkit-keyframes slideInFromTop {
+  from {
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes slideInFromBottom {
+  from {
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes slideInFromLeft {
+  from {
+    transform: translateX(-0.5rem);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-0.5rem);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@-webkit-keyframes slideInFromRight {
+  from {
+    transform: translateX(0.5rem);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(0.5rem);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Scrollbar hide */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Select and outline styles */
+.outline-hidden {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  .bg-popover {
+    background-color: rgb(9, 9, 11);
+  }
+
+  .text-popover-foreground {
+    color: rgb(250, 250, 250);
+  }
+
+  .bg-accent {
+    background-color: rgb(39, 39, 42);
+  }
+
+  .text-accent-foreground {
+    color: rgb(250, 250, 250);
+  }
+
+  .border-input {
+    border-color: rgb(39, 39, 42);
+  }
+}

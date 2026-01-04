@@ -1,31 +1,43 @@
+// core/guards/candidate-guard.ts
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { AuthService } from '../services/auth';
-import { map, switchMap, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
+// Removed: import { checkVerification } from '../../shared/utils/verification-check';
+// Removed: import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
 
-export const candidateGuard: CanActivateFn = (route, state) => {
+export const candidateGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  // Removed: const dialogService = inject(ZardDialogService);
 
-  // 1. Wait for Auth Check
-  return authService.checkAuth().pipe(
-    take(1),
-    map((isAuthenticated) => {
-      // 2. Check Authentication
-      if (!isAuthenticated) {
-        window.location.href = `${environment.nextJsUrl}/login`;
-        return false;
-      }
+  const user = authService.currentUser(); // Get the current user signal's value
 
-      // 3. Check Role (using the safe getter we made in Step 2)
-      if (authService.type === 'candidate') {
-        return true;
-      }
+  // 1. Check Authentication
+  if (!user) {
+    window.location.href = `${environment.nextJsUrl}/login`;
+    return false;
+  }
 
-      // 4. Unauthorized Role
-      console.warn('Unauthorized access attempt: Not a candidate');
-      return router.createUrlTree(['/unauthorized']); // Or wherever you want
-    })
-  );
+  // 2. Check Role/Type
+  if (user.type !== 'candidate') {
+    // Direct access to user.type
+    console.warn('Unauthorized access attempt: Not a candidate');
+    return router.createUrlTree(['/unauthorized']);
+  }
+
+  // --- IMPORTANT CHANGE HERE ---
+  // The `candidateGuard` will no longer enforce verification for viewing challenge details.
+  // Candidates can always view the details. The verification check will be moved
+  // to the `ChallengeDetails` component when the user tries to *start* the challenge.
+
+  return true; // Allow navigation if authenticated and is a candidate
 };

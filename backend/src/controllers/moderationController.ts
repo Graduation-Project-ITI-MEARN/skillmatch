@@ -14,25 +14,63 @@ import { logActivity } from "../utils/activityLogger";
  */
 
 const createReport = catchError(
-<<<<<<< HEAD
    async (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user;
       const { targetType, targetId, reason } = req.body;
-=======
-  async (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
-    const { targetType, targetId, reason } = req.body;
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
 
-    // Validate required fields
-    if (!targetType || !targetId || !reason) {
-      return res.status(400).json({
-        success: false,
-        message: "Target type, target ID, and reason are required",
+      // Validate required fields
+      if (!targetType || !targetId || !reason) {
+         return res.status(400).json({
+            success: false,
+            message: "Target type, target ID, and reason are required",
+         });
+      }
+
+      // Validate targetType
+      if (!["challenge", "submission", "user"].includes(targetType)) {
+         return res.status(400).json({
+            success: false,
+            message:
+               "Invalid target type. Must be challenge, submission, or user",
+         });
+      }
+
+      // Verify that target exists
+      let targetExists = false;
+      switch (targetType) {
+         case "challenge":
+            targetExists = !!(await Challenge.findById(targetId));
+            break;
+         case "submission":
+            targetExists = !!(await Submission.findById(targetId));
+            break;
+         case "user":
+            targetExists = !!(await User.findById(targetId));
+            break;
+      }
+
+      if (!targetExists) {
+         return res.status(404).json({
+            success: false,
+            message: `${targetType} not found`,
+         });
+      }
+
+      // Prevent users from reporting themselves
+      if (targetType === "user" && targetId === user._id.toString()) {
+         return res.status(400).json({
+            success: false,
+            message: "You cannot report yourself",
+         });
+      }
+
+      // Check if user already reported this content
+      const existingReport = await Report.findOne({
+         reporterId: user._id,
+         targetType,
+         targetId,
       });
-    }
 
-<<<<<<< HEAD
       if (existingReport) {
          return res.status(400).json({
             success: false,
@@ -48,31 +86,11 @@ const createReport = catchError(
          targetType: formattedTargetType, // Save as "Submission", "User", "Challenge"
          targetId,
          reason,
-=======
-    // Validate targetType
-    if (!["challenge", "submission", "user"].includes(targetType)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid target type. Must be challenge, submission, or user",
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
       });
-    }
 
-    // Verify that target exists
-    let targetExists = false;
-    switch (targetType) {
-      case "challenge":
-        targetExists = !!(await Challenge.findById(targetId));
-        break;
-      case "submission":
-        targetExists = !!(await Submission.findById(targetId));
-        break;
-      case "user":
-        targetExists = !!(await User.findById(targetId));
-        break;
-    }
+      // Populate reporter info
+      await report.populate("reporterId", "name email");
 
-<<<<<<< HEAD
       await logActivity(
          user._id,
          "report_created",
@@ -85,54 +103,8 @@ const createReport = catchError(
          success: true,
          message: "Report submitted successfully",
          data: report,
-=======
-    if (!targetExists) {
-      return res.status(404).json({
-        success: false,
-        message: `${targetType} not found`,
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
       });
-    }
-
-    // Prevent users from reporting themselves
-    if (targetType === "user" && targetId === user._id.toString()) {
-      return res.status(400).json({
-        success: false,
-        message: "You cannot report yourself",
-      });
-    }
-
-    // Check if user already reported this content
-    const existingReport = await Report.findOne({
-      reporterId: user._id,
-      targetType,
-      targetId,
-    });
-
-    if (existingReport) {
-      return res.status(400).json({
-        success: false,
-        message: "You have already reported this content",
-      });
-    }
-
-    // Create report
-    const report = await Report.create({
-      reporterId: user._id,
-      targetType,
-      targetId,
-      reason,
-    });
-
-    // Populate reporter info
-    await report.populate("reporterId", "name email");
-
-    res.status(201).json({
-      success: true,
-      message: "Report submitted successfully",
-      data: report,
-    });
-  }
+   }
 );
 
 /**
@@ -141,19 +113,11 @@ const createReport = catchError(
  * @access  Private (Admin only)
  */
 const getReports = catchError(
-<<<<<<< HEAD
    async (req: Request, res: Response, next: NextFunction) => {
       // advancedResults middleware will handle the query
       // This is just for reference
       res.status(200).json(res.advancedResults);
    }
-=======
-  async (req: Request, res: Response, next: NextFunction) => {
-    // advancedResults middleware will handle the query
-    // This is just for reference
-    res.status(200).json(res.advancedResults);
-  }
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
 );
 
 /**
@@ -162,66 +126,60 @@ const getReports = catchError(
  * @access  Private (Admin only)
  */
 const resolveReport = catchError(
-<<<<<<< HEAD
    async (req: Request, res: Response, next: NextFunction) => {
       const { id } = req.params;
       const { status, adminNotes, action } = req.body;
-=======
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { status, adminNotes, action } = req.body;
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
 
-    // Validate status
-    if (!status || !["resolved", "dismissed"].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Status must be either 'resolved' or 'dismissed'",
+      // Validate status
+      if (!status || !["resolved", "dismissed"].includes(status)) {
+         return res.status(400).json({
+            success: false,
+            message: "Status must be either 'resolved' or 'dismissed'",
+         });
+      }
+
+      // Find report
+      const report = await Report.findById(id);
+
+      if (!report) {
+         return res.status(404).json({
+            success: false,
+            message: "Report not found",
+         });
+      }
+
+      // Check if already resolved
+      if (report.status !== "pending") {
+         return res.status(400).json({
+            success: false,
+            message: `Report is already ${report.status}`,
+         });
+      }
+
+      // Update report status
+      report.status = status;
+      if (adminNotes) {
+         report.adminNotes = adminNotes;
+      }
+      await report.save();
+
+      // Optional: Take action on the reported content
+      if (status === "resolved" && action) {
+         await performModerationAction(report, action);
+      }
+
+      // Populate related data
+      await report.populate([
+         { path: "reporterId", select: "name email" },
+         { path: "targetId" },
+      ]);
+
+      res.status(200).json({
+         success: true,
+         message: `Report ${status} successfully`,
+         data: report,
       });
-    }
-
-    // Find report
-    const report = await Report.findById(id);
-
-    if (!report) {
-      return res.status(404).json({
-        success: false,
-        message: "Report not found",
-      });
-    }
-
-    // Check if already resolved
-    if (report.status !== "pending") {
-      return res.status(400).json({
-        success: false,
-        message: `Report is already ${report.status}`,
-      });
-    }
-
-    // Update report status
-    report.status = status;
-    if (adminNotes) {
-      report.adminNotes = adminNotes;
-    }
-    await report.save();
-
-    // Optional: Take action on the reported content
-    if (status === "resolved" && action) {
-      await performModerationAction(report, action);
-    }
-
-    // Populate related data
-    await report.populate([
-      { path: "reporterId", select: "name email" },
-      { path: "targetId" },
-    ]);
-
-    res.status(200).json({
-      success: true,
-      message: `Report ${status} successfully`,
-      data: report,
-    });
-  }
+   }
 );
 
 /**
@@ -230,7 +188,6 @@ const resolveReport = catchError(
  * @access  Private (Admin only)
  */
 const getModerationStats = catchError(
-<<<<<<< HEAD
    async (req: Request, res: Response, next: NextFunction) => {
       const stats = await Report.aggregate([
          {
@@ -264,55 +221,20 @@ const getModerationStats = catchError(
                      $count: "count",
                   },
                ],
-=======
-  async (req: Request, res: Response, next: NextFunction) => {
-    const stats = await Report.aggregate([
-      {
-        $facet: {
-          byStatus: [
-            {
-              $group: {
-                _id: "$status",
-                count: { $sum: 1 },
-              },
->>>>>>> 8d2630a (chore: added dtos for moderation/payment, validated routes, and updated postman)
             },
-          ],
-          byTargetType: [
-            {
-              $group: {
-                _id: "$targetType",
-                count: { $sum: 1 },
-              },
-            },
-          ],
-          total: [
-            {
-              $count: "count",
-            },
-          ],
-          pending: [
-            {
-              $match: { status: "pending" },
-            },
-            {
-              $count: "count",
-            },
-          ],
-        },
-      },
-    ]);
+         },
+      ]);
 
-    res.status(200).json({
-      success: true,
-      data: {
-        byStatus: stats[0].byStatus,
-        byTargetType: stats[0].byTargetType,
-        total: stats[0].total[0]?.count || 0,
-        pending: stats[0].pending[0]?.count || 0,
-      },
-    });
-  }
+      res.status(200).json({
+         success: true,
+         data: {
+            byStatus: stats[0].byStatus,
+            byTargetType: stats[0].byTargetType,
+            total: stats[0].total[0]?.count || 0,
+            pending: stats[0].pending[0]?.count || 0,
+         },
+      });
+   }
 );
 
 /**
@@ -320,34 +242,34 @@ const getModerationStats = catchError(
  * (Optional: Can be expanded based on requirements)
  */
 async function performModerationAction(
-  report: any,
-  action: "hide" | "ban" | "delete"
+   report: any,
+   action: "hide" | "ban" | "delete"
 ) {
-  switch (report.targetType) {
-    case "challenge":
-      if (action === "hide" || action === "delete") {
-        await Challenge.findByIdAndUpdate(report.targetId, {
-          status: "archived",
-        });
-      }
-      break;
+   switch (report.targetType) {
+      case "challenge":
+         if (action === "hide" || action === "delete") {
+            await Challenge.findByIdAndUpdate(report.targetId, {
+               status: "archived",
+            });
+         }
+         break;
 
-    case "submission":
-      if (action === "hide" || action === "delete") {
-        await Submission.findByIdAndUpdate(report.targetId, {
-          status: "rejected",
-        });
-      }
-      break;
+      case "submission":
+         if (action === "hide" || action === "delete") {
+            await Submission.findByIdAndUpdate(report.targetId, {
+               status: "rejected",
+            });
+         }
+         break;
 
-    case "user":
-      if (action === "ban") {
-        await User.findByIdAndUpdate(report.targetId, {
-          isActive: false,
-        });
-      }
-      break;
-  }
+      case "user":
+         if (action === "ban") {
+            await User.findByIdAndUpdate(report.targetId, {
+               isActive: false,
+            });
+         }
+         break;
+   }
 }
 
 export { createReport, getReports, resolveReport, getModerationStats };

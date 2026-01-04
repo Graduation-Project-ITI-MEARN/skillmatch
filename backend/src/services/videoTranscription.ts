@@ -18,14 +18,12 @@ interface TranscriptionResult {
 }
 
 /**
- * YES! AssemblyAI can transcribe YouTube and Vimeo videos directly!
- * Just pass the URL - no need to download the video first.
+ * IMPORTANT: AssemblyAI Free Tier Limitations
+ * - ✅ Works with: Direct video URLs (.mp4, .webm, etc.) from S3, Cloudflare, any CDN
+ * - ❌ Does NOT work with: YouTube, Vimeo (requires downloading first)
  *
- * @param videoUrl - Can be:
- *  - YouTube URL: https://www.youtube.com/watch?v=xxxxx OR https://youtu.be/xxxxx
- *  - Vimeo URL: https://vimeo.com/xxxxx
- *  - Direct video URL: https://your-s3-bucket.com/video.mp4
- *  - Any publicly accessible video URL
+ * SOLUTION 1: Ask candidates to upload videos directly to your storage
+ * SOLUTION 2: Use YouTube Data API + Whisper for YouTube videos
  */
 export const transcribeVideo = async (
    videoUrl: string
@@ -33,32 +31,23 @@ export const transcribeVideo = async (
    try {
       console.log("Starting transcription for:", videoUrl);
 
-      let processedUrl = videoUrl;
-
-      // Convert YouTube shortened URLs to full URLs for better consistency, though AssemblyAI often handles both
-      if (videoUrl.includes("youtu.be/")) {
-         const videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
-         if (videoId) {
-            processedUrl = `https://www.youtube.com/watch?v=${videoId}`;
-            console.log("Converted shortened URL to:", processedUrl);
-         }
-      }
-
-      // Basic check for common non-video file types that might cause issues
-      // This is a heuristic and not foolproof, but can catch obvious errors
-      const contentType = await getUrlContentType(processedUrl);
-      if (contentType && contentType.includes("text/html")) {
-         throw new Error(
-            "Provided URL appears to be an HTML page, not a direct video or audio file. Please provide a direct video link (e.g., .mp4, YouTube, Vimeo)."
+      // Check if it's a YouTube or Vimeo URL
+      if (isYouTubeUrl(videoUrl) || isVimeoUrl(videoUrl)) {
+         console.log(
+            "⚠️  YouTube/Vimeo detected. Using fallback transcription..."
          );
+         // For now, return mock data or skip transcription
+         // In production, you'd download the video first
+         return {
+            text: "Video transcription skipped for YouTube/Vimeo. Candidate uploaded video link.",
+            confidence: 0,
+         };
       }
 
-      // AssemblyAI automatically handles YouTube/Vimeo/direct URLs
+      // For direct video URLs (Cloudinary, S3, etc.)
       const transcript = await client.transcripts.transcribe({
-         audio: processedUrl, // Works with YouTube, Vimeo, S3, Cloudflare, etc.
+         audio: videoUrl,
          language_code: "en",
-         // Optional: Auto-detect language
-         // language_detection: true,
       });
 
       if (transcript.status === "error") {
@@ -70,32 +59,58 @@ export const transcribeVideo = async (
          confidence: transcript.confidence || 0,
          words: transcript.words || [],
       };
-   } catch (error) {
+   } catch (error: any) {
       console.error("Transcription Error:", error);
-      // Re-throw specific error message if it's from our content type check
-      if (error instanceof Error && error.message.includes("HTML page")) {
-         throw error;
-      }
-      throw new Error("Failed to transcribe video");
+
+      // If it fails, continue without transcript rather than blocking evaluation
+      return {
+         text: "Transcription unavailable. Video was provided but could not be processed.",
+         confidence: 0,
+      };
    }
 };
 
 /**
- * Helper to get content type of a URL without downloading full content
+ * Check if URL is YouTube
  */
-const getUrlContentType = async (url: string): Promise<string | null> => {
-   try {
-      const response = await axios.head(url);
-      return response.headers["content-type"] || null;
-   } catch (error) {
-      console.warn(`Could not determine content type for ${url}:`, error);
-      return null;
-   }
+const isYouTubeUrl = (url: string): boolean => {
+   return url.includes("youtube.com") || url.includes("youtu.be");
 };
 
 /**
- * Alternative: Use FREE Whisper API from OpenAI
- * Note: Requires downloading video first, then converting to audio
+ * Check if URL is Vimeo
+ */
+const isVimeoUrl = (url: string): boolean => {
+   return url.includes("vimeo.com");
+};
+
+/**
+ * RECOMMENDED: Check if URL is a direct video file
+ * This is what AssemblyAI can transcribe
+ */
+export const isDirectVideoUrl = (url: string): boolean => {
+   const videoExtensions = [
+      ".mp4",
+      ".webm",
+      ".mov",
+      ".avi",
+      ".mkv",
+      ".m4a",
+      ".wav",
+   ];
+   const urlLower = url.toLowerCase();
+
+   return (
+      videoExtensions.some((ext) => urlLower.includes(ext)) ||
+      urlLower.includes("cloudinary.com") ||
+      urlLower.includes("s3.amazonaws.com") ||
+      urlLower.includes("cloudflare")
+   );
+};
+
+/**
+ * ALTERNATIVE: Use OpenAI Whisper for YouTube videos
+ * This requires downloading the video first using youtube-dl or similar
  */
 export const transcribeWithWhisper = async (
    audioFilePath: string
@@ -116,11 +131,36 @@ export const transcribeWithWhisper = async (
 
       return {
          text: transcription.text,
-         confidence: 0.95, // Whisper doesn't provide confidence
+         confidence: 0.95,
       };
    } catch (error) {
       console.error("Whisper Error:", error);
       throw new Error("Failed to transcribe with Whisper");
+   }
+};
+
+/**
+ * BEST SOLUTION: Get YouTube video info without transcribing
+ * This way you still validate the video exists
+ */
+export const validateYouTubeVideo = async (
+   url: string
+): Promise<{ valid: boolean; title?: string; duration?: number }> => {
+   try {
+      const videoId = extractYouTubeId(url);
+      if (!videoId) return { valid: false };
+
+      // Use YouTube oEmbed API (no API key needed!)
+      const response = await axios.get(
+         `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+      );
+
+      return {
+         valid: true,
+         title: response.data.title,
+      };
+   } catch (error) {
+      return { valid: false };
    }
 };
 
@@ -142,73 +182,7 @@ const extractYouTubeId = (url: string): string | null => {
 };
 
 /**
- * Extract Vimeo video ID from URL
- */
-const extractVimeoId = (url: string): string | null => {
-   const match = url.match(/vimeo\.com\/(\d+)/);
-   return match ? match[1] : null;
-};
-
-/**
- * Check if URL is a supported video platform
- */
-export const isSupportedVideoUrl = (url: string): boolean => {
-   return (
-      url.includes("youtube.com") ||
-      url.includes("youtu.be") ||
-      url.includes("vimeo.com") ||
-      url.includes(".mp4") ||
-      url.includes(".webm") ||
-      url.includes(".mov") ||
-      url.includes("s3.amazonaws.com") ||
-      url.includes("cloudflare")
-   );
-};
-
-/**
- * Get video metadata (duration, title)
- * Useful for validation before transcription
- */
-export const getVideoMetadata = async (
-   url: string
-): Promise<{ duration?: number; title?: string }> => {
-   try {
-      if (url.includes("youtube.com") || url.includes("youtu.be")) {
-         const videoId = extractYouTubeId(url);
-         if (!videoId) throw new Error("Invalid YouTube URL");
-
-         // Use YouTube Data API (optional - requires API key)
-         // For now, just validate URL
-         return {
-            title: "YouTube Video",
-            duration: undefined,
-         };
-      }
-
-      if (url.includes("vimeo.com")) {
-         const videoId = extractVimeoId(url);
-         if (!videoId) throw new Error("Invalid Vimeo URL");
-
-         // Get Vimeo metadata (public API, no auth needed)
-         const response = await axios.get(
-            `https://vimeo.com/api/v2/video/${videoId}.json`
-         );
-
-         return {
-            title: response.data[0]?.title || "Vimeo Video",
-            duration: response.data[0]?.duration,
-         };
-      }
-
-      return {};
-   } catch (error) {
-      console.error("Metadata fetch error:", error);
-      return {};
-   }
-};
-
-/**
- * Analyze video sentiment (uses AssemblyAI)
+ * Analyze video sentiment (only works with direct URLs)
  */
 export const analyzeVideoSentiment = async (
    videoUrl: string
@@ -217,6 +191,11 @@ export const analyzeVideoSentiment = async (
    sentimentScore: number;
 }> => {
    try {
+      // Skip for YouTube/Vimeo
+      if (isYouTubeUrl(videoUrl) || isVimeoUrl(videoUrl)) {
+         return { sentiment: "neutral", sentimentScore: 0.5 };
+      }
+
       const transcript = await client.transcripts.transcribe({
          audio: videoUrl,
          sentiment_analysis: true,
@@ -249,62 +228,5 @@ export const analyzeVideoSentiment = async (
    } catch (error) {
       console.error("Sentiment Analysis Error:", error);
       return { sentiment: "neutral", sentimentScore: 0.5 };
-   }
-};
-
-/**
- * FREE Alternative: Use Gemini for video analysis
- * Gemini can analyze video directly!
- */
-export const analyzeVideoWithGemini = async (
-   videoUrl: string,
-   challengeContext: string
-): Promise<{
-   transcript: string;
-   analysis: string;
-   confidence: number;
-}> => {
-   try {
-      const { GoogleGenerativeAI } = require("@google/generative-ai");
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-      // Gemini 1.5 Pro can analyze videos directly (FREE!)
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
-      const prompt = `Analyze this video where a candidate explains their solution to: ${challengeContext}
-
-Provide:
-1. Transcript of what they said
-2. Analysis of their explanation quality
-3. Whether they demonstrate real understanding
-
-Format as JSON:
-{
-  "transcript": "...",
-  "analysis": "...",
-  "confidence": 0-100
-}`;
-
-      const result = await model.generateContent([
-         prompt,
-         {
-            inlineData: {
-               mimeType: "video/mp4", // Assuming mp4, adjust if other types are expected
-               data: videoUrl, // Gemini can fetch public videos
-            },
-         },
-      ]);
-
-      const response = result.response.text();
-      const parsed = JSON.parse(response.replace(/```json|```/g, "").trim());
-
-      return {
-         transcript: parsed.transcript || "",
-         analysis: parsed.analysis || "",
-         confidence: parsed.confidence || 0,
-      };
-   } catch (error) {
-      console.error("Gemini video analysis error:", error);
-      throw new Error("Could not analyze video with Gemini");
    }
 };
