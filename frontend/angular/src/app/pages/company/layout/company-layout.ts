@@ -4,7 +4,17 @@ import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { LucideAngularModule, Briefcase, Users, FileText, BarChart3, Eye } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Briefcase,
+  Users,
+  FileText,
+  BarChart3,
+  Eye,
+  CircleUserRound,
+  BrainCircuit,
+  Brain,
+} from 'lucide-angular';
 
 import { DashboardLayoutComponent, DashboardTab } from '@shared/layouts/dashboard/dashboard';
 import { ZardStatComponent } from '@shared/components/zard-ui/ui-stats-card.component';
@@ -57,10 +67,17 @@ export class CompanyShellComponent implements OnInit {
       icon: FileText,
     },
     { labelKey: 'DASHBOARD.TABS.TALENT', route: '/dashboard/company/talent', icon: Users },
-    { labelKey: 'DASHBOARD.TABS.ANALYTICS', route: '/dashboard/company/analytics', icon: Eye },
+    // { labelKey: 'DASHBOARD.TABS.ANALYTICS', route: '/dashboard/company/analytics', icon: Eye },
+    {
+      labelKey: 'DASHBOARD.TABS.PROFILE',
+      route: '/dashboard/company/profile',
+      icon: CircleUserRound,
+    },
   ];
 
   stats: any[] = [];
+  // New property to control visibility of stats cards
+  hasStatsData = false;
 
   async ngOnInit() {
     this.theme.setTheme('company');
@@ -70,20 +87,14 @@ export class CompanyShellComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  handleCreateChallenge() {
-    // Check verification before navigating to create challenge
-    if (checkVerification(this.authService.currentUser(), this.dialog)) {
-      this.router.navigate(['/dashboard/company/create']);
-    }
-  }
-
   private async loadUserData() {
     try {
       const user = this.authService.currentUser();
-      this.name = user?.companyName || user?.name || 'Company';
+      console.log(user);
+      this.name = user?.name ?? '';
       this.initials = this.generateInitials(this.name);
     } catch {
-      this.name = 'Company';
+      this.name = '';
       this.initials = 'CO';
     }
   }
@@ -94,30 +105,31 @@ export class CompanyShellComponent implements OnInit {
         this.http.get<CompanyStats>(`${environment.apiUrl}/stats/company`)
       );
 
+      const totalChallenges = statsData.totalChallenges ?? 0;
+      const totalSubmissions = statsData.totalSubmissions ?? 0;
+      const avgScore = statsData.avgScore ?? 0;
+
+      // Determine if there's any non-zero stat
+      this.hasStatsData = totalChallenges > 0 || totalSubmissions > 0 || avgScore > 0;
+
       this.stats = [
         {
           labelKey: 'DASHBOARD.STATS.ACTIVE_JOBS',
-          value: String(statsData.totalChallenges ?? 0),
-          trend: '+2 this month',
+          value: String(totalChallenges),
+          // trend: '',
           icon: Briefcase,
         },
         {
           labelKey: 'DASHBOARD.STATS.APPLICANTS',
-          value: String(statsData.totalSubmissions ?? 0),
-          trend: '+5% vs last week',
-          icon: FileText,
-        },
-        {
-          labelKey: 'DASHBOARD.STATS.INTERVIEWS',
-          value: String(statsData.avgScore ?? 0),
-          trend: 'Average Score',
+          value: String(totalSubmissions),
+          // trend: 'Submitted applications',
           icon: Users,
         },
         {
-          labelKey: 'DASHBOARD.STATS.HIRED',
-          value: String(statsData.totalHires ?? 0),
-          trend: 'On track',
-          icon: BarChart3,
+          labelKey: 'DASHBOARD.STATS.AVG_SCORE',
+          value: String(avgScore),
+          // trend: 'Scored by AI',
+          icon: Brain,
         },
       ];
     } catch (error) {
@@ -127,6 +139,7 @@ export class CompanyShellComponent implements OnInit {
   }
 
   private setFallbackStats() {
+    this.hasStatsData = false; // If there's an error, assume no stats data
     this.stats = [
       { labelKey: 'DASHBOARD.STATS.ACTIVE_JOBS', value: '0', trend: '', icon: Briefcase },
       { labelKey: 'DASHBOARD.STATS.APPLICANTS', value: '0', trend: '', icon: FileText },

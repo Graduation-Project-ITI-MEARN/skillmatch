@@ -1,4 +1,3 @@
-import express from "express";
 import {
    createChallenge,
    getPublishedChallenges,
@@ -7,11 +6,16 @@ import {
    updateChallenge,
    deleteChallenge,
    getChallengeById,
+   getUserAcceptedChallenges,
+   getAvailableChallenges,
 } from "../controllers/challengeController";
 import auth from "../middlewares/authMiddleware";
+import express from "express";
+import { requireSubscription } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
 import { createChallengeDTO, updateChallengeDTO } from "../DTO/challenge";
+import { requireVerification } from "../middlewares/requireVerification";
 
 const router = express.Router();
 
@@ -22,9 +26,23 @@ const router = express.Router();
 // Get all published challenges (Feed)
 router.get("/", getPublishedChallenges);
 
+router.get("/user-accepted/:userId", getUserAcceptedChallenges);
+
+// ==========================
+// ADMIN ROUTES
+// ==========================
+router.get("/all", getAllChallenges);
+
 // ==========================
 // PROTECTED ROUTES (Authenticated Users)
 // ==========================
+
+router.get(
+   "/available",
+   auth,
+   restrictTo(["candidate"]),
+   getAvailableChallenges
+);
 
 // Get challenges created by the logged-in user
 router.get("/mine", auth, getMyChallenges);
@@ -38,6 +56,8 @@ router.post(
    auth,
    validate(createChallengeDTO),
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
+   requireSubscription,
    createChallenge
 );
 
@@ -47,6 +67,7 @@ router.put(
    auth,
    validate(updateChallengeDTO),
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
    updateChallenge
 );
 
@@ -55,14 +76,8 @@ router.delete(
    "/:id",
    auth,
    restrictTo(["company", "challenger"]),
+   requireVerification(["company", "challenger"]),
    deleteChallenge
 );
-
-// ==========================
-// ADMIN ROUTES
-// ==========================
-
-// Get all challenges including drafts and archived (Admin only)
-router.get("/all", auth, restrictTo(["admin"]), getAllChallenges);
 
 export default router;

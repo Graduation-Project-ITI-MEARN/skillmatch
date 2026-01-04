@@ -8,6 +8,9 @@ import { calculateSkillLevel } from "../utils/skillLevel";
 import { catchError } from "../utils/catchAsync";
 import { logActivity } from "../utils/activityLogger";
 import mongoose from "mongoose";
+import APIError from "../utils/APIError";
+import { CATEGORIES } from "./metadataController";
+import { sendNotification } from "../utils/notification";
 
 /**
  * @desc    Get all users (Advanced Results)
@@ -248,51 +251,48 @@ const updateUser = catchError(async (req: Request, res: Response) => {
  * @access  Private
  */
 const verifyUser = catchError(async (req: Request, res: Response) => {
-  console.log("--- Inside verifyUser handler ---");
-  console.log("req.body:", req.body); // Log the entire req.body
-  console.log("req.headers:", req.headers); // Log headers to check Content-Type
+   if (!req.user) {
+      return res.status(401).json({
+         success: false,
+         message: "Unauthorized",
+      });
+   }
 
-  if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
+   const { nationalId, documentUrl } = req.body;
 
-  const { nationalId, documentUrl } = req.body;
+   if (!nationalId || !documentUrl) {
+      console.error(
+         "Validation failed: nationalId or documentUrl missing in req.body"
+      );
+      return res.status(400).json({
+         success: false,
+         message: "National ID and document URL are required",
+      });
+   }
 
-  if (!nationalId || !documentUrl) {
-    console.error(
-      "Validation failed: nationalId or documentUrl missing in req.body"
-    );
-    return res.status(400).json({
-      success: false,
-      message: "National ID and document URL are required",
-    });
-  }
+   const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+         nationalId,
+         verificationDocument: documentUrl,
+         verificationStatus: "pending",
+      },
+      { new: true, runValidators: true }
+   );
 
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      nationalId,
-      verificationDocument: documentUrl,
-      verificationStatus: "pending",
-    },
-    { new: true, runValidators: true }
-  );
+   // Log Activity
+   await logActivity(
+      req.user._id,
+      "user_verification_submit",
+      `User submitted identity verification documents`,
+      "success",
+      req.user._id
+   );
 
-  // Log Activity
-  await logActivity(
-    req.user._id,
-    "user_verification_submit",
-    `User submitted identity verification documents`,
-    "success"
-  );
-
-  res.status(200).json({
-    success: true,
-    data: updatedUser,
-  });
+   res.status(200).json({
+      success: true,
+      data: updatedUser,
+   });
 });
 
 /**
@@ -334,14 +334,21 @@ const updateVerificationStatus = catchError(
       userToUpdate._id // Target user's ID
     );
 
-    res.status(200).json({
-      success: true,
-      message: `User ${
-        userToUpdate.name || userToUpdate.email
-      } verification status updated to ${status}.`,
-      data: userToUpdate,
-    });
-  }
+      await sendNotification(
+         userToUpdate._id,
+         "You've been verified!",
+         `Your verification status has been updated to ${status}.`,
+         "success"
+      );
+
+      res.status(200).json({
+         success: true,
+         message: `User ${
+            userToUpdate.name || userToUpdate.email
+         } verification status updated to ${status}.`,
+         data: userToUpdate,
+      });
+   }
 );
 
 /**
@@ -350,16 +357,24 @@ const updateVerificationStatus = catchError(
  * @access  Private
  */
 const getAISkills = catchError(async (req: Request, res: Response) => {
-  const user = req.user;
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+   // 1. نبحث عن الـ ID في الـ Query String أولاً (للبورتفوليو العام)
+   // وإذا لم يوجد نأخذه من req.user (لبروفايل المستخدم نفسه)
+   const userId = (req.query.userId as string) || (req.user as any)?._id;
 
-  const results = await Submission.aggregate([
-    {
-      $match: {
-        candidateId: new mongoose.Types.ObjectId(user._id),
-        status: "accepted",
+   if (!userId) {
+      return res.status(400).json({ 
+         success: false, 
+         message: "User ID is required to fetch skills" 
+      });
+   }
+
+   const results = await Submission.aggregate([
+      {
+         $match: {
+            // نستخدم الـ userId الذي حصلنا عليه
+            candidateId: new mongoose.Types.ObjectId(userId),
+            status: "accepted",
+         },
       },
     },
     {

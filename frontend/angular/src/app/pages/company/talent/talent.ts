@@ -4,39 +4,33 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
-import {
-  LucideAngularModule,
-  Search,
-  Filter,
-  Star,
-  MessageSquare,
-  X,
-} from 'lucide-angular';
+import { LucideAngularModule, Search, Filter, Star, MessageSquare, X } from 'lucide-angular';
 import { environment } from 'src/environments/environment';
+import { Router, RouterModule } from '@angular/router';
 
 interface TalentProfile {
-  _id: string;
+  _id?: string; // This needs to be provided by the backend
+  rank?: number;
   name: string;
-  email: string;
-  profilePicture?: string;
-  totalScore: number;
+  score: number;
   challengesCompleted: number;
-  skills: string[];
-  status: 'available' | 'engaged';
+  type?: string;
+  email?: string; // This needs to be provided by the backend
+  profilePicture?: string;
+  skills?: string[];
+  status?: 'available' | 'engaged';
   role?: string;
 }
-
-type CategoryFilter = 'all' | 'coding' | 'design' | 'marketing' ;
 
 @Component({
   selector: 'app-talent-pool',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, TranslateModule, LucideAngularModule, RouterModule],
   templateUrl: './talent.html',
-  styleUrls: ['./talent.css'],
 })
 export class Talent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   icons = { Search, Filter, Star, MessageSquare, X };
 
@@ -46,47 +40,79 @@ export class Talent implements OnInit {
   isLoading = false;
   showFilterDropdown = false;
 
-  categoryFilter: CategoryFilter = 'all';
-  categories: CategoryFilter[] = ['all', 'coding', 'design', 'marketing' ];
+  categoryFilter: string = 'all';
+  categories: string[] = ['all'];
 
   async ngOnInit() {
+    await this.loadCategories();
     await this.loadTalent();
   }
 
- private async loadTalent() {
-  try {
-    this.isLoading = true;
-
-    // 1. تجهيز الـ Params لإرسالها للسيرفر
-    let params: any = {};
-
-    if (this.categoryFilter !== 'all') {
-      // بنبعت التصنيف للباك-إند (تأكد أن الباك-إند بيفهم كلمة skills)
-      params.skills = this.categoryFilter;
+  private async loadCategories() {
+    try {
+      const response: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/metadata/categories`)
+      );
+      if (response.success && Array.isArray(response.data)) {
+        this.categories = ['all', ...response.data];
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      this.categories = ['all', 'Development', 'Design', 'Marketing', 'Writing'];
     }
-
-    if (this.searchQuery) {
-      params.name = this.searchQuery; // أو حسب ما الباك-إند بيستقبل البحث
-    }
-
-    const response: any = await firstValueFrom(
-      this.http.get(`${environment.apiUrl}/talent/talent`, { params })
-    );
-
-    // 2. تحديث القائمة بالبيانات اللي جات من السيرفر مفلترة جاهزة
-    this.talentList = response.data || [];
-    this.filteredTalentList = this.talentList;
-
-  } catch (error) {
-    console.error('Error loading talent:', error);
-  } finally {
-    this.isLoading = false;
   }
-}
 
-applyFilters() {
-  this.loadTalent();
-}
+  private async loadTalent() {
+    try {
+      this.isLoading = true;
+
+      let params: any = {};
+
+      if (this.categoryFilter !== 'all') {
+        params.category = this.categoryFilter;
+      }
+
+      if (this.searchQuery) {
+        params.name = this.searchQuery;
+      }
+
+      const response: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/leaderboard`, { params })
+      );
+
+      if (response.success && Array.isArray(response.data)) {
+        this.talentList = response.data.map((item: any) => ({
+          ...item,
+          _id: item._id || item.id || undefined,
+          email: item.email || undefined,
+          profilePicture: item.profilePicture || '',
+          skills: item.skills || [],
+          status: item.status || 'available',
+          role: item.role || '',
+        }));
+        console.log('Fetched leaderboard data:', this.talentList);
+      } else {
+        this.talentList = [];
+      }
+      this.filteredTalentList = this.talentList;
+    } catch (error) {
+      console.error('Error loading talent:', error);
+      this.talentList = [];
+      this.filteredTalentList = [];
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  // New method to construct the external portfolio link
+  getPortfolioLink(id: string): string {
+    return `${environment.nextJsUrl}/leaderboard/${id}`;
+  }
+
+  applyFilters() {
+    this.loadTalent();
+  }
+
   onSearchChange() {
     this.applyFilters();
   }
@@ -95,7 +121,7 @@ applyFilters() {
     this.showFilterDropdown = !this.showFilterDropdown;
   }
 
-  selectCategory(category: CategoryFilter) {
+  selectCategory(category: string) {
     this.categoryFilter = category;
     this.showFilterDropdown = false;
     this.applyFilters();
@@ -117,15 +143,5 @@ applyFilters() {
       return (words[0][0] + words[1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
-  }
-
-  viewProfile(id: string) {
-    console.log('View profile:', id);
-    // TODO: Navigate to profile page
-  }
-
-  contactPerson(id: string) {
-    console.log('Contact person:', id);
-    // TODO: Open contact modal
   }
 }

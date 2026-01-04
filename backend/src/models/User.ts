@@ -7,20 +7,26 @@ import bcrypt from "bcryptjs";
 
 // User Interface Definition
 export interface IUser extends Document {
-  email: string;
-  password: string;
-  name?: string;
-  role: "user" | "admin";
-  type?: "candidate" | "company" | "challenger";
-  skills?: string[]; // Assuming skills are related to categories
-  totalScore?: number;
-  badges?: string[];
-  isVerified?: boolean;
-  verificationStatus?: "none" | "pending" | "verified" | "rejected";
-  resetOTP?: string;
-  resetOTPExpires?: Date;
-  nationalId?: string;
-  verificationDocument?: string;
+   email: string;
+   password: string;
+   name?: string;
+   role: "user" | "admin";
+   type?: "candidate" | "company" | "challenger";
+   skills?: string[]; // Assuming skills are related to categories
+   totalScore?: number;
+   badges?: string[];
+   isVerified?: boolean;
+   verificationStatus?: "none" | "pending" | "verified" | "rejected";
+   nationalId?: string;
+   verificationDocument?: string;
+   subscriptionStatus: "free" | "active" | "expired";
+   subscriptionExpiry: Date | null;
+   subscriptionPlan: {
+      type: String;
+      enum: ["basic", "professional", "enterprise"];
+      default: null;
+   };
+   walletBalance: number;
 
   // --- NEW FIELDS FOR CANDIDATE PROFILE ---
   city?: string; // For both candidate and company
@@ -72,11 +78,32 @@ const UserSchema: Schema = new Schema(
     ],
     categoriesOfInterest: [{ type: String, enum: CATEGORIES }], // Array of categories
 
-    website: { type: String }, // For companies
-  },
-  {
-    timestamps: true,
-  }
+      website: { type: String }, // For companies
+      subscriptionStatus: {
+         type: String,
+         enum: ["free", "active", "expired"],
+         default: "free",
+      },
+
+      subscriptionPlan: {
+         type: String,
+         enum: ["basic", "professional", "enterprise"],
+         default: null,
+      },
+
+      subscriptionExpiry: {
+         type: Date,
+         default: null,
+      },
+
+      walletBalance: {
+         type: Number,
+         default: 0,
+      },
+   },
+   {
+      timestamps: true,
+   }
 );
 
 /**

@@ -20,9 +20,9 @@ import validate from "../middlewares/validate";
 const authRouter = require("express").Router();
 
 const authRateLimit = createRateLimiter(
-  5,
-  15,
-  "Too many login/register attempts."
+   50,
+   150,
+   "Too many login/register attempts."
 );
 
 authRouter.post("/register", authRateLimit, validate(registerDTO), register);

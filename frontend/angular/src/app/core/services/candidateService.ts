@@ -25,11 +25,21 @@ export class CandidateService {
   }
 
   // ================== Active Challenges ==================
-  getAllChallenges(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges`, {
+  // This method will now fetch ONLY challenges the candidate hasn't started.
+  // We are replacing the previous `getAllChallenges` logic for the overview.
+  getAvailableChallengesForCandidate(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/challenges/available`, {
       withCredentials: true,
     });
   }
+
+  // If you still need a method to get *all* challenges regardless of candidate status
+  // (e.g., for an admin view), you might keep or rename a method like this:
+  // getAllChallengesAdmin(): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/challenges`, {
+  //     withCredentials: true,
+  //   });
+  // }
 
   // ================== AI Recommendations ==================
   getAiRecommendations(): Observable<any> {
@@ -52,6 +62,13 @@ export class CandidateService {
     });
   }
 
+  // Add this new method to fetch skills analysis
+  getSkillsAnalysis(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ai/skills-analysis`, {
+      withCredentials: true,
+    });
+  }
+
   // ================== Leaderboard ==========================
   getLeaderboard(): Observable<any> {
     return this.http.get(`${this.apiUrl}/leaderboard`, {
@@ -59,26 +76,29 @@ export class CandidateService {
     });
   }
 
-    // ================== Challenge Details ==================
-  getChallengeById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/challenges/${id}`, {
+  // ================== Challenge Details ==================
+  getChallengeById(challengeId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/challenges/${challengeId}`);
+  }
+
+  // ================== Submissions ==================
+
+  startChallenge(challengeId: string): Observable<any> {
+    // This assumes your backend has an endpoint like POST /api/challenges/:id/start
+    // and that this endpoint is protected by your `requireVerification(['candidate'])` middleware.
+    return this.http.post(`${this.apiUrl}/submissions/start`, {
+      challengeId,
+    });
+  }
+
+  submitFinalSolution(submissionData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/submissions`, submissionData, {
       withCredentials: true,
     });
   }
 
-    // ================== Submissions ==================
-
-
-  startChallenge(challengeId: string, submissionType: string): Observable<any> {
-  return this.http.post(`${this.apiUrl}/submissions/start`, {
-    challengeId,
-  }, {
-    withCredentials: true,
-  });
-}
-
-  submitFinalSolution(submissionData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/submissions`, submissionData, {
+  getSubmissionById(submissionId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/submissions/${submissionId}`, {
       withCredentials: true,
     });
   }

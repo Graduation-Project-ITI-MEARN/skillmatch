@@ -12,15 +12,21 @@
     <div class="col-span-1 lg:col-span-2 space-y-4">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">{{ 'DASHBOARD.OVERVIEW.TITLE' | translate }}</h2>
+        <h2 class="text-2xl font-bold text-gray-800">
+          {{ 'DASHBOARD.OVERVIEW.TITLE' | translate }}
+        </h2>
         <div class="flex gap-2">
           <!-- All Fields Dropdown -->
           <div class="relative inline-block text-left">
             <button
               (click)="activeDropdown = activeDropdown === 'main_field' ? null : 'main_field'"
-              class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-slate-50 transition-all text-slate-700 font-medium flex items-center gap-3 min-w-[140px] justify-between shadow-sm outline-none"
+              class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-slate-50 transition-all text-slate-700 font-medium flex items-center gap-3 min-w-35 justify-between shadow-sm outline-none"
             >
-              <span>{{ selectedField === 'all' ? ('DASHBOARD.OVERVIEW.ALL_FIELDS' | translate) : selectedField }}</span>
+              <span>{{
+                selectedField === 'all'
+                  ? ('DASHBOARD.OVERVIEW.ALL_FIELDS' | translate)
+                  : selectedField
+              }}</span>
               <svg
                 class="w-4 h-4 text-slate-400 transition-transform duration-200"
                 [class.rotate-180]="activeDropdown === 'main_field'"
@@ -39,7 +45,7 @@
 
             @if (activeDropdown === 'main_field') {
             <div
-              class="absolute left-0 mt-2 w-56 origin-top-left bg-white border border-slate-100 rounded-xl shadow-xl z-[10020] animate-scale-up py-1"
+              class="absolute left-0 mt-2 w-56 origin-top-left bg-white border border-slate-100 rounded-xl shadow-xl z-10020 animate-scale-up py-1"
             >
               <button
                 (click)="onFieldChange('all')"
@@ -75,7 +81,12 @@
 
       <!-- Results Count -->
       <div class="text-sm text-gray-600 font-medium mb-4">
-        {{ 'DASHBOARD.OVERVIEW.SHOWING' | translate }} {{ activeChallenges.length }} {{ activeChallenges.length !== 1 ? ('DASHBOARD.OVERVIEW.CHALLENGES' | translate) : ('DASHBOARD.OVERVIEW.CHALLENGE' | translate) }}
+        {{ 'DASHBOARD.OVERVIEW.SHOWING' | translate }} {{ activeChallenges.length }}
+        {{
+          activeChallenges.length !== 1
+            ? ('DASHBOARD.OVERVIEW.CHALLENGES' | translate)
+            : ('DASHBOARD.OVERVIEW.CHALLENGE' | translate)
+        }}
       </div>
 
       <!-- Empty State -->
@@ -114,18 +125,24 @@
                 class="px-3 py-1 rounded-full text-xs font-semibold"
                 [ngClass]="challenge.levelColor"
               >
-                {{ challenge.difficulty || 'medium' }}
+                {{ challenge.difficulty | titlecase }}
+                <!-- Use TitleCasePipe here -->
               </span>
             </div>
             <p class="text-sm text-gray-600 font-medium">
-              {{ challenge.company || 'TechCorp Inc.' }}
+              {{ challenge.company }}
+              <!-- Now uses c.creatorId.name -->
             </p>
           </div>
 
-          <!-- Prize -->
+          <!-- Prize (salary or prizeAmount) -->
           <div class="text-right pl-4">
-            <div class="text-2xl font-bold text-gray-900 mb-1">${{ challenge.prize }}</div>
-            <div class="text-xs text-gray-500 uppercase font-semibold">{{ 'DASHBOARD.OVERVIEW.PRIZE' | translate }}</div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">
+              ${{ challenge.prize | number : '1.0-0' }}
+            </div>
+            <div class="text-xs text-gray-500 uppercase font-semibold">
+              {{ 'DASHBOARD.OVERVIEW.PRIZE' | translate }}
+            </div>
           </div>
         </div>
 
@@ -135,32 +152,32 @@
             <lucide-icon [img]="icons.Clock" class="w-4 h-4"></lucide-icon>
             {{ challenge.daysLeft }} {{ 'DASHBOARD.OVERVIEW.DAYS_LEFT' | translate }}
           </div>
-          <div class="flex items-center gap-2">
+          <!-- <div class="flex items-center gap-2">
             <lucide-icon [img]="icons.Trophy" class="w-4 h-4"></lucide-icon>
             {{ challenge.competitors }} {{ 'DASHBOARD.OVERVIEW.COMPETING' | translate }}
-          </div>
+          </div> -->
         </div>
 
         <!-- Bottom Row: Stack & Action -->
         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
           <div class="flex gap-2">
-            <!-- Mock Tech Stack -->
-            @for (tech of challenge.techStack; track $index) {
+            <!-- Display actual tags -->
+            @for (tag of challenge.tags; track $index) {
             <span
               class="px-3 py-1 bg-gray-100 rounded-lg text-xs font-medium text-gray-600 border border-gray-200"
             >
-              {{ tech }}
+              {{ tag }}
             </span>
             }
           </div>
 
-          <button
+          <a
             [routerLink]="['../challenge', challenge._id]"
             class="cursor-pointer flex items-center gap-2 px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all font-medium text-sm shadow-lg shadow-gray-900/10"
           >
             {{ 'DASHBOARD.OVERVIEW.VIEW_DETAILS' | translate }}
             <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4"></lucide-icon>
-          </button>
+          </a>
         </div>
       </div>
       }
@@ -169,12 +186,14 @@
     <!-- RIGHT COLUMN: Sidebar (AI, Submissions, Stats) -->
     <div class="space-y-6 col-span-1">
       <!-- 1. AI Recommendations -->
-      <div class="bg-[#f5f8ff] rounded-[24px] p-8 border border-[#e2eaff] shadow-sm max-w-md">
+      <div class="bg-[#f5f8ff] rounded-3xl p-8 border border-[#e2eaff] shadow-sm max-w-md">
         <div class="flex items-center gap-3 mb-6">
           <div class="text-slate-900">
             <lucide-icon [img]="icons.Brain" class="w-6 h-6"></lucide-icon>
           </div>
-          <h3 class="text-xl font-bold text-[#0f172a]">{{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.TITLE' | translate }}</h3>
+          <h3 class="text-xl font-bold text-[#0f172a]">
+            {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.TITLE' | translate }}
+          </h3>
         </div>
 
         @if (aiRecommendations.length > 0) {
@@ -183,7 +202,9 @@
           <strong class="text-[#1e293b] font-extrabold">{{
             aiRecommendations[0].role || 'Real-Time Chat Analytics'
           }}</strong>
-          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.CHALLENGE' | translate }} <span class="font-medium">94%</span> {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.WITH_EXPERTISE' | translate }}
+          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.CHALLENGE' | translate }}
+          <span class="font-medium">94%</span>
+          {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.WITH_EXPERTISE' | translate }}
         </p>
 
         <button
@@ -194,18 +215,24 @@
         } @else {
         <div class="py-4 flex flex-col items-center gap-2">
           <div class="animate-pulse w-full h-4 bg-slate-200 rounded"></div>
-          <p class="text-sm text-slate-500 italic">{{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.ANALYZING' | translate }}</p>
+          <p class="text-sm text-slate-500 italic">
+            {{ 'DASHBOARD.OVERVIEW.AI_RECOMMENDATIONS.ANALYZING' | translate }}
+          </p>
         </div>
         }
       </div>
 
       <!-- 2. Recent Submissions -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 ">
-        <h3 class="text-lg font-bold mb-4 text-gray-800">{{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.TITLE' | translate }}</h3>
+      <div class="bg-white rounded-2xl p-6 border border-gray-100">
+        <h3 class="text-lg font-bold mb-4 text-gray-800">
+          {{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.TITLE' | translate }}
+        </h3>
 
         <div class="space-y-3">
           @if (recentSubmissions.length === 0) {
-          <p class="text-sm text-gray-400 italic">{{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.NO_SUBMISSIONS' | translate }}</p>
+          <p class="text-sm text-gray-400 italic">
+            {{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.NO_SUBMISSIONS' | translate }}
+          </p>
           } @for (sub of recentSubmissions; track sub._id) {
           <div
             class="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all cursor-pointer group border border-gray-100"
@@ -216,16 +243,26 @@
                   class="text-sm font-bold text-gray-900 mb-1 line-clamp-1"
                   [title]="sub.challengeId?.title"
                 >
-                  {{ sub.challengeId?.title || ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNKNOWN_CHALLENGE' | translate) }}
+                  {{
+                    sub.challengeId?.title ||
+                      ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNKNOWN_CHALLENGE' | translate)
+                  }}
                 </h4>
                 <p class="text-xs text-gray-500 font-medium">
-                  {{ sub.aiScore ? ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.EVALUATED' | translate) : ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNDER_REVIEW' | translate) }}
+                  {{
+                    sub.aiEvaluation?.evaluatedAt
+                      ? ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.EVALUATED' | translate)
+                      : ('DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.UNDER_REVIEW' | translate)
+                  }}
+                  @if (sub.aiEvaluation?.evaluatedAt) { ({{
+                    sub.aiEvaluation.evaluatedAt | date : 'shortDate'
+                  }}) }
                 </p>
               </div>
 
-              @if (sub.aiScore) {
+              @if (sub.aiScore !== undefined && sub.aiScore !== null) {
               <span
-                class="px-2 py-1 bg-gradient-to-right from-blue-400 to-purple-400 text-white rounded-lg text-[10px] font-bold"
+                class="px-2 py-1 bg-primary-gradient text-white rounded-lg text-[10px] font-bold"
               >
                 {{ 'DASHBOARD.OVERVIEW.RECENT_SUBMISSIONS.SCORE' | translate }}: {{ sub.aiScore }}
               </span>
@@ -233,13 +270,10 @@
             </div>
 
             <!-- Score Bar -->
-            @if (sub.aiScore) {
+            @if (sub.aiScore !== undefined && sub.aiScore !== null) {
             <div class="flex items-center gap-2">
               <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-gradient-to-right from-blue-400 to-purple-400 rounded-full"
-                  [style.width.%]="sub.aiScore"
-                ></div>
+                <div class="h-full bg-gray-900 rounded-full" [style.width.%]="sub.aiScore"></div>
               </div>
               <span class="text-xs font-bold text-gray-600">{{ sub.aiScore }}</span>
             </div>
@@ -249,30 +283,94 @@
         </div>
       </div>
 
-      <!-- 3. This Week Stats -->
+      <!-- 3. Candidate Statistics (NEW) -->
+      @if (hasAnyStats()) {
       <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-        <h3 class="text-lg font-bold mb-4 text-gray-800">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.TITLE' | translate }}</h3>
+        <h3 class="text-lg font-bold mb-4 text-gray-800">
+          {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.TITLE' | translate }}
+        </h3>
         <div class="space-y-4">
+          <!-- Amount of challenges with submissions -->
+          @if (candidateOverviewStats.amountOfChallenges > 0) {
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.CHALLENGES_STARTED' | translate }}</span>
-            <span class="text-xl font-bold text-gray-900">{{ weeklyStats.started }}</span>
+            <span class="text-sm text-gray-600 font-medium flex items-center gap-2">
+              <lucide-icon [img]="icons.ListChecks" class="w-4 h-4 text-gray-500"></lucide-icon>
+              {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.CHALLENGES_COMPLETED' | translate }}
+            </span>
+            <span class="text-xl font-bold text-gray-900">{{
+              candidateOverviewStats.amountOfChallenges
+            }}</span>
           </div>
+          }
+
+          <!-- Challenges Won -->
+          @if (candidateOverviewStats.challengesWon > 0) {
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.VIDEOS_RECORDED' | translate }}</span>
-            <span class="text-xl font-bold text-gray-900">{{ weeklyStats.videos }}</span>
+            <span class="text-sm text-gray-600 font-medium flex items-center gap-2">
+              <lucide-icon [img]="icons.Award" class="w-4 h-4 text-yellow-500"></lucide-icon>
+              {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.CHALLENGES_WON' | translate }}
+            </span>
+            <span class="text-xl font-bold text-gray-900">{{
+              candidateOverviewStats.challengesWon
+            }}</span>
           </div>
+          }
+
+          <!-- Highest AI Score -->
+          @if (candidateOverviewStats.highestAiScore > 0) {
           <div
             class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
           >
-            <span class="text-sm text-gray-600 font-medium">{{ 'DASHBOARD.OVERVIEW.WEEKLY_STATS.AVG_SCORE' | translate }}</span>
-            <span class="text-xl font-bold text-gray-900">{{ weeklyStats.avgScore }}</span>
+            <span class="text-sm text-gray-600 font-medium flex items-center gap-2">
+              <lucide-icon [img]="icons.Gauge" class="w-4 h-4 text-blue-500"></lucide-icon>
+              {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.HIGHEST_AI_SCORE' | translate }}
+            </span>
+            <span class="text-xl font-bold text-gray-900"
+              >{{ candidateOverviewStats.highestAiScore | number : '1.0-0' }}%</span
+            >
           </div>
+          }
+
+          <!-- Average AI Score -->
+          @if (candidateOverviewStats.averageAiScore > 0) {
+          <div
+            class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+          >
+            <span class="text-sm text-gray-600 font-medium flex items-center gap-2">
+              <lucide-icon [img]="icons.Activity" class="w-4 h-4 text-green-500"></lucide-icon>
+              {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.AVERAGE_AI_SCORE' | translate }}
+            </span>
+            <span class="text-xl font-bold text-gray-900"
+              >{{ candidateOverviewStats.averageAiScore | number : '1.0-1' }}%</span
+            >
+          </div>
+          }
+
+          <!-- Global Rank -->
+          @if (candidateOverviewStats.globalRank > 0) {
+          <div
+            class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+          >
+            <span class="text-sm text-gray-600 font-medium flex items-center gap-2">
+              <lucide-icon
+                [img]="icons.ArrowUpWideNarrow"
+                class="w-4 h-4 text-pink-500"
+              ></lucide-icon>
+              {{ 'DASHBOARD.OVERVIEW.YOUR_STATS.GLOBAL_RANK' | translate }}
+            </span>
+            <span class="text-xl font-bold text-gray-900">{{
+              candidateOverviewStats.globalRank
+            }}</span>
+          </div>
+
+          }
         </div>
       </div>
+      }
     </div>
   </div>
   }
@@ -298,7 +396,9 @@
         >
           <lucide-icon [img]="icons.Filter" class="w-4 h-4 text-white"></lucide-icon>
         </div>
-        <h3 class="text-lg font-bold text-white">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.TITLE' | translate }}</h3>
+        <h3 class="text-lg font-bold text-white">
+          {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.TITLE' | translate }}
+        </h3>
       </div>
       <button
         (click)="toggleFilterPanel()"
@@ -311,7 +411,7 @@
     <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
       <div class="space-y-5">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+          <label class="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
             <svg
               class="w-4 h-4 text-slate-500"
               fill="none"
@@ -338,12 +438,18 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="relative">
-            <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.CATEGORY' | translate }}</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">{{
+              'DASHBOARD.OVERVIEW.FILTER_MODAL.CATEGORY' | translate
+            }}</label>
             <button
               (click)="activeDropdown = activeDropdown === 'cat' ? null : 'cat'"
               class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
             >
-              <span>{{ filters.category === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_CATEGORIES' | translate) : filters.category }}</span>
+              <span>{{
+                filters.category === 'all'
+                  ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_CATEGORIES' | translate)
+                  : filters.category
+              }}</span>
               <svg
                 class="w-4 h-4 text-slate-400"
                 [class.rotate-180]="activeDropdown === 'cat'"
@@ -382,13 +488,17 @@
           </div>
 
           <div class="relative">
-            <label class="block text-sm font-semibold text-slate-700 mb-2">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.DIFFICULTY' | translate }}</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">{{
+              'DASHBOARD.OVERVIEW.FILTER_MODAL.DIFFICULTY' | translate
+            }}</label>
             <button
               (click)="activeDropdown = activeDropdown === 'diff' ? null : 'diff'"
               class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
             >
               <span>{{
-                filters.difficulty === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_LEVELS' | translate) : (filters.difficulty | titlecase)
+                filters.difficulty === 'all'
+                  ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ALL_LEVELS' | translate)
+                  : (filters.difficulty | titlecase)
               }}</span>
               <svg
                 class="w-4 h-4 text-slate-400"
@@ -429,7 +539,7 @@
         </div>
 
         <div class="relative">
-          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+          <label class="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
             <lucide-icon [img]="icons.Clock" class="w-4 h-4 text-slate-500"></lucide-icon>
             {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.DEADLINE' | translate }}
           </label>
@@ -438,7 +548,10 @@
             class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm"
           >
             <span>{{
-              filters.daysLeft === 'all' ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ANY_TIME' | translate) : ('DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: filters.daysLeft })
+              filters.daysLeft === 'all'
+                ? ('DASHBOARD.OVERVIEW.FILTER_MODAL.ANY_TIME' | translate)
+                : ('DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS'
+                  | translate : { days: filters.daysLeft })
             }}</span>
             <svg
               class="w-4 h-4 text-slate-400"
@@ -469,39 +582,43 @@
               (click)="filters.daysLeft = '3'; applyFilters(); activeDropdown = null"
               class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
             >
-              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 3 } }}
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate : { days: 3 } }}
             </button>
             <button
               (click)="filters.daysLeft = '7'; applyFilters(); activeDropdown = null"
               class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
             >
-              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 7 } }}
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate : { days: 7 } }}
             </button>
             <button
               (click)="filters.daysLeft = '30'; applyFilters(); activeDropdown = null"
               class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50"
             >
-              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate:{ days: 30 } }}
+              {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.WITHIN_DAYS' | translate : { days: 30 } }}
             </button>
           </div>
           }
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+          <label class="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
             <lucide-icon [img]="icons.Trophy" class="w-4 h-4 text-slate-500"></lucide-icon>
             {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.PRIZE_RANGE' | translate }}
           </label>
           <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
             <div class="flex items-center justify-between mb-4">
               <div class="text-center flex-1">
-                <div class="text-xl font-bold text-slate-800">${{ filters.prizeMin }}</div>
-                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MIN' | translate }}</div>
+                <div class="text-xl font-bold text-slate-800">£{{ filters.prizeMin }}</div>
+                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">
+                  {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MIN' | translate }}
+                </div>
               </div>
               <div class="w-10 h-0.5 bg-slate-300 mx-3 rounded-full"></div>
               <div class="text-center flex-1">
                 <div class="text-xl font-bold text-slate-800">${{ filters.prizeMax }}</div>
-                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">{{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MAX' | translate }}</div>
+                <div class="text-xs text-slate-500 font-semibold uppercase mt-1">
+                  {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.MAX' | translate }}
+                </div>
               </div>
             </div>
             <div class="space-y-3">
@@ -538,7 +655,7 @@
       </button>
       <button
         (click)="applyFilters(); toggleFilterPanel()"
-        class="flex-1 px-5 py-2.5 bg-gradient-to-r from-slate-800 to-slate-700 text-white rounded-lg font-semibold text-sm shadow-lg shadow-slate-900/20"
+        class="flex-1 px-5 py-2.5 bg-linear-to-r from-slate-800 to-slate-700 text-white rounded-lg font-semibold text-sm shadow-lg shadow-slate-900/20"
       >
         {{ 'DASHBOARD.OVERVIEW.FILTER_MODAL.APPLY_FILTERS' | translate }}
       </button>

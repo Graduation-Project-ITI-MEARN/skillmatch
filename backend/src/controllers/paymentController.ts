@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import User from "../models/User";
 import axios from "axios";
 import { catchError } from "../utils/catchAsync";
 import crypto from "crypto";
@@ -13,11 +14,16 @@ import { logActivity } from "../utils/activityLogger"; // <-- Import Logger
  */
 const createPaymentIntent = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
-      const { amount, currency, billing_data, payment_type } = req.body;
+      const { amount, currency, billing_data, payment_type, plan_id } =
+         req.body;
       const user = (req as any).user;
 
-       console.log('Payment payload:', { amount, payment_type, currency: currency || 'EGP' });
-      console.log('User:', user);
+      console.log("Payment payload:", {
+         amount,
+         payment_type,
+         currency: currency || "EGP",
+      });
+      console.log("User:", user);
 
       // VALIDATION: Ensure we know what this payment is for
       if (!payment_type || !["SUBSCRIPTION", "TOPUP"].includes(payment_type)) {
@@ -41,7 +47,9 @@ const createPaymentIntent = catchError(
       // Format: "USER_ID---PAYMENT_TYPE---TIMESTAMP"
       // Example: "654321...---SUBSCRIPTION---17000000"
       // This allows the webhook to split this string and know exactly what to update.
-      const customOrderId = `${user._id}---${payment_type}---${Date.now()}`;
+      const customOrderId = plan_id
+         ? `${user._id}---${payment_type}---${plan_id}---${Date.now()}`
+         : `${user._id}---${payment_type}---${Date.now()}`;
 
       const orderResponse = await axios.post(
          "https://accept.paymob.com/api/ecommerce/orders",
@@ -114,7 +122,6 @@ const handleWebhook = catchError(
    async (req: Request, res: Response, next: NextFunction) => {
       const { obj, type, hmac } = req.body;
 
-      // We only care about TRANSACTION updates, ignore others
       if (type !== "TRANSACTION") {
          res.status(200).send();
          return;
@@ -186,18 +193,55 @@ const handleWebhook = catchError(
 
       // 5. PROCESS TRANSACTION
       if (success === true) {
-         console.log(
-            `✅ [Paymob] Payment Succeeded. Order: ${order.id}, Tx: ${id}`
-         );
-         // NOTE: We cannot use logActivity here easily because the webhook comes from Paymob,
-         // so we don't have the req.user context.
-         // Ideally, you would look up the user via a stored Transaction model using order.id
-         // TODO: Call your service to update user wallet/subscription
-      } else {
-         console.log(`❌ [Paymob] Payment Failed/Pending. Order: ${order.id}`);
+         const customId = order?.merchant_order_id;
+         if (!customId) return res.status(200).send();
+
+         const [userId, paymentType, planId] = customId.split("---");
+
+         const user = await User.findById(userId);
+         if (!user) return res.status(200).send();
+
+         if (paymentType === "SUBSCRIPTION") {
+            user.subscriptionStatus = "active";
+
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + 30);
+            user.subscriptionExpiry = expiry;
+
+            // Store the plan type if provided
+            if (
+               planId &&
+               ["basic", "professional", "enterprise"].includes(planId)
+            ) {
+               user.subscriptionPlan = planId;
+            }
+
+            await user.save();
+
+            await logActivity(
+               userId,
+               "subscription_activated",
+               `Subscription activated (${
+                  planId || "unknown"
+               } plan) until ${expiry.toISOString()}`,
+               "success"
+            );
+         }
+
+         if (paymentType === "TOPUP") {
+            const amount = amount_cents / 100;
+            user.walletBalance += amount;
+            await user.save();
+
+            await logActivity(
+               userId,
+               "wallet_topup",
+               `Wallet topped up with ${amount} EGP`,
+               "success"
+            );
+         }
       }
 
-      // Acknowledge receipt to Paymob
       res.status(200).send();
    }
 );

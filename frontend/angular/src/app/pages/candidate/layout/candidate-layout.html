@@ -20,12 +20,15 @@
   </div>
   <!-- Stats Grid -->
   <ng-container stats>
-    @for(stat of stats; track stat.labelKey) {
+    @for(stat of stats; track stat.id) {
+    <!-- Render stat card only if its value is not '0', '#0', '0%', or '0.0%' -->
+    @if (stat.value !== '0' && stat.value !== '#0' && stat.value !== '0%' && stat.value !== '0.0%')
+    {
     <z-stat [labelKey]="stat.labelKey" [value]="stat.value" [trend]="stat.trend">
       <!-- Icon Binding -->
       <lucide-icon icon [img]="stat.icon" class="w-5 h-5"></lucide-icon>
     </z-stat>
-    }
+    } }
   </ng-container>
 
   <router-outlet></router-outlet>

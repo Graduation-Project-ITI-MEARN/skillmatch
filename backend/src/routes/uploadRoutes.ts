@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Route: /api/upload/file
 // 1. Check Auth -> 2. Process File -> 3. Return Response
+// Route: /api/upload/file
 router.post(
    "/file",
    // validate(videoLinkSchema),

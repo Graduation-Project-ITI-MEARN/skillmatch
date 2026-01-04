@@ -1,118 +1,170 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, LayoutGrid, Flame } from "lucide-react";
+import { ArrowLeft, Flame } from "lucide-react";
 import { Challenge } from "@/app/types/challenge";
+import CategoryBadge from "@/app/components/ui/CategoryBadge";
 
 export default function ChallengeDetailPage() {
-  const { id } = useParams();
-  
-  // Mock Data
-  const challenge: Challenge = {
-    id: String(id),
-    title: "Real-Time Chat System",
-    company: "TECHCORP INC",
-    location: "Cairo",
-    deadline: "2025-12-11",
-    category: "Coding",
-    type: "Jobs",
-    prize: 500,
-    salary: 1200,
-    difficulty: "Medium"
-  };
+   const { id } = useParams();
+   const router = useRouter();
+   const [challenge, setChallenge] = useState<Challenge | null>(null);
+   const [loading, setLoading] = useState(true);
 
-  const difficultyLevel = challenge.difficulty === "Easy" ? 1 : challenge.difficulty === "Medium" ? 3 : 5;
+   useEffect(() => {
+      const fetchChallenge = async () => {
+         try {
+            const res = await fetch(
+               `${process.env.NEXT_PUBLIC_API_URL}/challenges/${id}`
+            );
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            // تأكد لو البيانات جاية في حقل data
+            setChallenge(data.data || data);
+         } catch {
+            setChallenge(null);
+         } finally {
+            setLoading(false);
+         }
+      };
+      fetchChallenge();
+   }, [id]);
 
-  return (
-    <div className="bg-white min-h-screen text-black font-sans">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <Link href="/challenges" className="flex items-center gap-2 text-gray-400 font-bold mb-12 hover:text-black transition-colors">
-          <ArrowLeft size={20} /> Back to Challenges
-        </Link>
+   const handleStart = () => {
+      const isLoggedIn = !!localStorage.getItem("token");
+      if (!isLoggedIn) {
+         router.push("/login");
+      } else {
+         router.push(`/dashboard/challenges/${id}`);
+      }
+   };
 
-        <div className="flex flex-col lg:flex-row gap-20">
-          <div className="flex-1">
-            <h1 className="text-6xl font-serif mb-6 leading-tight">{challenge.title}</h1>
-            <p className="text-gray-400 text-lg mb-10 tracking-wide">
-              Posted by {challenge.company} - {challenge.location} · {challenge.deadline}
-            </p>
+   if (loading)
+      return (
+         <div className="text-center py-20 font-bold text-2xl">Loading...</div>
+      );
 
-            <button className="bg-black text-white px-12 py-4 rounded-full font-bold text-lg mb-16 shadow-xl hover:scale-105 transition-transform">
-              Start Challenge
-            </button>
+   if (!challenge)
+      return (
+         <div className="text-center py-20">
+            <h2 className="text-2xl font-bold mb-4">Challenge not found.</h2>
+            <Link
+               href="/challenges"
+               className="text-blue-500 font-bold underline">
+               Go back to all challenges
+            </Link>
+         </div>
+      );
 
-            <div className="flex gap-12 border-b border-gray-100 mb-12 text-lg font-bold text-gray-300">
-              <span className="text-black border-b-4 border-black pb-6">Overview</span>
-              <span className="hover:text-black cursor-pointer transition-colors">Requirements</span>
-              <span className="hover:text-black cursor-pointer transition-colors">Evaluation</span>
-            </div>
+   const difficultyLevel =
+      challenge.difficulty === "easy"
+         ? 1
+         : challenge.difficulty === "medium"
+         ? 3
+         : 5;
 
-            <div className="bg-gray rounded-[40px] p-12 mb-16 border border-gray-100/50">
-              <h2 className="text-3xl font-serif mb-6">Overview</h2>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Build a scalable, real-time chat application that can handle thousands of users simultaneously...
-              </p>
-            </div>
-            
-            <div className="space-y-12">
-               <DetailItem icon={<LayoutGrid />} title="Objective" content="Develop a real-time chat system with 100+ concurrent users." />
-               <DetailItem icon={<Check />} title="Skills Needed" content="Node.js, WebSocket, MongoDB, scalability." />
-            </div>
-          </div>
+   return (
+      <div className="bg-white min-h-screen text-black font-sans">
+         <div className="max-w-7xl mx-auto px-6 py-12">
+            <Link
+               href="/challenges"
+               className="flex items-center gap-2 text-gray-400 font-bold mb-12 hover:text-black transition-colors">
+               <ArrowLeft size={20} /> Back to Challenges
+            </Link>
 
-          {/* Sidebar */}
-          <aside className="w-full lg:w-[400px]">
-            <div className="bg-gray rounded-[50px] p-12 sticky top-10 border border-gray-100/50">
-              <div className="bg-light-red/20 text-red px-6 py-2 rounded-xl font-bold w-fit mb-10 border border-red/10">
-                {challenge.category}
-              </div>
+            <div className="flex flex-col lg:flex-row gap-20">
+               <div className="flex-1">
+                  <h1 className="text-5xl font-serif mb-6 leading-tight capitalize">
+                     {challenge.title}
+                  </h1>
+                  <p className="text-gray-400 text-lg mb-10 tracking-wide">
+                     Posted by {challenge.creatorId.name || "Company"} ·{" "}
+                     {new Date(challenge.deadline).toLocaleDateString()}
+                  </p>
 
-              <div className="space-y-8 mb-12">
-                <SidebarInfo label="Company" value={challenge.company} />
-                <SidebarInfo label="Location" value={challenge.location} />
-                <SidebarInfo label="Salary" value={`$${challenge.salary}/mo`} />
-                
-                <div>
-                  <span className="block text-xs font-bold uppercase tracking-widest mb-4">Difficulty Level</span>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map(i => (
-                      <Flame key={i} size={22} fill={i <= difficultyLevel ? "#e89d62" : "none"} 
-                        className={i <= difficultyLevel ? "text-orange" : "text-gray-300"} />
-                    ))}
+                  <button
+                     onClick={handleStart}
+                     className="bg-black text-white px-12 py-4 rounded-full font-bold text-lg mb-16 shadow-xl hover:scale-105 transition-transform">
+                     Start Challenge
+                  </button>
+
+                  <div className="bg-gray rounded-[40px] p-12 mb-16">
+                     <h2 className="text-3xl font-serif mb-6">Overview</h2>
+                     <p className="text-gray-600 leading-relaxed text-lg">
+                        {challenge.description}
+                     </p>
                   </div>
-                </div>
-              </div>
+               </div>
 
-              <button className="w-full bg-black text-white py-5 rounded-[24px] font-bold text-xl shadow-2xl hover:bg-dark-gray transition-all">
-                Start Challenge
-              </button>
+               <aside className="w-full lg:w-[400px]">
+                  <div className="bg-gray rounded-[50px] p-12 sticky top-10 border border-gray-200">
+                     <div className="mb-4">
+                        <CategoryBadge category={challenge.category} />
+                     </div>
+
+                     <div className="space-y-8 mb-12">
+                        <SidebarInfo label="Type" value={challenge.type} />
+                        <SidebarInfo
+                           label="Reward"
+                           value={
+                              challenge.type === "job"
+                                 ? `$${challenge.salary}/mo`
+                                 : `$${challenge.prizeAmount}`
+                           }
+                        />
+
+                        <div>
+                           <span className="block text-xs font-bold uppercase tracking-widest mb-4 text-gray-400">
+                              Difficulty Level
+                           </span>
+                           <div className="flex gap-1">
+                              {[1, 2, 3, 4, 5].map((i) => (
+                                 <Flame
+                                    key={i}
+                                    size={22}
+                                    fill={
+                                       i <= difficultyLevel ? "#e89d62" : "none"
+                                    }
+                                    className={
+                                       i <= difficultyLevel
+                                          ? "text-orange-500"
+                                          : "text-gray-300"
+                                    }
+                                 />
+                              ))}
+                           </div>
+                        </div>
+                     </div>
+
+                     <button
+                        onClick={handleStart}
+                        className="w-full bg-black text-white py-4 rounded-3xl font-bold text-xl hover:bg-zinc-800 transition-all">
+                        Start Challenge
+                     </button>
+                  </div>
+               </aside>
             </div>
-          </aside>
-        </div>
+         </div>
       </div>
-    </div>
-  );
+   );
 }
 
-function SidebarInfo({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <span className="block text-[11px] font-bold uppercase tracking-[0.2em] mb-1">{label}</span>
-      <span className="text-gray-600 font-medium text-lg">{value}</span>
-    </div>
-  );
-}
-
-function DetailItem({ icon, title, content }: any) {
-  return (
-    <div className="flex gap-6">
-      <div className="w-14 h-14 bg-light-orange rounded-2xl flex items-center justify-center text-black shrink-0">
-        {icon}
-      </div>
+function SidebarInfo({
+   label,
+   value,
+}: {
+   label: string;
+   value: string | number | undefined;
+}) {
+   return (
       <div>
-        <h4 className="text-2xl font-serif mb-2">{title}</h4>
-        <p className="text-gray-600 text-lg leading-relaxed">{content}</p>
+         <span className="block text-[11px] font-bold uppercase tracking-[0.2em] mb-1 text-gray-400">
+            {label}
+         </span>
+         <span className="text-gray-700 font-medium text-lg capitalize">
+            {value || "N/A"}
+         </span>
       </div>
-    </div>
-  );
+   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "../globals.css"; // تأكد أن المسار صحيح للوصول لملف الـ css
+import "../globals.css";
 import { Locale, routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getMessages } from "next-intl/server";
@@ -8,7 +8,7 @@ import { RTLProvider } from "../components/RTLContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-// انقل الـ Metadata هنا
+
 export const metadata: Metadata = {
    title: "SkillMatch - Challenge Yourself",
    description: "Platform for skill-based challenges and competitions",
@@ -32,15 +32,16 @@ export default async function RootLayout({
    const direction = isRTL ? "rtl" : "ltr";
 
    return (
-      <html lang={locale} dir={direction}>
+      <html lang={locale} dir={direction} suppressHydrationWarning>
          <body
+            suppressHydrationWarning
             className={`${
                direction === "rtl" ? "font-arabic-sans" : "font-sans"
             } min-h-screen flex flex-col`}>
             <NextIntlClientProvider locale={locale} messages={messages}>
                <RTLProvider isRTL={isRTL}>
                   <Header />
-                  <main className="flex-grow">{children}</main>
+                  <main className="grow">{children}</main>
                   <Footer />
                </RTLProvider>
             </NextIntlClientProvider>

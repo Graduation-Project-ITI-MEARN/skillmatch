@@ -2,18 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import APIError from "../utils/APIError";
 import User from "../models/User"; // Import your User model
 
-declare module "express-serve-static-core" {
-   interface Request {
-      user?: {
-         _id: string;
-         role: "user" | "admin";
-         type?: "candidate" | "company" | "challenger";
-         isVerified?: boolean; // Add isVerified to the user type for convenience
-         // Add other relevant user properties if needed
-      };
-   }
-}
-
 /**
  * @desc    Middleware to ensure the authenticated user is verified
  * @param   allowedTypes (optional) - An array of user types for which verification is required.

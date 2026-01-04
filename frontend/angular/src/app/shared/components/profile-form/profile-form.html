@@ -1,0 +1,407 @@
+<div class="min-h-screen">
+  <div class="max-w-5xl mx-auto flex justify-center items-center py-4">
+    <div class="md:w-1/2">
+      <!-- Right Side - Form -->
+      <div class="lg:col-span-3">
+        <!-- Success Message -->
+        <div
+          *ngIf="submitSuccess"
+          class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3"
+        >
+          <lucide-icon
+            [img]="icons.CheckCircle"
+            class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+          ></lucide-icon>
+          <div>
+            <h3 class="font-semibold text-green-900">
+              {{ 'PROFILE.UPDATE.SUCCESS_TITLE' | translate }}
+            </h3>
+            <p class="text-sm text-green-700">
+              {{ 'PROFILE.UPDATE.SUCCESS_MESSAGE' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="submitError"
+          class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+        >
+          <lucide-icon
+            [img]="icons.AlertCircle"
+            class="w-5 h-5 text-red-600 shrink-0 mt-0.5"
+          ></lucide-icon>
+          <div>
+            <h3 class="font-semibold text-red-900">{{ 'COMMON.ERROR_TITLE' | translate }}</h3>
+            <p class="text-sm text-red-700">{{ submitError }}</p>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <ui-card>
+          <form [formGroup]="profileForm" class="space-y-6">
+            <!-- Name -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'PROFILE.FORM.NAME' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="{{ 'PROFILE.FORM.NAME_PLACEHOLDER' | translate }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+              />
+              <p
+                *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+                class="mt-1 text-red-600 text-sm"
+              >
+                {{ 'PROFILE.FORM.NAME_ERROR' | translate }}
+              </p>
+            </div>
+
+            <!-- Email (Disabled) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'PROFILE.FORM.EMAIL' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                formControlName="email"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 outline-none cursor-not-allowed"
+                readonly
+              />
+            </div>
+
+            <!-- Bio -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'PROFILE.FORM.BIO' | translate }}
+              </label>
+              <textarea
+                formControlName="bio"
+                rows="4"
+                placeholder="{{ 'PROFILE.FORM.BIO_PLACEHOLDER' | translate }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all resize-none"
+              ></textarea>
+            </div>
+
+            <!-- City -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                {{ 'PROFILE.FORM.CITY' | translate }}
+              </label>
+              <input
+                type="text"
+                formControlName="city"
+                placeholder="{{ 'PROFILE.FORM.CITY_PLACEHOLDER' | translate }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+              />
+            </div>
+
+            <!-- Candidate Specific Fields -->
+            <ng-container *ngIf="userType === 'candidate'">
+              <!-- GitHub -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ 'PROFILE.FORM.GITHUB' | translate }}
+                </label>
+                <input
+                  type="url"
+                  formControlName="github"
+                  placeholder="{{ 'PROFILE.FORM.GITHUB_PLACEHOLDER' | translate }}"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+                />
+              </div>
+
+              <!-- LinkedIn -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ 'PROFILE.FORM.LINKEDIN' | translate }}
+                </label>
+                <input
+                  type="url"
+                  formControlName="linkedin"
+                  placeholder="{{ 'PROFILE.FORM.LINKEDIN_PLACEHOLDER' | translate }}"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+                />
+              </div>
+
+              <!-- Other Links (Dynamic FormArray) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                  {{ 'PROFILE.FORM.OTHER_LINKS' | translate }}
+                </label>
+                <div
+                  formArrayName="otherLinks"
+                  class="space-y-4 border border-gray-200 rounded-xl p-4 bg-gray-50"
+                >
+                  <div
+                    *ngIf="otherLinks.controls.length === 0"
+                    class="text-center text-gray-500 py-2"
+                  >
+                    {{ 'PROFILE.FORM.NO_OTHER_LINKS' | translate }}
+                  </div>
+                  <div
+                    *ngFor="let linkGroup of otherLinks.controls; let i = index"
+                    [formGroupName]="i"
+                    class="flex items-end gap-3"
+                  >
+                    <div class="flex-1">
+                      <label class="block text-xs font-medium text-gray-500 mb-1">{{
+                        'PROFILE.FORM.LINK_NAME' | translate
+                      }}</label>
+                      <input
+                        type="text"
+                        formControlName="name"
+                        placeholder="{{ 'PROFILE.FORM.LINK_NAME_PLACEHOLDER' | translate }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-black"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <label class="block text-xs font-medium text-gray-500 mb-1">{{
+                        'PROFILE.FORM.LINK_URL' | translate
+                      }}</label>
+                      <input
+                        type="url"
+                        formControlName="url"
+                        placeholder="{{ 'PROFILE.FORM.LINK_URL_PLACEHOLDER' | translate }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-black"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      (click)="removeOtherLink(i)"
+                      class="p-2 bg-red-50 hover:bg-red-100 rounded-lg text-red-600 transition-colors shrink-0"
+                    >
+                      <lucide-icon [img]="icons.Trash2" class="w-4 h-4"></lucide-icon>
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="addOtherLink()"
+                    class="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors mt-3"
+                  >
+                    <lucide-icon [img]="icons.Plus" class="w-4 h-4"></lucide-icon>
+                    <span>{{ 'PROFILE.FORM.ADD_OTHER_LINK' | translate }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Candidate Skills Dropdown with Search -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ 'PROFILE.FORM.SKILLS' | translate }}
+                </label>
+
+                <!-- Selected Skills Pills -->
+                <div
+                  *ngIf="skillsArray.controls.length > 0"
+                  class="flex flex-wrap gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <span
+                    *ngFor="let skill of skillsArray.value"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-sm font-medium"
+                  >
+                    {{ skill }}
+                    <button
+                      type="button"
+                      (click)="toggleSkill(skill)"
+                      class="hover:bg-gray-700 rounded-full p-0.5 transition-colors"
+                    >
+                      <lucide-icon [img]="icons.X" class="w-3.5 h-3.5"></lucide-icon>
+                    </button>
+                  </span>
+                </div>
+
+                <!-- Skills Dropdown -->
+                <div class="relative">
+                  <button
+                    type="button"
+                    class="custom-dropdown"
+                    (click)="openSkillsDropdown = !openSkillsDropdown"
+                  >
+                    <span class="text-gray-400">
+                      {{
+                        skillsArray.controls.length > 0
+                          ? skillsArray.controls.length +
+                            ' ' +
+                            ('PROFILE.FORM.SKILLS_SELECTED' | translate)
+                          : ('PROFILE.FORM.SELECT_SKILLS' | translate)
+                      }}
+                    </span>
+                    <lucide-icon
+                      [img]="icons.ChevronDown"
+                      class="w-5 h-5 text-gray-500 transition-transform"
+                      [class.rotate-180]="openSkillsDropdown"
+                    ></lucide-icon>
+                  </button>
+
+                  <!-- Dropdown Menu with Search -->
+                  <div
+                    *ngIf="openSkillsDropdown"
+                    class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl"
+                  >
+                    <!-- Search Input -->
+                    <div class="p-3 border-b border-gray-200">
+                      <div class="relative">
+                        <lucide-icon
+                          [img]="icons.Search"
+                          class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                        ></lucide-icon>
+                        <input
+                          type="text"
+                          [(ngModel)]="skillSearchQuery"
+                          [ngModelOptions]="{ standalone: true }"
+                          (ngModelChange)="onSkillSearch($event)"
+                          placeholder="{{ 'PROFILE.FORM.SEARCH_SKILLS' | translate }}"
+                          class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg outline-none focus:border-black text-sm"
+                        />
+                        <button
+                          *ngIf="skillSearchQuery"
+                          type="button"
+                          (click)="clearSkillSearch()"
+                          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          <lucide-icon [img]="icons.X" class="w-4 h-4"></lucide-icon>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Skills List -->
+                    <div class="max-h-64 overflow-y-auto">
+                      <div
+                        *ngIf="filteredSkills.length === 0"
+                        class="px-4 py-8 text-center text-gray-500 text-sm"
+                      >
+                        {{ 'PROFILE.FORM.NO_SKILLS_FOUND' | translate }}
+                      </div>
+                      <label
+                        *ngFor="let skill of filteredSkills"
+                        class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          [checked]="isSkillSelected(skill)"
+                          (change)="toggleSkill(skill)"
+                          class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-black focus:ring-offset-0"
+                        />
+                        <span class="text-sm text-gray-900">{{ skill }}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Categories of Interest Dropdown with Search -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ 'PROFILE.FORM.CATEGORIES_OF_INTEREST' | translate }}
+                </label>
+
+                <!-- Selected Categories Pills -->
+                <div
+                  *ngIf="categoriesOfInterestArray.controls.length > 0"
+                  class="flex flex-wrap gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <span
+                    *ngFor="let category of categoriesOfInterestArray.value"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-sm font-medium"
+                  >
+                    {{ category }}
+                    <button
+                      type="button"
+                      (click)="toggleCategory(category)"
+                      class="hover:bg-gray-700 rounded-full p-0.5 transition-colors"
+                    >
+                      <lucide-icon [img]="icons.X" class="w-3.5 h-3.5"></lucide-icon>
+                    </button>
+                  </span>
+                </div>
+
+                <!-- Categories Dropdown -->
+                <div class="relative">
+                  <button
+                    type="button"
+                    class="custom-dropdown"
+                    (click)="openCategoriesDropdown = !openCategoriesDropdown"
+                  >
+                    <span class="text-gray-400">
+                      {{
+                        categoriesOfInterestArray.controls.length > 0
+                          ? categoriesOfInterestArray.controls.length +
+                            ' ' +
+                            ('PROFILE.FORM.CATEGORIES_SELECTED' | translate)
+                          : ('PROFILE.FORM.SELECT_CATEGORIES' | translate)
+                      }}
+                    </span>
+                    <lucide-icon
+                      [img]="icons.ChevronDown"
+                      class="w-5 h-5 text-gray-500 transition-transform"
+                      [class.rotate-180]="openCategoriesDropdown"
+                    ></lucide-icon>
+                  </button>
+
+                  <!-- Dropdown Menu -->
+                  <div
+                    *ngIf="openCategoriesDropdown"
+                    class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl"
+                  >
+                    <div class="max-h-64 overflow-y-auto">
+                      <label
+                        *ngFor="let category of allCategories"
+                        class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          [checked]="isCategorySelected(category)"
+                          (change)="toggleCategory(category)"
+                          class="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-black focus:ring-offset-0"
+                        />
+                        <span class="text-sm text-gray-900">{{ category }}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Company Specific Fields -->
+            <ng-container *ngIf="userType === 'company'">
+              <!-- Website -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ 'PROFILE.FORM.WEBSITE' | translate }}
+                </label>
+                <input
+                  type="url"
+                  formControlName="website"
+                  placeholder="{{ 'PROFILE.FORM.WEBSITE_PLACEHOLDER' | translate }}"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-all"
+                />
+                <p
+                  *ngIf="profileForm.get('website')?.invalid && profileForm.get('website')?.touched"
+                  class="mt-1 text-red-600 text-sm"
+                >
+                  {{ 'PROFILE.FORM.WEBSITE_ERROR' | translate }}
+                </p>
+              </div>
+            </ng-container>
+
+            <!-- Action Button (Update Profile) -->
+            <div class="pt-4">
+              <button
+                type="submit"
+                (click)="onSubmit()"
+                [disabled]="isSubmitting || profileForm.invalid"
+                class="w-full px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-lg"
+              >
+                <span *ngIf="!isSubmitting">{{ 'PROFILE.FORM.UPDATE_PROFILE' | translate }}</span>
+                <span *ngIf="isSubmitting">{{ 'PROFILE.FORM.UPDATING' | translate }}</span>
+              </button>
+            </div>
+          </form>
+        </ui-card>
+      </div>
+    </div>
+  </div>
+</div>

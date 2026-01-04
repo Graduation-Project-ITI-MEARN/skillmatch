@@ -7,6 +7,7 @@ import crypto from "crypto";
 import { generateOtpEmail } from "../utils/emailTemplates";
 import { logActivity } from "../utils/activityLogger";
 import sendEmail from "../utils/sendEmail";
+import { sendNotification } from "../utils/notification";
 
 const jwt = require("jsonwebtoken");
 
@@ -111,6 +112,20 @@ const login = catchError(async (req: Request, res: Response) => {
     },
   });
 });
+
+/**
+ * @desc    Log out
+ * @route   GET /api/auth/logout
+ * @access  Private
+ */
+
+const logout = (req: Request, res: Response) => {
+   res.cookie("token", "none", {
+      expires: new Date(Date.now() + 10 * 1000), // 10 seconds
+      httpOnly: true,
+   });
+   res.status(200).json({ success: true, data: {} });
+};
 
 /**
  * @desc    Get current logged in user
