@@ -360,15 +360,22 @@ const updateVerificationStatus = catchError(
  * @access  Private
  */
 const getAISkills = catchError(async (req: Request, res: Response) => {
-   const user = req.user;
-   if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
+   // 1. نبحث عن الـ ID في الـ Query String أولاً (للبورتفوليو العام)
+   // وإذا لم يوجد نأخذه من req.user (لبروفايل المستخدم نفسه)
+   const userId = (req.query.userId as string) || (req.user as any)?._id;
+
+   if (!userId) {
+      return res.status(400).json({ 
+         success: false, 
+         message: "User ID is required to fetch skills" 
+      });
    }
 
    const results = await Submission.aggregate([
       {
          $match: {
-            candidateId: new mongoose.Types.ObjectId(user._id),
+            // نستخدم الـ userId الذي حصلنا عليه
+            candidateId: new mongoose.Types.ObjectId(userId),
             status: "accepted",
          },
       },

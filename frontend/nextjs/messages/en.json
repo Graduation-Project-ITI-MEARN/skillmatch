@@ -17,11 +17,13 @@
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "viewPortfolio": "View Portfolio",
+    "loading": "Loading data...",
+
     "score": "Score",
-    "loading": "Loading...",
-    "noParticipants": "No participants in this category yet",
-    "noParticipantsDesc": "Once someone joins or earns points in this category, they will appear here automatically.",
+    "viewPortfolio": "View Portfolio",
+    "noParticipants": "No participants found",
+    "noParticipantsDesc": "There are no users to display in this category yet.",
+
     "categories": {
       "all": "All"
     }
