@@ -6,14 +6,14 @@ import { motion } from "framer-motion";
 export default function AboutPage() {
    const t = useTranslations("About");
 
-   // Team Data mapping
-   const teamMembers = [
-      { key: "aya", img: "/images/team/aya.jpg" },
-      { key: "ahmedm", img: "/images/team/ahmedm.jpg" },
-      { key: "esraa", img: "/images/team/esraa.jpg" },
-      { key: "ahmedh", img: "/images/team/ahmedh.jpg" },
-      { key: "menna", img: "/images/team/menna.jpg" },
-   ];
+  // Team Data mapping
+  const teamMembers = [
+    { key: "aya", img: "/images/aya.png" },
+    { key: "ahmedm", img: "/images/mancy.png" },
+    { key: "esraa", img: "/images/esraa.png" },
+    { key: "ahmedh", img: "/images/henksh.png" },
+    { key: "menna", img: "/images/menna.png" },
+  ];
 
    return (
       <div className="min-h-screen  font-sans text-black pb-20">
@@ -72,6 +72,33 @@ export default function AboutPage() {
                   {t("Team.title")}
                </h2>
             </div>
+          </div>
+          
+          {/* Right Visual (Abstract Sphere) */}
+          <div className="flex-1 w-full flex justify-center lg:justify-end">
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.9 }}
+               whileInView={{ opacity: 1, scale: 1 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.8 }}
+               className="w-80 h-80 md:w-96 md:h-96 relative"
+             >
+                <motion.div
+                  animate={{ y: [0, -15, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-full h-full relative"
+                >
+                  <Image 
+                    src="/images/plate.svg" 
+                    alt="Mission Visual" 
+                    fill 
+                    className="object-contain"
+                  />
+                </motion.div>
+             </motion.div>
+          </div>
+        </div>
+      </section>
 
             {/* Dark Container */}
             <div className="w-full rounded-[40px] overflow-hidden relative min-h-[600px] flex flex-col items-center justify-center py-16 px-6">
@@ -99,15 +126,17 @@ export default function AboutPage() {
                               </div>
                            </div>
 
-                           {/* Member Text */}
-                           <h4 className="text-white text-xl md:text-2xl font-serif mb-1 leading-tight">
-                              {t(`Team.members.${member.key}.name`)}
-                           </h4>
-                           <p className="text-white/60 text-sm md:text-base font-light">
-                              {t(`Team.members.${member.key}.role`)}
-                           </p>
-                        </motion.div>
-                     ))}
+            {/* Team Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 justify-items-center">
+              {teamMembers.map((member) => (
+                <motion.div 
+                  key={member.key}
+                  whileHover={{ y: -10 }}
+                  className="flex flex-col items-center text-center group"
+                >
+                  {/* Member Image */}
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-gray-200 rounded-3xl mb-6 overflow-hidden border-4 border-white/10 shadow-lg relative">
+                       <Image src={member.img} fill alt="" className="object-cover" />
                   </div>
                </div>
             </div>

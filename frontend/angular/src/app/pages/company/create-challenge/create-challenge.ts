@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ZardCalendarComponent } from '@/shared/components/zard-ui/calendar/calendar.component';
 import {
   FormBuilder,
   FormGroup,
@@ -40,6 +41,7 @@ import {
     ReactiveFormsModule,
     TranslateModule,
     LucideAngularModule,
+    ZardCalendarComponent
     // Removed Zard UI imports like ZardSelectImports, ZardInputDirective, ZardCalendarComponent
   ],
   templateUrl: './create-challenge.html',
@@ -68,7 +70,7 @@ export class CreateChallenge implements OnInit {
   idealSolutionTypes: IdealSolutionType[] = ['link', 'file', 'text'];
 
   selectedTags: string[] = [];
-  minDate!: string; // For native HTML date input 'min' attribute
+  minDate!: Date; // For native HTML date input 'min' attribute
   skillSearchQuery = '';
 
   // Dropdown open/close flags
@@ -99,7 +101,7 @@ export class CreateChallenge implements OnInit {
 
     const today = new Date();
     today.setDate(today.getDate() + 1); // Minimum date is tomorrow
-    this.minDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD for native input
+    this.minDate = today // Format as YYYY-MM-DD for native input
 
     this.challengeForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
@@ -108,7 +110,7 @@ export class CreateChallenge implements OnInit {
       difficulty: [this.selectedDifficulty, Validators.required],
       type: ['job'], // Fixed to 'job'
       submissionType: [this.selectedSubmissionType, Validators.required],
-      deadline: ['', [Validators.required, this.dateMinValidator(this.minDate)]], // Custom validator for min date with native input
+      deadline: [null as Date | null, [Validators.required, this.dateMinValidator(this.minDate)]], // Custom validator for min date with native input
       salary: [null as number | null, [Validators.required, Validators.min(1000)]],
       additionalInfo: [''],
       tags: [[], Validators.required],
@@ -353,7 +355,7 @@ export class CreateChallenge implements OnInit {
   }
 
   // --- Native Date Input Validator ---
-  dateMinValidator(minDateString: string) {
+  dateMinValidator(minDateString: Date) {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value) {
         return null; // Don't validate if no date is selected, handled by Validators.required
