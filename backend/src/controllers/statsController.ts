@@ -181,40 +181,42 @@ const getCandidateStats = catchError(async (req: Request, res: Response) => {
    });
 });
 
-// ==================== Challenger Stats ====================
+// ==================== Challenger Stats (Updated) ====================
 const getChallengerStats = async (req: any, res: Response) => {
    const challengerId = req.user._id;
 
-   const myChallenges = await Challenge.find({
-      creatorId: challengerId,
-   }).select("_id prizeAmount");
-   const myChallengeIds = myChallenges.map((c) => c._id);
-
-   // Calculate real total prizes allocated
-   const totalPrizes = myChallenges.reduce(
-      (acc, curr) => acc + (curr.prizeAmount || 0),
-      0
-   );
-
-   const [totalSubmissions, avgScore] = await Promise.all([
-      Submission.countDocuments({ challengeId: { $in: myChallengeIds } }) || 0,
-      Submission.aggregate([
-         { $match: { challengeId: { $in: myChallengeIds } } },
-         { $group: { _id: null, avgScore: { $avg: "$aiScore" } } },
-      ]).then((r) => r[0]?.avgScore || 0),
+   // 1. حساب عدد التحديات ومتوسط الجوائز
+   const challengeStats = await Challenge.aggregate([
+      { $match: { creatorId: new mongoose.Types.ObjectId(challengerId) } },
+      {
+         $group: {
+            _id: null,
+            totalChallenges: { $sum: 1 },
+            averagePrizeAmount: { $avg: { $ifNull: ["$prizeAmount", "$salary"] } }
+         }
+      }
    ]);
 
-   const activeCount = await Challenge.countDocuments({
-      creatorId: challengerId,
-      status: "published",
-   });
+   // 2. حساب عدد التسليمات ومتوسط سكور الـ AI
+   const submissionStats = await Submission.aggregate([
+      { $match: { challengeCreator: new mongoose.Types.ObjectId(challengerId) } },
+      {
+         $group: {
+            _id: null,
+            totalSubmissions: { $sum: 1 },
+            averageAiScore: { $avg: "$aiScore" }
+         }
+      }
+   ]);
 
    res.status(200).json({
-      totalChallenges: myChallenges.length,
-      activeCount,
-      totalSubmissions,
-      avgScore: Math.round(avgScore),
-      totalPrizes,
+      success: true,
+      data: {
+         totalChallenges: challengeStats[0]?.totalChallenges || 0,
+         totalSubmissions: submissionStats[0]?.totalSubmissions || 0,
+         averageAiScore: Math.round(submissionStats[0]?.averageAiScore || 0),
+         averagePrizeAmount: Math.round(challengeStats[0]?.averagePrizeAmount || 0)
+      }
    });
 };
 
