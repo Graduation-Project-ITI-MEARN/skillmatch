@@ -65,13 +65,18 @@ interface ChallengeFrontendData {
   templateUrl: './overview.html',
   styleUrls: ['./overview.css'],
 })
-export class CompanyOverviewComponent implements OnInit {
+export class Overview implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
   icons = { Eye, Users, TrendingUp, Search, Filter, X, Plus, Edit, Trash2 };
 
-  challengerStats = { totalChallenges: 0, totalSubmissions: 0, averageAiScore: 0, averagePrizeAmount: 0 };
+  challengerStats = {
+    totalChallenges: 0,
+    totalSubmissions: 0,
+    averageAiScore: 0,
+    averagePrizeAmount: 0,
+  };
   isLoadingChallenges = true;
   isLoadingHiringInsights = true;
   allChallenges: ChallengeFrontendData[] = [];
@@ -104,10 +109,14 @@ export class CompanyOverviewComponent implements OnInit {
   };
 
   async ngOnInit() {
-    await Promise.all([this.loadChallengerStats(), this.loadChallenges(), this.loadHiringInsights()]);
+    await Promise.all([
+      this.loadChallengerStats(),
+      this.loadChallenges(),
+      this.loadHiringInsights(),
+    ]);
   }
 
- async loadChallengerStats() {
+  async loadChallengerStats() {
     try {
       const response: any = await firstValueFrom(
         this.http.get(`${environment.apiUrl}/stats/challenger`)
@@ -125,7 +134,7 @@ export class CompanyOverviewComponent implements OnInit {
       const res: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/challenges/mine`));
       const data: ChallengeBackendData[] = res.data || res;
 
-      this.allChallenges = data.map(c => ({
+      this.allChallenges = data.map((c) => ({
         _id: c._id,
         title: c.title,
         category: this.translateCategory(c.category),
@@ -146,7 +155,9 @@ export class CompanyOverviewComponent implements OnInit {
 
   private async loadHiringInsights() {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/ai/hiring-insights`));
+      const res: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/ai/hiring-insights`)
+      );
       this.hiringInsights = res.data ?? null;
     } finally {
       this.isLoadingHiringInsights = false;
@@ -154,7 +165,11 @@ export class CompanyOverviewComponent implements OnInit {
   }
 
   private translateCategory(cat: string) {
-    const map: any = { development: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING', design: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DESIGN', marketing: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.MARKETING' };
+    const map: any = {
+      development: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.CODING',
+      design: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.DESIGN',
+      marketing: 'DASHBOARD.CO-OVERVIEW.CATEGORIES.MARKETING',
+    };
     return map[cat?.toLowerCase()] || cat;
   }
 
@@ -186,13 +201,25 @@ export class CompanyOverviewComponent implements OnInit {
 
   onSearch() {
     const q = this.searchQuery.toLowerCase();
-    this.challenges = this.allChallenges.filter(c => c.title.toLowerCase().includes(q));
+    this.challenges = this.allChallenges.filter((c) => c.title.toLowerCase().includes(q));
   }
 
-  toggleJobType(value: string) { /* logic */ }
-  toggleStatus(value: string) { /* logic */ }
-  toggleBudget(value: string) { /* logic */ }
-  clearAllFilters() { /* logic */ }
-  applyFiltersAndClose() { /* logic */ }
-  viewApplications(id: string) { this.router.navigate([`/dashboard/company/challenge/${id}/applications`]); }
+  toggleJobType(value: string) {
+    /* logic */
+  }
+  toggleStatus(value: string) {
+    /* logic */
+  }
+  toggleBudget(value: string) {
+    /* logic */
+  }
+  clearAllFilters() {
+    /* logic */
+  }
+  applyFiltersAndClose() {
+    /* logic */
+  }
+  viewApplications(id: string) {
+    this.router.navigate([`/dashboard/company/challenge/${id}/applications`]);
+  }
 }

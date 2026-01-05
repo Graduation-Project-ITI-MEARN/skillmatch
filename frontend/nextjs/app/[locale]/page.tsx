@@ -29,7 +29,7 @@ export default function LandingPage() {
    };
 
    return (
-      <main className="min-h-screen flex flex-col bg-white overflow-x-hidden">
+      <main className="min-h-screen flex flex-col overflow-x-hidden">
          {/* ================= HERO SECTION ================= */}
          <section className="pt-24 pb-16 px-6">
             <div className="max-w-7xl mx-auto">
@@ -127,7 +127,7 @@ export default function LandingPage() {
                               {/* Glow Background (Absolute) */}
                               <div className="absolute inset-0 z-0">
                                  <Image
-                                    src="/images/landing/hero-glow.png"
+                                    src="/images/gradient.svg"
                                     alt=""
                                     className="w-full h-full object-cover scale-110 opacity-90"
                                     onError={(e) =>
@@ -140,11 +140,7 @@ export default function LandingPage() {
                               {/* Geometric Shape (Relative) */}
                               <div className="relative z-10 w-3/4 h-3/4 flex items-center justify-center">
                                  <Image
-                                    src={
-                                       isHiring
-                                          ? "/images/landing/hero-globe.png"
-                                          : "/images/landing/hero-candidate.png"
-                                    }
+                                    src={"/images/geometric-circles.svg"}
                                     alt="Visual"
                                     className="w-full h-full object-contain"
                                     onError={(e) =>
@@ -167,13 +163,9 @@ export default function LandingPage() {
          <WhySkillMatch />
 
          {/* ================= FOOTER CTA ================= */}
-         <section className="relative py-24 overflow-hidden text-center">
-            <div className="absolute inset-0 bg-linear-to-br from-[#a87866] via-[#946b78] to-[#6a6b85] z-0">
-               <div
-                  className="absolute inset-0 opacity-20 mix-blend-overlay"
-                  style={{
-                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                  }}></div>
+         <section className="relative py-32 overflow-hidden text-center">
+            <div className="absolute inset-0 bg-[url('/images/background-2.svg')] bg-cover z-0">
+               <div className="absolute inset-0 opacity-20 mix-blend-overlay bg-[url('/images/background-2.svg')] bg-cover"></div>
             </div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-6">
