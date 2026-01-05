@@ -4,7 +4,11 @@
 import React, { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 // Make sure to import the updated ShapeVariant from AngledSplitCard
-import { AngledCard, AngledContainer, ShapeVariant } from "./AngledSplitCard";
+import {
+   AngledCard,
+   AngledContainer,
+   ShapeVariant,
+} from "./AngledCardForButtons";
 import { cn } from "@/app/lib/utils";
 import { useRTL } from "../RTLContext";
 
@@ -88,6 +92,12 @@ const SplitButton: React.FC<SplitButtonProps> = ({
                                  color: textColor,
                               }}>
                               <ArrowLeft size={20} strokeWidth={2.5} />
+                              {/* <Image
+                                 src={"/images/arrow-left.svg"}
+                                 alt="Arrow Left"
+                                 width={20}
+                                 height={20}
+                              /> */}
                            </div>
                         </AngledCard>
                         <AngledCard
@@ -135,6 +145,12 @@ const SplitButton: React.FC<SplitButtonProps> = ({
                                  color: textColor,
                               }}>
                               <ArrowRight size={20} strokeWidth={2.5} />
+                              {/* <Image
+                                 src={"/images/arrow-.svg"}
+                                 alt="Arrow Left"
+                                 width={20}
+                                 height={20}
+                              /> */}
                            </div>
                         </AngledCard>
                      </>

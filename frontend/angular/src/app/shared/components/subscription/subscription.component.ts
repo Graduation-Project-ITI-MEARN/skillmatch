@@ -21,6 +21,7 @@ interface SubscriptionPlan {
   selector: 'app-subscription',
   standalone: true,
   imports: [CommonModule, TranslateModule],
+  templateUrl: './subscription.component.html',
 })
 export class SubscriptionComponent implements OnInit {
   private dialog = inject(MatDialog);
@@ -124,7 +125,7 @@ export class SubscriptionComponent implements OnInit {
 
     try {
       const response = await this.paymentService
-        .initiatePayment(plan.price, 'SUBSCRIPTION', plan.id) // Pass plan.id
+        .initiatePayment(plan.price, 'SUBSCRIPTION') // Pass plan.id
         .toPromise();
 
       if (response?.data?.iframeUrl) {

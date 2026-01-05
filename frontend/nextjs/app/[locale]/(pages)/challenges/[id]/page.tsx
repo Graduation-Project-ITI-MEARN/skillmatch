@@ -1,10 +1,10 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { ArrowLeft, Flame } from "lucide-react";
 import { Challenge } from "@/app/types/challenge";
 import CategoryBadge from "@/app/components/ui/CategoryBadge";
+import { Link } from "@/i18n/routing";
 
 export default function ChallengeDetailPage() {
    const { id } = useParams();
@@ -65,8 +65,8 @@ export default function ChallengeDetailPage() {
          : 5;
 
    return (
-      <div className="bg-white min-h-screen text-black font-sans">
-         <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="min-h-screen text-black font-sans ">
+         <div className="max-w-7xl mx-auto px-10 py-12">
             <Link
                href="/challenges"
                className="flex items-center gap-2 text-gray-400 font-bold mb-12 hover:text-black transition-colors">
@@ -80,6 +80,7 @@ export default function ChallengeDetailPage() {
                   </h1>
                   <p className="text-gray-400 text-lg mb-10 tracking-wide">
                      Posted by {challenge.creatorId.name || "Company"} ·{" "}
+                     Deadline:{" "}
                      {new Date(challenge.deadline).toLocaleDateString()}
                   </p>
 
@@ -109,8 +110,8 @@ export default function ChallengeDetailPage() {
                            label="Reward"
                            value={
                               challenge.type === "job"
-                                 ? `$${challenge.salary}/mo`
-                                 : `$${challenge.prizeAmount}`
+                                 ? `£${challenge.salary}/mo`
+                                 : `£${challenge.prizeAmount}`
                            }
                         />
 

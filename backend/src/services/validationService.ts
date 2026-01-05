@@ -19,11 +19,17 @@ interface ValidationResult {
 export const validateGitHubLink = async (
    githubUrl: string
 ): Promise<{ isValid: boolean; message: string; repoData?: any }> => {
+   console.log("--- START validateGitHubLink ---");
+   console.log("GitHub URL received:", githubUrl);
+
    try {
-      // Extract username and repo name from URL
       const match = githubUrl.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+      console.log("URL Match result:", match); // CRITICAL: Check this
 
       if (!match) {
+         console.log(
+            "Validation Failed: Invalid GitHub URL format (regex mismatch)"
+         );
          return {
             isValid: false,
             message: "Invalid GitHub URL format",
@@ -31,48 +37,47 @@ export const validateGitHubLink = async (
       }
 
       const [, username, repoName] = match;
-
-      // Clean repo name (remove .git, trailing slashes, etc.)
       const cleanRepoName = repoName.replace(/\.git$/, "").replace(/\/$/, "");
 
-      // Check if repo exists using GitHub API (no auth needed for public repos)
-      const response = await axios.get(
-         `https://api.github.com/repos/${username}/${cleanRepoName}`,
-         {
-            headers: {
-               "User-Agent": "SkillMatch-AI",
-            },
-            timeout: 5000,
-         }
+      console.log(
+         `Extracted Username: "${username}", Clean Repo Name: "${cleanRepoName}"`
       );
+
+      const apiUrl = `https://api.github.com/repos/${username}/${cleanRepoName}`;
+      console.log("Calling GitHub API URL:", apiUrl); // CRITICAL: Ensure this URL is correct
+
+      const response = await axios.get(apiUrl, {
+         headers: {
+            "User-Agent": "SkillMatch-AI",
+         },
+         timeout: 5000,
+      });
+
+      console.log("GitHub API Response Status:", response.status);
+      // console.log("GitHub API Response Data:", response.data); // Optional: log full data if needed
 
       const repo = response.data;
 
-      // Check for suspicious indicators
+      // ... (your existing warning checks) ...
       const warnings: string[] = [];
-
       // Check 1: Empty or very small repo
       if (repo.size === 0) {
          warnings.push("Repository appears to be empty");
       }
-
       // Check 2: No recent activity
       const lastUpdated = new Date(repo.updated_at);
       const daysSinceUpdate = Math.floor(
          (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24)
       );
-
       if (daysSinceUpdate > 365) {
          warnings.push("Repository hasn't been updated in over a year");
       }
-
       // Check 3: Fork without modifications
       if (repo.fork) {
          warnings.push(
             "This is a forked repository. Ensure you made significant modifications."
          );
       }
-
       // Check 4: Default or template repo
       const suspiciousNames = [
          "test",
@@ -91,7 +96,9 @@ export const validateGitHubLink = async (
             "Repository name suggests this might be a demo/template"
          );
       }
+      console.log("Repository warnings:", warnings);
 
+      console.log("Validation Succeeded: Repository is valid.");
       return {
          isValid: true,
          message:
@@ -106,23 +113,50 @@ export const validateGitHubLink = async (
             createdAt: repo.created_at,
             updatedAt: repo.updated_at,
             hasIssues: repo.has_issues,
-            isPrivate: repo.private,
+            isPrivate: repo.private, // This will be false for public repos
             warnings,
          },
       };
    } catch (error: any) {
+      console.error("Error caught in validateGitHubLink:", error.message);
+      if (error.response) {
+         console.error("Error Response Status:", error.response.status);
+         console.error("Error Response Data:", error.response.data); // CRITICAL: Look here for GitHub's error message
+      } else if (error.request) {
+         console.error("Error Request (no response received):", error.request);
+      } else {
+         console.error(
+            "Error Message (Axios config/other error):",
+            error.message
+         );
+      }
+
       if (error.response?.status === 404) {
+         console.log("Validation Failed: GitHub API returned 404.");
          return {
             isValid: false,
             message: "GitHub repository not found. Please check the URL.",
          };
       }
+      if (error.code === "ECONNABORTED") {
+         // Axios timeout error
+         console.log("Validation Failed: GitHub API request timed out.");
+         return {
+            isValid: false,
+            message: "GitHub API request timed out. Please try again later.",
+         };
+      }
 
+      console.log(
+         "Validation Failed: General error during GitHub link validation."
+      );
       return {
          isValid: false,
          message:
             "Could not validate GitHub link. Please ensure it's accessible.",
       };
+   } finally {
+      console.log("--- END validateGitHubLink ---");
    }
 };
 

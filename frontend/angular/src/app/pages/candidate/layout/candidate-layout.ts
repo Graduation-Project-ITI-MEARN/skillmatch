@@ -36,7 +36,6 @@ import { NotificationsDropdownComponent } from '@shared/components/notifications
     TranslateModule,
     RouterModule,
     NotificationsDropdownComponent,
-    DecimalPipe, // Add DecimalPipe to imports
   ],
   templateUrl: './candidate-layout.html',
   providers: [DecimalPipe], // Provide DecimalPipe for local component usage

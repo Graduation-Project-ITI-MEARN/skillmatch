@@ -84,18 +84,15 @@ const UserSchema: Schema = new Schema(
          enum: ["free", "active", "expired"],
          default: "free",
       },
-
       subscriptionPlan: {
          type: String,
          enum: ["basic", "professional", "enterprise"],
-         default: null,
+         default: null, // Remove the wrapping object
       },
-
       subscriptionExpiry: {
          type: Date,
          default: null,
       },
-
       walletBalance: {
          type: Number,
          default: 0,

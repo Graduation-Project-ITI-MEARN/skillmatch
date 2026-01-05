@@ -52,12 +52,18 @@ const paymobWebhookSchema = z.object({
       is_refunded: z.boolean(),
       is_standalone_payment: z.boolean(),
       is_voided: z.boolean(),
-      order: z.object({
-         id: z.number(),
-      }),
+
+      // ✅ FIX IS HERE: Add merchant_order_id
+      order: z
+         .object({
+            id: z.number(),
+            merchant_order_id: z.string().optional(),
+         })
+         .passthrough(), // Optional: allows other extra Paymob fields without stripping them
+
       owner: z.number(),
       pending: z.boolean(),
-      source_data_pan: z.string().optional(),
+      source_data_pan: z.string().optional().nullable(), // .nullable() handles nulls safely
       source_data_sub_type: z.string(),
       source_data_type: z.string(),
       success: z.boolean(),

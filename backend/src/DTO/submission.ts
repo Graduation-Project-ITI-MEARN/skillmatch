@@ -9,7 +9,6 @@ const createSubmissionDTO = z
 
       videoExplanationUrl: z
          .string()
-         .min(1, "Video explanation is required")
          .refine(
             (val) => {
                try {
@@ -20,7 +19,8 @@ const createSubmissionDTO = z
                }
             },
             { message: "Video URL must be a valid link" }
-         ),
+         )
+         .optional(),
 
       submissionType: SubmissionTypeEnum,
       linkUrl: z.string().optional(),

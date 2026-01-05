@@ -1,3 +1,4 @@
+// app/[locale]/layout.tsx
 import type { Metadata } from "next";
 import "../globals.css";
 import { Locale, routing } from "@/i18n/routing";
@@ -7,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { RTLProvider } from "../components/RTLContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-
+import { BodyClassManager } from "../components/BodyClassManager"; // Import the new component
 
 export const metadata: Metadata = {
    title: "SkillMatch - Challenge Yourself",
@@ -40,6 +41,7 @@ export default async function RootLayout({
             } min-h-screen flex flex-col`}>
             <NextIntlClientProvider locale={locale} messages={messages}>
                <RTLProvider isRTL={isRTL}>
+                  <BodyClassManager /> {/* Add the BodyClassManager here */}
                   <Header />
                   <main className="grow">{children}</main>
                   <Footer />

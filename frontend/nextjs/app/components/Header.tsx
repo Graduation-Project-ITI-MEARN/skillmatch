@@ -41,8 +41,9 @@ export default function Header() {
                      width={40}
                      height={40}
                      className="w-10 h-10"
+                     loading="eager"
                   />
-                  <span className="text-xl font-bold text-gray-900">
+                  <span className="text-2xl font-serif font-bold text-gray-900">
                      SkillMatch
                   </span>
                </Link>

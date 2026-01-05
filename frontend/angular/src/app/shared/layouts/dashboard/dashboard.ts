@@ -15,7 +15,7 @@ export interface DashboardTab {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, LucideAngularModule],
   template: `
-    <div class="bg-stone-50 text-gray-900 font-sans pb-20">
+    <div class="bg-bg-soft text-gray-900 font-sans pb-20">
       <div class="max-w-450 mx-auto px-6 pt-8">
         <!-- 1. HEADER (Persistent) -->
         <div class="flex items-start justify-between mb-12">

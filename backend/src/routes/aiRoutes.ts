@@ -10,6 +10,7 @@ import {
    getRecommendations,
    getSkillAnalysis,
    getHiringInsights,
+   getPublicSkillAnalysis,
 } from "../controllers/aiController";
 import auth from "../middlewares/authMiddleware";
 import { restrictTo } from "../middlewares/restrictTo";
@@ -29,7 +30,18 @@ aiRouter.get(
 );
 
 // Get skill gap analysis
-aiRouter.get("/skills-analysis", restrictTo(["candidate"]), getSkillAnalysis);
+aiRouter.get(
+   "/skills-analysis",
+   auth,
+   restrictTo(["candidate"]),
+   getSkillAnalysis
+);
+
+// Get public skill gap analysis
+aiRouter.get(
+   "/public-skills-analysis/:userId", // Define a public endpoint with a userId parameter
+   getPublicSkillAnalysis // Use a new controller function for public access
+);
 
 // AI Career Coach chat
 aiRouter.post("/coach/chat", auth, aiCoachChat);

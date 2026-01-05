@@ -1,6 +1,6 @@
 // src/controllers/aiController.ts
-import { Request, Response } from "express";
-import Challenge from "../models/Challenge";
+import { NextFunction, Request, Response } from "express";
+import Challenge, { IChallenge } from "../models/Challenge";
 import Submission from "../models/Submission";
 import User from "../models/User";
 import { catchError } from "../utils/catchAsync";
@@ -16,6 +16,7 @@ import {
    PRICING_TIERS,
    PricingTier,
 } from "../types/AIModels";
+import { getSkills, SKILLS } from "./metadataController";
 
 // ==========================================
 // NEW: Multi-Model Evaluation Routes
@@ -625,14 +626,14 @@ export const getRecommendations = catchError(
  * @access  Private (Candidate)
  */
 export const getSkillAnalysis = catchError(
-   async (req: Request, res: Response) => {
-      const userId = req.user?._id;
+   async (req: Request, res: Response, next: NextFunction) => {
+      const userId = req.user?._id; // This comes from authentication middleware
 
       const submissions = await Submission.find({
          candidateId: userId,
          status: { $in: ["accepted", "pending"] },
          aiEvaluation: { $exists: true },
-      }).populate("challengeId", "tags");
+      }).populate<{ challengeId: IChallenge }>("challengeId", "tags title"); // Ensure 'title' is populated here and type challengeId
 
       if (!submissions || submissions.length === 0) {
          return res.status(200).json({
@@ -643,11 +644,134 @@ export const getSkillAnalysis = catchError(
                skills: [],
                totalSubmissions: 0,
                averageScore: 0,
+               strongestSkills: [],
+               skillsToImprove: [],
             },
          });
       }
 
-      // Aggregate scores by skill
+      const skillStats: Record<
+         string,
+         {
+            totalScore: number;
+            count: number;
+            submissions: Array<{ score: number; challengeTitle: string }>;
+         }
+      > = {};
+
+      submissions.forEach((sub) => {
+         // Removed 'any' type
+         const challenge = sub.challengeId as IChallenge; // Cast for type safety after population
+
+         // 1. Get tags from the challenge, default to empty array
+         const rawTags = challenge?.tags || [];
+
+         // 2. Filter tags to ensure they are present in the approved SKILLS list
+         const approvedTags = rawTags.filter((tag) => SKILLS.includes(tag));
+
+         const score = sub.aiEvaluation?.technicalScore || sub.aiScore || 0;
+         const challengeTitle = challenge?.title || "Unknown Challenge";
+
+         approvedTags.forEach((tag: string) => {
+            // Iterate over approvedTags
+            if (!skillStats[tag]) {
+               skillStats[tag] = { totalScore: 0, count: 0, submissions: [] };
+            }
+            skillStats[tag].totalScore += score;
+            skillStats[tag].count += 1;
+            skillStats[tag].submissions.push({ score, challengeTitle });
+         });
+      });
+
+      const skills = Object.keys(skillStats).map((skill) => {
+         const avgScore = Math.round(
+            skillStats[skill].totalScore / skillStats[skill].count
+         );
+
+         let level: "beginner" | "intermediate" | "advanced" | "expert";
+         if (avgScore >= 90) level = "expert";
+         else if (avgScore >= 75) level = "advanced";
+         else if (avgScore >= 60) level = "intermediate";
+         else level = "beginner";
+
+         return {
+            skill,
+            averageScore: avgScore,
+            level,
+            submissionsCount: skillStats[skill].count,
+            recentScores: skillStats[skill].submissions.slice(-3),
+            trend: calculateTrend(skillStats[skill].submissions),
+         };
+      });
+
+      skills.sort((a, b) => b.averageScore - a.averageScore);
+
+      const totalScore = skills.reduce((sum, s) => sum + s.averageScore, 0);
+      const averageScore =
+         skills.length > 0 ? Math.round(totalScore / skills.length) : 0;
+
+      res.status(200).json({
+         success: true,
+         data: {
+            skills,
+            totalSubmissions: submissions.length,
+            averageScore,
+            strongestSkills: skills.slice(0, 3),
+            skillsToImprove: skills.filter((s) => s.averageScore < 70),
+         },
+      });
+   }
+);
+
+// --- New Public Controller (getPublicSkillAnalysis) ---
+/**
+ * @desc    Public Skill Analysis with AI Scores per Skill for a given user ID
+ * @route   GET /api/ai/public-skills-analysis/:userId
+ * @access  Public
+ */
+export const getPublicSkillAnalysis = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const { userId } = req.params; // Get userId from URL parameters
+
+      // --- Validation for public access ---
+      const user = await User.findById(userId);
+      if (!user) {
+         return res.status(404).json({
+            success: false,
+            message: "User not found.",
+         });
+      }
+      // Optional: Restrict to only candidate profiles if other user types shouldn't have skill analysis public
+      if (user.type !== "candidate") {
+         return res.status(403).json({
+            // Or 404 to obscure the reason
+            success: false,
+            message: "Skill analysis is only available for candidate profiles.",
+         });
+      }
+      // --- End Validation ---
+
+      const submissions = await Submission.find({
+         candidateId: userId,
+         status: { $in: ["accepted", "pending"] },
+         aiEvaluation: { $exists: true },
+      }).populate("challengeId", "tags title"); // Ensure 'title' is populated for challengeTitle
+
+      if (!submissions || submissions.length === 0) {
+         return res.status(200).json({
+            success: true,
+            message:
+               "No evaluated submissions yet. Complete challenges to build your skill profile!",
+            data: {
+               skills: [],
+               totalSubmissions: 0,
+               averageScore: 0,
+               strongestSkills: [],
+               skillsToImprove: [],
+            },
+         });
+      }
+
       const skillStats: Record<
          string,
          {
@@ -672,7 +796,6 @@ export const getSkillAnalysis = catchError(
          });
       });
 
-      // Build skill profile
       const skills = Object.keys(skillStats).map((skill) => {
          const avgScore = Math.round(
             skillStats[skill].totalScore / skillStats[skill].count
@@ -694,11 +817,11 @@ export const getSkillAnalysis = catchError(
          };
       });
 
-      // Sort by score
       skills.sort((a, b) => b.averageScore - a.averageScore);
 
       const totalScore = skills.reduce((sum, s) => sum + s.averageScore, 0);
-      const averageScore = Math.round(totalScore / skills.length);
+      const averageScore =
+         skills.length > 0 ? Math.round(totalScore / skills.length) : 0;
 
       res.status(200).json({
          success: true,
