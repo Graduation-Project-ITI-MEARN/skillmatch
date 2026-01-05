@@ -22,17 +22,21 @@ app.use(express.json()); // Parse JSON bodies
 app.use(helmet());
 app.use(cookieParser());
 
-const FRONTEND_URL = process.env.FRONTEND_URL || [
+const DEFAULT_FRONTEND_URLS = [
    "http://localhost:4200",
    "http://localhost:3000",
 ];
 
+const FRONTEND_URL = process.env.FRONTEND_URL
+   ? process.env.FRONTEND_URL.split(",").map((url) => url.trim())
+   : DEFAULT_FRONTEND_URLS;
+
 app.use(
    cors({
-      origin: FRONTEND_URL,
+      origin: FRONTEND_URL, // This can now correctly be an array or a single string
       credentials: true,
    })
-); // Enable CORS for frontend origin
+);
 
 // Routes
 bootstrap(app);
