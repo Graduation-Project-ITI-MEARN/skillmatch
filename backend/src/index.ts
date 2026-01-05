@@ -4,7 +4,7 @@ dotenv.config();
 import "./config/db";
 import "./config/cloudinary";
 import "./socket";
-
+import { initSocket } from "./socket";
 import APIError from "./utils/APIError";
 import { Server } from "socket.io";
 import { bootstrap } from "./routes/bootstrap";
@@ -14,7 +14,6 @@ import errorHandler from "./middlewares/errorHandler";
 import express from "express";
 import helmet from "helmet";
 import http from "http";
-import { initSocket } from "../src/socket";
 
 const app = express();
 
