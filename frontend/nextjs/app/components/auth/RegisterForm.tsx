@@ -55,7 +55,7 @@ const RegisterForm = () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Redirect to Angular dashboard
-            const redirectUrl = `http://localhost:4200${result.redirectUrl}`;
+            const redirectUrl = `${process.env.NEXT_PUBLIC_ANGULAR_DASHBOARD_URL}/${result.redirectUrl}`;
             console.log("Redirecting to:", redirectUrl);
 
             // Use window.location.replace to avoid ESLint warning
