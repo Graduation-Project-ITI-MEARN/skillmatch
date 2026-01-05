@@ -1,7 +1,7 @@
 <div class="relative min-h-125">
   <!-- Overlay التحميل -->
   <div *ngIf="isLoading" class="fixed inset-0 bg-white/60 z-100 flex items-center justify-center">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
   </div>
 
   <app-pricing-modal
@@ -36,49 +36,121 @@
             </div>
           </div>
 
+          <!-- Career Insights Summary -->
+          <div
+            *ngIf="dashboardData?.careerInsights"
+            class="bg-white/70 rounded-xl p-6 border border-blue-200 mb-6"
+          >
+            <h3 class="mb-4 font-semibold text-lg">
+              {{ 'DASHBOARD.COACH.CAREER_INSIGHTS' | translate }}
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div class="flex items-center gap-2">
+                <lucide-icon [img]="icons.BarChart" class="w-4 h-4 text-blue-500"></lucide-icon>
+                <span
+                  >{{ 'DASHBOARD.COACH.CAREER_LEVEL' | translate }}:
+                  <span class="font-medium capitalize">{{
+                    dashboardData?.careerInsights?.careerLevel
+                  }}</span></span
+                >
+              </div>
+              <div class="flex items-center gap-2">
+                <lucide-icon [img]="icons.Zap" class="w-4 h-4 text-purple-500"></lucide-icon>
+                <span
+                  >{{ 'DASHBOARD.COACH.READINESS_SCORE' | translate }}:
+                  <span class="font-medium"
+                    >{{ dashboardData?.careerInsights?.readinessScore }}%</span
+                  ></span
+                >
+              </div>
+              <div class="flex items-center gap-2 md:col-span-2">
+                <lucide-icon [img]="icons.Target" class="w-4 h-4 text-green-500"></lucide-icon>
+                <span
+                  >{{ 'DASHBOARD.COACH.MONTHLY_GOAL' | translate }}:
+                  <span class="font-medium">{{
+                    dashboardData?.careerInsights?.monthlyGoal
+                  }}</span></span
+                >
+              </div>
+              <div class="flex items-center gap-2 md:col-span-2">
+                <lucide-icon [img]="icons.Clock" class="w-4 h-4 text-yellow-500"></lucide-icon>
+                <span
+                  >{{ 'DASHBOARD.COACH.ESTIMATED_JOB_READY' | translate }}:
+                  <span class="font-medium">{{
+                    dashboardData?.careerInsights?.estimatedTimeToJobReady
+                  }}</span></span
+                >
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <h4 class="font-semibold mb-3">{{ 'DASHBOARD.COACH.NEXT_STEPS' | translate }}</h4>
+              <ul
+                *ngIf="dashboardData?.careerInsights?.nextSteps?.length"
+                class="space-y-2 text-sm text-gray-700 list-disc list-inside"
+              >
+                <li *ngFor="let step of dashboardData?.careerInsights?.nextSteps">
+                  {{ step }}
+                </li>
+              </ul>
+              <div
+                *ngIf="!dashboardData?.careerInsights?.nextSteps?.length"
+                class="text-gray-500 text-sm py-2"
+              >
+                {{ 'DASHBOARD.COACH.NO_NEXT_STEPS' | translate }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Path / Career Paths -->
           <div class="space-y-4">
-            <div class="bg-white/70 rounded-xl p-6 border border-blue-200">
+            <div
+              class="bg-white/70 rounded-xl p-6 border border-blue-200"
+              *ngIf="dashboardData?.careerInsights?.careerPaths?.length"
+            >
               <h3 class="mb-4 font-semibold">{{ 'DASHBOARD.COACH.CURRENT_PATH' | translate }}</h3>
               <div class="space-y-5">
-                <!-- Path Item 1 -->
-                <div class="flex items-center gap-4">
-                  <div
-                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold"
-                  >
-                    1
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-sm font-medium">Master TypeScript Advanced Patterns</span>
-                      <span class="text-xs text-blue-600 font-bold uppercase">{{
-                        'DASHBOARD.COACH.IN_PROGRESS' | translate
-                      }}</span>
+                <div
+                  *ngFor="let path of dashboardData?.careerInsights?.careerPaths; let i = index"
+                  class="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg"
+                >
+                  <div class="flex items-center gap-4">
+                    <div
+                      class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-700"
+                    >
+                      {{ i + 1 }}
                     </div>
-                    <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        class="h-full bg-gradient-to-right from-blue-400 to-purple-400"
-                        style="width: 65%"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Path Item 2 -->
-                <div class="flex items-center gap-4 opacity-60">
-                  <div
-                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold"
-                  >
-                    2
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                      <span class="text-sm font-medium">System Design Fundamentals</span>
-                      <span class="text-xs text-gray-500">{{
-                        'DASHBOARD.COACH.NEXT' | translate
-                      }}</span>
+                    <div class="flex-1">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-base font-medium">{{ path.title }}</span>
+                        <span
+                          *ngIf="i === 0"
+                          class="text-xs text-blue-600 font-bold uppercase py-1 px-2 bg-blue-100 rounded-full"
+                          >{{ 'DASHBOARD.COACH.IN_PROGRESS' | translate }}</span
+                        >
+                        <span
+                          *ngIf="i > 0"
+                          class="text-xs text-gray-500 py-1 px-2 bg-gray-100 rounded-full"
+                          >{{ 'DASHBOARD.COACH.NEXT' | translate }}</span
+                        >
+                      </div>
+                      <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          class="h-full bg-gradient-to-right from-blue-400 to-purple-400"
+                          [style.width.%]="path.match"
+                        ></div>
+                      </div>
                     </div>
                   </div>
+                  <p class="text-sm text-gray-600 mt-2 ml-12">{{ path.reasoning }}</p>
                 </div>
               </div>
+            </div>
+            <div
+              *ngIf="!dashboardData?.careerInsights?.careerPaths?.length"
+              class="text-gray-500 text-center py-4 bg-white/70 rounded-xl p-6 border border-blue-200"
+            >
+              {{ 'DASHBOARD.COACH.NO_CAREER_PATHS_YET' | translate }}
             </div>
           </div>
         </div>
@@ -90,14 +162,14 @@
           </h3>
           <div class="space-y-4">
             <div
-              *ngFor="let i of [1, 2, 3]"
+              *ngFor="let challenge of dashboardData?.recommendedChallenges"
               class="bg-white rounded-xl p-6 hover:shadow-md transition-all border border-gray-100 flex items-center justify-between group"
             >
               <div>
-                <h4 class="font-bold mb-1 group-hover:text-indigo-600 transition-colors">
-                  Advanced TypeScript Patterns Challenge
+                <h4 class="font-bold mb-1 group-hover:text-gray-900 transition-colors">
+                  {{ challenge.title }}
                 </h4>
-                <p class="text-sm text-gray-500">{{ 'DASHBOARD.COACH.PERFECT_FOR' | translate }}</p>
+                <p class="text-sm text-gray-500">{{ challenge.description }}</p>
               </div>
               <button
                 class="px-5 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition-all text-sm font-medium"
@@ -105,43 +177,121 @@
                 {{ 'DASHBOARD.COACH.START' | translate }}
               </button>
             </div>
+            <div
+              *ngIf="!dashboardData?.recommendedChallenges?.length"
+              class="text-gray-500 text-center py-4 bg-white rounded-xl p-6 border border-gray-100"
+            >
+              {{ 'DASHBOARD.COACH.NO_CHALLENGES_YET' | translate }}
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Right Column: Sidebar -->
       <div class="space-y-6">
+        <!-- Performance Stats -->
+        <div
+          *ngIf="dashboardData?.stats"
+          class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+        >
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <lucide-icon [img]="icons.Trophy" class="w-5 h-5 text-yellow-500"></lucide-icon>
+            <span>{{ 'DASHBOARD.COACH.STATS' | translate }}</span>
+          </h3>
+          <div class="space-y-4 text-sm text-gray-700">
+            <div class="flex items-center justify-between">
+              <span class="font-medium">{{ 'DASHBOARD.COACH.TOTAL_SUBMISSIONS' | translate }}</span>
+              <span class="font-bold text-gray-900">{{
+                dashboardData?.stats?.totalSubmissions
+              }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-medium">{{ 'DASHBOARD.COACH.AVERAGE_SCORE' | translate }}</span>
+              <span class="font-bold text-gray-900">{{ dashboardData?.stats?.averageScore }}%</span>
+            </div>
+            <div>
+              <h4 class="font-medium mb-2">{{ 'DASHBOARD.COACH.STRONG_SKILLS' | translate }}</h4>
+              <ul *ngIf="dashboardData?.stats?.strongSkills?.length" class="flex flex-wrap gap-2">
+                <li
+                  *ngFor="let skill of dashboardData?.stats?.strongSkills"
+                  class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full flex items-center gap-1"
+                >
+                  <lucide-icon [img]="icons.CheckCircle" class="w-3 h-3"></lucide-icon>
+                  <span>{{ skill }}</span>
+                </li>
+              </ul>
+              <div
+                *ngIf="!dashboardData?.stats?.strongSkills?.length"
+                class="text-gray-500 text-sm py-2"
+              >
+                {{ 'DASHBOARD.COACH.NO_STRONG_SKILLS' | translate }}
+              </div>
+            </div>
+            <div>
+              <h4 class="font-medium mb-2">{{ 'DASHBOARD.COACH.WEAK_SKILLS' | translate }}</h4>
+              <ul *ngIf="dashboardData?.stats?.weakSkills?.length" class="flex flex-wrap gap-2">
+                <li
+                  *ngFor="let skill of dashboardData?.stats?.weakSkills"
+                  class="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full flex items-center gap-1"
+                >
+                  <lucide-icon [img]="icons.XCircle" class="w-3 h-3"></lucide-icon>
+                  <span>{{ skill }}</span>
+                </li>
+              </ul>
+              <div
+                *ngIf="!dashboardData?.stats?.weakSkills?.length"
+                class="text-gray-500 text-sm py-2"
+              >
+                {{ 'DASHBOARD.COACH.NO_WEAK_SKILLS' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Skill Gaps -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <h3 class="text-lg font-bold mb-4">{{ 'DASHBOARD.COACH.SKILL_GAPS' | translate }}</h3>
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <lucide-icon [img]="icons.Brain" class="w-5 h-5 text-gray-900"></lucide-icon>
+            <span>{{ 'DASHBOARD.COACH.SKILL_GAPS' | translate }}</span>
+          </h3>
           <div class="space-y-6">
-            <div class="space-y-2">
+            <div *ngFor="let skillGap of dashboardData?.skillGaps" class="space-y-2">
               <div class="flex items-center justify-between text-sm">
-                <span class="font-medium text-gray-700">TypeScript Patterns</span>
-                <span class="text-indigo-600 font-bold">65%</span>
+                <span class="font-medium text-gray-700">{{ skillGap.name }}</span>
+                <span class="text-gray-900 font-bold">{{ skillGap.percentage }}%</span>
               </div>
               <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500" style="width: 65%"></div>
+                <div class="h-full bg-gray-900" [style.width.%]="skillGap.percentage"></div>
               </div>
+            </div>
+            <div *ngIf="!dashboardData?.skillGaps?.length" class="text-gray-500 text-center py-2">
+              {{ 'DASHBOARD.COACH.NO_SKILL_GAPS_YET' | translate }}
             </div>
           </div>
         </div>
 
         <!-- Resources -->
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <h3 class="text-lg font-bold mb-4">
-            {{ 'DASHBOARD.COACH.LEARNING_RESOURCES' | translate }}
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <lucide-icon [img]="icons.BookOpen" class="w-5 h-5 text-gray-500"></lucide-icon>
+            <span>{{ 'DASHBOARD.COACH.LEARNING_RESOURCES' | translate }}</span>
           </h3>
           <div class="space-y-3">
             <div
-              *ngFor="let res of ['TypeScript Deep Dive', 'System Design Primer']"
+              *ngFor="let res of dashboardData?.learningResources"
               class="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all cursor-pointer flex items-center justify-between border border-transparent hover:border-gray-200"
             >
               <div class="flex items-center gap-3">
-                <lucide-icon [img]="icons.BookOpen" class="w-4 h-4 text-gray-400"></lucide-icon>
+                <lucide-icon [img]="icons.Lightbulb" class="w-4 h-4 text-gray-400"></lucide-icon>
                 <span class="text-sm font-medium">{{ res }}</span>
               </div>
               <lucide-icon [img]="icons.ChevronRight" class="w-4 h-4 text-gray-300"></lucide-icon>
+            </div>
+            <div
+              *ngIf="!dashboardData?.learningResources?.length"
+              class="text-gray-500 text-center py-2"
+            >
+              {{ 'DASHBOARD.COACH.NO_RESOURCES_YET' | translate }}
             </div>
           </div>
         </div>
@@ -159,7 +309,7 @@
     >
       <lucide-icon
         [img]="icons.Brain"
-        class="w-16 h-16 text-indigo-600 mx-auto mb-6 opacity-80"
+        class="w-16 h-16 text-gray-900 mx-auto mb-6 opacity-80"
       ></lucide-icon>
       <h3 class="text-xl font-black text-gray-900 mb-2">
         {{ 'DASHBOARD.COACH.PREMIUM_FEATURE' | translate }}
@@ -169,7 +319,7 @@
       </p>
       <button
         (click)="showPricingModal = true"
-        class="w-full px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"
+        class="w-full px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-gray-950 transition-all shadow-xl shadow-indigo-100"
       >
         {{ 'DASHBOARD.COACH.UPGRADE_TO_PRO' | translate }}
       </button>

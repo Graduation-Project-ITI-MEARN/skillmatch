@@ -22,7 +22,7 @@ interface EvaluationRequest {
    category: string;
    tags: string[];
    submissionContent: string;
-   videoTranscript?: string; // ✅ Added this field
+   videoTranscript?: string;
    selectedModel: AIModel;
 }
 
@@ -47,7 +47,7 @@ export const evaluateWithModel = async (
    const modelConfig = AI_MODELS[request.selectedModel];
 
    console.log(
-      `Evaluating with ${modelConfig.name} (${
+      `🤖 Evaluating with ${modelConfig.name} (${
          modelConfig.isFree ? "FREE" : "PAID"
       })...`
    );
@@ -68,14 +68,26 @@ export const evaluateWithModel = async (
          default:
             throw new Error(`Unsupported provider: ${modelConfig.provider}`);
       }
+
+      console.log(`✅ Evaluation complete:`, {
+         technical: result.technicalScore,
+         clarity: result.clarityScore,
+         communication: result.communicationScore,
+         overall: result.overallScore,
+      });
+
       return result;
    } catch (error) {
-      console.error(`${modelConfig.name} failed, trying fallback...`, error);
+      console.error(`❌ ${modelConfig.name} failed:`, error);
       // Fallback to free model if paid model fails
-      return await evaluateWithGemini({
-         ...request,
-         selectedModel: AIModel.GEMINI_FLASH,
-      });
+      if (request.selectedModel !== AIModel.GEMINI_FLASH) {
+         console.log("🔄 Trying fallback to Gemini Flash...");
+         return await evaluateWithGemini({
+            ...request,
+            selectedModel: AIModel.GEMINI_FLASH,
+         });
+      }
+      throw error;
    }
 };
 
@@ -96,17 +108,19 @@ const evaluateWithOpenAI = async (
          {
             role: "system",
             content:
-               "You are an expert skill evaluator. Respond ONLY with valid JSON, no markdown.",
+               "You are an expert technical evaluator for coding challenges. Analyze submissions critically and provide varied, accurate scores based on actual quality. Respond ONLY with valid JSON.",
          },
          { role: "user", content: prompt },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 2000,
-      temperature: 0.7,
+      max_tokens: 3000,
+      temperature: 0.8, // Increased for more variation
    });
 
    const responseText = completion.choices[0]?.message?.content || "{}";
-   const parsed = parseEvaluationResponse(responseText);
+   console.log("📝 OpenAI Raw Response:", responseText.substring(0, 200));
+
+   const parsed = parseEvaluationResponse(responseText, request.selectedModel);
 
    const inputTokens = completion.usage?.prompt_tokens || 0;
    const outputTokens = completion.usage?.completion_tokens || 0;
@@ -122,14 +136,13 @@ const evaluateWithOpenAI = async (
 };
 
 /**
- * Google Gemini Evaluation (FREE!)
+ * Google Gemini Evaluation
  */
 const evaluateWithGemini = async (
    request: EvaluationRequest
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   // FIX: Use correct model names without -latest suffix
    const modelString =
       request.selectedModel === AIModel.GEMINI_PRO
          ? "gemini-1.5-pro"
@@ -138,15 +151,18 @@ const evaluateWithGemini = async (
    const model = gemini.getGenerativeModel({
       model: modelString,
       generationConfig: {
-         temperature: 0.7,
-         maxOutputTokens: 2000,
+         temperature: 0.8, // Increased for more variation
+         maxOutputTokens: 3000,
+         responseMimeType: "application/json", // Force JSON response
       },
    });
 
    const result = await model.generateContent(prompt);
    const responseText = result.response.text();
 
-   const parsed = parseEvaluationResponse(responseText);
+   console.log("📝 Gemini Raw Response:", responseText.substring(0, 200));
+
+   const parsed = parseEvaluationResponse(responseText, request.selectedModel);
 
    return {
       ...parsed,
@@ -156,25 +172,24 @@ const evaluateWithGemini = async (
 };
 
 /**
- * Groq Evaluation (FREE & ULTRA FAST!)
+ * Groq Evaluation
  */
 const evaluateWithGroq = async (
    request: EvaluationRequest
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   // FIXED: Correct Groq model names
-   let modelString = "llama-3.1-70b-versatile"; // Not llama-3.1-70b-chat
+   let modelString = "llama-3.1-70b-versatile";
 
    switch (request.selectedModel) {
       case AIModel.LLAMA_8B:
-         modelString = "llama-3.1-8b-instant"; // Correct
+         modelString = "llama-3.1-8b-instant";
          break;
       case AIModel.MIXTRAL_8X7B:
-         modelString = "mixtral-8x7b-32768"; // Correct
+         modelString = "mixtral-8x7b-32768";
          break;
       case AIModel.LLAMA_70B:
-         modelString = "llama-3.1-70b-versatile"; // Correct
+         modelString = "llama-3.1-70b-versatile";
          break;
    }
 
@@ -183,7 +198,7 @@ const evaluateWithGroq = async (
          {
             role: "system",
             content:
-               "You are an expert skill evaluator. Respond ONLY with valid JSON.",
+               "You are an expert technical evaluator. Analyze submissions critically and provide varied, accurate scores. Respond ONLY with valid JSON.",
          },
          {
             role: "user",
@@ -191,12 +206,15 @@ const evaluateWithGroq = async (
          },
       ],
       model: modelString,
-      temperature: 0.7,
-      max_tokens: 2000,
+      temperature: 0.8, // Increased for more variation
+      max_tokens: 3000,
+      response_format: { type: "json_object" },
    });
 
    const responseText = completion.choices[0]?.message?.content || "{}";
-   const parsed = parseEvaluationResponse(responseText);
+   console.log("📝 Groq Raw Response:", responseText.substring(0, 200));
+
+   const parsed = parseEvaluationResponse(responseText, request.selectedModel);
 
    return {
       ...parsed,
@@ -206,51 +224,85 @@ const evaluateWithGroq = async (
 };
 
 /**
- * Build standardized evaluation prompt
+ * Build standardized evaluation prompt (IMPROVED)
  */
 const buildEvaluationPrompt = (request: EvaluationRequest): string => {
-   return `You are an expert evaluator for SkillMatch AI.
+   return `You are evaluating a technical challenge submission for SkillMatch AI. 
 
-**Challenge:**
-Title: ${request.challengeTitle}
-Description: ${request.challengeDescription}
-Difficulty: ${request.difficulty}
-Category: ${request.category}
-Skills: ${request.tags.join(", ")}
+**IMPORTANT EVALUATION GUIDELINES:**
+- Be critical and realistic in your scoring
+- Scores should vary based on actual quality (not default to 80-90)
+- A mediocre solution should score 40-60
+- A good solution should score 60-80
+- An excellent solution should score 80-95
+- A poor solution should score 20-40
+- Consider the difficulty level when scoring
 
-**Submission:**
+**Challenge Details:**
+- Title: ${request.challengeTitle}
+- Description: ${request.challengeDescription}
+- Difficulty: ${request.difficulty}
+- Category: ${request.category}
+- Required Skills: ${request.tags.join(", ")}
+
+**Candidate's Submission:**
 ${request.submissionContent}
 
 ${
    request.videoTranscript
-      ? `**Video Explanation:**\n${request.videoTranscript}`
-      : ""
+      ? `**Video Explanation Transcript:**
+${request.videoTranscript}
+
+(Note: Evaluate communication skills based on the video transcript quality)`
+      : "(No video explanation provided - score communication based on written explanation only)"
 }
 
-Evaluate on:
-1. Technical Quality (0-100): Correctness, efficiency, creativity
-2. Clarity Score (0-100): Structure and organization
-3. Communication Score (0-100): Explanation quality
+**Evaluation Criteria:**
 
-Respond with ONLY this JSON (no markdown, no extra text):
+1. **Technical Quality (0-100):**
+   - Correctness and completeness of solution
+   - Code quality and best practices
+   - Efficiency and optimization
+   - Innovation and problem-solving approach
+   - Handling of edge cases
+   
+2. **Clarity Score (0-100):**
+   - Code organization and structure
+   - Documentation and comments
+   - Readability and maintainability
+   - Following conventions
+
+3. **Communication Score (0-100):**
+   - Quality of explanation (written or video)
+   - Ability to articulate technical concepts
+   - Completeness of documentation
+   - Professional presentation
+
+**Required Response Format:**
+Respond with ONLY a JSON object (no markdown, no backticks, no extra text):
+
 {
-  "technicalScore": 85,
-  "clarityScore": 90,
-  "communicationScore": 80,
-  "overallScore": 85,
-  "feedback": "Clear solution with good practices. Consider edge cases.",
-  "strengths": ["Clean code", "Good explanation"],
-  "improvements": ["Add error handling", "Consider performance"]
-}`;
+  "technicalScore": <number 0-100>,
+  "clarityScore": <number 0-100>,
+  "communicationScore": <number 0-100>,
+  "overallScore": <number 0-100>,
+  "feedback": "<2-3 sentences of overall assessment>",
+  "strengths": ["<specific strength 1>", "<specific strength 2>", "<specific strength 3>"],
+  "improvements": ["<specific improvement 1>", "<specific improvement 2>", "<specific improvement 3>"]
+}
+
+Provide specific, actionable feedback. Vary your scores based on actual quality.`;
 };
 
 /**
- * Parse AI response into structured format
+ * Parse AI response into structured format (IMPROVED ERROR HANDLING)
  */
 const parseEvaluationResponse = (
-   response: string
+   response: string,
+   modelUsed: AIModel
 ): Omit<EvaluationResult, "modelUsed" | "costIncurred"> => {
    try {
+      // Remove markdown code blocks if present
       let cleaned = response
          .replace(/```json\n?/g, "")
          .replace(/```\n?/g, "")
@@ -264,38 +316,58 @@ const parseEvaluationResponse = (
 
       const parsed = JSON.parse(cleaned);
 
+      // Validate required fields exist
+      if (
+         typeof parsed.technicalScore !== "number" ||
+         typeof parsed.clarityScore !== "number" ||
+         typeof parsed.communicationScore !== "number"
+      ) {
+         console.error("⚠️ Invalid score types in response:", parsed);
+         throw new Error("Invalid score types in AI response");
+      }
+
+      // Clamp scores to 0-100 range
+      const technicalScore = Math.min(
+         100,
+         Math.max(0, Math.round(parsed.technicalScore))
+      );
+      const clarityScore = Math.min(
+         100,
+         Math.max(0, Math.round(parsed.clarityScore))
+      );
+      const communicationScore = Math.min(
+         100,
+         Math.max(0, Math.round(parsed.communicationScore))
+      );
+
+      // Calculate overall score
+      const overallScore = parsed.overallScore
+         ? Math.min(100, Math.max(0, Math.round(parsed.overallScore)))
+         : Math.round((technicalScore + clarityScore + communicationScore) / 3);
+
       return {
-         technicalScore: Math.min(100, Math.max(0, parsed.technicalScore || 0)),
-         clarityScore: Math.min(100, Math.max(0, parsed.clarityScore || 0)),
-         communicationScore: Math.min(
-            100,
-            Math.max(0, parsed.communicationScore || 0)
-         ),
-         overallScore:
-            parsed.overallScore ||
-            Math.round(
-               (parsed.technicalScore +
-                  parsed.clarityScore +
-                  parsed.communicationScore) /
-                  3
-            ),
+         technicalScore,
+         clarityScore,
+         communicationScore,
+         overallScore,
          feedback: parsed.feedback || "Evaluation completed",
-         strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
+         strengths: Array.isArray(parsed.strengths)
+            ? parsed.strengths.slice(0, 5)
+            : ["Submission received"],
          improvements: Array.isArray(parsed.improvements)
-            ? parsed.improvements
-            : [],
+            ? parsed.improvements.slice(0, 5)
+            : ["See feedback for details"],
       };
    } catch (error) {
-      console.error("Parse Error:", error, "Response:", response);
-      return {
-         technicalScore: 50,
-         clarityScore: 50,
-         communicationScore: 50,
-         overallScore: 50,
-         feedback: "Evaluation completed with limited analysis",
-         strengths: ["Submission received"],
-         improvements: ["Could not generate detailed feedback"],
-      };
+      console.error("❌ Parse Error:", error);
+      console.error("Raw response:", response);
+
+      // Instead of returning default values, throw error to trigger retry
+      throw new Error(
+         `Failed to parse AI response: ${
+            error instanceof Error ? error.message : "Unknown error"
+         }`
+      );
    }
 };
 
@@ -310,7 +382,6 @@ export const getModelForChallenge = (
       return customModel;
    }
 
-   // Default to free models
    switch (pricingTier) {
       case "free":
          return AIModel.GEMINI_FLASH;
@@ -321,7 +392,7 @@ export const getModelForChallenge = (
       case "premium":
          return AIModel.GPT4O;
       default:
-         return AIModel.GEMINI_FLASH; // Default to free
+         return AIModel.GEMINI_FLASH;
    }
 };
 
@@ -337,6 +408,6 @@ export const estimateEvaluationCost = (
 
    if (config.isFree) return 0;
 
-   const avgTokens = 700;
+   const avgTokens = 1000; // Increased estimate
    return (avgTokens / 1000) * config.costPer1kTokens;
 };

@@ -17,6 +17,7 @@ import { requireBalance } from "../middlewares/requirePayment";
 import { restrictTo } from "../middlewares/restrictTo";
 import validate from "../middlewares/validate";
 import { requireVerification } from "../middlewares/requireVerification";
+import { uploadSubmissionFiles } from "../middlewares/upload";
 
 const router = express.Router();
 
@@ -51,9 +52,10 @@ router.post(
 router.post(
    "/",
    auth,
-   validate(createSubmissionDTO),
+   // validate(createSubmissionDTO), // <--- This is the problem! It runs too early.
    restrictTo(["candidate"]),
    requireVerification(["candidate"]),
+   uploadSubmissionFiles, // <--- Multer runs AFTER validation
    createSubmission
 );
 

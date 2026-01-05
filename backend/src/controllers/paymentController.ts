@@ -267,3 +267,94 @@ const handleWebhook = catchError(
    }
 );
 export { createPaymentIntent, handleWebhook };
+
+/**
+ * FAKE PAYMENT - FOR DEMO/TESTING ONLY
+ * Instantly activates subscription without real payment
+ */
+export const simulatePayment = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const { plan_id } = req.body;
+      const user = (req as any).user; // From protect middleware
+
+      console.log("🎭 DEMO MODE: Simulating payment for user:", user.email);
+
+      // Validate plan
+      const validPlans = ["basic", "professional", "enterprise"];
+      const planToActivate = validPlans.includes(plan_id) ? plan_id : "basic";
+
+      // Update user subscription
+      user.subscriptionStatus = "active";
+      user.subscriptionPlan = planToActivate;
+
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 30); // 30 days from now
+      user.subscriptionExpiry = expiry;
+
+      await user.save();
+
+      console.log("✅ DEMO: Subscription activated!", {
+         user: user.email,
+         plan: planToActivate,
+         expiry: expiry.toISOString(),
+      });
+
+      // Log activity
+      await logActivity(
+         user._id,
+         "subscription_activated",
+         `[DEMO] Subscription activated (${planToActivate} plan) until ${expiry.toISOString()}`,
+         "success"
+      );
+
+      res.status(200).json({
+         success: true,
+         message: "Subscription activated successfully (DEMO MODE)",
+         data: {
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionPlan: user.subscriptionPlan,
+            subscriptionExpiry: user.subscriptionExpiry,
+            user: {
+               id: user._id,
+               email: user.email,
+               name: user.name,
+            },
+         },
+      });
+   }
+);
+
+/**
+ * RESET SUBSCRIPTION - FOR TESTING
+ * Resets user back to free tier
+ */
+export const resetSubscription = catchError(
+   async (req: Request, res: Response, next: NextFunction) => {
+      const user = (req as any).user;
+
+      user.subscriptionStatus = "free";
+      user.subscriptionPlan = null;
+      user.subscriptionExpiry = null;
+
+      await user.save();
+
+      console.log("🔄 DEMO: Subscription reset for user:", user.email);
+
+      await logActivity(
+         user._id,
+         "subscription_reset",
+         `[DEMO] Subscription reset to free tier`,
+         "success"
+      );
+
+      res.status(200).json({
+         success: true,
+         message: "Subscription reset to free tier",
+         data: {
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionPlan: user.subscriptionPlan,
+            subscriptionExpiry: user.subscriptionExpiry,
+         },
+      });
+   }
+);

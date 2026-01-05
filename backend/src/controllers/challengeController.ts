@@ -258,8 +258,6 @@ const getMyChallenges = catchError(async (req: Request, res: Response) => {
  * @access  Private (Admin)
  */
 const getAllChallenges = catchError(async (req: Request, res: Response) => {
-   console.log("⚡ EXECUTING NEW AGGREGATION PIPELINE ⚡"); // <--- Watch for this in your terminal
-
    const challenges = await Challenge.aggregate([
       // 1. Join with Submissions
       {

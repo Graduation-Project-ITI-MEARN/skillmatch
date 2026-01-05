@@ -10,7 +10,7 @@ import { useEffect } from "react";
 const routesWithBackground = [
    "/",
    "/leaderboard", // Includes /leaderboard and /leaderboard/[id]
-   // Add any other routes that need a full-page background
+   "/about",
 ];
 
 export function BodyClassManager() {

@@ -19,6 +19,8 @@ import {
    isFakeGitHubUrl,
 } from "../services/validationService";
 import { sendNotification } from "../utils/notification";
+import { createSubmissionDTO } from "../DTO/submission";
+import { ZodError } from "zod";
 
 /**
  * @desc    Get submissions and started challenges for the logged-in candidate
@@ -33,7 +35,7 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
       candidateId: new mongoose.Types.ObjectId(user._id),
    }).populate(
       "challengeId",
-      "title category difficulty deadline submissionType"
+      "title category difficulty deadline submissionType aiConfig"
    );
 
    const startedChallenges = candidateSubmissions
@@ -83,123 +85,252 @@ const getMySubmissions = catchError(async (req: Request, res: Response) => {
       },
    });
 });
+
 /**
  * @desc    Candidate submits a solution (with automatic AI evaluation)
  * @route   POST /api/submissions
  * @access  Private (Candidate)
  */
 const createSubmission = catchError(async (req: Request, res: Response) => {
-   const {
-      challengeId,
-      videoExplanationUrl,
-      submissionType,
-      linkUrl,
-      fileUrls,
-      textContent,
-   } = req.body;
+   console.log("--------------- START createSubmission ---------------");
 
-   const candidateId = req.user?._id;
-   if (!candidateId) throw new APIError(401, "User not authenticated");
-   if (!challengeId) throw new APIError(400, "Challenge ID is required");
+   try {
+      // <--- ADDED: Top-level try-catch for better internal logging
+      console.log("1. req.body (after Multer):", req.body);
+      console.log("2. req.files (after Multer):", req.files);
+      console.log("3. req.user (authenticated user):", req.user); // Check if req.user is populated
 
-   // Fetch challenge with AI config
-   const challenge = await Challenge.findById(challengeId);
-   if (!challenge) throw new APIError(404, "Challenge not found");
+      // Text fields are in req.body
+      const { submissionId, submissionType, linkUrl, textContent } = req.body;
 
-   // --- VALIDATION ---
-   if (!videoExplanationUrl?.trim()) {
-      throw new APIError(400, "Video explanation is required");
-   }
-   if (!submissionType) throw new APIError(400, "Submission type is required");
+      const uploadedFiles = req.files as {
+         videoExplanationFile?: Express.Multer.File[];
+         file?: Express.Multer.File[];
+      };
 
-   // Type-specific validation
-   switch (submissionType) {
-      case SubmissionType.LINK:
-         if (!linkUrl?.trim()) throw new APIError(400, "Link URL required");
+      const candidateId = req.user?._id;
+      // The auth middleware should handle this, but an extra check for robust logging
+      if (!candidateId)
+         throw new APIError(401, "User not authenticated - (Internal Check)");
+      console.log("4. Candidate ID:", candidateId);
 
-         // Check for fake GitHub URLs
-         if (linkUrl.includes("github.com") && isFakeGitHubUrl(linkUrl)) {
+      if (!submissionId)
+         throw new APIError(400, "Submission ID is required in request body.");
+      console.log("5. Submission ID:", submissionId);
+
+      let submission: ISubmission | null = await Submission.findById(
+         submissionId
+      );
+      console.log(
+         "6. Found Submission:",
+         submission ? submission._id : "Not Found"
+      );
+
+      if (!submission) {
+         throw new APIError(
+            404,
+            "Submission not found or you must start the challenge first."
+         );
+      }
+      if (submission.candidateId.toString() !== candidateId.toString()) {
+         throw new APIError(403, "Not authorized to modify this submission.");
+      }
+      if (submission.status !== "started") {
+         throw new APIError(
+            409,
+            "You have already submitted for this challenge."
+         );
+      }
+
+      const challenge = await Challenge.findById(submission.challengeId);
+      console.log(
+         "7. Found Challenge:",
+         challenge ? challenge._id : "Not Found"
+      );
+      console.log("8. Challenge AI Config:", challenge?.aiConfig); // <--- CRITICAL: Check this output
+      if (!challenge) throw new APIError(404, "Associated challenge not found");
+
+      // --- BASIC VALIDATION (before Zod) ---
+      if (!submissionType)
+         throw new APIError(400, "Submission type is required");
+      console.log("9. Submission Type:", submissionType);
+
+      // Clear previous submission-related fields to avoid stale data
+      submission.linkUrl = undefined;
+      submission.fileUrls = [];
+      submission.textContent = undefined;
+      submission.videoExplanationUrl = undefined; // Also clear video URL initially
+
+      let finalLinkUrl: string | undefined;
+      let finalFileUrls: string[] = [];
+      let finalTextContent: string | undefined;
+      let finalVideoExplanationUrl: string | undefined;
+
+      console.log("10. Starting submission type specific processing...");
+      switch (submissionType) {
+         case SubmissionType.LINK:
+            if (!linkUrl?.trim()) throw new APIError(400, "Link URL required");
+            // ... (fake GitHub URL check) ...
+            if (linkUrl.includes("github.com")) {
+               const githubValidation = await validateGitHubLink(linkUrl); // <--- Error likely originates from within this function call
+               if (!githubValidation.isValid) {
+                  // <--- Or this line, throwing the APIError
+                  throw new APIError(400, githubValidation.message); // THIS IS THE APIError YOU ARE SEEING
+               }
+               if (githubValidation.repoData?.warnings?.length > 0) {
+                  console.log(
+                     "⚠️  GitHub warnings:",
+                     githubValidation.repoData.warnings
+                  );
+               }
+            }
+            finalLinkUrl = linkUrl.trim();
+            console.log("10a. Processed Link URL:", finalLinkUrl);
+            break;
+
+         case SubmissionType.FILE:
+            const projectFile = uploadedFiles.file?.[0];
+            if (!projectFile)
+               throw new APIError(
+                  400,
+                  "Project file required for file submission type."
+               );
+            finalFileUrls = [projectFile.path]; // Multer-Cloudinary stores the URL in `file.path`
+            console.log("10b. Processed Project File URL:", finalFileUrls);
+            break;
+
+         case SubmissionType.TEXT:
+            if (!textContent?.trim())
+               throw new APIError(400, "Text content required");
+            finalTextContent = textContent.trim();
+            console.log("10c. Processed Text Content:", finalTextContent);
+            break;
+
+         default:
+            throw new APIError(400, "Invalid submission type provided.");
+      }
+
+      // --- VIDEO EXPLANATION HANDLING ---
+      // Use optional chaining for aiConfig and then requireVideoTranscript
+      const requireVideoTranscript =
+         challenge?.aiConfig?.requireVideoTranscript;
+      const videoFile = uploadedFiles.videoExplanationFile?.[0];
+      console.log(
+         "11. Requires Video Transcript (Challenge config):",
+         requireVideoTranscript
+      );
+      console.log(
+         "12. Video File Uploaded:",
+         videoFile ? videoFile.path : "None"
+      );
+
+      if (requireVideoTranscript) {
+         if (!videoFile) {
             throw new APIError(
                400,
-               "Please provide a real GitHub repository, not a placeholder or example URL."
+               "Video explanation file is required for this challenge."
             );
          }
+         finalVideoExplanationUrl = videoFile.path; // Set the Cloudinary URL
+         console.log(
+            "12a. Final Video URL (Required):",
+            finalVideoExplanationUrl
+         );
+      } else {
+         finalVideoExplanationUrl = undefined; // Explicitly set to undefined if not required
+         console.log(
+            "12b. Final Video URL (Not Required):",
+            finalVideoExplanationUrl
+         );
+      }
 
-         // Validate GitHub repo if it's a GitHub link
-         if (linkUrl.includes("github.com")) {
-            const githubValidation = await validateGitHubLink(linkUrl);
-            if (!githubValidation.isValid) {
-               throw new APIError(400, githubValidation.message);
-            }
+      // --- FINAL ZOD VALIDATION ---
+      const submissionDataForValidation = {
+         challengeId: challenge._id.toString(),
+         candidateId: candidateId.toString(),
+         videoExplanationUrl: finalVideoExplanationUrl,
+         submissionType: submissionType,
+         linkUrl: finalLinkUrl,
+         fileUrls: finalFileUrls,
+         textContent: finalTextContent,
+         // aiScore is default/optional in DTO, no need to include here for creation
+         // Ensure all properties match your createSubmissionDTO schema
+      };
+      console.log("13. Data for Zod Validation:", submissionDataForValidation);
 
-            // If there are warnings, we'll include them in the response but still allow submission
-            if (githubValidation.repoData?.warnings?.length > 0) {
-               console.log(
-                  "⚠️  GitHub warnings:",
-                  githubValidation.repoData.warnings
-               );
-            }
+      try {
+         createSubmissionDTO.parse(submissionDataForValidation); // Validate the *processed* data
+         console.log("14. Zod Validation PASSED.");
+      } catch (error: any) {
+         if (error instanceof ZodError) {
+            console.error("14. Zod Validation FAILED:", error.message);
+            throw new APIError(
+               400,
+               "Submission validation failed (Zod)",
+               error.message
+            );
          }
-         break;
-      case SubmissionType.FILE:
-         if (!fileUrls?.length) throw new APIError(400, "File URLs required");
-         break;
-      case SubmissionType.TEXT:
-         if (!textContent?.trim())
-            throw new APIError(400, "Text content required");
-         break;
+         console.error("14. Unexpected error during Zod validation:", error);
+         throw error; // Re-throw other errors
+      }
+
+      // --- Update submission in DB with validated data ---
+      submission.linkUrl = finalLinkUrl;
+      submission.fileUrls = finalFileUrls;
+      submission.textContent = finalTextContent;
+      submission.videoExplanationUrl = finalVideoExplanationUrl;
+      submission.status = "pending";
+      submission.aiScore = 0; // Reset score on new submission
+      console.log("15. Saving Submission to DB:", submission._id);
+
+      await submission.save();
+      console.log("16. Submission SAVED.");
+
+      // Log activity
+      await logActivity(
+         candidateId,
+         "submission_created",
+         `User submitted solution for challenge: ${challenge.title}`,
+         "success",
+         submission._id
+      );
+      console.log("17. Activity Logged.");
+
+      // Populate for response
+      await submission.populate([
+         { path: "challengeId", select: "title category difficulty" },
+         { path: "candidateId", select: "name email" },
+      ]);
+      console.log("18. Submission Populated for response.");
+
+      // Start AI evaluation asynchronously (don't wait)
+      if (challenge.aiConfig?.autoEvaluate) {
+         console.log("19. Starting AI evaluation asynchronously...");
+         evaluateSubmissionAsync(submission._id.toString(), challenge);
+      } else {
+         console.log("19. AI evaluation not set to auto-evaluate.");
+      }
+
+      res.status(200).json({
+         success: true,
+         data: submission,
+         message:
+            "Solution submitted successfully! AI evaluation in progress...",
+      });
+      console.log(
+         "--------------- END createSubmission (SUCCESS) ---------------"
+      );
+   } catch (err: any) {
+      // <--- This catch block will now log ANY error that occurs within the controller
+      console.error(
+         "--------------- ERROR in createSubmission ---------------"
+      );
+      console.error("Caught internal error (full trace):", err); // Log the full error for debugging
+      console.error("-------------------------------------------------------");
+      // Re-throw the error so the outer `catchError` utility can still process it
+      // and send the appropriate APIError response to the frontend.
+      throw err;
    }
-
-   // Find existing submission
-   let submission: ISubmission | null = await Submission.findOne({
-      challengeId: new mongoose.Types.ObjectId(challengeId),
-      candidateId: new mongoose.Types.ObjectId(candidateId),
-   });
-
-   if (!submission) {
-      throw new APIError(400, "You must start the challenge first.");
-   }
-
-   if (submission.status !== "started") {
-      throw new APIError(409, "You have already submitted for this challenge.");
-   }
-
-   // Update submission details
-   submission.videoExplanationUrl = videoExplanationUrl.trim();
-   submission.submissionType = submissionType;
-   submission.linkUrl = linkUrl?.trim();
-   submission.fileUrls = fileUrls || [];
-   submission.textContent = textContent?.trim();
-   submission.status = "pending";
-   submission.aiScore = 0;
-
-   await submission.save();
-
-   // Log activity
-   await logActivity(
-      candidateId,
-      "submission_created",
-      `User submitted solution for challenge: ${challenge.title}`,
-      "success",
-      submission._id
-   );
-
-   // Populate for response
-   await submission.populate([
-      { path: "challengeId", select: "title category difficulty" },
-      { path: "candidateId", select: "name email" },
-   ]);
-
-   // Start AI evaluation asynchronously (don't wait)
-   if (challenge.aiConfig?.autoEvaluate) {
-      evaluateSubmissionAsync(submission._id.toString(), challenge);
-   }
-
-   res.status(200).json({
-      success: true,
-      data: submission,
-      message: "Solution submitted successfully! AI evaluation in progress...",
-   });
 });
 
 /**
@@ -375,6 +506,8 @@ Please compare the candidate's submission against this ideal solution. Consider:
          evaluatedAt: new Date(),
          videoTranscribed,
       };
+
+      submission.status = "accepted";
 
       await submission.save();
 
