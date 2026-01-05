@@ -1,16 +1,16 @@
 import {
-  forgotPassword,
-  getMe,
-  login,
-  logout,
-  register,
-  resetPassword,
+   // forgotPassword,
+   getMe,
+   login,
+   logout,
+   register,
+   // resetPassword,
 } from "../controllers/authController";
 import {
-  forgotPasswordDTO,
-  loginDTO,
-  registerDTO,
-  resetPasswordDTO,
+   forgotPasswordDTO,
+   loginDTO,
+   registerDTO,
+   resetPasswordDTO,
 } from "../DTO/authDTO";
 
 import auth from "../middlewares/authMiddleware";
@@ -29,19 +29,19 @@ authRouter.post("/register", authRateLimit, validate(registerDTO), register);
 
 authRouter.post("/login", authRateLimit, validate(loginDTO), login);
 
-authRouter.post(
-  "/forgot-password",
-  authRateLimit,
-  validate(forgotPasswordDTO),
-  forgotPassword
-);
+// authRouter.post(
+//   "/forgot-password",
+//   authRateLimit,
+//   validate(forgotPasswordDTO),
+//   forgotPassword
+// );
 
-authRouter.post(
-  "/reset-password",
-  authRateLimit,
-  validate(resetPasswordDTO),
-  resetPassword
-);
+// authRouter.post(
+//   "/reset-password",
+//   authRateLimit,
+//   validate(resetPasswordDTO),
+//   resetPassword
+// );
 
 authRouter.post("/logout", auth, logout);
 

@@ -67,17 +67,17 @@ export function HowItWorks() {
                      </p>
 
                      {/* Thin Arrow (Hidden on last item and mobile) */}
-                     {i !== steps.length - 1 && (
-                        <div className="">
-                           {/* Using a font-based arrow to match the thin look in the image */}
-                           <Image
-                              src="/images/arrow-right.svg"
-                              alt="Right Arrow"
-                              width={40}
-                              height={40}
-                           />
-                        </div>
-                     )}
+                     {i !== steps.length - 1 &&
+                        // <div className="">
+                        //    {/* Using a font-based arrow to match the thin look in the image */}
+                        //    <Image
+                        //       src="/images/arrow-right.svg"
+                        //       alt="Right Arrow"
+                        //       width={40}
+                        //       height={40}
+                        //    />
+                        // </div>
+                        ""}
                   </div>
                ))}
             </div>

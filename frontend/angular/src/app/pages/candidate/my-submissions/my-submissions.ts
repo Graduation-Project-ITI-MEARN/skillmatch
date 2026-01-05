@@ -51,18 +51,23 @@ export class MySubmissions implements OnInit {
 
   openSubmitModal(submission: any) {
     this.selectedSubmissionId = submission._id;
-    this.selectedChallenge = submission.challengeId; // Store the challenge details
+    // Ensure selectedChallenge has the full challenge object, including aiConfig
+    this.selectedChallenge = submission.challengeId;
 
     this.showModal = true;
     this.submitForm.reset();
     this.selectedProjectFile = null;
-    this.selectedVideoFile = null;
+    this.selectedVideoFile = null; // Reset video file selection on modal open
 
     // Clear existing validators for solutionUrl
     this.submitForm.get('solutionUrl')?.clearValidators();
     this.submitForm.get('solutionUrl')?.updateValueAndValidity();
 
     console.log('this.selectedChallenge', this.selectedChallenge);
+    console.log(
+      'Requires Video Transcript:',
+      this.selectedChallenge?.aiConfig?.requireVideoTranscript
+    );
 
     // Set active tab and validators based on submissionType
     if (this.selectedChallenge?.submissionType === 'file') {
@@ -103,27 +108,29 @@ export class MySubmissions implements OnInit {
       this.toast.error('Please provide a valid solution URL.');
       return;
     }
-    if (!this.selectedVideoFile) {
+
+    // CONDITIONAL VALIDATION FOR VIDEO EXPLANATION
+    if (this.selectedChallenge?.aiConfig?.requireVideoTranscript && !this.selectedVideoFile) {
       this.toast.error('Please upload your video explanation file.');
       return;
     }
 
     const formData = new FormData();
-    formData.append('submissionId', this.selectedSubmissionId);
+    formData.append('submissionId', this.selectedSubmissionId); // Send submissionId here
     formData.append('submissionType', this.activeTab); // This refers to the main challenge submission type
 
     if (this.activeTab === 'file') {
       if (this.selectedProjectFile) {
-        formData.append('file', this.selectedProjectFile); // Append project file under 'file' key
+        formData.append('file', this.selectedProjectFile); // Append project file under 'file' key (matches Multer field name)
       }
-    } else {
-      // activeTab === 'link'
-      formData.append('solutionUrl', this.submitForm.value.solutionUrl || '');
+    } else if (this.activeTab === 'link') {
+      formData.append('linkUrl', this.submitForm.value.solutionUrl || ''); // Send as linkUrl
     }
+    // No 'textContent' handled in this specific form, but if it were, you'd add it here.
 
-    // Append the video explanation file under 'videoExplanationFile' key
-    if (this.selectedVideoFile) {
-      formData.append('videoExplanationFile', this.selectedVideoFile);
+    // Append the video explanation file ONLY IF IT WAS REQUIRED AND SELECTED
+    if (this.selectedChallenge?.aiConfig?.requireVideoTranscript && this.selectedVideoFile) {
+      formData.append('videoExplanationFile', this.selectedVideoFile); // Append video file under 'videoExplanationFile' key
     }
 
     this.candidateService.submitFinalSolution(formData).subscribe({

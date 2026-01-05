@@ -144,67 +144,67 @@ const getMe = catchError(async (req: Request, res: Response) => {
  * @route   POST /api/auth/forgot-password
  * @access  Public
  */
-const forgotPassword = catchError(async (req: Request, res: Response) => {
-   const { email } = req.body;
+// const forgotPassword = catchError(async (req: Request, res: Response) => {
+//    const { email } = req.body;
 
-   const user = await User.findOne({ email });
-   if (!user) {
-      throw new Error("User not found");
-   }
+//    const user = await User.findOne({ email });
+//    if (!user) {
+//       throw new Error("User not found");
+//    }
 
-   // Generate OTP
-   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//    // Generate OTP
+//    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-   // Hash OTP before saving
-   const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
+//    // Hash OTP before saving
+//    const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
 
-   user.resetOTP = hashedOTP;
-   user.resetOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
-   await user.save({ validateBeforeSave: false });
+//    user.resetOTP = hashedOTP;
+//    user.resetOTPExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+//    await user.save({ validateBeforeSave: false });
 
-   // Send Email
-   await sendEmail({
-      to: user.email,
-      subject: "Password Reset OTP",
-      html: generateOtpEmail(otp, user.name || "User"),
-   });
+//    // Send Email
+//    await sendEmail({
+//       to: user.email,
+//       subject: "Password Reset OTP",
+//       html: generateOtpEmail(otp, user.name || "User"),
+//    });
 
-   res.status(200).json({
-      success: true,
-      message: "OTP sent to email",
-   });
-});
+//    res.status(200).json({
+//       success: true,
+//       message: "OTP sent to email",
+//    });
+// });
 
-/**
- * @desc    Reset password using OTP
- * @route   POST /api/auth/reset-password
- * @access  Public
- */
-const resetPassword = catchError(async (req: Request, res: Response) => {
-   const { email, otp, newPassword } = req.body;
+// /**
+//  * @desc    Reset password using OTP
+//  * @route   POST /api/auth/reset-password
+//  * @access  Public
+//  */
+// const resetPassword = catchError(async (req: Request, res: Response) => {
+//    const { email, otp, newPassword } = req.body;
 
-   const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
+//    const hashedOTP = crypto.createHash("sha256").update(otp).digest("hex");
 
-   const user = await User.findOne({
-      email,
-      resetOTP: hashedOTP,
-      resetOTPExpires: { $gt: Date.now() },
-   });
+//    const user = await User.findOne({
+//       email,
+//       resetOTP: hashedOTP,
+//       resetOTPExpires: { $gt: Date.now() },
+//    });
 
-   if (!user) {
-      throw new Error("Invalid or expired OTP");
-   }
+//    if (!user) {
+//       throw new Error("Invalid or expired OTP");
+//    }
 
-   user.password = newPassword;
-   user.resetOTP = undefined;
-   user.resetOTPExpires = undefined;
+//    user.password = newPassword;
+//    user.resetOTP = undefined;
+//    user.resetOTPExpires = undefined;
 
-   await user.save();
+//    await user.save();
 
-   res.status(200).json({
-      success: true,
-      message: "Password reset successful",
-   });
-});
+//    res.status(200).json({
+//       success: true,
+//       message: "Password reset successful",
+//    });
+// });
 
-export { register, login, getMe, forgotPassword, resetPassword, logout };
+export { register, login, getMe, logout };

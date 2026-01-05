@@ -4,11 +4,11 @@ import Challenge from "../models/Challenge";
 import Submission from "../models/Submission";
 import User from "../models/User";
 import { catchError } from "../utils/catchAsync";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { GoogleGenerativeAI } from "@google/generative-ai"; // Removed Google Generative AI import
 import APIError from "../utils/APIError";
 import OpenAI from "openai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || ""); // Removed Gemini initialization
 const openAi = new OpenAI({
    apiKey: process.env.OPENAI_API_KEY,
 });
@@ -23,7 +23,7 @@ export const getCareerDashboard = catchError(
       const userId = req.user?._id;
 
       console.log("User ID:", userId);
-      console.log(genAI);
+      // Removed console.log(genAI);
 
       if (!userId) {
          throw new APIError(400, "You are not logged in");
@@ -91,22 +91,17 @@ export const getCareerDashboard = catchError(
          .limit(5)
          .select("title difficulty tags category type prizeAmount");
 
-      // Generate AI career insights
-      // const model = genAI.getGenerativeModel({
-      //    model: "gemini-2.0-flash",
-      //    generationConfig: {
-      //       temperature: 0.7,
-      //       maxOutputTokens: 1500,
-      //    },
-      // });
-
-      const model = openAi.chat.completions.create({
-         model: "gpt-3.5-turbo",
+      // Generate AI career insights using OpenAI
+      const completion = await openAi.chat.completions.create({
+         model: "gpt-3.5-turbo", // Or "gpt-4" for potentially better results
          messages: [
             {
+               role: "system",
+               content: `You are an AI Career Coach for SkillMatch AI platform. Your task is to provide a comprehensive career development plan in JSON format. Always respond with valid JSON.`,
+            },
+            {
                role: "user",
-               content: `You are an AI Career Coach for SkillMatch AI platform.
-
+               content: `
             **Candidate Profile:**
             - Total Submissions: ${submissions.length}
             - Average Score: ${averageScore}/100
@@ -136,57 +131,20 @@ export const getCareerDashboard = catchError(
               "monthlyGoal": "specific achievable goal",
               "estimatedTimeToJobReady": "e.g., 2-3 months"
             }
-
-            `,
+            Be honest, encouraging, and actionable.`,
             },
          ],
          temperature: 0.7,
          max_tokens: 1500,
+         response_format: { type: "json_object" }, // Request JSON object directly
       });
 
-      //       const prompt = `You are an AI Career Coach for SkillMatch AI platform.
-
-      // **Candidate Profile:**
-      // - Total Submissions: ${submissions.length}
-      // - Average Score: ${averageScore}/100
-      // - Strong Skills: ${strongSkills.join(", ") || "Building foundation"}
-      // - Skills Needing Improvement: ${weakSkills.join(", ") || "None identified yet"}
-      // - Recent Challenges: ${submissions
-      //          .slice(0, 3)
-      //          .map((s: any) => s.challengeId.title)
-      //          .join(", ")}
-
-      // **Your Task:**
-      // Provide a comprehensive career development plan in JSON format:
-
-      // {
-      //   "careerLevel": "junior|mid|senior",
-      //   "readinessScore": 0-100,
-      //   "nextSteps": ["step 1", "step 2", "step 3"],
-      //   "careerPaths": [
-      //     {
-      //       "title": "e.g., Backend Developer",
-      //       "match": 0-100,
-      //       "reasoning": "why this fits"
-      //     }
-      //   ],
-      //   "monthlyGoal": "specific achievable goal",
-      //   "estimatedTimeToJobReady": "e.g., 2-3 months"
-      // }
-
-      // Be honest, encouraging, and actionable.`;
-
-      const result = await model;
-      const responseText = result.choices[0].message.content;
+      const responseText = completion.choices[0].message.content;
 
       let careerInsights;
       try {
-         const cleaned = responseText;
-         // .replace(/```json\n?/g, "")
-         // .replace(/```\n?/g, "")
-         // .trim();
-         // const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-         careerInsights = JSON.parse(cleaned || "{}");
+         // With response_format: { type: "json_object" }, direct parse should be reliable
+         careerInsights = JSON.parse(responseText || "{}");
       } catch (error) {
          console.error("Failed to parse career insights:", error);
          careerInsights = {
@@ -197,6 +155,9 @@ export const getCareerDashboard = catchError(
                "Focus on weak skills",
                "Build portfolio projects",
             ],
+            careerPaths: [],
+            monthlyGoal: "Continue skill development",
+            estimatedTimeToJobReady: "N/A",
          };
       }
 
@@ -271,47 +232,45 @@ export const candidateCoachChat = catchError(
               )
             : 0;
 
-      const userContext = `
-**Candidate Profile:**
-- Name: ${user?.name || "User"}
-- Total Submissions: ${submissions.length}
-- Average Score: ${averageScore}/100
-- Recent Challenges: ${
-         submissions.map((s: any) => s.challengeId.title).join(", ") ||
-         "None yet"
-      }
-
-**Conversation History:**
-${
-   conversationHistory
-      ?.slice(-4)
-      .map((msg: any) => `${msg.role}: ${msg.content}`)
-      .join("\n") || "No previous messages"
-}
-
-**Current Message:**
-User: ${message}
-
-**Instructions:**
-You are a professional AI Career Coach for SkillMatch AI. 
-- Help with career development, skill improvement, and job readiness
-- Be encouraging but realistic
-- Provide actionable advice
-- DO NOT discuss personal matters, relationships, or off-topic subjects
-- Keep responses concise (2-3 paragraphs)
-
-Respond naturally and helpfully.`;
-
-      const model = genAI.getGenerativeModel({
-         model: "gemini-2.0-flash",
-         generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 800,
+      // Prepare messages for OpenAI chat completion
+      const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+         {
+            role: "system",
+            content: `You are a professional AI Career Coach for SkillMatch AI.
+            - Your role is to help candidates with career development, skill improvement, and job readiness.
+            - Be encouraging but realistic.
+            - Provide actionable advice.
+            - DO NOT discuss personal matters, relationships, or off-topic subjects.
+            - Keep responses concise (2-3 paragraphs).`,
          },
+         {
+            role: "user",
+            content: `Here is my profile and recent activity for your context:
+            - Name: ${user?.name || "User"}
+            - Total Submissions: ${submissions.length}
+            - Average Score: ${averageScore}/100
+            - Recent Challenges: ${
+               submissions.map((s: any) => s.challengeId.title).join(", ") ||
+               "None yet"
+            }`,
+         },
+         // Add previous conversation history
+         ...(conversationHistory
+            ?.slice(-4) // Limit history to last 4 messages
+            .map((msg: any) => ({ role: msg.role, content: msg.content })) ||
+            []),
+         // Add the current user message
+         { role: "user", content: message },
+      ];
+
+      const completion = await openAi.chat.completions.create({
+         model: "gpt-3.5-turbo", // Or "gpt-4" for potentially better chat experience
+         messages: messages,
+         temperature: 0.7,
+         max_tokens: 800,
       });
 
-      const result = await model.generateContent(userContext);
-      const reply = result.response.text();
+      const reply = completion.choices[0].message.content;
 
       res.status(200).json({
          success: true,
@@ -357,56 +316,58 @@ export const companyCoachChat = catchError(
               )
             : 0;
 
-      const companyContext = `
-**Company Profile:**
-- Active Challenges: ${companyChallenges.length}
-- Total Submissions Received: ${submissions.length}
-- Average Candidate Score: ${avgCandidateScore}/100
-- Challenge Categories: ${
-         [...new Set(companyChallenges.map((c) => c.category))].join(", ") ||
-         "None yet"
-      }
+      // Prepare messages for OpenAI chat completion
+      const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+         {
+            role: "system",
+            content: `You are an AI Hiring Assistant for SkillMatch AI. Your role is to help companies with:
+            1. Identifying hiring needs and creating challenges.
+            2. Suggesting challenge ideas based on job requirements.
+            3. Analyzing candidate pool quality.
+            4. Recommending evaluation strategies.
 
-**Conversation History:**
-${
-   conversationHistory
-      ?.slice(-4)
-      .map((msg: any) => `${msg.role}: ${msg.content}`)
-      .join("\n") || "No previous messages"
-}
+            If the company asks you to create a challenge, you should suggest:
+            - Title
+            - Description
+            - Difficulty
+            - Category
+            - Tags (skills)
+            - Requirements
+            - Evaluation criteria
+            - Deliverables
+            - Ideal solution outline
 
-**Company Message:**
-${message}
-
-**Instructions:**
-You are an AI Hiring Assistant for SkillMatch AI, helping companies:
-1. Identify hiring needs and create challenges
-2. Suggest challenge ideas based on job requirements
-3. Analyze candidate pool quality
-4. Recommend evaluation strategies
-
-If the company asks you to create a challenge, suggest:
-- Title
-- Description
-- Difficulty
-- Category
-- Tags (skills)
-- Requirements
-- Evaluation criteria
-- Ideal solution outline
-
-Be professional, insightful, and action-oriented.`;
-
-      const model = genAI.getGenerativeModel({
-         model: "gemini-1.5-flash",
-         generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1200,
+            Be professional, insightful, and action-oriented.`,
          },
+         {
+            role: "user",
+            content: `Here is our company's current profile and challenge activity for your context:
+            - Active Challenges: ${companyChallenges.length}
+            - Total Submissions Received: ${submissions.length}
+            - Average Candidate Score: ${avgCandidateScore}/100
+            - Challenge Categories: ${
+               [...new Set(companyChallenges.map((c) => c.category))].join(
+                  ", "
+               ) || "None yet"
+            }`,
+         },
+         // Add previous conversation history
+         ...(conversationHistory
+            ?.slice(-4)
+            .map((msg: any) => ({ role: msg.role, content: msg.content })) ||
+            []),
+         // Add the current company message
+         { role: "user", content: message },
+      ];
+
+      const completion = await openAi.chat.completions.create({
+         model: "gpt-3.5-turbo", // Or "gpt-4"
+         messages: messages,
+         temperature: 0.7,
+         max_tokens: 1200,
       });
 
-      const result = await model.generateContent(companyContext);
-      const reply = result.response.text();
+      const reply = completion.choices[0].message.content;
 
       res.status(200).json({
          success: true,
@@ -433,16 +394,7 @@ export const generateChallenge = catchError(
          throw new APIError(400, "jobTitle and requiredSkills are required");
       }
 
-      const model = genAI.getGenerativeModel({
-         model: "gemini-1.5-flash",
-         generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 2000,
-         },
-      });
-
-      const prompt = `You are an expert Challenge Designer for SkillMatch AI.
-
+      const promptContent = `
 **Hiring Requirements:**
 - Job Title: ${jobTitle}
 - Required Skills: ${requiredSkills.join(", ")}
@@ -470,26 +422,42 @@ Create a practical challenge that tests these skills. Return ONLY valid JSON:
 
 Make it realistic, practical, and directly relevant to the job.`;
 
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
+      const completion = await openAi.chat.completions.create({
+         model: "gpt-4o-mini", // Using a model optimized for JSON output
+         messages: [
+            {
+               role: "system",
+               content:
+                  "You are an expert Challenge Designer for SkillMatch AI. Always provide a response in valid JSON format.",
+            },
+            {
+               role: "user",
+               content: promptContent,
+            },
+         ],
+         temperature: 0.8,
+         max_tokens: 2000,
+         response_format: { type: "json_object" }, // Explicitly request JSON object
+      });
+
+      const responseText = completion.choices[0].message.content;
 
       let challengeData;
       try {
-         const cleaned = responseText
-            .replace(/```json\n?/g, "")
-            .replace(/```\n?/g, "")
-            .trim();
-         const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-         challengeData = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+         challengeData = JSON.parse(responseText || "{}");
       } catch (error) {
+         console.error("Failed to parse generated challenge JSON:", error);
          throw new APIError(
             500,
-            "Failed to generate challenge. Please try again."
+            "Failed to generate challenge. Please try again or refine the request."
          );
       }
 
-      if (!challengeData) {
-         throw new APIError(500, "Failed to parse generated challenge.");
+      if (!challengeData || Object.keys(challengeData).length === 0) {
+         throw new APIError(
+            500,
+            "Failed to parse generated challenge or it was empty."
+         );
       }
 
       // Optionally auto-create the challenge
@@ -561,32 +529,36 @@ async function moderateMessage(message: string): Promise<boolean> {
    }
 
    try {
-      const model = genAI.getGenerativeModel({
-         model: "gemini-1.5-flash",
-         generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 100,
-         },
+      const completion = await openAi.chat.completions.create({
+         model: "gpt-3.5-turbo", // Using a general purpose model for classification
+         messages: [
+            {
+               role: "system",
+               content:
+                  "You are a helpful assistant that classifies messages. Respond with ONLY 'YES' if the message is related to career development, skills, job search, or professional growth. Otherwise, respond with ONLY 'NO'.",
+            },
+            {
+               role: "user",
+               content: `Is this message career-related? Message: "${message}"`,
+            },
+         ],
+         temperature: 0.2,
+         max_tokens: 5, // Expecting only 'YES' or 'NO'
       });
 
-      const prompt = `Is this message related to career development, skills, job search, or professional growth?
+      const response = completion.choices[0].message.content
+         ?.trim()
+         .toUpperCase();
 
-Message: "${message}"
-
-Respond with ONLY: YES or NO`;
-
-      const result = await model.generateContent(prompt);
-      const response = result.response.text().trim().toUpperCase();
-
-      return response.includes("YES");
+      return response === "YES";
    } catch (error) {
-      console.error("Moderation error:", error);
-      return true; // Allow if moderation fails
+      console.error("OpenAI Moderation error:", error);
+      return true; // Allow if moderation fails to avoid blocking legitimate users due to API issues
    }
 }
 
 /**
- * Generate learning resources based on skills
+ * Generate learning resources based on skills (No AI needed here)
  */
 function generateLearningResources(skills: string[]): Array<{
    skill: string;
@@ -605,7 +577,7 @@ function generateLearningResources(skills: string[]): Array<{
          {
             type: "video",
             title: "React Tutorial - freeCodeCamp",
-            url: "https://www.youtube.com/watch?v=bMknfKXIFA8",
+            url: "https://www.youtube.com/watch?v=w7ejDZ8SWL8",
          },
          {
             type: "practice",
@@ -622,7 +594,7 @@ function generateLearningResources(skills: string[]): Array<{
          {
             type: "video",
             title: "Node.js Crash Course",
-            url: "https://www.youtube.com/watch?v=fBNz5xF-Kx4",
+            url: "https://www.youtube.com/watch?v=f2EqECiTBL8",
          },
          {
             type: "book",
@@ -656,7 +628,7 @@ function generateLearningResources(skills: string[]): Array<{
          {
             type: "video",
             title: "JavaScript Tutorial",
-            url: "https://www.youtube.com/watch?v=W6NZfCO5SIk",
+            url: "https://www.youtube.com/watch?v=W6NZPH5jyUc",
          },
          {
             type: "practice",
@@ -673,7 +645,7 @@ function generateLearningResources(skills: string[]): Array<{
          {
             type: "video",
             title: "SQL Crash Course",
-            url: "https://www.youtube.com/watch?v=HXV3zeQKqGY",
+            url: "https://www.youtube.com/watch?v=HXV3zeQMqPG",
          },
          {
             type: "practice",

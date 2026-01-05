@@ -77,7 +77,7 @@ export default function ChallengesPage() {
       );
 
    return (
-      <div className="bg-white min-h-screen pb-20 font-sans text-black">
+      <div className="min-h-screen pb-20 font-sans text-black">
          <div className="text-center py-24 px-6">
             <h1 className="text-7xl font-serif mb-6">Challenges</h1>
             <p className="max-w-2xl mx-auto text-gray-500 text-lg">

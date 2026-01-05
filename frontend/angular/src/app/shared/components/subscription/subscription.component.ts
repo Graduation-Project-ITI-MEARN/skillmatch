@@ -125,7 +125,7 @@ export class SubscriptionComponent implements OnInit {
 
     try {
       const response = await this.paymentService
-        .initiatePayment(plan.price, 'SUBSCRIPTION', plan.id) // Pass plan.id
+        .initiatePayment(plan.price, 'SUBSCRIPTION') // Pass plan.id
         .toPromise();
 
       if (response?.data?.iframeUrl) {

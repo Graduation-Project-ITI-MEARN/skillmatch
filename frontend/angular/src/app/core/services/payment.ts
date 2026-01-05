@@ -16,7 +16,6 @@ export class PaymentService {
       amount: amount,
       currency: 'EGP',
       payment_type: type,
-      plan_id: planId, // Include plan ID for subscriptions
     };
 
     console.log('Sending Payload to Backend:', payload);
