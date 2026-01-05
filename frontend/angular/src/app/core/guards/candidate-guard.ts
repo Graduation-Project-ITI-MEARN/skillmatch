@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { environment } from '../../../environments/environment';
+import { LanguageService } from '../services/language';
 // Removed: import { checkVerification } from '../../shared/utils/verification-check';
 // Removed: import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
 
@@ -17,13 +18,14 @@ export const candidateGuard: CanActivateFn = (
 ) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  // Removed: const dialogService = inject(ZardDialogService);
+  const languageService = inject(LanguageService);
 
+  const lang = languageService.getLangauge();
   const user = authService.currentUser(); // Get the current user signal's value
 
   // 1. Check Authentication
   if (!user) {
-    window.location.href = `${environment.nextJsUrl}/login`;
+    window.location.href = `${environment.nextJsUrl}/${lang}/login`;
     return false;
   }
 

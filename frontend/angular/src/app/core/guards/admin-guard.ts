@@ -3,10 +3,14 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { map, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LanguageService } from '../services/language';
 
 export const adminGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const languageService = inject(LanguageService);
+
+  const lang = languageService.getLangauge();
 
   // 1. Wait for Auth Check
   return authService.checkAuth().pipe(
@@ -14,7 +18,8 @@ export const adminGuard: CanActivateFn = (route, state) => {
     map((isAuthenticated) => {
       // 2. Check Authentication
       if (!isAuthenticated) {
-        window.location.href = `${environment.nextJsUrl}/login`;
+        console.log(lang);
+        window.location.href = `${environment.nextJsUrl}/${lang}/login`;
         return false;
       }
 

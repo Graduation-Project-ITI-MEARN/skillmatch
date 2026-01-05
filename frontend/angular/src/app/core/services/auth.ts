@@ -4,6 +4,7 @@ import { CookieService } from './cookie';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LanguageService } from './language';
 
 // Define the expected structure from your /auth/me endpoint
 export interface AuthUserResponse {
@@ -26,6 +27,9 @@ export class AuthService {
   private http = inject(HttpClient);
   private cookiesService = inject(CookieService);
   private router = inject(Router);
+  private languageService = inject(LanguageService);
+
+  lang = this.languageService.getLangauge();
 
   // currentUser signal now holds the AuthUserResponse or null
   currentUser = signal<AuthUserResponse | null>(null);
@@ -97,7 +101,8 @@ export class AuthService {
       error: (err) => console.error('Backend logout failed', err),
       complete: () => {
         this.clearUserAndCookies();
-        window.location.href = `${environment.nextJsUrl}/login`; // Full page reload
+        console.log('Frontend logout successful');
+        window.location.href = `${environment.nextJsUrl}/${this.lang}/login`; // Full page reload
       },
     });
   }

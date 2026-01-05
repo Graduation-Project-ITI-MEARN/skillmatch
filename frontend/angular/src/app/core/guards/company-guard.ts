@@ -9,6 +9,7 @@ import { AuthService, AuthUserResponse } from '../services/auth'; // Import Auth
 import { environment } from '../../../environments/environment';
 import { ZardDialogService } from '@shared/components/zard-ui/dialog/dialog.service';
 import { checkVerification } from './verification.guard';
+import { LanguageService } from '../services/language';
 
 export const companyGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -17,12 +18,15 @@ export const companyGuard: CanActivateFn = (
   const authService = inject(AuthService);
   const router = inject(Router);
   const dialogService = inject(ZardDialogService);
+  const languageService = inject(LanguageService);
+
+  const lang = languageService.getLangauge();
 
   const user = authService.currentUser(); // Get the current user signal's value
 
   // 1. Check Authentication
   if (!user) {
-    window.location.href = `${environment.nextJsUrl}/login`;
+    window.location.href = `${environment.nextJsUrl}/${lang}/login`;
     return false;
   }
 

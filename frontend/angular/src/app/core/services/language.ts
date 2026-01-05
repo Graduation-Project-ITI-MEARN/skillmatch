@@ -74,4 +74,8 @@ export class LanguageService {
       }
     }
   }
+
+  getLangauge() {
+    return this.translate.currentLang;
+  }
 }
