@@ -910,4 +910,148 @@
       </div>
     </div>
   </div>
+
+  <!-- Add this modal to your create-challenge.html, right before the closing </div> -->
+
+  <!-- Subscription Required Modal -->
+  <div
+    *ngIf="showSubscriptionModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    (click)="closeSubscriptionModal()"
+  >
+    <div
+      class="bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 p-8"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="text-center">
+        <!-- Icon -->
+        <div
+          class="w-20 h-20 bg-linear-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6"
+        >
+          <svg
+            class="w-10 h-10 text-indigo-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">Subscription Required</h3>
+
+        <p class="text-gray-600 mb-8 leading-relaxed">
+          {{ subscriptionMessage }}
+        </p>
+
+        <!-- Benefits List -->
+        <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left">
+          <p class="font-semibold text-gray-900 mb-3">What you'll get:</p>
+          <ul class="space-y-2">
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg
+                class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Create unlimited job challenges</span>
+            </li>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg
+                class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>AI-powered candidate evaluation</span>
+            </li>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg
+                class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Advanced analytics & insights</span>
+            </li>
+            <li class="flex items-start gap-2 text-sm text-gray-700">
+              <svg
+                class="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Priority support</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pricing Preview -->
+        <div class="flex items-center justify-center gap-3 mb-8">
+          <div class="text-center px-4 py-3 bg-gray-100 rounded-xl">
+            <p class="text-sm text-gray-600 mb-1">Basic</p>
+            <p class="text-2xl font-bold text-gray-900">
+              299 <span class="text-base font-normal">EGP</span>
+            </p>
+          </div>
+          <div
+            class="text-center px-4 py-3 bg-linear-to-br from-indigo-600 to-purple-600 rounded-xl text-white"
+          >
+            <p class="text-sm opacity-90 mb-1">Professional ⭐</p>
+            <p class="text-2xl font-bold">599 <span class="text-base font-normal">EGP</span></p>
+          </div>
+          <div class="text-center px-4 py-3 bg-gray-100 rounded-xl">
+            <p class="text-sm text-gray-600 mb-1">Enterprise</p>
+            <p class="text-2xl font-bold text-gray-900">
+              1299 <span class="text-base font-normal">EGP</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button
+            type="button"
+            (click)="closeSubscriptionModal()"
+            class="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Maybe Later
+          </button>
+          <button
+            type="button"
+            (click)="navigateToSubscription()"
+            class="flex-1 px-6 py-3 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            View Plans
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -31,6 +31,8 @@ import {
   IAiModel,
   IPricingTierDetails,
 } from '../../../shared/models/challenge.model';
+import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '@/core/services/auth';
 
 @Component({
   selector: 'app-create-challenge',
@@ -41,7 +43,7 @@ import {
     ReactiveFormsModule,
     TranslateModule,
     LucideAngularModule,
-    ZardCalendarComponent
+    ZardCalendarComponent,
     // Removed Zard UI imports like ZardSelectImports, ZardInputDirective, ZardCalendarComponent
   ],
   templateUrl: './create-challenge.html',
@@ -53,6 +55,12 @@ export class CreateChallenge implements OnInit {
   private router = inject(Router);
   private challengeService = inject(ChallengeService);
   private translate = inject(TranslateService);
+  private dialog = inject(MatDialog);
+  private authService = inject(AuthService);
+
+  // Add these properties
+  showSubscriptionModal = false;
+  subscriptionMessage = '';
 
   icons = { ArrowLeft, CheckCircle, AlertCircle, ChevronDown, Search, X };
   challengeForm!: FormGroup;
@@ -101,7 +109,7 @@ export class CreateChallenge implements OnInit {
 
     const today = new Date();
     today.setDate(today.getDate() + 1); // Minimum date is tomorrow
-    this.minDate = today // Format as YYYY-MM-DD for native input
+    this.minDate = today; // Format as YYYY-MM-DD for native input
 
     this.challengeForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
@@ -383,10 +391,23 @@ export class CreateChallenge implements OnInit {
     this.challengeForm.get('idealSolution.value')?.markAsTouched(); // Trigger validation
   }
 
-  async onSubmit(status: 'draft' | 'published') {
-    this.challengeForm.markAllAsTouched(); // Mark all controls as touched to show errors
+  get hasActiveSubscription(): boolean {
+    const isSubscribed = this.authService.isSubscribed; // Or however you get current user
+    return isSubscribed;
+  }
 
-    // Explicit check for tags as it's a custom multi-select
+  async onSubmit(status: 'draft' | 'published') {
+    // NEW: Check subscription BEFORE validation if publishing
+    if (status === 'published' && !this.hasActiveSubscription) {
+      this.showSubscriptionModal = true;
+      this.subscriptionMessage =
+        'An active subscription is required to publish challenges. Subscribe now to unlock unlimited challenge creation with premium AI evaluation.';
+      return; // Stop here, don't submit
+    }
+
+    this.challengeForm.markAllAsTouched();
+
+    // Explicit check for tags
     if (this.selectedTags.length === 0) {
       this.challengeForm.get('tags')?.setErrors({ required: true });
       this.challengeForm.get('tags')?.markAsTouched();
@@ -397,7 +418,7 @@ export class CreateChallenge implements OnInit {
     if (!this.challengeForm.valid) {
       this.submitError = this.translate.instant('CHALLENGE.FORM.GENERIC_ERROR_MESSAGE');
       console.error('Form is invalid. Details:', this.challengeForm.errors);
-      // Detailed logging for nested groups
+      // Detailed logging
       Object.keys(this.challengeForm.controls).forEach((key) => {
         const control = this.challengeForm.get(key);
         if (control instanceof FormGroup) {
@@ -416,16 +437,16 @@ export class CreateChallenge implements OnInit {
 
     console.log('Frontend validation passed. Constructing payload...');
 
-    const formValue = this.challengeForm.getRawValue(); // Use getRawValue to get values from disabled controls if any
+    const formValue = this.challengeForm.getRawValue();
 
     const payload: any = {
       title: formValue.title,
       description: formValue.description,
       category: formValue.category,
       difficulty: formValue.difficulty,
-      type: 'job', // Fixed type
+      type: 'job',
       submissionType: formValue.submissionType,
-      deadline: formValue.deadline, // Native date input value (ISO string YYYY-MM-DD)
+      deadline: formValue.deadline,
       salary: formValue.salary,
       additionalInfo: formValue.additionalInfo,
       tags: formValue.tags,
@@ -444,16 +465,12 @@ export class CreateChallenge implements OnInit {
       status: status,
     };
 
-    // Ensure selectedModel is correctly added based on tier
     if (formValue.aiConfig.pricingTier === 'custom') {
       payload.aiConfig.selectedModel = formValue.aiConfig.selectedModel;
     } else if (this.selectedAiModel) {
       payload.aiConfig.selectedModel = this.selectedAiModel.id;
     } else {
-      // If no custom model and no default model found for non-custom tier, handle error or omit
       console.warn('No AI model selected for non-custom pricing tier or default not found.');
-      // Depending on backend, you might want to `delete payload.aiConfig.selectedModel;`
-      // or set it to a default fallback. For now, it will be an empty string if nothing matches.
     }
 
     console.log('Final payload being sent to backend:', payload);
@@ -469,19 +486,14 @@ export class CreateChallenge implements OnInit {
     } catch (error: any) {
       console.error('Error creating challenge:', error);
 
-      // Handle subscription-specific errors
       if (error?.error?.code === 'SUBSCRIPTION_REQUIRED') {
-        this.submitError = 'Active subscription required. Redirecting to subscription page...';
-        setTimeout(() => {
-          this.router.navigate(['/dashboard/company/subscription']);
-        }, 2000);
+        this.showSubscriptionModal = true;
+        this.subscriptionMessage =
+          'Active subscription required to publish challenges. Subscribe now to start hiring top talent.';
       } else if (error?.error?.code === 'SUBSCRIPTION_EXPIRED') {
-        this.submitError = 'Your subscription has expired. Redirecting to renewal...';
-        setTimeout(() => {
-          this.router.navigate(['/dashboard/company/subscription'], {
-            queryParams: { renew: 'true' },
-          });
-        }, 2000);
+        this.showSubscriptionModal = true;
+        this.subscriptionMessage =
+          'Your subscription has expired. Renew now to continue publishing challenges.';
       } else if (error?.error?.code === 'PREMIUM_AI_REQUIRES_SUBSCRIPTION') {
         this.submitError = 'Premium AI models require subscription upgrade.';
         this.showUpgradeModal = true;
@@ -491,6 +503,16 @@ export class CreateChallenge implements OnInit {
     } finally {
       this.isSubmitting = false;
     }
+  }
+
+  // Add method to navigate to subscription
+  navigateToSubscription() {
+    this.showSubscriptionModal = false;
+    this.router.navigate(['/dashboard/company/subscription']);
+  }
+
+  closeSubscriptionModal() {
+    this.showSubscriptionModal = false;
   }
 
   goBack() {
