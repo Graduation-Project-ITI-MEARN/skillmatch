@@ -1,0 +1,1 @@
+import{Jb as s,Kb as i,ic as o,kb as n}from"./chunk-565OUHKP.js";var a=class e{static{this.\u0275fac=function(t){return new(t||e)}}static{this.\u0275cmp=n({type:e,selectors:[["app-settings"]],decls:2,vars:0,template:function(t,m){t&1&&(s(0,"p"),o(1,"settings works!"),i())},encapsulation:2})}};export{a as Settings};
