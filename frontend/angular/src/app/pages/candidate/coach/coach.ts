@@ -72,7 +72,7 @@ export class Coach implements OnInit, OnDestroy {
   fetchDashboardData() {
     this.isLoading = true;
     this.http
-      .get<any>('http://localhost:5000/api/coach/dashboard')
+      .get<any>(`${environment.apiUrl}/coach/dashboard`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

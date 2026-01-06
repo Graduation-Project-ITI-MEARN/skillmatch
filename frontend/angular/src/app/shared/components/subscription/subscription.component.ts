@@ -4,16 +4,25 @@ import { MatDialog } from '@angular/material/dialog';
 import { PaymentIframe } from '../payment-iframe/payment-iframe';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaymentService } from '@/core/services/payment';
 import { AuthService } from '@/core/services/auth';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+
+// Map backend PricingTier enum to subscription plans
+enum PricingTier {
+  FREE = 'free',
+  BUDGET = 'budget',
+  BALANCED = 'balanced',
+  PREMIUM = 'premium',
+}
 
 interface SubscriptionPlan {
   id: string;
   name: string;
   price: number;
-  duration: number; // days
+  duration: number;
   features: string[];
-  aiModelAccess: 'free' | 'standard' | 'premium' | 'custom';
+  aiModelAccess: PricingTier;
   recommended?: boolean;
 }
 
@@ -25,22 +34,23 @@ interface SubscriptionPlan {
 })
 export class SubscriptionComponent implements OnInit {
   private dialog = inject(MatDialog);
-  private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
-  private router = inject(Router);
+  router = inject(Router);
+  private http = inject(HttpClient);
 
   currentUser = this.authService.currentUser();
   isProcessing = false;
   error = '';
   successMessage = '';
 
+  // Map pricing tiers to subscription plans
   subscriptionPlans: SubscriptionPlan[] = [
     {
       id: 'basic',
       name: 'Basic',
       price: 299,
       duration: 30,
-      aiModelAccess: 'free',
+      aiModelAccess: PricingTier.FREE, // Free tier AI models
       features: [
         'Create unlimited challenges',
         'Basic AI evaluation (Free tier models)',
@@ -54,11 +64,11 @@ export class SubscriptionComponent implements OnInit {
       name: 'Professional',
       price: 599,
       duration: 30,
-      aiModelAccess: 'premium',
+      aiModelAccess: PricingTier.BALANCED, // Balanced tier AI models
       recommended: true,
       features: [
         'Everything in Basic',
-        'Premium AI models (GPT-4, Claude, etc.)',
+        'Premium AI models (GPT-4o-mini, Claude Haiku)',
         'Priority support',
         'Unlimited submissions',
         'Advanced analytics',
@@ -71,9 +81,10 @@ export class SubscriptionComponent implements OnInit {
       name: 'Enterprise',
       price: 1299,
       duration: 30,
-      aiModelAccess: 'custom',
+      aiModelAccess: PricingTier.PREMIUM, // Premium tier - custom selection
       features: [
         'Everything in Professional',
+        'Premium AI models (GPT-4, Claude Sonnet, etc.)',
         'Custom AI model selection',
         'Dedicated account manager',
         'Custom AI model training',
@@ -86,7 +97,6 @@ export class SubscriptionComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // Check if returning from payment
     const urlParams = new URLSearchParams(window.location.search);
     const paymentSuccess = urlParams.get('success');
 
@@ -124,22 +134,30 @@ export class SubscriptionComponent implements OnInit {
     this.successMessage = '';
 
     try {
-      const response = await this.paymentService
-        .initiatePayment(plan.price, 'SUBSCRIPTION') // Pass plan.id
+      // Call backend to get REAL Paymob iframe
+      const response = await this.http
+        .post<any>(`${environment.apiUrl}/payment/create-intent`, {
+          amount: plan.price,
+          currency: 'EGP',
+          payment_type: 'SUBSCRIPTION',
+        })
         .toPromise();
 
       if (response?.data?.iframeUrl) {
         const dialogRef = this.dialog.open(PaymentIframe, {
-          data: { url: response.data.iframeUrl },
-          width: '800px',
-          height: '600px',
+          data: {
+            url: response.data.iframeUrl,
+            planId: plan.id, // Pass plan ID for simulation
+          },
+          width: '550px',
+          maxWidth: '95vw',
           disableClose: true,
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-          if (result === 'success') {
+          if (result === 'CHECK_STATUS') {
             this.handlePaymentSuccess();
-          } else if (result === 'failure') {
+          } else if (result === 'FAILED') {
             this.error = 'Payment failed. Please try again.';
           }
           this.isProcessing = false;
@@ -159,17 +177,16 @@ export class SubscriptionComponent implements OnInit {
       this.error = 'Payment was not completed. Please try again.';
     }
 
-    // Clean URL
     window.history.replaceState({}, '', window.location.pathname);
   }
 
   private async handlePaymentSuccess() {
     this.successMessage = 'Subscription activated successfully!';
 
-    // Refresh user data to get updated subscription status
+    // Refresh user data
     await this.authService.refreshUserProfile().toPromise();
 
-    // Navigate after a short delay
+    // Navigate back to where they came from
     setTimeout(() => {
       this.router.navigate(['/dashboard/company/overview'], {
         queryParams: { subscriptionSuccess: 'true' },
@@ -185,7 +202,6 @@ export class SubscriptionComponent implements OnInit {
   }
 
   upgradeSubscription() {
-    // Find next tier or recommended plan
     const professionalPlan = this.subscriptionPlans.find((p) => p.recommended);
     if (professionalPlan) {
       this.subscribe(professionalPlan);

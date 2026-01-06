@@ -107,7 +107,7 @@
 
         <!-- Action Buttons - MODIFIED HERE -->
         <div class="flex gap-3">
-          @if(canModifyChallenge(challenge)) {
+          @if(challenge.status === 'published') {
           <button
             (click)="viewApplications(challenge._id)"
             class="flex-1 bg-[#101828] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-black transition-all"
