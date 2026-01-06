@@ -21,7 +21,7 @@ export const routes: Routes = [
   // =========================
   {
     path: 'dashboard/challenger',
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -64,7 +64,7 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () =>
       import('./shared/layouts/dashboard/dashboard-root').then((m) => m.DashboardRootComponent),
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     children: [
       // Candidate
       {
@@ -73,7 +73,7 @@ export const routes: Routes = [
           import('./pages/candidate/layout/candidate-layout').then(
             (m) => m.CandidateShellComponent
           ),
-        // canActivate: [candidateGuard],
+        canActivate: [candidateGuard],
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
           {
@@ -129,7 +129,7 @@ export const routes: Routes = [
         path: 'company/challenge/:id/edit',
         loadComponent: () =>
           import('./pages/company/edit-challenge/edit-challenge').then((m) => m.EditChallenge),
-        // canActivate: [companyGuard],
+        canActivate: [companyGuard],
       },
 
       // Company
@@ -137,7 +137,7 @@ export const routes: Routes = [
         path: 'company',
         loadComponent: () =>
           import('./pages/company/layout/company-layout').then((m) => m.CompanyShellComponent),
-        // canActivate: [companyGuard],
+        canActivate: [companyGuard],
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
 
@@ -185,7 +185,7 @@ export const routes: Routes = [
           import('./pages/company/create-challenge/create-challenge').then(
             (m) => m.CreateChallenge
           ),
-        // canActivate: [companyGuard],
+        canActivate: [companyGuard],
       },
 
       // Admin
@@ -193,7 +193,7 @@ export const routes: Routes = [
         path: 'admin',
         loadComponent: () =>
           import('./pages/admin/layout/admin-layout').then((m) => m.AdminShellComponent),
-        // canActivate: [authGuard],
+        canActivate: [authGuard],
         children: [
           { path: '', redirectTo: 'overview', pathMatch: 'full' },
           {
