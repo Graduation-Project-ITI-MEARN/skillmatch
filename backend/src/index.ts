@@ -33,7 +33,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL
 
 app.use(
    cors({
-      origin: FRONTEND_URL, // This can now correctly be an array or a single string
+      origin: FRONTEND_URL,
       credentials: true,
    })
 );
@@ -58,7 +58,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
-initSocket(server);
 
 export const io = new Server(server, {
    cors: {
@@ -67,6 +66,9 @@ export const io = new Server(server, {
    },
 });
 
-app.listen(PORT, () => {
+initSocket(server);
+
+// CHANGE THIS: Use server.listen() instead of app.listen()
+server.listen(PORT, () => {
    console.log(`Server running on port ${PORT}`);
 });
