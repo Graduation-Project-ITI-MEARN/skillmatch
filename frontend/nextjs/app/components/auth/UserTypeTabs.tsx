@@ -21,7 +21,7 @@ const UserTypeTabs: React.FC<UserTypeTabsProps> = ({ selected, onChange }) => {
       { value: "challenger", label: "Challenger" },
    ];
 
-   const isRTL = document.documentElement.dir === "rtl";
+   const isRTL = false;
 
    return (
       <div className="w-full mb-12 flex flex-col items-center">

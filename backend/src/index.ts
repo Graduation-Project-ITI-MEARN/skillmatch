@@ -18,22 +18,33 @@ import http from "http";
 const app = express();
 
 // Middleware
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 app.use(helmet());
 app.use(cookieParser());
 
-const DEFAULT_FRONTEND_URLS = [
-   "http://localhost:4200",
-   "http://localhost:3000",
-];
+// Build allowed origins array
+const allowedOrigins = [
+   process.env.NEXTJS_URL,
+   process.env.ANGULAR_URL,
+   "http://localhost:4200", // Local Angular dev
+   "http://localhost:3000", // Local Next.js dev
+].filter((url): url is string => Boolean(url)); // Type-safe filter
 
-const FRONTEND_URL = process.env.FRONTEND_URL
-   ? process.env.FRONTEND_URL.split(",").map((url) => url.trim())
-   : DEFAULT_FRONTEND_URLS;
+console.log("Allowed CORS origins:", allowedOrigins);
 
 app.use(
    cors({
-      origin: FRONTEND_URL,
+      origin: (origin, callback) => {
+         // Allow requests with no origin (like mobile apps, Postman, curl)
+         if (!origin) return callback(null, true);
+
+         if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+         } else {
+            console.warn(`CORS blocked origin: ${origin}`);
+            callback(new Error("Not allowed by CORS"));
+         }
+      },
       credentials: true,
    })
 );
@@ -61,14 +72,13 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
    cors: {
-      origin: FRONTEND_URL,
+      origin: allowedOrigins,
       credentials: true,
    },
 });
 
 initSocket(server);
 
-// CHANGE THIS: Use server.listen() instead of app.listen()
 server.listen(PORT, () => {
    console.log(`Server running on port ${PORT}`);
 });
