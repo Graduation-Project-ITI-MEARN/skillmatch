@@ -22,11 +22,29 @@ app.use(express.json());
 app.use(helmet());
 app.use(cookieParser());
 
-// TEMPORARY: Allow all origins for debugging
-// TODO: Remove this and use specific origins in production
+// Build allowed origins array
+const allowedOrigins = [
+   process.env.NEXTJS_URL,
+   process.env.ANGULAR_URL,
+   "http://localhost:4200", // Local Angular dev
+   "http://localhost:3000", // Local Next.js dev
+].filter((url): url is string => Boolean(url)); // Type-safe filter
+
+console.log("Allowed CORS origins:", allowedOrigins);
+
 app.use(
    cors({
-      origin: true, // Allow all origins
+      origin: (origin, callback) => {
+         // Allow requests with no origin (like mobile apps, Postman, curl)
+         if (!origin) return callback(null, true);
+
+         if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+         } else {
+            console.warn(`CORS blocked origin: ${origin}`);
+            callback(new Error("Not allowed by CORS"));
+         }
+      },
       credentials: true,
    })
 );
@@ -54,7 +72,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
    cors: {
-      origin: "*", // Allow all origins for Socket.IO
+      origin: allowedOrigins,
       credentials: true,
    },
 });

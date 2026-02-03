@@ -160,7 +160,6 @@ export const routes: Routes = [
                 (m) => m.SubmissionDetailsComponent
               ),
           },
-          // END NEW ROUTE
 
           {
             path: 'talent',
@@ -176,6 +175,13 @@ export const routes: Routes = [
             path: 'profile',
             loadComponent: () =>
               import('./pages/company/profile/profile').then((m) => m.CompanyProfile),
+          },
+          {
+            path: 'subscription',
+            loadComponent: () =>
+              import('./pages/company/subscription/subscription.component').then(
+                (m) => m.SubscriptionComponent
+              ),
           },
         ],
       },

@@ -2,7 +2,13 @@
 import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
-import { AIModel, AI_MODELS } from "../types/AIModels";
+import {
+   AIModel,
+   AI_MODELS,
+   PRICING_TIERS,
+   PricingTier,
+   shouldRetryWithFallback,
+} from "../types/AIModels";
 
 // Initialize AI clients
 const openai = new OpenAI({
@@ -24,6 +30,7 @@ interface EvaluationRequest {
    submissionContent: string;
    videoTranscript?: string;
    selectedModel: AIModel;
+   pricingTier?: string; // For fallback selection
 }
 
 interface EvaluationResult {
@@ -36,66 +43,144 @@ interface EvaluationResult {
    improvements: string[];
    modelUsed: AIModel;
    costIncurred: number;
+   attemptedModels?: string[]; // Track which models were tried
 }
 
 /**
- * Main evaluation function - routes to appropriate provider
+ * Main evaluation function with automatic fallback
  */
 export const evaluateWithModel = async (
-   request: EvaluationRequest
+   request: EvaluationRequest,
 ): Promise<EvaluationResult> => {
-   const modelConfig = AI_MODELS[request.selectedModel];
+   const attemptedModels: string[] = [];
+   let lastError: any;
 
-   console.log(
-      `🤖 Evaluating with ${modelConfig.name} (${
-         modelConfig.isFree ? "FREE" : "PAID"
-      })...`
+   // Get fallback chain
+   const modelsToTry = getFallbackChain(
+      request.selectedModel,
+      request.pricingTier,
    );
 
-   let result: EvaluationResult;
+   console.log(`🎯 Primary model: ${request.selectedModel}`);
+   console.log(`📋 Fallback chain:`, modelsToTry);
 
-   try {
-      switch (modelConfig.provider) {
-         case "openai":
-            result = await evaluateWithOpenAI(request);
-            break;
-         case "google":
-            result = await evaluateWithGemini(request);
-            break;
-         case "groq":
-            result = await evaluateWithGroq(request);
-            break;
-         default:
-            throw new Error(`Unsupported provider: ${modelConfig.provider}`);
-      }
+   // Try each model in sequence
+   for (const modelToTry of modelsToTry) {
+      try {
+         const modelConfig = AI_MODELS[modelToTry];
+         if (!modelConfig) {
+            console.log(`⚠️ Model config not found for: ${modelToTry}`);
+            continue;
+         }
 
-      console.log(`✅ Evaluation complete:`, {
-         technical: result.technicalScore,
-         clarity: result.clarityScore,
-         communication: result.communicationScore,
-         overall: result.overallScore,
-      });
+         console.log(
+            `🤖 Attempting evaluation with ${modelConfig.name} (${
+               modelConfig.isFree ? "FREE" : "PAID"
+            })...`,
+         );
 
-      return result;
-   } catch (error) {
-      console.error(`❌ ${modelConfig.name} failed:`, error);
-      // Fallback to free model if paid model fails
-      if (request.selectedModel !== AIModel.GEMINI_FLASH) {
-         console.log("🔄 Trying fallback to Gemini Flash...");
-         return await evaluateWithGemini({
-            ...request,
-            selectedModel: AIModel.GEMINI_FLASH,
+         attemptedModels.push(modelToTry);
+
+         let result: EvaluationResult;
+
+         switch (modelConfig.provider) {
+            case "openai":
+               result = await evaluateWithOpenAI({
+                  ...request,
+                  selectedModel: modelToTry,
+               });
+               break;
+            case "google":
+               result = await evaluateWithGemini({
+                  ...request,
+                  selectedModel: modelToTry,
+               });
+               break;
+            case "groq":
+               result = await evaluateWithGroq({
+                  ...request,
+                  selectedModel: modelToTry,
+               });
+               break;
+            default:
+               throw new Error(`Unsupported provider: ${modelConfig.provider}`);
+         }
+
+         console.log(`✅ Evaluation complete with ${modelToTry}:`, {
+            technical: result.technicalScore,
+            clarity: result.clarityScore,
+            communication: result.communicationScore,
+            overall: result.overallScore,
          });
+
+         return {
+            ...result,
+            attemptedModels,
+         };
+      } catch (error: any) {
+         lastError = error;
+         const errorMsg =
+            error?.message || error?.toString() || "Unknown error";
+
+         console.error(`❌ ${modelToTry} failed:`, errorMsg);
+
+         // Check if we should try fallback
+         if (!shouldRetryWithFallback(error)) {
+            console.log(`🛑 Non-retryable error, stopping fallback chain`);
+            throw error;
+         }
+
+         console.log(`🔄 Error is retryable, trying next model in chain...`);
+
+         // If this was the last model, throw error
+         if (attemptedModels.length === modelsToTry.length) {
+            console.error(
+               `❌ All models failed. Attempted: ${attemptedModels.join(", ")}`,
+            );
+            throw new Error(
+               `Evaluation failed after trying ${attemptedModels.length} models. ` +
+                  `Last error: ${errorMsg}`,
+            );
+         }
       }
-      throw error;
    }
+
+   // This shouldn't be reached, but just in case
+   throw lastError || new Error("Evaluation failed with unknown error");
 };
 
 /**
- * OpenAI Evaluation
+ * Get fallback chain for a model
+ */
+function getFallbackChain(
+   primaryModel: AIModel,
+   pricingTier?: string,
+): AIModel[] {
+   const chain: AIModel[] = [primaryModel];
+
+   // Get tier-specific fallbacks
+   if (pricingTier && PRICING_TIERS[pricingTier as PricingTier]) {
+      const tierConfig = PRICING_TIERS[pricingTier as PricingTier];
+      chain.push(...tierConfig.fallbackModels);
+   } else {
+      // Default fallback chain (all free models, ensure these match your new enum)
+      chain.push(
+         AIModel.LLAMA_70B,
+         AIModel.GEMINI_2_5_FLASH, // Updated default Gemini fallback
+         AIModel.LLAMA_8B,
+         AIModel.MIXTRAL_8X7B,
+      );
+   }
+
+   // Remove duplicates
+   return [...new Set(chain)];
+}
+
+/**
+ * OpenAI Evaluation (unchanged)
  */
 const evaluateWithOpenAI = async (
-   request: EvaluationRequest
+   request: EvaluationRequest,
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
@@ -114,7 +199,7 @@ const evaluateWithOpenAI = async (
       ],
       response_format: { type: "json_object" },
       max_tokens: 3000,
-      temperature: 0.8, // Increased for more variation
+      temperature: 0.8,
    });
 
    const responseText = completion.choices[0]?.message?.content || "{}";
@@ -136,24 +221,57 @@ const evaluateWithOpenAI = async (
 };
 
 /**
- * Google Gemini Evaluation
+ * Google Gemini Evaluation - UPDATED MODEL NAMES
  */
 const evaluateWithGemini = async (
-   request: EvaluationRequest
+   request: EvaluationRequest,
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   const modelString =
-      request.selectedModel === AIModel.GEMINI_PRO
-         ? "gemini-1.5-pro"
-         : "gemini-1.5-flash";
+   let modelString: string;
+
+   // Use a switch statement to map the AIModel enum to the correct string literal for the API
+   switch (request.selectedModel) {
+      case AIModel.GEMINI_2_5_FLASH:
+         modelString = "gemini-2.5-flash";
+         break;
+      case AIModel.GEMINI_2_5_PRO:
+         modelString = "gemini-2.5-pro";
+         break;
+      case AIModel.GEMINI_2_0_FLASH:
+         modelString = "gemini-2.0-flash";
+         break;
+      case AIModel.GEMINI_2_0_FLASH_001:
+         modelString = "gemini-2.0-flash-001";
+         break;
+      case AIModel.GEMINI_2_0_FLASH_LITE:
+         modelString = "gemini-2.0-flash-lite";
+         break;
+      case AIModel.GEMINI_2_0_FLASH_LITE_001:
+         modelString = "gemini-2.0-flash-lite-001";
+         break;
+      case AIModel.GEMINI_2_5_FLASH_LITE:
+         modelString = "gemini-2.5-flash-lite";
+         break;
+      default:
+         // Provide a sensible default if the selected model is not explicitly handled,
+         // or if an older/unrecognized Gemini model is somehow passed.
+         // This should ideally align with your default free tier Gemini model.
+         console.warn(
+            `Unknown Gemini model selected: ${request.selectedModel}. Defaulting to gemini-2.5-flash.`,
+         );
+         modelString = "gemini-2.5-flash";
+         break;
+   }
+
+   console.log(`📡 Using Gemini model: ${modelString}`);
 
    const model = gemini.getGenerativeModel({
       model: modelString,
       generationConfig: {
-         temperature: 0.8, // Increased for more variation
+         temperature: 0.8,
          maxOutputTokens: 3000,
-         responseMimeType: "application/json", // Force JSON response
+         responseMimeType: "application/json",
       },
    });
 
@@ -167,19 +285,19 @@ const evaluateWithGemini = async (
    return {
       ...parsed,
       modelUsed: request.selectedModel,
-      costIncurred: 0, // FREE!
+      costIncurred: 0, // FREE! (assuming free tier is still applicable for these new models)
    };
 };
 
 /**
- * Groq Evaluation
+ * Groq Evaluation - UPDATED MODEL NAMES (already correct from previous step)
  */
 const evaluateWithGroq = async (
-   request: EvaluationRequest
+   request: EvaluationRequest,
 ): Promise<EvaluationResult> => {
    const prompt = buildEvaluationPrompt(request);
 
-   let modelString = "llama-3.1-70b-versatile";
+   let modelString = "llama-3.3-70b-versatile"; // Default Groq model
 
    switch (request.selectedModel) {
       case AIModel.LLAMA_8B:
@@ -189,9 +307,11 @@ const evaluateWithGroq = async (
          modelString = "mixtral-8x7b-32768";
          break;
       case AIModel.LLAMA_70B:
-         modelString = "llama-3.1-70b-versatile";
+         modelString = "llama-3.3-70b-versatile";
          break;
    }
+
+   console.log(`📡 Using Groq model: ${modelString}`);
 
    const completion = await groq.chat.completions.create({
       messages: [
@@ -206,7 +326,7 @@ const evaluateWithGroq = async (
          },
       ],
       model: modelString,
-      temperature: 0.8, // Increased for more variation
+      temperature: 0.8,
       max_tokens: 3000,
       response_format: { type: "json_object" },
    });
@@ -224,7 +344,7 @@ const evaluateWithGroq = async (
 };
 
 /**
- * Build standardized evaluation prompt (IMPROVED)
+ * Build standardized evaluation prompt (unchanged)
  */
 const buildEvaluationPrompt = (request: EvaluationRequest): string => {
    return `You are evaluating a technical challenge submission for SkillMatch AI. 
@@ -295,12 +415,12 @@ Provide specific, actionable feedback. Vary your scores based on actual quality.
 };
 
 /**
- * Parse AI response into structured format (IMPROVED ERROR HANDLING)
+ * Parse AI response into structured format (unchanged)
  */
 const parseEvaluationResponse = (
    response: string,
-   modelUsed: AIModel
-): Omit<EvaluationResult, "modelUsed" | "costIncurred"> => {
+   modelUsed: AIModel,
+): Omit<EvaluationResult, "modelUsed" | "costIncurred" | "attemptedModels"> => {
    try {
       // Remove markdown code blocks if present
       let cleaned = response
@@ -329,15 +449,15 @@ const parseEvaluationResponse = (
       // Clamp scores to 0-100 range
       const technicalScore = Math.min(
          100,
-         Math.max(0, Math.round(parsed.technicalScore))
+         Math.max(0, Math.round(parsed.technicalScore)),
       );
       const clarityScore = Math.min(
          100,
-         Math.max(0, Math.round(parsed.clarityScore))
+         Math.max(0, Math.round(parsed.clarityScore)),
       );
       const communicationScore = Math.min(
          100,
-         Math.max(0, Math.round(parsed.communicationScore))
+         Math.max(0, Math.round(parsed.communicationScore)),
       );
 
       // Calculate overall score
@@ -362,52 +482,47 @@ const parseEvaluationResponse = (
       console.error("❌ Parse Error:", error);
       console.error("Raw response:", response);
 
-      // Instead of returning default values, throw error to trigger retry
+      // Throw error to trigger fallback
       throw new Error(
          `Failed to parse AI response: ${
             error instanceof Error ? error.message : "Unknown error"
-         }`
+         }`,
       );
    }
 };
 
 /**
- * Get model for pricing tier
+ * Get model for pricing tier (unchanged, relies on updated AI_MODELS and PRICING_TIERS)
  */
 export const getModelForChallenge = (
    pricingTier: string,
-   customModel?: AIModel
+   customModel?: AIModel,
 ): AIModel => {
    if (customModel) {
       return customModel;
    }
 
-   switch (pricingTier) {
-      case "free":
-         return AIModel.GEMINI_FLASH;
-      case "balanced":
-         return AIModel.LLAMA_70B;
-      case "budget":
-         return AIModel.GPT4O_MINI;
-      case "premium":
-         return AIModel.GPT4O;
-      default:
-         return AIModel.GEMINI_FLASH;
+   const tier = pricingTier as PricingTier;
+   if (PRICING_TIERS[tier]) {
+      return PRICING_TIERS[tier].defaultModel;
    }
+
+   // Default to free tier
+   return AIModel.LLAMA_70B;
 };
 
 /**
- * Estimate cost
+ * Estimate cost (unchanged, relies on updated AI_MODELS)
  */
 export const estimateEvaluationCost = (
    pricingTier: string,
-   customModel?: AIModel
+   customModel?: AIModel,
 ): number => {
    const model = getModelForChallenge(pricingTier, customModel);
    const config = AI_MODELS[model];
 
    if (config.isFree) return 0;
 
-   const avgTokens = 1000; // Increased estimate
+   const avgTokens = 1000;
    return (avgTokens / 1000) * config.costPer1kTokens;
 };

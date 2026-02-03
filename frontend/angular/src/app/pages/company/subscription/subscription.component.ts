@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { PaymentIframe } from '../payment-iframe/payment-iframe';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@/core/services/auth';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { PaymentIframe } from '@shared/components/payment-iframe/payment-iframe';
 
 // Map backend PricingTier enum to subscription plans
 enum PricingTier {

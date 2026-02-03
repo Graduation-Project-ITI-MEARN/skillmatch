@@ -5,27 +5,27 @@
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       @for (sub of inProgressChallenges; track sub._id) {
-      <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
-        <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
-        <div class="mt-4 flex items-center justify-between">
-          <div class="text-sm text-gray-500">
-            <span class="block font-semibold text-dark-900"
-              >{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span
+        <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
+          <h3 class="text-lg font-bold text-gray-900">{{ sub.challengeId?.title }}</h3>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+              <span class="block font-semibold text-dark-900"
+                >{{ 'DASHBOARD.MY_SUBMISSIONS.DEADLINE' | translate }}:</span
+              >
+              {{ sub.deadline | date }}
+            </div>
+            <button
+              (click)="openSubmitModal(sub)"
+              class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold cursor-pointer transition-all"
             >
-            {{ sub.deadline | date }}
+              {{ 'DASHBOARD.MY_SUBMISSIONS.SUBMIT_SOLUTION' | translate }}
+            </button>
           </div>
-          <button
-            (click)="openSubmitModal(sub)"
-            class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-bold cursor-pointer transition-all"
-          >
-            {{ 'DASHBOARD.MY_SUBMISSIONS.SUBMIT_SOLUTION' | translate }}
-          </button>
         </div>
-      </div>
       } @empty {
-      <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed text-gray-400">
-        {{ 'DASHBOARD.MY_SUBMISSIONS.NO_PROGRESS' | translate }}
-      </div>
+        <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed text-gray-400">
+          {{ 'DASHBOARD.MY_SUBMISSIONS.NO_PROGRESS' | translate }}
+        </div>
       }
     </div>
   </section>
@@ -37,21 +37,23 @@
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       @for (sub of completedChallenges; track sub._id) {
-      <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
-        <div class="flex justify-between items-start">
-          <h3 class="text-lg font-bold text-gray-700">{{ sub.challengeId?.title }}</h3>
-          <div class="bg-gray-700 text-white px-3 py-1 rounded-full text-xs font-bold">
-            {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}: {{ sub.aiScore }}
+        <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="flex justify-between items-start">
+            <h3 class="text-lg font-bold text-gray-700">{{ sub.challengeId?.title }}</h3>
+            <div
+              class="bg-gray-700 text-white px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap"
+            >
+              {{ 'DASHBOARD.PORTFOLIO.SCORE' | translate }}: {{ sub.aiScore }}
+            </div>
           </div>
+          <!-- Updated: Add click handler to view details -->
+          <button
+            (click)="viewSubmissionDetails(sub._id)"
+            class="mt-4 font-semibold text-dark-900 text-sm hover:underline cursor-pointer"
+          >
+            {{ 'DASHBOARD.MY_SUBMISSIONS.VIEW_RESULT' | translate }}
+          </button>
         </div>
-        <!-- Updated: Add click handler to view details -->
-        <button
-          (click)="viewSubmissionDetails(sub._id)"
-          class="mt-4 font-semibold text-dark-900 text-sm hover:underline cursor-pointer"
-        >
-          {{ 'DASHBOARD.MY_SUBMISSIONS.VIEW_RESULT' | translate }}
-        </button>
-      </div>
       }
     </div>
   </section>
@@ -180,8 +182,7 @@
             [disabled]="
               (activeTab === 'file' && !selectedProjectFile) ||
               (activeTab === 'link' && submitForm.get('solutionUrl')?.invalid) ||
-              (selectedChallenge?.aiConfig?.requireVideoTranscript &&
-                !selectedVideoFile) // Updated condition
+              (selectedChallenge?.aiConfig?.requireVideoTranscript && !selectedVideoFile) // Updated condition
             "
             class="flex-1 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black disabled:opacity-50 transition-all cursor-pointer"
           >

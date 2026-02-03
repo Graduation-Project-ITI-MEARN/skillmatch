@@ -17,7 +17,7 @@
       "CHALLENGER": "إنشاء المسابقات وبناء المجتمع"
     },
     "ACTIONS": {
-      "COACH": "مدرب مسار وظيفي بالذكاء الاصطناعي",
+      "COACH": "مدربك الذكي",
       "CREATE_CHALLENGE": "إنشاء تحدي",
       "CREATE_BOUNTY": "مكافأة جديدة",
       "SYSTEM_REPORT": "تقرير النظام"
@@ -25,7 +25,7 @@
     "TABS": {
       "OVERVIEW": "نظرة عامة",
       "PORTFOLIO": "ملفي الشخصي",
-      "COACH": "مدرب الذكاء الاصطناعي",
+      "COACH": "مدربك الذكي",
       "LEADERBOARD": "لوحة المتصدرين",
       "MY_CHALLENGES": "تحدياتي",
       "SUBMISSIONS": "التقديمات",
@@ -125,7 +125,19 @@
         "PDF_DOCUMENT": "وثيقة PDF",
         "OPEN_PDF": "فتح PDF",
         "DOCUMENT": "وثيقة",
-        "OTHER_DOCUMENT_TYPE": "نوع وثيقة آخر"
+        "OTHER_DOCUMENT_TYPE": "نوع وثيقة آخر",
+        "VERIFIED": "تم التحقق",
+        "PENDING": "معلق",
+        "NO_USERS": "لم يتم العثور على مستخدمين.",
+        "TAX_CARD_REQUIRES_REVIEW": "البطاقة الضريبية: تتطلب مراجعة",
+        "ID_REQUIRES_REVIEW": "الهوية: تتطلب مراجعة",
+        "LOAD_USERS_FAILED": "فشل تحميل المستخدمين.",
+        "VERIFY_USER_FAILED": "فشل التحقق من المستخدم.",
+        "REJECT_USER_FAILED": "فشل رفض التحقق من المستخدم.",
+        "USER_VERIFIED_SUCCESS": "تم التحقق من {{name}}.",
+        "USER_REJECTED_SUCCESS": "تم رفض التحقق من {{name}}.",
+        "VIEW_TAX_DETAILS": "تفاصيل البطاقة الضريبية",
+        "VIEW_ID_DETAILS": "تفاصيل الهوية"
       },
       "CHALLENGES": {
         "TITLE": "إدارة التحديات",
@@ -289,7 +301,7 @@
     "PRICING": {
       "PLAN_NAME": "الخطة المميزة",
       "TITLE": "أطلق العنان لإمكانياتك الكاملة",
-      "PRICE": "$9.99",
+      "PRICE": "200EGP",
       "PERIOD": "/الشهر",
       "UPGRADE_BTN": "الترقية الآن",
       "FOOTER_NOTE": "يمكن الإلغاء في أي وقت. لا توجد رسوم خفية.",
@@ -351,7 +363,11 @@
         "BUDGET_0_500": "$0 - $500",
         "BUDGET_500_1000": "$500 - $1,000",
         "BUDGET_1000_PLUS": "$1,000+"
-      }
+      },
+      "DELETE_JOB_HINT": "حذف إعلان الوظيفة",
+      "NO_INSIGHTS_YET": "لا توجد رؤى بعد.",
+      "PUBLISH_CHALLENGES_TO_GET_INSIGHTS": "انشر التحديات للحصول على رؤى.",
+      "CREATE_FIRST_CHALLENGE": "أنشئ أول إعلان وظيفة لك"
     },
     "SUBMISSIONS": {
       "TITLE": "جميع التقديمات",
@@ -820,7 +836,9 @@
     "LOADING_DETAILS": "جاري تحميل تفاصيل التقديم.",
     "CHALLENGE": "التحدي",
     "REJECT": "رفض",
-    "ERROR_LOADING_DATA": "فشل تحميل البيانات."
+    "ERROR_LOADING_DATA": "فشل تحميل البيانات.",
+    "ERROR": "خطأ",
+    "SUCCESS": "نجاح"
   },
   "NO_DATA": "لا توجد بيانات متاحة حاليًا.",
   "PROFILE": {

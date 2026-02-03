@@ -118,13 +118,13 @@ export class Overview implements OnInit {
       next: (res: any) => {
         // CORRECTED: Access challenges from res.challenges.data
         const challengesData = Array.isArray(res.challenges?.data) ? res.challenges.data : [];
-
+        console.log('challengesData:', challengesData);
         this.allChallenges = challengesData.map((c: any) => ({
           ...c,
           // Ensure deadline is a valid Date object for calculateDaysLeft
           deadline: c.deadline ? new Date(c.deadline) : new Date(Date.now() + 86400000 * 5),
           daysLeft: this.calculateDaysLeft(
-            c.deadline ? new Date(c.deadline) : new Date(Date.now() + 86400000 * 5)
+            c.deadline ? new Date(c.deadline) : new Date(Date.now() + 86400000 * 5),
           ),
           // Use creatorId.name for company, default if not available
           company: c.creatorId?.name || 'Unknown Company',
@@ -136,8 +136,12 @@ export class Overview implements OnInit {
           competitors: c.competitorsCount || Math.floor(Math.random() * 100) + 20,
         }));
 
+        console.log('All Challenges:', this.allChallenges);
+
         this.activeChallenges = [...this.allChallenges];
-        this.applyFilters();
+
+        // this.applyFilters();
+        console.log('Active Challenges:', this.activeChallenges);
 
         const subsData = Array.isArray(res.submissions)
           ? res.submissions
@@ -209,12 +213,12 @@ export class Overview implements OnInit {
 
     if (this.filters.difficulty !== 'all') {
       filtered = filtered.filter(
-        (c) => (c.difficulty || '').toLowerCase() === this.filters.difficulty.toLowerCase()
+        (c) => (c.difficulty || '').toLowerCase() === this.filters.difficulty.toLowerCase(),
       );
     }
 
     filtered = filtered.filter(
-      (c) => c.prize >= this.filters.prizeMin && c.prize <= this.filters.prizeMax
+      (c) => c.prize >= this.filters.prizeMin && c.prize <= this.filters.prizeMax,
     );
 
     if (this.filters.daysLeft !== 'all') {
@@ -226,7 +230,7 @@ export class Overview implements OnInit {
       const term = this.filters.searchTerm.toLowerCase();
       filtered = filtered.filter(
         (c) =>
-          c.title.toLowerCase().includes(term) || (c.company || '').toLowerCase().includes(term)
+          c.title.toLowerCase().includes(term) || (c.company || '').toLowerCase().includes(term),
       );
     }
 

@@ -125,7 +125,19 @@
         "PDF_DOCUMENT": "PDF Document",
         "OPEN_PDF": "Open PDF",
         "DOCUMENT": "Document",
-        "OTHER_DOCUMENT_TYPE": "Other Document"
+        "OTHER_DOCUMENT_TYPE": "Other Document",
+        "VERIFIED": "Verified",
+        "PENDING": "Pending",
+        "NO_USERS": "No users found.",
+        "TAX_CARD_REQUIRES_REVIEW": "Tax Card: Requires Review",
+        "ID_REQUIRES_REVIEW": "ID: Requires Review",
+        "LOAD_USERS_FAILED": "Failed to load users.",
+        "VERIFY_USER_FAILED": "Failed to verify user.",
+        "REJECT_USER_FAILED": "Failed to reject user verification.",
+        "USER_VERIFIED_SUCCESS": "{{name}} has been verified.",
+        "USER_REJECTED_SUCCESS": "{{name}}'s verification was rejected.",
+        "VIEW_TAX_DETAILS": "Tax Card Details",
+        "VIEW_ID_DETAILS": "ID Details"
       },
       "CHALLENGES": {
         "TITLE": "Challenge Management",
@@ -289,7 +301,7 @@
     "PRICING": {
       "PLAN_NAME": "Premium Plan",
       "TITLE": "Unlock Your Full Potential",
-      "PRICE": "$9.99",
+      "PRICE": "200EGP",
       "PERIOD": "/month",
       "UPGRADE_BTN": "Upgrade Now",
       "FOOTER_NOTE": "Cancel anytime. No hidden fees.",
@@ -351,7 +363,11 @@
         "BUDGET_0_500": "$0 - $500",
         "BUDGET_500_1000": "$500 - $1,000",
         "BUDGET_1000_PLUS": "$1,000+"
-      }
+      },
+      "DELETE_JOB_HINT": "Delete Job Posting",
+      "NO_INSIGHTS_YET": "No insights yet.",
+      "PUBLISH_CHALLENGES_TO_GET_INSIGHTS": "Publish challenges to get insights.",
+      "CREATE_FIRST_CHALLENGE": "Create Your First Job Posting"
     },
     "SUBMISSIONS": {
       "TITLE": "All Applications",
@@ -820,7 +836,9 @@
     "LOADING_DETAILS": "Loading submission details.",
     "CHALLENGE": "Challenge",
     "REJECT": "Reject",
-    "ERROR_LOADING_DATA": "Failed to load data."
+    "ERROR_LOADING_DATA": "Failed to load data.",
+    "ERROR": "Error",
+    "SUCCESS": "Success"
   },
   "NO_DATA": "No data available currently.",
   "PROFILE": {

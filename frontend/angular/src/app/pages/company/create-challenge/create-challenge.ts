@@ -24,6 +24,9 @@ import {
 } from 'lucide-angular';
 import { environment } from 'src/environments/environment';
 import { ChallengeService } from '../../../core/services/challenge.service';
+import { AuthService } from '@/core/services/auth';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentIframe } from '@shared/components/payment-iframe/payment-iframe';
 import {
   SubmissionType,
   IdealSolutionType,
@@ -31,8 +34,6 @@ import {
   IAiModel,
   IPricingTierDetails,
 } from '../../../shared/models/challenge.model';
-import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '@/core/services/auth';
 
 @Component({
   selector: 'app-create-challenge',
@@ -44,10 +45,10 @@ import { AuthService } from '@/core/services/auth';
     TranslateModule,
     LucideAngularModule,
     ZardCalendarComponent,
-    // Removed Zard UI imports like ZardSelectImports, ZardInputDirective, ZardCalendarComponent
+    MatDialogModule,
   ],
   templateUrl: './create-challenge.html',
-  styleUrls: ['./create-challenge.css'], // You might need to add custom dropdown CSS here
+  styleUrls: ['./create-challenge.css'],
 })
 export class CreateChallenge implements OnInit {
   private fb = inject(FormBuilder);
@@ -55,12 +56,8 @@ export class CreateChallenge implements OnInit {
   private router = inject(Router);
   private challengeService = inject(ChallengeService);
   private translate = inject(TranslateService);
-  private dialog = inject(MatDialog);
   private authService = inject(AuthService);
-
-  // Add these properties
-  showSubscriptionModal = false;
-  subscriptionMessage = '';
+  private dialog = inject(MatDialog);
 
   icons = { ArrowLeft, CheckCircle, AlertCircle, ChevronDown, Search, X };
   challengeForm!: FormGroup;
@@ -69,7 +66,7 @@ export class CreateChallenge implements OnInit {
   submitSuccess = false;
 
   categories: string[] = [];
-  allSkills: string[] = []; // Assuming a flat list from service
+  allSkills: string[] = [];
   aiModels: IAiModel[] = [];
   aiPricingTiers: IPricingTierDetails[] = [];
 
@@ -78,7 +75,7 @@ export class CreateChallenge implements OnInit {
   idealSolutionTypes: IdealSolutionType[] = ['link', 'file', 'text'];
 
   selectedTags: string[] = [];
-  minDate!: Date; // For native HTML date input 'min' attribute
+  minDate!: Date;
   skillSearchQuery = '';
 
   // Dropdown open/close flags
@@ -96,29 +93,72 @@ export class CreateChallenge implements OnInit {
     { title: 'CHALLENGE.CREATE.BENEFIT_3_TITLE', desc: 'CHALLENGE.CREATE.BENEFIT_3_DESC' },
   ];
 
-  selectedCategory = ''; // Must be initialized to a string
-  selectedDifficulty = ''; // Must be initialized to a string
+  selectedCategory = '';
+  selectedDifficulty = '';
   selectedSubmissionType: SubmissionType = 'link';
   selectedIdealSolutionType: IdealSolutionType = 'link';
   selectedPricingTier: PricingTier = 'free';
   selectedAiModel: IAiModel | null = null;
   selectedAiModelId = '';
 
+  // Subscription Modal Properties
+  showSubscriptionModal = false;
+  subscriptionMessage = '';
+  selectedPlanForModal: string | null = null;
+
+  // Subscription plans for the modal
+  subscriptionPlans = [
+    {
+      id: 'basic',
+      name: 'Basic',
+      price: 299,
+      features: ['Create unlimited challenges', 'Basic AI evaluation', 'Standard support'],
+    },
+    {
+      id: 'professional',
+      name: 'Professional',
+      price: 599,
+      recommended: true,
+      features: [
+        'Everything in Basic',
+        'Premium AI models',
+        'Priority support',
+        'Advanced analytics',
+      ],
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: 1299,
+      features: [
+        'Everything in Professional',
+        'Custom AI models',
+        'Dedicated support',
+        'API access',
+      ],
+    },
+  ];
+
+  // Upgrade Modal Properties
+  showUpgradeModal = false;
+  upgradeMessage = '';
+  requiredPlan: 'professional' | 'enterprise' = 'professional';
+
   ngOnInit() {
     this.fetchMetadata();
 
     const today = new Date();
-    today.setDate(today.getDate() + 1); // Minimum date is tomorrow
-    this.minDate = today; // Format as YYYY-MM-DD for native input
+    today.setDate(today.getDate() + 1);
+    this.minDate = today;
 
     this.challengeForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required, Validators.minLength(1)]],
       category: [this.selectedCategory, Validators.required],
       difficulty: [this.selectedDifficulty, Validators.required],
-      type: ['job'], // Fixed to 'job'
+      type: ['job'],
       submissionType: [this.selectedSubmissionType, Validators.required],
-      deadline: [null as Date | null, [Validators.required, this.dateMinValidator(this.minDate)]], // Custom validator for min date with native input
+      deadline: [null as Date | null, [Validators.required, this.dateMinValidator(this.minDate)]],
       salary: [null as number | null, [Validators.required, Validators.min(1000)]],
       additionalInfo: [''],
       tags: [[], Validators.required],
@@ -127,7 +167,7 @@ export class CreateChallenge implements OnInit {
       deliverables: ['', [Validators.required, Validators.minLength(10)]],
       idealSolution: this.fb.group({
         type: [this.selectedIdealSolutionType, Validators.required],
-        value: ['', Validators.required], // Add initial required for "value"
+        value: ['', Validators.required],
       }),
       aiConfig: this.fb.group({
         pricingTier: [this.selectedPricingTier, Validators.required],
@@ -137,7 +177,6 @@ export class CreateChallenge implements OnInit {
       }),
     });
 
-    // Initialize selected values from form controls (if any default values are set)
     this.selectedCategory = this.challengeForm.get('category')?.value;
     this.selectedDifficulty = this.challengeForm.get('difficulty')?.value;
     this.selectedSubmissionType = this.challengeForm.get('submissionType')?.value;
@@ -145,13 +184,12 @@ export class CreateChallenge implements OnInit {
     this.selectedPricingTier = this.challengeForm.get('aiConfig.pricingTier')?.value;
     this.selectedAiModelId = this.challengeForm.get('aiConfig.selectedModel')?.value;
 
-    // --- Ideal Solution Type Logic ---
     this.challengeForm
       .get('idealSolution.type')
       ?.valueChanges.subscribe((type: IdealSolutionType) => {
         this.selectedIdealSolutionType = type;
         const idealSolutionValueControl = this.challengeForm.get('idealSolution.value');
-        idealSolutionValueControl?.setValue(''); // Clear value when type changes
+        idealSolutionValueControl?.setValue('');
 
         if (type === 'link') {
           idealSolutionValueControl?.setValidators([
@@ -163,13 +201,12 @@ export class CreateChallenge implements OnInit {
         } else if (type === 'file') {
           idealSolutionValueControl?.setValidators(Validators.required);
         } else {
-          idealSolutionValueControl?.clearValidators(); // Should not happen with defined types
+          idealSolutionValueControl?.clearValidators();
         }
         idealSolutionValueControl?.updateValueAndValidity();
-        idealSolutionValueControl?.markAsTouched(); // Trigger validation UI feedback
+        idealSolutionValueControl?.markAsTouched();
       });
 
-    // --- AI Config Pricing Tier Logic ---
     this.challengeForm.get('aiConfig.pricingTier')?.valueChanges.subscribe((tier: PricingTier) => {
       this.selectedPricingTier = tier;
       const selectedModelControl = this.challengeForm.get('aiConfig.selectedModel');
@@ -178,7 +215,7 @@ export class CreateChallenge implements OnInit {
         selectedModelControl?.setValidators(Validators.required);
         this.selectedAiModel = null;
         this.selectedAiModelId = '';
-        selectedModelControl?.setValue(''); // Clear selected model
+        selectedModelControl?.setValue('');
       } else {
         const tierDetails = this.aiPricingTiers.find((t) => t.tier === tier);
         if (tierDetails) {
@@ -195,16 +232,14 @@ export class CreateChallenge implements OnInit {
         }
       }
       selectedModelControl?.updateValueAndValidity();
-      selectedModelControl?.markAsTouched(); // Trigger validation UI feedback
+      selectedModelControl?.markAsTouched();
     });
 
-    // Update selectedAiModel when selectedAiModelId changes
     this.challengeForm.get('aiConfig.selectedModel')?.valueChanges.subscribe((modelId) => {
       this.selectedAiModelId = modelId;
       this.selectedAiModel = this.aiModels.find((m) => m.id === modelId) || null;
     });
 
-    // Trigger initial validation for idealSolution and aiConfig
     this.challengeForm.get('idealSolution.type')?.updateValueAndValidity();
     this.challengeForm.get('aiConfig.pricingTier')?.updateValueAndValidity();
   }
@@ -219,7 +254,6 @@ export class CreateChallenge implements OnInit {
 
       if (categoriesRes.success) {
         this.categories = categoriesRes.data;
-        // Set initial category if not already set, e.g., to the first one
         if (!this.selectedCategory && this.categories.length > 0) {
           this.selectCategory(this.categories[0]);
         }
@@ -231,7 +265,6 @@ export class CreateChallenge implements OnInit {
         this.aiModels = aiModelsRes.data.models;
         this.aiPricingTiers = aiModelsRes.data.pricingTiers;
 
-        // Set default AI model for 'free' tier on load
         const freeTier = this.aiPricingTiers.find((t) => t.tier === 'free');
         if (freeTier) {
           const defaultModel = this.aiModels.find((m) => m.id === freeTier.defaultModel);
@@ -252,7 +285,6 @@ export class CreateChallenge implements OnInit {
     return this.allSkills.filter((skill) => skill.toLowerCase().includes(query));
   }
 
-  // --- Dropdown Selectors ---
   selectCategory(cat: string) {
     this.selectedCategory = cat;
     this.challengeForm.get('category')?.setValue(cat);
@@ -281,17 +313,12 @@ export class CreateChallenge implements OnInit {
     this.openIdealSolutionType = false;
   }
 
-  showUpgradeModal = false;
-  upgradeMessage = '';
-  requiredPlan: 'professional' | 'enterprise' = 'professional';
-
   selectPricingTier(tier: PricingTier) {
     this.selectedPricingTier = tier;
     this.challengeForm.get('aiConfig.pricingTier')?.setValue(tier);
     this.challengeForm.get('aiConfig.pricingTier')?.markAsTouched();
     this.openPricingTier = false;
 
-    // Check if user can use this tier
     if (tier === 'custom') {
       if (!this.canUseCustomAIModels()) {
         this.showUpgradeModal = true;
@@ -299,7 +326,6 @@ export class CreateChallenge implements OnInit {
           'Premium AI models require a Professional or Enterprise subscription. Upgrade now to unlock advanced AI capabilities including GPT-4, Claude Sonnet, and custom model selection.';
         this.requiredPlan = 'professional';
 
-        // Revert to free tier
         setTimeout(() => {
           if (this.showUpgradeModal) {
             this.selectPricingTier('free');
@@ -322,7 +348,7 @@ export class CreateChallenge implements OnInit {
 
   closeUpgradeModal() {
     this.showUpgradeModal = false;
-    this.selectPricingTier('free'); // Reset to free tier
+    this.selectPricingTier('free');
   }
 
   selectAiModel(modelId: string) {
@@ -333,7 +359,6 @@ export class CreateChallenge implements OnInit {
     this.openAiModel = false;
   }
 
-  // --- Skill Management ---
   toggleSkill(skill: string) {
     const index = this.selectedTags.indexOf(skill);
     if (index > -1) {
@@ -342,7 +367,7 @@ export class CreateChallenge implements OnInit {
       this.selectedTags.push(skill);
     }
     this.challengeForm.get('tags')?.setValue(this.selectedTags);
-    this.challengeForm.get('tags')?.markAsTouched(); // Ensure validation state updates
+    this.challengeForm.get('tags')?.markAsTouched();
   }
 
   removeSkill(skill: string) {
@@ -351,7 +376,7 @@ export class CreateChallenge implements OnInit {
       this.selectedTags.splice(index, 1);
     }
     this.challengeForm.get('tags')?.setValue(this.selectedTags);
-    this.challengeForm.get('tags')?.markAsTouched(); // Ensure validation state updates
+    this.challengeForm.get('tags')?.markAsTouched();
   }
 
   isSkillSelected(skill: string): boolean {
@@ -362,15 +387,14 @@ export class CreateChallenge implements OnInit {
     this.skillSearchQuery = '';
   }
 
-  // --- Native Date Input Validator ---
   dateMinValidator(minDateString: Date) {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value) {
-        return null; // Don't validate if no date is selected, handled by Validators.required
+        return null;
       }
       const selectedDate = new Date(control.value);
       const minValidDate = new Date(minDateString);
-      minValidDate.setHours(0, 0, 0, 0); // Normalize to start of day
+      minValidDate.setHours(0, 0, 0, 0);
 
       return selectedDate >= minValidDate
         ? null
@@ -378,36 +402,104 @@ export class CreateChallenge implements OnInit {
     };
   }
 
-  // --- File Handling ---
   handleIdealSolutionFile(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      // In a real application, you'd upload the file and store a URL/ID.
-      // For form validation, we're just checking if a file was selected.
       this.challengeForm.get('idealSolution.value')?.setValue(file.name);
     } else {
       this.challengeForm.get('idealSolution.value')?.setValue('');
     }
-    this.challengeForm.get('idealSolution.value')?.markAsTouched(); // Trigger validation
+    this.challengeForm.get('idealSolution.value')?.markAsTouched();
   }
 
+  // Subscription Check
   get hasActiveSubscription(): boolean {
-    const isSubscribed = this.authService.isSubscribed; // Or however you get current user
-    return isSubscribed;
+    const user = this.authService.isSubscribed;
+    return user;
+  }
+
+  // Select plan in modal
+  selectPlanInModal(planId: string) {
+    this.selectedPlanForModal = planId;
+  }
+
+  // Proceed with payment
+  async proceedWithPayment() {
+    if (!this.selectedPlanForModal) {
+      alert('Please select a plan');
+      return;
+    }
+
+    const plan = this.subscriptionPlans.find((p) => p.id === this.selectedPlanForModal);
+    if (!plan) return;
+
+    this.showSubscriptionModal = false;
+    this.isSubmitting = true;
+
+    try {
+      const response = await firstValueFrom(
+        this.http.post<any>(`${environment.apiUrl}/payment/create-intent`, {
+          amount: plan.price,
+          currency: 'EGP',
+          payment_type: 'SUBSCRIPTION',
+        })
+      );
+
+      if (response?.data?.iframeUrl) {
+        const dialogRef = this.dialog.open(PaymentIframe, {
+          data: {
+            url: response.data.iframeUrl,
+            planId: plan.id,
+          },
+          width: '550px',
+          maxWidth: '95vw',
+          disableClose: true,
+        });
+
+        dialogRef.afterClosed().subscribe(async (result) => {
+          if (result === 'CHECK_STATUS') {
+            this.submitError = '';
+            this.submitSuccess = false;
+
+            setTimeout(async () => {
+              await firstValueFrom(this.authService.refreshUserProfile());
+
+              if (this.hasActiveSubscription) {
+                this.onSubmit('published');
+              } else {
+                this.submitError = 'Subscription activation pending. Please try again in a moment.';
+                this.isSubmitting = false;
+              }
+            }, 3000);
+          } else if (result === 'FAILED') {
+            this.submitError = 'Payment failed. Please try again.';
+            this.isSubmitting = false;
+          }
+        });
+      }
+    } catch (error: any) {
+      console.error('Payment initiation failed:', error);
+      this.submitError = error?.error?.message || 'Failed to initiate payment';
+      this.isSubmitting = false;
+    }
+  }
+
+  closeSubscriptionModal() {
+    this.showSubscriptionModal = false;
+    this.selectedPlanForModal = null;
   }
 
   async onSubmit(status: 'draft' | 'published') {
-    // NEW: Check subscription BEFORE validation if publishing
+    // Check subscription BEFORE validation if publishing
     if (status === 'published' && !this.hasActiveSubscription) {
       this.showSubscriptionModal = true;
       this.subscriptionMessage =
         'An active subscription is required to publish challenges. Subscribe now to unlock unlimited challenge creation with premium AI evaluation.';
-      return; // Stop here, don't submit
+      return;
     }
 
     this.challengeForm.markAllAsTouched();
 
-    // Explicit check for tags
     if (this.selectedTags.length === 0) {
       this.challengeForm.get('tags')?.setErrors({ required: true });
       this.challengeForm.get('tags')?.markAsTouched();
@@ -418,7 +510,6 @@ export class CreateChallenge implements OnInit {
     if (!this.challengeForm.valid) {
       this.submitError = this.translate.instant('CHALLENGE.FORM.GENERIC_ERROR_MESSAGE');
       console.error('Form is invalid. Details:', this.challengeForm.errors);
-      // Detailed logging
       Object.keys(this.challengeForm.controls).forEach((key) => {
         const control = this.challengeForm.get(key);
         if (control instanceof FormGroup) {
@@ -492,8 +583,7 @@ export class CreateChallenge implements OnInit {
           'Active subscription required to publish challenges. Subscribe now to start hiring top talent.';
       } else if (error?.error?.code === 'SUBSCRIPTION_EXPIRED') {
         this.showSubscriptionModal = true;
-        this.subscriptionMessage =
-          'Your subscription has expired. Renew now to continue publishing challenges.';
+        this.subscriptionMessage = 'Your subscription has expired. Renew now to continue.';
       } else if (error?.error?.code === 'PREMIUM_AI_REQUIRES_SUBSCRIPTION') {
         this.submitError = 'Premium AI models require subscription upgrade.';
         this.showUpgradeModal = true;
@@ -503,16 +593,6 @@ export class CreateChallenge implements OnInit {
     } finally {
       this.isSubmitting = false;
     }
-  }
-
-  // Add method to navigate to subscription
-  navigateToSubscription() {
-    this.showSubscriptionModal = false;
-    this.router.navigate(['/dashboard/company/subscription']);
-  }
-
-  closeSubscriptionModal() {
-    this.showSubscriptionModal = false;
   }
 
   goBack() {
